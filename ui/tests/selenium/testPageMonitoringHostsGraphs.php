@@ -21,7 +21,7 @@
 require_once dirname(__FILE__).'/../include/CWebTest.php';
 
 class testPageMonitoringHostsGraphs extends CWebTest {
-	
+
 		public static function getCheckFilterData() {
 		return [
 			[
@@ -66,10 +66,10 @@ class testPageMonitoringHostsGraphs extends CWebTest {
 			]
 		];
 	}
-	
+
 	/**
 	 * @dataProvider getCheckFilterData
-	 */	
+	 */
 	public function testPageMonitoringHostsGraphs_CheckFilter($data) {
 		$this->page->login()->open('zabbix.php?view_as=showgraph&action=charts.view&from=now-1h&to=now&filter_search_type=0&filter_set=1');
 		$form = $this->query('name:zbx_filter')->one()->asForm();
@@ -78,7 +78,7 @@ class testPageMonitoringHostsGraphs extends CWebTest {
 		$this->page->waitUntilReady();
 		$graphs_count = $this->query('xpath://tbody/tr/div[@class="flickerfreescreen"]')->all()->count();
 		$this->assertEquals($data['graphs_amount'], $graphs_count);
-		
+
 		// Checking from Values view.
 		$this->query('id:view_as')->asDropdown()->one()->select('Values');
 		$this->page->waitUntilReady();
