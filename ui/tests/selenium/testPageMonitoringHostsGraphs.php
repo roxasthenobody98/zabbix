@@ -22,7 +22,7 @@ require_once dirname(__FILE__).'/../include/CWebTest.php';
 
 class testPageMonitoringHostsGraphs extends CWebTest {
 
-		public static function getCheckFilterData() {
+	public static function getCheckFilterData() {
 		return [
 			[
 				[
@@ -63,6 +63,17 @@ class testPageMonitoringHostsGraphs extends CWebTest {
 					'graphs_amount' => 1,
 					'items_names' => ['Item to delete graph']
 				]
+			],
+			[
+				[
+					'filter' => [
+						'Host' => 'Dynamic widgets H1',
+						'Search type' => 'Strict',
+						'Graphs' => 'Dynamic widgets H1 G1 (I1)'
+					],
+					'graphs_amount' => 1,
+					'items_names' => ['Dynamic widgets H1I1']
+				]
 			]
 		];
 	}
@@ -72,6 +83,12 @@ class testPageMonitoringHostsGraphs extends CWebTest {
 	 */
 	public function testPageMonitoringHostsGraphs_CheckFilter($data) {
 		$this->page->login()->open('zabbix.php?view_as=showgraph&action=charts.view&from=now-1h&to=now&filter_search_type=0&filter_set=1');
+
+		// Checking that graph filter is activated and visible.
+		if ($this->query('xpath://li[@aria-controls="tab_2"]')->one()->getAttribute('aria-selected') == 'false') {
+			$this->query('xpath://ul[@role="tablist"]/li[@aria-controls="tab_2"]/a')->one()->click();
+		}
+
 		$form = $this->query('name:zbx_filter')->one()->asForm();
 		$form->fill($data['filter']);
 		$form->submit();
