@@ -1337,18 +1337,16 @@ define('API_SORTORDER',			31);
 define('API_CALC_FORMULA',		32);
 
 // flags
-define('API_REQUIRED',					0x0001);
-define('API_NOT_EMPTY',					0x0002);
-define('API_ALLOW_NULL',				0x0004);
-define('API_NORMALIZE',					0x0008);
-define('API_DEPRECATED',				0x0010);
-define('API_ALLOW_USER_MACRO',			0x0020);
-define('API_ALLOW_COUNT',				0x0040);
-define('API_ALLOW_LLD_MACRO',			0x0080);
-define('API_REQUIRED_LLD_MACRO',		0x0100);
-define('API_TIME_UNIT_WITH_YEAR',		0x0200);
-define('API_ALLOW_EVENT_TAGS_MACRO',	0x0400);
-define('API_PRESERVE_KEYS',				0x0800);
+define('API_NOT_EMPTY',					0x0001);
+define('API_ALLOW_NULL',				0x0002);
+define('API_NORMALIZE',					0x0004);
+define('API_ALLOW_USER_MACRO',			0x0008);
+define('API_ALLOW_COUNT',				0x0010);
+define('API_ALLOW_LLD_MACRO',			0x0020);
+define('API_REQUIRED_LLD_MACRO',		0x0040);
+define('API_TIME_UNIT_WITH_YEAR',		0x0080);
+define('API_ALLOW_EVENT_TAGS_MACRO',	0x0100);
+define('API_PRESERVE_KEYS',				0x0200);
 
 // JSON error codes.
 if (!defined('JSON_ERROR_NONE')) {

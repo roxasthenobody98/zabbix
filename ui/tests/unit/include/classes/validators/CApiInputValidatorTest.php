@@ -1171,8 +1171,8 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			],
 			[
 				['type' => API_OBJECT, 'fields' => [
-					'host' => ['type' => API_STRING_UTF8, 'flags' => API_REQUIRED],
-					'name' => ['type' => API_STRING_UTF8, 'flags' => API_REQUIRED]
+					'host' => ['type' => API_STRING_UTF8, 'required' => true],
+					'name' => ['type' => API_STRING_UTF8, 'required' => true]
 				]],
 				[
 					'host' => 'Zabbix server'
@@ -1326,7 +1326,7 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			],
 			[
 				['type' => API_OBJECTS, 'fields' => [
-					'host' => ['type' => API_STRING_UTF8, 'flags' => API_REQUIRED],
+					'host' => ['type' => API_STRING_UTF8, 'required' => true],
 					'name' => ['type' => API_STRING_UTF8]
 				]],
 				[
@@ -1342,8 +1342,8 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			[
 				['type' => API_OBJECTS, 'fields' => [
 					'name' => ['type' => API_STRING_UTF8],
-					'col' => ['type' => API_INT32, 'flags' => API_REQUIRED, 'default' => '0'],
-					'row' => ['type' => API_INT32, 'flags' => API_REQUIRED, 'default' => '1'],
+					'col' => ['type' => API_INT32, 'required' => true, 'default' => '0'],
+					'row' => ['type' => API_INT32, 'required' => true, 'default' => '1'],
 					'width' => ['type' => API_INT32],
 					'height' => ['type' => API_INT32]
 				]],
@@ -1359,8 +1359,8 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			],
 			[
 				['type' => API_OBJECTS, 'fields' => [
-					'host' => ['type' => API_STRING_UTF8, 'flags' => API_REQUIRED],
-					'name' => ['type' => API_STRING_UTF8, 'flags' => API_REQUIRED]
+					'host' => ['type' => API_STRING_UTF8, 'required' => true],
+					'name' => ['type' => API_STRING_UTF8, 'required' => true]
 				]],
 				[
 					['host' => 'Zabbix server', 'name' => 'Zabbix server'],
@@ -1371,11 +1371,11 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			],
 			[
 				['type' => API_OBJECTS, 'uniq' => [['valuemapid'], ['name']], 'fields' => [
-					'valuemapid' =>	['type' => API_ID, 'flags' => API_REQUIRED],
-					'name' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => 64],
-					'mappings' =>	['type' => API_OBJECTS, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'uniq' => [['value']], 'fields' => [
-						'value' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => 64],
-						'newvalue' =>	['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => 64]
+					'valuemapid' =>	['type' => API_ID, 'required' => true],
+					'name' =>		['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => 64],
+					'mappings' =>	['type' => API_OBJECTS, 'required' => true, 'flags' => API_NOT_EMPTY, 'uniq' => [['value']], 'fields' => [
+						'value' =>		['type' => API_STRING_UTF8, 'required' => true, 'length' => 64],
+						'newvalue' =>	['type' => API_STRING_UTF8, 'required' => true, 'length' => 64]
 					]]
 				]],
 				[
@@ -1430,8 +1430,8 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			],
 			[
 				['type' => API_OBJECTS, 'uniq' => [['valuemapid'], ['name']], 'fields' => [
-					'valuemapid' =>	['type' => API_ID, 'flags' => API_REQUIRED],
-					'name' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => 64]
+					'valuemapid' =>	['type' => API_ID, 'required' => true],
+					'name' =>		['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => 64]
 				]],
 				[
 					[
@@ -1452,11 +1452,11 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			],
 			[
 				['type' => API_OBJECTS, 'uniq' => [['valuemapid'], ['name']], 'fields' => [
-					'valuemapid' =>	['type' => API_ID, 'flags' => API_REQUIRED],
-					'name' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => 64],
-					'mappings' =>	['type' => API_OBJECTS, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'uniq' => [['value']], 'fields' => [
-						'value' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => 64],
-						'newvalue' =>	['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => 64]
+					'valuemapid' =>	['type' => API_ID, 'required' => true],
+					'name' =>		['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => 64],
+					'mappings' =>	['type' => API_OBJECTS, 'required' => true, 'flags' => API_NOT_EMPTY, 'uniq' => [['value']], 'fields' => [
+						'value' =>		['type' => API_STRING_UTF8, 'required' => true, 'length' => 64],
+						'newvalue' =>	['type' => API_STRING_UTF8, 'required' => true, 'length' => 64]
 					]]
 				]],
 				[
@@ -1480,7 +1480,7 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			[
 				['type' => API_OBJECT, 'fields' => [
 					'tags' => ['type' => API_OBJECTS, 'uniq' => [['tag', 'operator', 'value']], 'fields' => [
-						'tag'		=> ['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => 255],
+						'tag'		=> ['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => 255],
 						'operator'	=> ['type' => API_INT32, 'in' => implode(',', [0, 2]), 'default' => 2],
 						'value'		=> ['type' => API_STRING_UTF8, 'length' => 255, 'default' => '']
 					]]
@@ -1511,7 +1511,7 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			[
 				['type' => API_OBJECT, 'fields' => [
 					'tags' => ['type' => API_OBJECTS, 'uniq' => [['tag', 'operator', 'value']], 'fields' => [
-						'tag'		=> ['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => 255],
+						'tag'		=> ['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => 255],
 						'operator'	=> ['type' => API_INT32, 'in' => implode(',', [0, 2]), 'default' => 2],
 						'value'		=> ['type' => API_STRING_UTF8, 'length' => 255, 'default' => '']
 					]]
@@ -1527,8 +1527,8 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			],
 			[
 				['type' => API_OBJECTS, 'uniq' => [['valuemapid'], ['name']], 'fields' => [
-					'valuemapid' =>	['type' => API_ID, 'flags' => API_REQUIRED],
-					'name' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => 64]
+					'valuemapid' =>	['type' => API_ID, 'required' => true],
+					'name' =>		['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => 64]
 				]],
 				[
 					'valuemapid' => 5,
@@ -1539,11 +1539,11 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			],
 			[
 				['type' => API_OBJECTS, 'flags' => API_NORMALIZE, 'uniq' => [['valuemapid'], ['name']], 'fields' => [
-					'valuemapid' =>	['type' => API_ID, 'flags' => API_REQUIRED],
-					'name' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => 64],
-					'mappings' =>	['type' => API_OBJECTS, 'flags' => API_REQUIRED | API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['value']], 'fields' => [
-						'value' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => 64],
-						'newvalue' =>	['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => 64]
+					'valuemapid' =>	['type' => API_ID, 'required' => true],
+					'name' =>		['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => 64],
+					'mappings' =>	['type' => API_OBJECTS, 'required' => true, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['value']], 'fields' => [
+						'value' =>		['type' => API_STRING_UTF8, 'required' => true, 'length' => 64],
+						'newvalue' =>	['type' => API_STRING_UTF8, 'required' => true, 'length' => 64]
 					]]
 				]],
 				[
@@ -1564,8 +1564,8 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			],
 			[
 				['type' => API_OBJECTS, 'fields' => [
-					'type' =>	['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => '1:9'],
-					'value' =>	['type' => API_MULTIPLE, 'flags' => API_REQUIRED, 'rules' => [
+					'type' =>	['type' => API_INT32, 'required' => true, 'in' => '1:9'],
+					'value' =>	['type' => API_MULTIPLE, 'required' => true, 'rules' => [
 						['if' => ['field' => 'type', 'in' => '1,2'], 'type' => API_INT32],
 						['if' => ['field' => 'type', 'in' => '3,4'], 'type' => API_STRING_UTF8],
 						['if' => ['field' => 'type', 'in' => '5:9'], 'type' => API_ID]
@@ -1589,8 +1589,8 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			],
 			[
 				['type' => API_OBJECTS, 'fields' => [
-					'type' =>	['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => '1:9'],
-					'value' =>	['type' => API_MULTIPLE, 'flags' => API_REQUIRED, 'rules' => [
+					'type' =>	['type' => API_INT32, 'required' => true, 'in' => '1:9'],
+					'value' =>	['type' => API_MULTIPLE, 'required' => true, 'rules' => [
 						['if' => ['field' => 'type', 'in' => '1,2'], 'type' => API_INT32]
 					]]
 				]],
@@ -1603,8 +1603,8 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			],
 			[
 				['type' => API_OBJECTS, 'fields' => [
-					'type' =>	['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => '1:9'],
-					'value' =>	['type' => API_MULTIPLE, 'flags' => API_REQUIRED, 'rules' => [
+					'type' =>	['type' => API_INT32, 'required' => true, 'in' => '1:9'],
+					'value' =>	['type' => API_MULTIPLE, 'required' => true, 'rules' => [
 						['if' => ['field' => 'type', 'in' => '1,3'], 'type' => API_INT32]
 					]]
 				]],
@@ -1617,7 +1617,7 @@ class CApiInputValidatorTest extends PHPUnit_Framework_TestCase {
 			],
 			[
 				['type' => API_OBJECTS, 'fields' => [
-					'host' =>	['type' => API_H_NAME, 'flags' => API_REQUIRED],
+					'host' =>	['type' => API_H_NAME, 'required' => true],
 					'name' =>	['type' => API_STRING_UTF8, 'default_source' => 'host'],
 				]],
 				[

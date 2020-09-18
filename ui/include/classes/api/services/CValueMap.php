@@ -288,10 +288,10 @@ class CValueMap extends CApiService {
 		}
 
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['name']], 'fields' => [
-			'name' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('valuemaps', 'name')],
-			'mappings' =>	['type' => API_OBJECTS, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'uniq' => [['value']], 'fields' => [
-				'value' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => DB::getFieldLength('mappings', 'value')],
-				'newvalue' =>	['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('mappings', 'newvalue')]
+			'name' =>		['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('valuemaps', 'name')],
+			'mappings' =>	['type' => API_OBJECTS, 'required' => true, 'flags' => API_NOT_EMPTY, 'uniq' => [['value']], 'fields' => [
+				'value' =>		['type' => API_STRING_UTF8, 'required' => true, 'length' => DB::getFieldLength('mappings', 'value')],
+				'newvalue' =>	['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('mappings', 'newvalue')]
 			]]
 		]];
 		if (!CApiInputValidator::validate($api_input_rules, $valuemaps, '/', $error)) {
@@ -313,11 +313,11 @@ class CValueMap extends CApiService {
 		}
 
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['valuemapid'], ['name']], 'fields' => [
-			'valuemapid' =>	['type' => API_ID, 'flags' => API_REQUIRED],
+			'valuemapid' =>	['type' => API_ID, 'required' => true],
 			'name' =>		['type' => API_STRING_UTF8, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('valuemaps', 'name')],
 			'mappings' =>	['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY, 'uniq' => [['value']], 'fields' => [
-				'value' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => DB::getFieldLength('mappings', 'value')],
-				'newvalue' =>	['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('mappings', 'newvalue')]
+				'value' =>		['type' => API_STRING_UTF8, 'required' => true, 'length' => DB::getFieldLength('mappings', 'value')],
+				'newvalue' =>	['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('mappings', 'newvalue')]
 			]]
 		]];
 		if (!CApiInputValidator::validate($api_input_rules, $valuemaps, '/', $error)) {

@@ -105,8 +105,8 @@ class CTask extends CApiService {
 		}
 
 		$api_input_rules = ['type' => API_OBJECT, 'fields' => [
-			'type' =>		['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', [ZBX_TM_TASK_CHECK_NOW])],
-			'itemids' =>	['type' => API_IDS, 'flags' => API_REQUIRED | API_NOT_EMPTY | API_NORMALIZE, 'uniq' => true]
+			'type' =>		['type' => API_INT32, 'required' => true, 'in' => implode(',', [ZBX_TM_TASK_CHECK_NOW])],
+			'itemids' =>	['type' => API_IDS, 'required' => true, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => true]
 		]];
 
 		if (!CApiInputValidator::validate($api_input_rules, $task, '/', $error)) {

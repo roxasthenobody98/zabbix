@@ -2079,7 +2079,7 @@ abstract class CItemGeneral extends CApiService {
 				'in' => '1:'.SEC_PER_MIN
 			],
 			'url' => [
-				'type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY,
+				'type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY,
 				'length' => DB::getFieldLength('items', 'url'),
 			],
 			'status_codes' => [
@@ -2172,7 +2172,7 @@ abstract class CItemGeneral extends CApiService {
 
 		if (array_key_exists('templateid', $data) && $data['templateid']) {
 			$rules['interfaceid'] = [
-				'type' => API_ID, 'flags' => API_REQUIRED | API_NOT_EMPTY
+				'type' => API_ID, 'required' => true, 'flags' => API_NOT_EMPTY
 			];
 		}
 

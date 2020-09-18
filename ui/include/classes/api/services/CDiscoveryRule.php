@@ -1490,50 +1490,50 @@ class CDiscoveryRule extends CItemGeneral {
 	 */
 	protected function validateOverrides(array $items): void {
 		$api_input_rules = ['type' => API_OBJECTS, 'uniq' => [['name'], ['step']], 'fields' => [
-			'step' =>			['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => '1:'.ZBX_MAX_INT32],
-			'name' =>			['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('lld_override', 'name')],
+			'step' =>			['type' => API_INT32, 'required' => true, 'in' => '1:'.ZBX_MAX_INT32],
+			'name' =>			['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('lld_override', 'name')],
 			'stop' =>			['type' => API_INT32, 'in' => implode(',', [ZBX_LLD_OVERRIDE_STOP_NO, ZBX_LLD_OVERRIDE_STOP_YES]), 'default' => ZBX_LLD_OVERRIDE_STOP_NO],
 			'filter' =>			['type' => API_OBJECT, 'fields' => [
-				'evaltype' =>		['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', [CONDITION_EVAL_TYPE_AND_OR, CONDITION_EVAL_TYPE_AND, CONDITION_EVAL_TYPE_OR, CONDITION_EVAL_TYPE_EXPRESSION])],
+				'evaltype' =>		['type' => API_INT32, 'required' => true, 'in' => implode(',', [CONDITION_EVAL_TYPE_AND_OR, CONDITION_EVAL_TYPE_AND, CONDITION_EVAL_TYPE_OR, CONDITION_EVAL_TYPE_EXPRESSION])],
 				'formula' =>		['type' => API_STRING_UTF8],
-				'conditions' =>		['type' => API_OBJECTS, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'fields' => [
-					'macro' =>			['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('lld_override_condition', 'macro')],
+				'conditions' =>		['type' => API_OBJECTS, 'required' => true, 'flags' => API_NOT_EMPTY, 'fields' => [
+					'macro' =>			['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('lld_override_condition', 'macro')],
 					'operator' =>		['type' => API_INT32, 'in' => implode(',', [CONDITION_OPERATOR_REGEXP, CONDITION_OPERATOR_NOT_REGEXP]), 'default' => DB::getDefault('lld_override_condition', 'operator')],
-					'value' =>			['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => DB::getFieldLength('lld_override_condition', 'value')],
+					'value' =>			['type' => API_STRING_UTF8, 'required' => true, 'length' => DB::getFieldLength('lld_override_condition', 'value')],
 					'formulaid' =>		['type' => API_STRING_UTF8]
 				]]
 			]],
 			'operations' =>	['type' => API_OBJECTS, 'fields' => [
-				'operationobject' =>	['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', [OPERATION_OBJECT_ITEM_PROTOTYPE, OPERATION_OBJECT_TRIGGER_PROTOTYPE, OPERATION_OBJECT_GRAPH_PROTOTYPE, OPERATION_OBJECT_HOST_PROTOTYPE])],
+				'operationobject' =>	['type' => API_INT32, 'required' => true, 'in' => implode(',', [OPERATION_OBJECT_ITEM_PROTOTYPE, OPERATION_OBJECT_TRIGGER_PROTOTYPE, OPERATION_OBJECT_GRAPH_PROTOTYPE, OPERATION_OBJECT_HOST_PROTOTYPE])],
 				'operator' =>			['type' => API_INT32, 'in' => implode(',', [CONDITION_OPERATOR_EQUAL, CONDITION_OPERATOR_NOT_EQUAL, CONDITION_OPERATOR_LIKE, CONDITION_OPERATOR_NOT_LIKE, CONDITION_OPERATOR_REGEXP, CONDITION_OPERATOR_NOT_REGEXP]), 'default' => DB::getDefault('lld_override_operation', 'operator')],
 				'value' =>				['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('lld_override_operation', 'value')],
 				'opstatus' =>			['type' => API_OBJECT, 'fields' => [
-					'status' =>				['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', [ZBX_PROTOTYPE_STATUS_ENABLED, ZBX_PROTOTYPE_STATUS_DISABLED])],
+					'status' =>				['type' => API_INT32, 'required' => true, 'in' => implode(',', [ZBX_PROTOTYPE_STATUS_ENABLED, ZBX_PROTOTYPE_STATUS_DISABLED])],
 				]],
 				'opdiscover' =>			['type' => API_OBJECT, 'fields' => [
-					'discover' =>			['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', [ZBX_PROTOTYPE_DISCOVER, ZBX_PROTOTYPE_NO_DISCOVER])],
+					'discover' =>			['type' => API_INT32, 'required' => true, 'in' => implode(',', [ZBX_PROTOTYPE_DISCOVER, ZBX_PROTOTYPE_NO_DISCOVER])],
 				]],
 				'opperiod' =>			['type' => API_OBJECT, 'fields' => [
-					'delay' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('lld_override_opperiod', 'delay')]
+					'delay' =>				['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('lld_override_opperiod', 'delay')]
 				]],
 				'ophistory' =>			['type' => API_OBJECT, 'fields' => [
-					'history' =>			['type' => API_TIME_UNIT, 'flags' => API_REQUIRED | API_NOT_EMPTY | API_ALLOW_USER_MACRO | API_ALLOW_LLD_MACRO, 'in' => '0,'.implode(':', [SEC_PER_HOUR, 25 * SEC_PER_YEAR]), 'length' => DB::getFieldLength('lld_override_ophistory', 'history')]
+					'history' =>			['type' => API_TIME_UNIT, 'required' => true, 'flags' => API_NOT_EMPTY | API_ALLOW_USER_MACRO | API_ALLOW_LLD_MACRO, 'in' => '0,'.implode(':', [SEC_PER_HOUR, 25 * SEC_PER_YEAR]), 'length' => DB::getFieldLength('lld_override_ophistory', 'history')]
 				]],
 				'optrends' =>			['type' => API_OBJECT, 'fields' => [
-					'trends' =>				['type' => API_TIME_UNIT, 'flags' => API_REQUIRED | API_NOT_EMPTY | API_ALLOW_USER_MACRO | API_ALLOW_LLD_MACRO, 'in' => '0,'.implode(':', [SEC_PER_HOUR, 25 * SEC_PER_YEAR]), 'length' => DB::getFieldLength('lld_override_optrends', 'trends')]
+					'trends' =>				['type' => API_TIME_UNIT, 'required' => true, 'flags' => API_NOT_EMPTY | API_ALLOW_USER_MACRO | API_ALLOW_LLD_MACRO, 'in' => '0,'.implode(':', [SEC_PER_HOUR, 25 * SEC_PER_YEAR]), 'length' => DB::getFieldLength('lld_override_optrends', 'trends')]
 				]],
 				'opseverity' =>			['type' => API_OBJECT, 'fields' => [
-					'severity' =>			['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', range(TRIGGER_SEVERITY_NOT_CLASSIFIED, TRIGGER_SEVERITY_COUNT - 1))]
+					'severity' =>			['type' => API_INT32, 'required' => true, 'in' => implode(',', range(TRIGGER_SEVERITY_NOT_CLASSIFIED, TRIGGER_SEVERITY_COUNT - 1))]
 				]],
 				'optag' =>				['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY, 'uniq' => [['tag', 'value']], 'fields' => [
-					'tag' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('lld_override_optag', 'tag')],
+					'tag' =>				['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('lld_override_optag', 'tag')],
 					'value' =>				['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('lld_override_optag', 'value'), 'default' => DB::getDefault('lld_override_optag', 'value')]
 				]],
 				'optemplate' =>			['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY, 'fields' => [
-					'templateid' =>			['type' => API_ID, 'flags' => API_REQUIRED]
+					'templateid' =>			['type' => API_ID, 'required' => true]
 				]],
 				'opinventory' =>		['type' => API_OBJECT, 'fields' => [
-					'inventory_mode' =>		['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', [HOST_INVENTORY_DISABLED, HOST_INVENTORY_MANUAL, HOST_INVENTORY_AUTOMATIC])]
+					'inventory_mode' =>		['type' => API_INT32, 'required' => true, 'in' => implode(',', [HOST_INVENTORY_DISABLED, HOST_INVENTORY_MANUAL, HOST_INVENTORY_AUTOMATIC])]
 				]]
 			]]
 		]];
@@ -1850,8 +1850,8 @@ class CDiscoveryRule extends CItemGeneral {
 	protected function validateCreateLLDMacroPaths(array $items) {
 		$rules = [
 			'lld_macro_paths' =>	['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY, 'fields' => [
-				'lld_macro' =>			['type' => API_LLD_MACRO, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('lld_macro_path', 'lld_macro')],
-				'path' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('lld_macro_path', 'path')]
+				'lld_macro' =>			['type' => API_LLD_MACRO, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('lld_macro_path', 'lld_macro')],
+				'path' =>				['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('lld_macro_path', 'path')]
 			]]
 		];
 

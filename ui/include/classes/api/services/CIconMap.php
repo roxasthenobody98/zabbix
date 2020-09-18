@@ -179,13 +179,13 @@ class CIconMap extends CApiService {
 		}
 
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['name']], 'fields' => [
-			'name' =>			['type' => API_STRING_UTF8, 'flags' => API_NOT_EMPTY | API_REQUIRED, 'length' => DB::getFieldLength('icon_map', 'name')],
-			'default_iconid' =>	['type' => API_ID, 'flags' => API_REQUIRED],
-			'mappings' =>		['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_REQUIRED, 'uniq' => [['inventory_link', 'expression']], 'fields' => [
-				'iconid' =>			['type' => API_ID, 'flags' => API_REQUIRED],
-				'expression' =>		['type' => API_REGEX, 'flags' => API_NOT_EMPTY | API_REQUIRED, 'length' => DB::getFieldLength('icon_mapping', 'expression')],
-				'inventory_link' =>	['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => '1:70'],
-				'sortorder' =>		['type' => API_INT32, 'flags' => API_DEPRECATED]
+			'name' =>			['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('icon_map', 'name')],
+			'default_iconid' =>	['type' => API_ID, 'required' => true],
+			'mappings' =>		['type' => API_OBJECTS, 'required' => true, 'flags' => API_NOT_EMPTY, 'uniq' => [['inventory_link', 'expression']], 'fields' => [
+				'iconid' =>			['type' => API_ID, 'required' => true],
+				'expression' =>		['type' => API_REGEX, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('icon_mapping', 'expression')],
+				'inventory_link' =>	['type' => API_INT32, 'required' => true, 'in' => '1:70'],
+				'sortorder' =>		['type' => API_INT32, 'deprecated' => true]
 			]]
 		]];
 		if (!CApiInputValidator::validate($api_input_rules, $iconmaps, '/', $error)) {
@@ -250,14 +250,14 @@ class CIconMap extends CApiService {
 		}
 
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['iconmapid'], ['name']], 'fields' => [
-			'iconmapid' =>		['type' => API_ID, 'flags' => API_REQUIRED],
+			'iconmapid' =>		['type' => API_ID, 'required' => true],
 			'name' =>			['type' => API_STRING_UTF8, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('icon_map', 'name')],
 			'default_iconid' =>	['type' => API_ID],
 			'mappings' =>		['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY, 'uniq' => [['inventory_link', 'expression']], 'fields' => [
-				'iconid' =>			['type' => API_ID, 'flags' => API_REQUIRED],
-				'expression' =>		['type' => API_REGEX, 'flags' => API_NOT_EMPTY | API_REQUIRED, 'length' => DB::getFieldLength('icon_mapping', 'expression')],
-				'inventory_link' =>	['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => '1:70'],
-				'sortorder' =>		['type' => API_INT32, 'flags' => API_DEPRECATED]
+				'iconid' =>			['type' => API_ID, 'required' => true],
+				'expression' =>		['type' => API_REGEX, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('icon_mapping', 'expression')],
+				'inventory_link' =>	['type' => API_INT32, 'required' => true, 'in' => '1:70'],
+				'sortorder' =>		['type' => API_INT32, 'deprecated' => true]
 			]]
 		]];
 		if (!CApiInputValidator::validate($api_input_rules, $iconmaps, '/', $error)) {
