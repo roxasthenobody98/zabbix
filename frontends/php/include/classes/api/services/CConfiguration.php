@@ -31,8 +31,8 @@ class CConfiguration extends CApiService {
 	 */
 	public function export(array $params) {
 		$api_input_rules = ['type' => API_OBJECT, 'fields' => [
-			'format' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'in' => implode(',', [CExportWriterFactory::XML, CExportWriterFactory::JSON])],
-			'options' =>	['type' => API_OBJECT, 'flags' => API_REQUIRED, 'fields' => [
+			'format' =>		['type' => API_STRING_UTF8, 'required' => true, 'in' => implode(',', [CExportWriterFactory::XML, CExportWriterFactory::JSON])],
+			'options' =>	['type' => API_OBJECT, 'required' => true, 'fields' => [
 				'groups' =>		['type' => API_IDS],
 				'hosts' =>		['type' => API_IDS],
 				'images' =>		['type' => API_IDS],
@@ -68,9 +68,9 @@ class CConfiguration extends CApiService {
 	 */
 	public function import($params) {
 		$api_input_rules = ['type' => API_OBJECT, 'fields' => [
-			'format' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'in' => implode(',', [CImportReaderFactory::XML, CImportReaderFactory::JSON])],
-			'source' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED],
-			'rules' =>				['type' => API_OBJECT, 'flags' => API_REQUIRED, 'fields' => [
+			'format' =>				['type' => API_STRING_UTF8, 'required' => true, 'in' => implode(',', [CImportReaderFactory::XML, CImportReaderFactory::JSON])],
+			'source' =>				['type' => API_STRING_UTF8, 'required' => true],
+			'rules' =>				['type' => API_OBJECT, 'required' => true, 'fields' => [
 				'applications' =>		['type' => API_OBJECT, 'fields' => [
 					'createMissing' =>		['type' => API_BOOLEAN, 'default' => false],
 					'deleteMissing' =>		['type' => API_BOOLEAN, 'default' => false]

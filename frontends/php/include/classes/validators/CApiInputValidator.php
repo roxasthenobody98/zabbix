@@ -812,7 +812,8 @@ class CApiInputValidator {
 	 * @param array  $rul
 	 * @param int    $rule['flags']                                   (optional) API_ALLOW_NULL
 	 * @param array  $rule['fields']
-	 * @param int    $rule['fields'][<field_name>]['flags']           (optional) API_REQUIRED, API_DEPRECATED
+	 * @param bool   $rule['fields'][<field_name>]['required']        (optional)
+	 * @param bool   $rule['fields'][<field_name>]['deprecated']      (optional)
 	 * @param mixed  $rule['fields'][<field_name>]['default']         (optional)
 	 * @param string $rule['fields'][<field_name>]['default_source']  (optional)
 	 * @param mixed  $data
@@ -843,8 +844,6 @@ class CApiInputValidator {
 
 		// validation of the values type
 		foreach ($rule['fields'] as $field_name => $field_rule) {
-			$flags = array_key_exists('flags', $field_rule) ? $field_rule['flags'] : 0x00;
-
 			if (array_key_exists('default', $field_rule) && !array_key_exists($field_name, $data)) {
 				$data[$field_name] = $field_rule['default'];
 			}
@@ -858,11 +857,11 @@ class CApiInputValidator {
 				if (!self::validateData($field_rule, $data[$field_name], $subpath, $error, $data)) {
 					return false;
 				}
-				if ($flags & API_DEPRECATED) {
+				if (array_key_exists('deprecated', $field_rule) && $field_rule['deprecated']) {
 					trigger_error(_s('Parameter "%1$s" is deprecated.', $subpath), E_USER_NOTICE);
 				}
 			}
-			elseif ($flags & API_REQUIRED) {
+			elseif (array_key_exists('required', $field_rule) && $field_rule['required']) {
 				$error = _s('Invalid parameter "%1$s": %2$s.', $path,
 					_s('the parameter "%1$s" is missing', $field_name)
 				);
@@ -1546,8 +1545,8 @@ class CApiInputValidator {
 	private static function validateHttpPosts($rule, &$data, $path, &$error) {
 		if (is_array($data)) {
 			$rules = ['type' => API_OBJECTS, 'fields' => [
-				'name' =>	['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY],
-				'value' =>	['type' => API_STRING_UTF8, 'flags' => API_REQUIRED]
+				'name' =>	['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY],
+				'value' =>	['type' => API_STRING_UTF8, 'required' => true]
 			]];
 
 			if (array_key_exists('name-length', $rule)) {

@@ -1598,7 +1598,7 @@ class CMap extends CMapElement {
 		$selements = [];
 		$links = [];
 		$api_shape_rules = ['type' => API_OBJECTS, 'flags' => API_NORMALIZE, 'fields' => [
-			'type' =>				['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', [SYSMAP_SHAPE_TYPE_RECTANGLE, SYSMAP_SHAPE_TYPE_ELLIPSE])],
+			'type' =>				['type' => API_INT32, 'required' => true, 'in' => implode(',', [SYSMAP_SHAPE_TYPE_RECTANGLE, SYSMAP_SHAPE_TYPE_ELLIPSE])],
 			'x' =>					['type' => API_INT32],
 			'y' =>					['type' => API_INT32],
 			'width' =>				['type' => API_INT32],
@@ -1980,7 +1980,7 @@ class CMap extends CMapElement {
 				}
 
 				unset($api_shape_rules['fields']['sysmap_shapeid']);
-				$api_shape_rules['fields']['type']['flags'] = API_REQUIRED;
+				$api_shape_rules['fields']['type']['required'] = true;
 				$api_shape_rules['fields']['x']['in'] = '0:'.$map_width;
 				$api_shape_rules['fields']['y']['in'] = '0:'.$map_height;
 				$api_shape_rules['fields']['width']['in'] = '1:'.$map_width;
@@ -1990,7 +1990,7 @@ class CMap extends CMapElement {
 					self::exception(ZBX_API_ERROR_PARAMETERS, $error);
 				}
 
-				$api_shape_rules['fields']['sysmap_shapeid'] = ['type' => API_ID, 'flags' => API_REQUIRED];
+				$api_shape_rules['fields']['sysmap_shapeid'] = ['type' => API_ID, 'required' => true];
 				$api_shape_rules['fields']['type']['flags'] = 0;
 				if (!CApiInputValidator::validate($api_shape_rules, $shape_diff['both'], $path, $error)) {
 					self::exception(ZBX_API_ERROR_PARAMETERS, $error);

@@ -32,9 +32,9 @@ class CWidgetFieldTags extends CWidgetField {
 
 		$this->setSaveType(ZBX_WIDGET_FIELD_TYPE_STR);
 		$this->setValidationRules(['type' => API_OBJECTS, 'fields' => [
-			'tag'		=> ['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => 255],
-			'operator'	=> ['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', [TAG_OPERATOR_LIKE, TAG_OPERATOR_EQUAL])],
-			'value'		=> ['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => 255]
+			'tag'		=> ['type' => API_STRING_UTF8, 'required' => true, 'length' => 255],
+			'operator'	=> ['type' => API_INT32, 'required' => true, 'in' => implode(',', [TAG_OPERATOR_LIKE, TAG_OPERATOR_EQUAL])],
+			'value'		=> ['type' => API_STRING_UTF8, 'required' => true, 'length' => 255]
 		]]);
 		$this->setDefault([]);
 	}

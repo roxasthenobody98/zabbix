@@ -264,7 +264,7 @@ class CUser extends CApiService {
 		$supported_locales = array_keys(getLocales());
 
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['alias']], 'fields' => [
-			'alias' =>			['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('users', 'alias')],
+			'alias' =>			['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('users', 'alias')],
 			'name' =>			['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('users', 'name')],
 			'surname' =>		['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('users', 'surname')],
 			'passwd' =>			['type' => API_STRING_UTF8, 'flags' => API_NOT_EMPTY, 'length' => 255],
@@ -276,12 +276,12 @@ class CUser extends CApiService {
 			'type' =>			['type' => API_INT32, 'in' => implode(',', [USER_TYPE_ZABBIX_USER, USER_TYPE_ZABBIX_ADMIN, USER_TYPE_SUPER_ADMIN])],
 			'refresh' =>		['type' => API_TIME_UNIT, 'flags' => API_NOT_EMPTY, 'in' => '0:'.SEC_PER_HOUR],
 			'rows_per_page' =>	['type' => API_INT32, 'in' => '1:999999'],
-			'usrgrps' =>		['type' => API_OBJECTS, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'uniq' => [['usrgrpid']], 'fields' => [
-				'usrgrpid' =>		['type' => API_ID, 'flags' => API_REQUIRED]
+			'usrgrps' =>		['type' => API_OBJECTS, 'required' => true, 'flags' => API_NOT_EMPTY, 'uniq' => [['usrgrpid']], 'fields' => [
+				'usrgrpid' =>		['type' => API_ID, 'required' => true]
 			]],
 			'user_medias' =>	['type' => API_OBJECTS, 'fields' => [
-				'mediatypeid' =>	['type' => API_ID, 'flags' => API_REQUIRED],
-				'sendto' =>			['type' => API_STRINGS_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY | API_NORMALIZE],
+				'mediatypeid' =>	['type' => API_ID, 'required' => true],
+				'sendto' =>			['type' => API_STRINGS_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY | API_NORMALIZE],
 				'active' =>			['type' => API_INT32, 'in' => implode(',', [MEDIA_STATUS_ACTIVE, MEDIA_STATUS_DISABLED])],
 				'severity' =>		['type' => API_INT32, 'in' => '0:63'],
 				'period' =>			['type' => API_TIME_PERIOD, 'flags' => API_ALLOW_USER_MACRO, 'length' => DB::getFieldLength('media', 'period')]
@@ -370,7 +370,7 @@ class CUser extends CApiService {
 		$supported_locales = array_keys(getLocales());
 
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['userid'], ['alias']], 'fields' => [
-			'userid' =>			['type' => API_ID, 'flags' => API_REQUIRED],
+			'userid' =>			['type' => API_ID, 'required' => true],
 			'alias' =>			['type' => API_STRING_UTF8, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('users', 'alias')],
 			'name' =>			['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('users', 'name')],
 			'surname' =>		['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('users', 'surname')],
@@ -384,11 +384,11 @@ class CUser extends CApiService {
 			'refresh' =>		['type' => API_TIME_UNIT, 'flags' => API_NOT_EMPTY, 'in' => '0:'.SEC_PER_HOUR],
 			'rows_per_page' =>	['type' => API_INT32, 'in' => '1:999999'],
 			'usrgrps' =>		['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY, 'uniq' => [['usrgrpid']], 'fields' => [
-				'usrgrpid' =>		['type' => API_ID, 'flags' => API_REQUIRED]
+				'usrgrpid' =>		['type' => API_ID, 'required' => true]
 			]],
 			'user_medias' =>	['type' => API_OBJECTS, 'fields' => [
-				'mediatypeid' =>	['type' => API_ID, 'flags' => API_REQUIRED],
-				'sendto' =>			['type' => API_STRINGS_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY | API_NORMALIZE],
+				'mediatypeid' =>	['type' => API_ID, 'required' => true],
+				'sendto' =>			['type' => API_STRINGS_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY | API_NORMALIZE],
 				'active' =>			['type' => API_INT32, 'in' => implode(',', [MEDIA_STATUS_ACTIVE, MEDIA_STATUS_DISABLED])],
 				'severity' =>		['type' => API_INT32, 'in' => '0:63'],
 				'period' =>			['type' => API_TIME_PERIOD, 'flags' => API_ALLOW_USER_MACRO, 'length' => DB::getFieldLength('media', 'period')]
@@ -1160,8 +1160,8 @@ class CUser extends CApiService {
 	 */
 	public function login(array $user) {
 		$api_input_rules = ['type' => API_OBJECT, 'fields' => [
-			'user' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => 255],
-			'password' =>	['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => 255],
+			'user' =>		['type' => API_STRING_UTF8, 'required' => true, 'length' => 255],
+			'password' =>	['type' => API_STRING_UTF8, 'required' => true, 'length' => 255],
 			'userData' =>	['type' => API_FLAG]
 		]];
 		if (!CApiInputValidator::validate($api_input_rules, $user, '/', $error)) {
@@ -1285,7 +1285,7 @@ class CUser extends CApiService {
 	 */
 	public function checkAuthentication(array $session) {
 		$api_input_rules = ['type' => API_OBJECT, 'fields' => [
-			'sessionid' =>	['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => DB::getFieldLength('sessions', 'sessionid')],
+			'sessionid' =>	['type' => API_STRING_UTF8, 'required' => true, 'length' => DB::getFieldLength('sessions', 'sessionid')],
 			'extend' =>	['type' => API_BOOLEAN, 'default' => true]
 		]];
 		if (!CApiInputValidator::validate($api_input_rules, $session, '/', $error)) {
