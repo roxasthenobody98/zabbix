@@ -1264,8 +1264,8 @@ class CMediatype extends CApiService {
 		$api_input_rules = ['type' => API_OBJECT, 'fields' => [
 			'description' =>		['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('media_type', 'description')],
 			'message_templates' =>	['type' => API_OBJECTS, 'uniq' => [['eventsource', 'recovery']], 'fields' => [
-				'eventsource' =>		['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', [EVENT_SOURCE_TRIGGERS, EVENT_SOURCE_DISCOVERY, EVENT_SOURCE_AUTOREGISTRATION, EVENT_SOURCE_INTERNAL])],
-				'recovery' =>			['type' => API_MULTIPLE, 'flags' => API_REQUIRED, 'rules' => [
+				'eventsource' =>		['type' => API_INT32, 'required' => true, 'in' => implode(',', [EVENT_SOURCE_TRIGGERS, EVENT_SOURCE_DISCOVERY, EVENT_SOURCE_AUTOREGISTRATION, EVENT_SOURCE_INTERNAL])],
+				'recovery' =>			['type' => API_MULTIPLE, 'required' => true, 'rules' => [
 											['if' => ['field' => 'eventsource', 'in' => EVENT_SOURCE_TRIGGERS], 'type' => API_INT32, 'in' => implode(',', [ACTION_OPERATION, ACTION_RECOVERY_OPERATION, ACTION_ACKNOWLEDGE_OPERATION])],
 											['if' => ['field' => 'eventsource', 'in' => implode(',', [EVENT_SOURCE_DISCOVERY, EVENT_SOURCE_AUTOREGISTRATION])], 'type' => API_INT32, 'in' => ACTION_OPERATION],
 											['if' => ['field' => 'eventsource', 'in' => EVENT_SOURCE_INTERNAL], 'type' => API_INT32, 'in' => implode(',', [ACTION_OPERATION, ACTION_RECOVERY_OPERATION])]
@@ -1277,7 +1277,7 @@ class CMediatype extends CApiService {
 
 		if ($type == MEDIA_TYPE_WEBHOOK) {
 			$api_input_rules['fields'] += [
-				'script' =>				['type' => API_STRING_UTF8, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('media_type', 'script')],
+				'script' =>				['type' => API_STRING_UTF8, 'required' => ($method === 'create'), 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('media_type', 'script')],
 				'timeout' =>			['type' => API_TIME_UNIT, 'length' => DB::getFieldLength('media_type', 'timeout'), 'in' => '1:60'],
 				'process_tags' =>		['type' => API_INT32, 'in' => implode(',', [ZBX_MEDIA_TYPE_TAGS_DISABLED, ZBX_MEDIA_TYPE_TAGS_ENABLED])],
 				'show_event_menu' =>	['type' => API_INT32, 'in' => implode(',', [ZBX_EVENT_MENU_HIDE, ZBX_EVENT_MENU_SHOW])],
@@ -1285,14 +1285,10 @@ class CMediatype extends CApiService {
 				'event_menu_url' =>		['type' => API_URL, 'flags' => API_ALLOW_EVENT_TAGS_MACRO, 'length' => DB::getFieldLength('media_type', 'event_menu_url')],
 				'event_menu_name' =>	['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('media_type', 'event_menu_name')],
 				'parameters' =>			['type' => API_OBJECTS, 'uniq' => [['name']], 'fields' => [
-					'name' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('media_type_param', 'name')],
-					'value' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => DB::getFieldLength('media_type_param', 'value')]
+					'name' =>				['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('media_type_param', 'name')],
+					'value' =>				['type' => API_STRING_UTF8, 'required' => true, 'length' => DB::getFieldLength('media_type_param', 'value')]
 				]]
 			];
-
-			if ($method === 'create') {
-				$api_input_rules['fields']['script']['flags'] |= API_REQUIRED;
-			}
 		}
 
 		return $api_input_rules;

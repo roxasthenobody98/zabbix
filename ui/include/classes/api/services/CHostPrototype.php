@@ -192,29 +192,29 @@ class CHostPrototype extends CHostBase {
 	 */
 	protected function validateCreate(array &$host_prototypes) {
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['ruleid', 'host'], ['ruleid', 'name']], 'fields' => [
-			'ruleid' =>				['type' => API_ID, 'flags' => API_REQUIRED],
-			'host' =>				['type' => API_H_NAME, 'flags' => API_REQUIRED | API_REQUIRED_LLD_MACRO, 'length' => DB::getFieldLength('hosts', 'host')],
+			'ruleid' =>				['type' => API_ID, 'required' => true],
+			'host' =>				['type' => API_H_NAME, 'required' => true, 'flags' => API_REQUIRED_LLD_MACRO, 'length' => DB::getFieldLength('hosts', 'host')],
 			'name' =>				['type' => API_STRING_UTF8, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('hosts', 'name'), 'default_source' => 'host'],
 			'status' =>				['type' => API_INT32, 'in' => implode(',', [HOST_STATUS_MONITORED, HOST_STATUS_NOT_MONITORED])],
 			'discover' =>			['type' => API_INT32, 'in' => implode(',', [HOST_DISCOVER, HOST_NO_DISCOVER])],
-			'groupLinks' =>			['type' => API_OBJECTS, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'uniq' => [['groupid']], 'fields' => [
-				'groupid' =>			['type' => API_ID, 'flags' => API_REQUIRED]
+			'groupLinks' =>			['type' => API_OBJECTS, 'required' => true, 'flags' => API_NOT_EMPTY, 'uniq' => [['groupid']], 'fields' => [
+				'groupid' =>			['type' => API_ID, 'required' => true]
 			]],
 			'groupPrototypes' =>	['type' => API_OBJECTS, 'uniq' => [['name']], 'fields' => [
-				'name' =>				['type' => API_HG_NAME, 'flags' => API_REQUIRED | API_REQUIRED_LLD_MACRO, 'length' => DB::getFieldLength('hstgrp', 'name')]
+				'name' =>				['type' => API_HG_NAME, 'required' => true, 'flags' => API_REQUIRED_LLD_MACRO, 'length' => DB::getFieldLength('hstgrp', 'name')]
 			]],
 			'inventory_mode' =>		['type' => API_INT32, 'in' => implode(',', [HOST_INVENTORY_DISABLED, HOST_INVENTORY_MANUAL, HOST_INVENTORY_AUTOMATIC])],
 			'templates' =>			['type' => API_OBJECTS, 'flags' => API_NORMALIZE, 'uniq' => [['templateid']], 'fields' => [
-				'templateid' =>			['type' => API_ID, 'flags' => API_REQUIRED]
+				'templateid' =>			['type' => API_ID, 'required' => true]
 			]],
 			'macros' =>				['type' => API_OBJECTS, 'flags' => API_NORMALIZE, 'uniq' => [['macro']], 'fields' => [
-				'macro' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY],
-				'value' =>				['type' => API_STRING_UTF8, 'flag' => API_REQUIRED | API_NOT_EMPTY],
-				'type' =>				['type' => API_INT32, 'flag' => API_REQUIRED, 'in' => implode(',', [ZBX_MACRO_TYPE_TEXT, ZBX_MACRO_TYPE_SECRET])],
+				'macro' =>				['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY],
+				'value' =>				['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY],
+				'type' =>				['type' => API_INT32, 'required' => true, 'in' => implode(',', [ZBX_MACRO_TYPE_TEXT, ZBX_MACRO_TYPE_SECRET])],
 				'description' => 		['type' => API_STRING_UTF8]
 			]],
 			'tags' =>				['type' => API_OBJECTS, 'flags' => API_NORMALIZE, 'uniq' => [['tag', 'value']], 'fields' => [
-				'tag' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('host_tag', 'tag')],
+				'tag' =>				['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('host_tag', 'tag')],
 				'value' =>				['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('host_tag', 'value'), 'default' => DB::getDefault('host_tag', 'value')]
 			]]
 		]];
@@ -376,7 +376,7 @@ class CHostPrototype extends CHostBase {
 	 */
 	protected function validateUpdate(array &$host_prototypes, array &$db_host_prototypes = null) {
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['hostid']], 'fields' => [
-			'hostid' =>				['type' => API_ID, 'flags' => API_REQUIRED],
+			'hostid' =>				['type' => API_ID, 'required' => true],
 			'host' =>				['type' => API_H_NAME, 'flags' => API_REQUIRED_LLD_MACRO, 'length' => DB::getFieldLength('hosts', 'host')],
 			'name' =>				['type' => API_STRING_UTF8, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('hosts', 'name')],
 			'status' =>				['type' => API_INT32, 'in' => implode(',', [HOST_STATUS_MONITORED, HOST_STATUS_NOT_MONITORED])],
@@ -391,17 +391,17 @@ class CHostPrototype extends CHostBase {
 			]],
 			'inventory_mode' =>		['type' => API_INT32, 'in' => implode(',', [HOST_INVENTORY_DISABLED, HOST_INVENTORY_MANUAL, HOST_INVENTORY_AUTOMATIC])],
 			'templates' =>			['type' => API_OBJECTS, 'flags' => API_NORMALIZE, 'uniq' => [['templateid']], 'fields' => [
-				'templateid' =>			['type' => API_ID, 'flags' => API_REQUIRED]
+				'templateid' =>			['type' => API_ID, 'required' => true]
 			]],
 			'macros' =>				['type' => API_OBJECTS, 'flags' => API_NORMALIZE, 'uniq' => [['macro']], 'fields' => [
 				'hostmacroid' =>		['type' => API_ID],
-				'macro' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY],
+				'macro' =>				['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY],
 				'value' =>				['type' => API_STRING_UTF8],
 				'type' =>				['type' => API_INT32, 'in' => implode(',', [ZBX_MACRO_TYPE_TEXT, ZBX_MACRO_TYPE_SECRET])],
 				'description' => 		['type' => API_STRING_UTF8]
 			]],
 			'tags' =>				['type' => API_OBJECTS, 'flags' => API_NORMALIZE, 'uniq' => [['tag', 'value']], 'fields' => [
-				'tag' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('host_tag', 'tag')],
+				'tag' =>				['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('host_tag', 'tag')],
 				'value' =>				['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('host_tag', 'value'), 'default' => DB::getDefault('host_tag', 'value')]
 			]]
 		]];

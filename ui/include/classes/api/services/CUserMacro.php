@@ -253,8 +253,8 @@ class CUserMacro extends CApiService {
 		}
 
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['macro']], 'fields' => [
-			'macro' =>			['type' => API_USER_MACRO, 'flags' => API_REQUIRED, 'length' => DB::getFieldLength('globalmacro', 'macro')],
-			'value' =>			['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'length' => DB::getFieldLength('globalmacro', 'value')],
+			'macro' =>			['type' => API_USER_MACRO, 'required' => true, 'length' => DB::getFieldLength('globalmacro', 'macro')],
+			'value' =>			['type' => API_STRING_UTF8, 'required' => true, 'length' => DB::getFieldLength('globalmacro', 'value')],
 			'type' =>			['type' => API_INT32, 'in' => ZBX_MACRO_TYPE_TEXT.','.ZBX_MACRO_TYPE_SECRET],
 			'description' =>	['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('globalmacro', 'description')]
 		]];
@@ -348,7 +348,7 @@ class CUserMacro extends CApiService {
 		}
 
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['globalmacroid'], ['macro']], 'fields' => [
-			'globalmacroid' =>	['type' => API_ID, 'flags' => API_REQUIRED],
+			'globalmacroid' =>	['type' => API_ID, 'required' => true],
 			'macro' =>			['type' => API_USER_MACRO, 'length' => DB::getFieldLength('globalmacro', 'macro')],
 			'value' =>			['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('globalmacro', 'value')],
 			'type' =>			['type' => API_INT32, 'in' => ZBX_MACRO_TYPE_TEXT.','.ZBX_MACRO_TYPE_SECRET],

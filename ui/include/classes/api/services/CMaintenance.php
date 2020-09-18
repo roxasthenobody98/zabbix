@@ -498,7 +498,7 @@ class CMaintenance extends CApiService {
 			'maintenance_type'	=> ['type' => API_INT32, 'in' => implode(',', [MAINTENANCE_TYPE_NORMAL, MAINTENANCE_TYPE_NODATA])],
 			'tags_evaltype'		=> ['type' => API_INT32, 'in' => implode(',', [MAINTENANCE_TAG_EVAL_TYPE_AND_OR, MAINTENANCE_TAG_EVAL_TYPE_OR])],
 			'tags'				=> ['type' => API_OBJECTS, 'uniq' => [['tag', 'operator', 'value']], 'fields' => [
-				'tag'				=> ['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('maintenance_tag', 'tag')],
+				'tag'				=> ['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('maintenance_tag', 'tag')],
 				'operator'			=> ['type' => API_INT32, 'in' => implode(',', [MAINTENANCE_TAG_OPERATOR_EQUAL, MAINTENANCE_TAG_OPERATOR_LIKE]), 'default' => DB::getDefault('maintenance_tag', 'operator')],
 				'value'				=> ['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('maintenance_tag', 'value'), 'default' => DB::getDefault('maintenance_tag', 'value')]
 			]]

@@ -275,8 +275,8 @@ class CApplication extends CApiService {
 	 */
 	private function validateCreate(array &$applications) {
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['hostid', 'name']], 'fields' => [
-			'hostid' =>		['type' => API_ID, 'flags' => API_REQUIRED],
-			'name' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('applications', 'name')]
+			'hostid' =>		['type' => API_ID, 'required' => true],
+			'name' =>		['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('applications', 'name')]
 		]];
 		if (!CApiInputValidator::validate($api_input_rules, $applications, '/', $error)) {
 			self::exception(ZBX_API_ERROR_PARAMETERS, $error);
@@ -319,7 +319,7 @@ class CApplication extends CApiService {
 	 */
 	private function validateUpdate(array &$applications, array &$db_applications = null) {
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['applicationid']], 'fields' => [
-			'applicationid' =>	['type' => API_ID, 'flags' => API_REQUIRED],
+			'applicationid' =>	['type' => API_ID, 'required' => true],
 			'name' =>			['type' => API_STRING_UTF8, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('applications', 'name')]
 		]];
 		if (!CApiInputValidator::validate($api_input_rules, $applications, '/', $error)) {

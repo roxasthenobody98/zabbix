@@ -242,10 +242,10 @@ class CScript extends CApiService {
 		}
 
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['name']], 'fields' => [
-			'name' =>			['type' => API_SCRIPT_NAME, 'flags' => API_REQUIRED, 'length' => DB::getFieldLength('scripts', 'name')],
+			'name' =>			['type' => API_SCRIPT_NAME, 'required' => true, 'length' => DB::getFieldLength('scripts', 'name')],
 			'type' =>			['type' => API_INT32, 'in' => implode(',', [ZBX_SCRIPT_TYPE_CUSTOM_SCRIPT, ZBX_SCRIPT_TYPE_IPMI])],
 			'execute_on' =>		['type' => API_INT32, 'in' => implode(',', [ZBX_SCRIPT_EXECUTE_ON_AGENT, ZBX_SCRIPT_EXECUTE_ON_SERVER, ZBX_SCRIPT_EXECUTE_ON_PROXY])],
-			'command' =>		['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('scripts', 'command')],
+			'command' =>		['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength('scripts', 'command')],
 			'description' =>	['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('scripts', 'description')],
 			'usrgrpid' =>		['type' => API_ID],
 			'groupid' =>		['type' => API_ID],
@@ -319,7 +319,7 @@ class CScript extends CApiService {
 		}
 
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['scriptid'], ['name']], 'fields' => [
-			'scriptid' =>		['type' => API_ID, 'flags' => API_REQUIRED],
+			'scriptid' =>		['type' => API_ID, 'required' => true],
 			'name' =>			['type' => API_SCRIPT_NAME, 'length' => DB::getFieldLength('scripts', 'name')],
 			'type' =>			['type' => API_INT32, 'in' => implode(',', [ZBX_SCRIPT_TYPE_CUSTOM_SCRIPT, ZBX_SCRIPT_TYPE_IPMI])],
 			'execute_on' =>		['type' => API_INT32, 'in' => implode(',', [ZBX_SCRIPT_EXECUTE_ON_AGENT, ZBX_SCRIPT_EXECUTE_ON_SERVER, ZBX_SCRIPT_EXECUTE_ON_PROXY])],
@@ -607,8 +607,8 @@ class CScript extends CApiService {
 		global $ZBX_SERVER, $ZBX_SERVER_PORT;
 
 		$api_input_rules = ['type' => API_OBJECT, 'fields' => [
-			'hostid' =>		['type' => API_ID, 'flags' => API_REQUIRED],
-			'scriptid' =>	['type' => API_ID, 'flags' => API_REQUIRED]
+			'hostid' =>		['type' => API_ID, 'required' => true],
+			'scriptid' =>	['type' => API_ID, 'required' => true]
 		]];
 		if (!CApiInputValidator::validate($api_input_rules, $data, '/', $error)) {
 			self::exception(ZBX_API_ERROR_PARAMETERS, $error);

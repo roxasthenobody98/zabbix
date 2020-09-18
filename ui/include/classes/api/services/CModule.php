@@ -143,23 +143,12 @@ class CModule extends CApiService {
 		}
 
 		$modules = zbx_toArray($modules);
-		$rules = [
-			'type' => API_OBJECT,
-			'fields' => [
-				'id' => [
-					'type' => API_STRING_UTF8,
-					'flags' => API_REQUIRED | API_NOT_EMPTY,
-					'length' => DB::getFieldLength($this->tableName, 'id')
-				],
-				'relative_path' => [
-					'type' => API_STRING_UTF8,
-					'flags' => API_REQUIRED | API_NOT_EMPTY,
-					'length' => DB::getFieldLength($this->tableName, 'relative_path')
-				],
-				'status' => ['type' => API_INT32, 'in' => MODULE_STATUS_DISABLED.','.MODULE_STATUS_ENABLED]
-			]
-		];
-		$this->validate($rules, $modules);
+		$api_input_rules = ['type' => API_OBJECT, 'fields' => [
+			'id' =>				['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength($this->tableName, 'id')],
+			'relative_path' =>	['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY, 'length' => DB::getFieldLength($this->tableName, 'relative_path')],
+			'status' =>			['type' => API_INT32, 'in' => MODULE_STATUS_DISABLED.','.MODULE_STATUS_ENABLED]
+		]];
+		$this->validate($api_input_rules, $modules);
 
 		$defaults = [
 			'status' => MODULE_STATUS_DISABLED,
@@ -204,14 +193,11 @@ class CModule extends CApiService {
 		}
 
 		$modules = zbx_toArray($modules);
-		$rules = [
-			'type' => API_OBJECT,
-			'fields' => [
-				'moduleid' => ['type' => API_ID, 'flags' => API_REQUIRED | API_NOT_EMPTY],
-				'status' => ['type' => API_INT32, 'in' => MODULE_STATUS_DISABLED.','.MODULE_STATUS_ENABLED]
-			]
-		];
-		$this->validate($rules, $modules);
+		$api_input_rules = ['type' => API_OBJECT, 'fields' => [
+			'moduleid' =>	['type' => API_ID, 'required' => true, 'flags' => API_NOT_EMPTY],
+			'status' =>		['type' => API_INT32, 'in' => MODULE_STATUS_DISABLED.','.MODULE_STATUS_ENABLED]
+		]];
+		$this->validate($api_input_rules, $modules);
 
 		$db_modules = DB::select($this->tableName, [
 			'output' => ['moduleid', 'id', 'status'],
@@ -279,12 +265,12 @@ class CModule extends CApiService {
 	/**
 	 * Validate module data.
 	 *
-	 * @param array $rules          API validation rules for module object.
-	 * @param array $modules        Array of modules data to be validated.
+	 * @param array $api_input_rules  API validation rules for module object.
+	 * @param array $modules          Array of modules data to be validated.
 	 *
 	 * @throws APIException
 	 */
-	protected function validate(array $rules, array $modules): void {
+	protected function validate(array $api_input_rules, array $modules): void {
 		foreach ($modules as $module) {
 			if (array_key_exists('config', $module) && !is_array($module['config'])) {
 				self::exception(ZBX_API_ERROR_PARAMETERS,
@@ -293,7 +279,7 @@ class CModule extends CApiService {
 			}
 
 			unset($module['config']);
-			if (!CApiInputValidator::validate($rules, $module, '', $error)) {
+			if (!CApiInputValidator::validate($api_input_rules, $module, '', $error)) {
 				self::exception(ZBX_API_ERROR_PARAMETERS, $error);
 			}
 		}

@@ -41,18 +41,18 @@ class CWidgetFieldGraphDataSet extends CWidgetField {
 
 		$this->setSaveType(ZBX_WIDGET_FIELD_TYPE_STR);
 		$this->setValidationRules(['type' => API_OBJECTS, 'fields' => [
-			'hosts'					=> ['type' => API_STRINGS_UTF8, 'flags' => API_REQUIRED],
-			'items'					=> ['type' => API_STRINGS_UTF8, 'flags' => API_REQUIRED],
-			'color'					=> ['type' => API_COLOR, 'flags' => API_REQUIRED | API_NOT_EMPTY],
-			'type'					=> ['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', [SVG_GRAPH_TYPE_LINE, SVG_GRAPH_TYPE_POINTS, SVG_GRAPH_TYPE_STAIRCASE, SVG_GRAPH_TYPE_BAR])],
+			'hosts'					=> ['type' => API_STRINGS_UTF8, 'required' => true],
+			'items'					=> ['type' => API_STRINGS_UTF8, 'required' => true],
+			'color'					=> ['type' => API_COLOR, 'required' => true, 'flags' => API_NOT_EMPTY],
+			'type'					=> ['type' => API_INT32, 'required' => true, 'in' => implode(',', [SVG_GRAPH_TYPE_LINE, SVG_GRAPH_TYPE_POINTS, SVG_GRAPH_TYPE_STAIRCASE, SVG_GRAPH_TYPE_BAR])],
 			'width'					=> ['type' => API_INT32, 'in' => implode(',', range(0, 10))],
 			'pointsize'				=> ['type' => API_INT32, 'in' => implode(',', range(1, 10))],
-			'transparency'			=> ['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', range(0, 10))],
+			'transparency'			=> ['type' => API_INT32, 'required' => true, 'in' => implode(',', range(0, 10))],
 			'fill'					=> ['type' => API_INT32, 'in' => implode(',', range(0, 10))],
 			'missingdatafunc'		=> ['type' => API_INT32, 'in' => implode(',', [SVG_GRAPH_MISSING_DATA_NONE, SVG_GRAPH_MISSING_DATA_CONNECTED, SVG_GRAPH_MISSING_DATA_TREAT_AS_ZERO])],
-			'axisy'					=> ['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', [GRAPH_YAXIS_SIDE_LEFT, GRAPH_YAXIS_SIDE_RIGHT])],
-			'timeshift'				=> ['type' => API_TIME_UNIT, 'flags' => API_REQUIRED, 'in' => implode(':', [ZBX_MIN_TIMESHIFT, ZBX_MAX_TIMESHIFT])],
-			'aggregate_function'	=> ['type' => API_INT32, 'flags' => API_REQUIRED, 'in' => implode(',', [GRAPH_AGGREGATE_NONE, GRAPH_AGGREGATE_MIN, GRAPH_AGGREGATE_MAX, GRAPH_AGGREGATE_AVG, GRAPH_AGGREGATE_COUNT, GRAPH_AGGREGATE_SUM, GRAPH_AGGREGATE_FIRST, GRAPH_AGGREGATE_LAST])],
+			'axisy'					=> ['type' => API_INT32, 'required' => true, 'in' => implode(',', [GRAPH_YAXIS_SIDE_LEFT, GRAPH_YAXIS_SIDE_RIGHT])],
+			'timeshift'				=> ['type' => API_TIME_UNIT, 'required' => true, 'in' => implode(':', [ZBX_MIN_TIMESHIFT, ZBX_MAX_TIMESHIFT])],
+			'aggregate_function'	=> ['type' => API_INT32, 'required' => true, 'in' => implode(',', [GRAPH_AGGREGATE_NONE, GRAPH_AGGREGATE_MIN, GRAPH_AGGREGATE_MAX, GRAPH_AGGREGATE_AVG, GRAPH_AGGREGATE_COUNT, GRAPH_AGGREGATE_SUM, GRAPH_AGGREGATE_FIRST, GRAPH_AGGREGATE_LAST])],
 			'aggregate_interval'	=> ['type' => API_TIME_UNIT, 'flags' => API_TIME_UNIT_WITH_YEAR, 'in' => implode(':', [1, ZBX_MAX_TIMESHIFT])],
 			'aggregate_grouping'	=> ['type' => API_INT32, 'in' => implode(',', [GRAPH_AGGREGATE_BY_ITEM, GRAPH_AGGREGATE_BY_DATASET])]
 		]]);
