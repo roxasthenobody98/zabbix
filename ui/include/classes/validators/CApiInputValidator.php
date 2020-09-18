@@ -68,7 +68,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateData($rule, &$data, $path, &$error, array $parent_data = null) {
+	private static function validateData(array $rule, &$data, $path, &$error, array $parent_data = null) {
 		switch ($rule['type']) {
 			case API_CALC_FORMULA:
 				return self::validateCalcFormula($rule, $data, $path, $error);
@@ -189,7 +189,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateDataUniqueness($rule, &$data, $path, &$error) {
+	private static function validateDataUniqueness(array $rule, &$data, $path, &$error) {
 		switch ($rule['type']) {
 			case API_CALC_FORMULA:
 			case API_COLOR:
@@ -287,7 +287,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateCalcFormula($rule, &$data, $path, &$error) {
+	private static function validateCalcFormula(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (self::checkStringUtf8(API_NOT_EMPTY, $data, $path, $error) === false) {
@@ -314,7 +314,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateColor($rule, &$data, $path, &$error) {
+	private static function validateColor(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (self::checkStringUtf8($flags & API_NOT_EMPTY, $data, $path, $error) === false) {
@@ -347,7 +347,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateMultiple($rule, &$data, $path, &$error, array $parent_data) {
+	private static function validateMultiple(array $rule, &$data, $path, &$error, array $parent_data) {
 		foreach ($rule['rules'] as $field_rule) {
 			if (self::Int32In($parent_data[$field_rule['if']['field']], $field_rule['if']['in'])) {
 				unset($field_rule['if']);
@@ -375,7 +375,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateStringUtf8($rule, &$data, $path, &$error) {
+	private static function validateStringUtf8(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -413,7 +413,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateStringsUtf8($rule, &$data, $path, &$error) {
+	private static function validateStringsUtf8(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -465,7 +465,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateInt32($rule, &$data, $path, &$error) {
+	private static function validateInt32(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -504,7 +504,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateUInt64($rule, &$data, $path, &$error) {
+	private static function validateUInt64(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -545,7 +545,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateUInts64($rule, &$data, $path, &$error) {
+	private static function validateUInts64(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -592,7 +592,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateFloat($rule, &$data, $path, &$error) {
+	private static function validateFloat(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -638,7 +638,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateFloats($rule, &$data, $path, &$error) {
+	private static function validateFloats(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -704,7 +704,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function checkInt32In($rule, $data, $path, &$error) {
+	private static function checkInt32In(array $rule, $data, $path, &$error) {
 		if (!array_key_exists('in', $rule)) {
 			return true;
 		}
@@ -732,7 +732,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateInts32($rule, &$data, $path, &$error) {
+	private static function validateInts32(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -783,7 +783,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateId($rule, &$data, $path, &$error) {
+	private static function validateId(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -829,7 +829,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateBoolean($rule, &$data, $path, &$error) {
+	private static function validateBoolean(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -854,7 +854,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateFlag($rule, &$data, $path, &$error) {
+	private static function validateFlag(array $rule, &$data, $path, &$error) {
 		if (is_bool($data)) {
 			return true;
 		}
@@ -885,7 +885,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateObject($rule, &$data, $path, &$error) {
+	private static function validateObject(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -947,7 +947,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateOutput($rule, &$data, $path, &$error) {
+	private static function validateOutput(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -987,7 +987,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validatePSK($rule, &$data, $path, &$error) {
+	private static function validatePSK(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (self::checkStringUtf8($flags & API_NOT_EMPTY, $data, $path, $error) === false) {
@@ -1026,7 +1026,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateSortOrder($rule, &$data, $path, &$error) {
+	private static function validateSortOrder(array $rule, &$data, $path, &$error) {
 		$in = ZBX_SORT_UP.','.ZBX_SORT_DOWN;
 
 		if (self::validateStringUtf8(['in' => $in], $data, $path, $e)) {
@@ -1072,7 +1072,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateIds($rule, &$data, $path, &$error) {
+	private static function validateIds(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -1119,7 +1119,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateObjects($rule, &$data, $path, &$error) {
+	private static function validateObjects(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (($flags & API_ALLOW_NULL) && $data === null) {
@@ -1171,7 +1171,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateHostGroupName($rule, &$data, $path, &$error) {
+	private static function validateHostGroupName(array $rule, &$data, $path, &$error) {
 		if (self::checkStringUtf8(API_NOT_EMPTY, $data, $path, $error) === false) {
 			return false;
 		}
@@ -1214,7 +1214,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateHostName($rule, &$data, $path, &$error) {
+	private static function validateHostName(array $rule, &$data, $path, &$error) {
 		if (self::checkStringUtf8(API_NOT_EMPTY, $data, $path, $error) === false) {
 			return false;
 		}
@@ -1260,7 +1260,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateNumeric($rule, &$data, $path, &$error) {
+	private static function validateNumeric(array $rule, &$data, $path, &$error) {
 		global $DB;
 
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
@@ -1333,7 +1333,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateScriptName($rule, &$data, $path, &$error) {
+	private static function validateScriptName(array $rule, &$data, $path, &$error) {
 		if (self::checkStringUtf8(API_NOT_EMPTY, $data, $path, $error) === false) {
 			return false;
 		}
@@ -1368,7 +1368,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateUserMacro($rule, &$data, $path, &$error) {
+	private static function validateUserMacro(array $rule, &$data, $path, &$error) {
 		if (self::checkStringUtf8(API_NOT_EMPTY, $data, $path, $error) === false) {
 			return false;
 		}
@@ -1397,7 +1397,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateLLDMacro($rule, &$data, $path, &$error) {
+	private static function validateLLDMacro(array $rule, &$data, $path, &$error) {
 		if (self::checkStringUtf8(API_NOT_EMPTY, $data, $path, $error) === false) {
 			return false;
 		}
@@ -1426,7 +1426,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateRangeTime($rule, &$data, $path, &$error) {
+	private static function validateRangeTime(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (self::checkStringUtf8(API_NOT_EMPTY, $data, $path, $error) === false) {
@@ -1460,7 +1460,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateTimePeriod($rule, &$data, $path, &$error) {
+	private static function validateTimePeriod(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (self::checkStringUtf8(API_NOT_EMPTY, $data, $path, $error) === false) {
@@ -1494,7 +1494,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateRegex($rule, &$data, $path, &$error) {
+	private static function validateRegex(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (self::checkStringUtf8($flags, $data, $path, $error) === false) {
@@ -1532,7 +1532,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateTimeUnit($rule, &$data, $path, &$error) {
+	private static function validateTimeUnit(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		/*
@@ -1593,7 +1593,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateStringsUniqueness($rule, array $data = null, $path, &$error) {
+	private static function validateStringsUniqueness(array $rule, array $data = null, $path, &$error) {
 		// $data can be NULL when API_ALLOW_NULL is set
 		if ($data === null) {
 			return true;
@@ -1631,7 +1631,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateObjectsUniqueness($rule, array $data = null, $path, &$error) {
+	private static function validateObjectsUniqueness(array $rule, array $data = null, $path, &$error) {
 		// $data can be NULL when API_ALLOW_NULL is set
 		if ($data === null) {
 			return true;
@@ -1707,7 +1707,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateHttpPosts($rule, &$data, $path, &$error) {
+	private static function validateHttpPosts(array $rule, &$data, $path, &$error) {
 		if (is_array($data)) {
 			$rules = ['type' => API_OBJECTS, 'fields' => [
 				'name' =>	['type' => API_STRING_UTF8, 'required' => true, 'flags' => API_NOT_EMPTY],
@@ -1744,7 +1744,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateVariableName($rule, &$data, $path, &$error) {
+	private static function validateVariableName(array $rule, &$data, $path, &$error) {
 		if (self::checkStringUtf8(API_NOT_EMPTY, $data, $path, $error) === false) {
 			return false;
 		}
@@ -1774,7 +1774,7 @@ class CApiInputValidator {
 	 *
 	 * @return bool
 	 */
-	private static function validateUrl($rule, &$data, $path, &$error) {
+	private static function validateUrl(array $rule, &$data, $path, &$error) {
 		$flags = array_key_exists('flags', $rule) ? $rule['flags'] : 0x00;
 
 		if (self::checkStringUtf8($flags & API_NOT_EMPTY, $data, $path, $error) === false) {
