@@ -459,6 +459,28 @@ footer {
   .sidebar-nav-toggle + div {
     flex-shrink: 1; }
 
+.form-grid {
+  display: grid;
+  row-gap: 10px;
+  column-gap: 10px;
+  grid-template-columns: auto 35fr auto auto; }
+  .form-grid .form-grid-item.col-label, .form-grid .form-grid-item.col-sm-label {
+    text-align: right;
+    word-wrap: break-word;
+    align-self: start;
+    line-height: 24px; }
+  .form-grid .form-grid-item.col-detail, .form-grid .form-grid-item.col-sm-detail {
+    text-align: left;
+    align-self: center; }
+  .form-grid .form-grid-item.col-detail {
+    grid-column: 2 / -1; }
+  .form-grid .form-grid-item.col-offset-1 {
+    grid-column-start: 2; }
+  .form-grid .form-grid-item.col-offset-2 {
+    grid-column-start: 3; }
+  .form-grid .form-grid-item.col-offset-3 {
+    grid-column-start: 4; }
+
 .form-search {
   position: relative;
   height: 24px; }

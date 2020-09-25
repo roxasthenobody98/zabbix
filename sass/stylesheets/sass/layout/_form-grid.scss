@@ -1,0 +1,35 @@
+.form-grid {
+	display: grid;
+	row-gap: 10px;
+	column-gap: 10px;
+	grid-template-columns: auto 35fr auto auto;
+
+	.form-grid-item {
+		&.col-label, &.col-sm-label {
+			text-align: right;
+			word-wrap: break-word;
+			align-self: start;
+			line-height: 24px;
+		}
+		&.col-detail, &.col-sm-detail {
+			text-align: left;
+			align-self: center;
+		}
+
+		&.col-detail {
+			grid-column: 2 / -1;
+		}
+
+		$offsets: (
+			1: 2,
+			2: 3,
+			3: 4
+		);
+
+		@each $offset, $value in $offsets {
+			&.col-offset-#{$offset} {
+				grid-column-start: $value;
+			}
+		}
+	}
+}

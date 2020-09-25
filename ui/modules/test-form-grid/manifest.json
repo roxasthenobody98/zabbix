@@ -1,0 +1,20 @@
+{
+	"manifest_version": 0.01,
+	"id": "15",
+	"name": "test module",
+	"author": "",
+	"description": "Test module for form-grid css",
+	"version": "",
+	"namespace": "FormGrid",
+	"url": "",
+	"actions": {
+		"form.grid.item": {
+			"class": "FormGrid",
+			"view": "form.grid.item"
+		},
+		"form.grid.item.test": {
+			"class": "FormGrid",
+			"view": "form.grid.item.test"
+		}
+	}
+}
