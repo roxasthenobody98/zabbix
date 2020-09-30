@@ -2,8 +2,7 @@
 
 use Modules\FormGrid\Helper\{
 	CFormGrid,
-	CFormGridItemLabel,
-	CFormGridItemDetail
+	CFormField
 };
 
 $this->addJsFile('itemtest.js');
@@ -12,10 +11,8 @@ $this->addJsFile('multilineinput.js');
 $this->addJsFile('textareaflexible.js');
 $this->addJsFile('class.cviewswitcher.js');
 
-$form = new CFormGrid;
-
-$macros_table = (new CTable())->addClass(ZBX_STYLE_TEXTAREA_FLEXIBLE_CONTAINER);
-$macros_table
+$macros_table = (new CTable())
+	->addClass(ZBX_STYLE_TEXTAREA_FLEXIBLE_CONTAINER)
 	->addRow([
 		(new CCol(
 			(new CTextAreaFlexible('macro_rows[]', '{$MACRO}', ['readonly' => false]))
@@ -62,99 +59,91 @@ $macros_table
 		))->addClass(ZBX_STYLE_TEXTAREA_FLEXIBLE_PARENT)
 	]);
 
-$form
+$form = (new CFormGrid())
+	->addClass(CFormGrid::ZBX_STYLE_FORM_GRID_3_1)
 	->addItem([
-		new CFormGridItemLabel(
-			new CLabel(_('Get value from host'), 'get_value')
-		),
-		new CFormGridItemDetail(
+		new CLabel(_('Get value from host'), 'get_value'),
+		(new CFormField(
 			(new CCheckBox('get_value', 1))->setChecked(true)
-		),
-		(new CFormGridItemLabel(
-			new CLabel(_('Host address'), 'host_address')
-		))->setSmall(),
-		(new CFormGridItemDetail(
+		))->addClass(CFormField::ZBX_STYLE_FORM_FIELD_FLUID),
+
+		new CLabel(_('Host address'), 'host_address'),
+		(new CFormField(
 			(new CTextBox('interface[address]', '127.0.0.1'))
 					->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
-		))->setSmall(),
-		(new CFormGridItemLabel(
-			new CLabel(_('Port'), 'port')
-		))->setSmall(),
-		(new CFormGridItemDetail(
+		)),
+
+		new CLabel(_('Port'), 'port'),
+		(new CFormField(
 			(new CTextBox('interface[port]', '10050', '', 64))
 				->setWidth(ZBX_TEXTAREA_SMALL_WIDTH)
-		))->setSmall(),
-		new CFormGridItemLabel(
-			new CLabel(_('Proxy'), 'proxy_hostid')
-		),
-		new CFormGridItemDetail(
+		)),
+
+		new CLabel(_('Proxy'), 'proxy_hostid'),
+		(new CFormField(
 			(new CComboBox('proxy_hostid', 0, null, [0 => _('(no proxy)')]))
 				->setWidth(ZBX_TEXTAREA_SMALL_WIDTH)
-		),
-		(new CFormGridItemDetail(
+		))->addClass(CFormField::ZBX_STYLE_FORM_FIELD_FLUID),
+
+		(new CFormField(
 			(new CSimpleButton(_('Get value')))
 				->addClass(ZBX_STYLE_BTN_ALT)
 				->setId('get_value_btn')
-		))->setOffset(3)->addStyle('justify-self: end;'),
-		(new CFormGridItemLabel(
-			new CLabel(_('Value'), 'value')
-		))->setSmall(),
-		(new CFormGridItemDetail(
+		))
+			->addClass(CFormField::ZBX_STYLE_FORM_FIELD_OFFSET_3)
+			->addStyle('justify-self: end;'),
+
+		new CLabel(_('Value'), 'value'),
+		(new CFormField(
 			(new CMultilineInput('value', '', [
 				'disabled' => false,
 				'readonly' => false
 			]))->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
-		))->setSmall(),
-		(new CFormGridItemLabel(
-			new CLabel(_('Time'), 'time')
-		))->setSmall(),
-		(new CFormGridItemDetail(
+		)),
+
+		new CLabel(_('Time'), 'time'),
+		(new CFormField(
 			(new CTextBox(null, 'now', true))
 				->setWidth(ZBX_TEXTAREA_SMALL_WIDTH)
 				->setId('time')
-		))->setSmall(),
-		(new CFormGridItemLabel(
-			new CLabel(_('Previous value'), 'prev_item_value')
-		))->setSmall(),
-		(new CFormGridItemDetail(
+		)),
+
+		new CLabel(_('Previous value'), 'prev_item_value'),
+		(new CFormField(
 			(new CMultilineInput('prev_value', '', [
 				'disabled' => true
 			]))->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
-		))->setSmall(),
-		(new CFormGridItemLabel(
-			new CLabel(_('Prev. time'), 'prev_time')
-		))->setSmall(),
-		(new CFormGridItemDetail(
+		)),
+
+		new CLabel(_('Prev. time'), 'prev_time'),
+		(new CFormField(
 			(new CTextBox('prev_time', ''))
 			->setEnabled(false)
 			->setWidth(ZBX_TEXTAREA_SMALL_WIDTH)
-		))->setSmall(),
-		new CFormGridItemLabel(
-			new CLabel(_('End of line sequence'), 'eol')
-		),
-		new CFormGridItemDetail(
+		)),
+
+		new CLabel(_('End of line sequence'), 'eol'),
+		(new CFormField(
 			(new CRadioButtonList('eol', 0))
 			->addValue(_('LF'), ZBX_EOL_LF)
 			->addValue(_('CRLF'), ZBX_EOL_CRLF)
 			->setModern(true)
-		),
-		new CFormGridItemLabel(
-			new CLabel(_('Macros'))
-		),
-		new CFormGridItemDetail(
+		))->addClass(CFormField::ZBX_STYLE_FORM_FIELD_FLUID),
+
+		new CLabel(_('Macros')),
+		(new CFormField(
 			(new CDiv($macros_table))->addClass(ZBX_STYLE_TABLE_FORMS_SEPARATOR)
-		),
-		new CFormGridItemLabel(
-			new CLabel(_('Result'))
-		),
-		new CFormGridItemDetail(
+		))->addClass(CFormField::ZBX_STYLE_FORM_FIELD_FLUID),
+
+		new CLabel(_('Result')),
+		(new CFormField(
 			(new CDiv([
 				(new CSpan('Result converted to Text'))->addClass('grey'),
 				new CSpan('Zabbix server')
 			]))
 				->addClass(ZBX_STYLE_TABLE_FORMS_SEPARATOR)
 				->addStyle('display: flex; justify-content: space-between;')
-		),
+		))->addClass(CFormField::ZBX_STYLE_FORM_FIELD_FLUID)
 	]);
 
 $div = (new CDiv($form))->addStyle('width: 850px;');

@@ -2,8 +2,8 @@
 
 use Modules\FormGrid\Helper\{
 	CFormGrid,
-	CFormGridItemLabel,
-	CFormGridItemDetail
+	CFormField,
+	CFormActions
 };
 
 require_once dirname(__FILE__).'/../assets/js/common.js.php';
@@ -12,13 +12,6 @@ $this->addJsFile('multiselect.js');
 $this->addJsFile('multilineinput.js');
 $this->addJsFile('textareaflexible.js');
 $this->addJsFile('class.cviewswitcher.js');
-
-$f = (new CForm())
-	->setId('item-form')
-	->setName('itemForm')
-	->setAttribute('aria-labeledby', ZBX_STYLE_PAGE_TITLE)
-	->addVar('form', 'create')
-	->addVar('hostid', '10290');
 
 $form = new CFormGrid;
 
@@ -38,10 +31,6 @@ $key_controls[] = (new CButton('keyButton', _('Select')))
 		]).
 			',{itemtype: jQuery("#type option:selected").val()}), null, this);'
 	);
-
-$span = (new CSpan(_('No interface found')))
-	->addClass(ZBX_STYLE_RED)
-	->setId('interface_not_defined');
 
 $delayFlexTable = (new CTable())
 	->setId('delayFlexTable')
@@ -66,42 +55,35 @@ $delayFlexTable = (new CTable())
 	->addClass(ZBX_STYLE_BTN_LINK)
 	->addClass('element-table-add')]);
 
-$hostInventoryFieldComboBox = (new CComboBox('inventory_link'))
-	->addItem(0, '-'._('None').'-', null);
-
 $form
 	->addItem([
-		new CFormGridItemLabel(
-			(new CLabel(_('Name'), 'name'))->setAsteriskMark()
-		),
-		new CFormGridItemDetail(
+		(new CLabel(_('Name'), 'name'))->setAsteriskMark(),
+		new CFormField(
 			(new CTextBox('name', ''))
 			->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
 			->setAriaRequired()
 			->setAttribute('autofocus', 'autofocus')
 		),
-		new CFormGridItemLabel(
-			new CLabel(_('Type'), 'type')
-		),
-		new CFormGridItemDetail(
+
+		new CLabel(_('Type'), 'type'),
+		new CFormField(
 			new CComboBox('type', '', null, ['Zabbix agent', 'Zabbix agent (active)'])
 		),
-		new CFormGridItemLabel(
-			(new CLabel(_('Key'), 'key'))->setAsteriskMark()
-		),
-		new CFormGridItemDetail(
+
+		(new CLabel(_('Key'), 'key'))->setAsteriskMark(),
+		new CFormField(
 			$key_controls
 		),
-		new CFormGridItemLabel(
-			(new CLabel(_('Host interface'), 'interfaceid'))->setAsteriskMark()
+
+		(new CLabel(_('Host interface'), 'interfaceid'))->setAsteriskMark(),
+		new CFormField(
+			(new CSpan(_('No interface found')))
+				->addClass(ZBX_STYLE_RED)
+				->setId('interface_not_defined')
 		),
-		new CFormGridItemDetail(
-			$span
-		),
-		new CFormGridItemLabel(
-			new CLabel(_('Type of information'), 'value_type')
-		),
-		new CFormGridItemDetail(
+
+		new CLabel(_('Type of information'), 'value_type'),
+		new CFormField(
 			(new CComboBox('value_type', 1, null, [
 				ITEM_VALUE_TYPE_UINT64 => _('Numeric (unsigned)'),
 				ITEM_VALUE_TYPE_FLOAT => _('Numeric (float)'),
@@ -110,32 +92,28 @@ $form
 				ITEM_VALUE_TYPE_TEXT => _('Text')
 			]))
 		),
-		new CFormGridItemLabel(
-			new CLabel(_('Units'), 'units')
-		),
-		new CFormGridItemDetail(
+
+		new CLabel(_('Units'), 'units'),
+		new CFormField(
 			(new CTextBox('units', ''))->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
 		),
-		new CFormGridItemLabel(
-			(new CLabel(_('Update interval'), 'delay'))->setAsteriskMark()
-		),
-		new CFormGridItemDetail(
+
+		(new CLabel(_('Update interval'), 'delay'))->setAsteriskMark(),
+		new CFormField(
 			(new CTextBox('delay', '1m'))
 				->setWidth(ZBX_TEXTAREA_SMALL_WIDTH)
 				->setAriaRequired()
 		),
-		new CFormGridItemLabel(
-			new CLabel(_('Custom intervals'))
-		),
-		new CFormGridItemDetail(
+
+		new CLabel(_('Custom intervals')),
+		new CFormField(
 			(new CDiv($delayFlexTable))
 				->addClass(ZBX_STYLE_TABLE_FORMS_SEPARATOR)
 				->setAttribute('style', 'min-width: '.(ZBX_TEXTAREA_STANDARD_WIDTH+50).'px;')
 		),
-		new CFormGridItemLabel(
-			(new CLabel(_('History storage period'), 'history'))->setAsteriskMark()
-		),
-		new CFormGridItemDetail(
+
+		(new CLabel(_('History storage period'), 'history'))->setAsteriskMark(),
+		new CFormField(
 			(new CDiv([
 				(new CRadioButtonList('history_mode', 0))
 					->addValue(_('Do not keep history'), ITEM_STORAGE_OFF)
@@ -143,10 +121,9 @@ $form
 					->setModern(true)
 			]))->addStyle('display:flex;')
 		),
-		new CFormGridItemLabel(
-			(new CLabel(_('Trend storage period'), 'trends'))->setAsteriskMark()
-		),
-		new CFormGridItemDetail(
+
+		(new CLabel(_('Trend storage period'), 'trends'))->setAsteriskMark(),
+		new CFormField(
 			(new CDiv([
 				(new CRadioButtonList('trends_mode', 1))
 					->addValue(_('Do not keep trends'), ITEM_STORAGE_OFF)
@@ -158,50 +135,51 @@ $form
 					->setAriaRequired()
 			]))->addStyle('display:flex;')
 		),
-		new CFormGridItemLabel(
-			new CLabel(_('New application'), 'new_application')
-		),
-		new CFormGridItemDetail(
+
+		new CLabel(_('New application'), 'new_application'),
+		new CFormField(
 			(new CSpan(
 				(new CTextBox('new_application', ''))->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
 			))->addClass(ZBX_STYLE_FORM_NEW_GROUP)
 		),
-		new CFormGridItemLabel(
-			new CLabel(_('Applications'))
-		),
-		new CFormGridItemDetail(
+
+		new CLabel(_('Applications')),
+		new CFormField(
 			new CListBox('applications_names[]', '', 6)
 		),
-		new CFormGridItemLabel(
-			new CLabel(_('Populates host inventory field'))
+
+		new CLabel(_('Populates host inventory field')),
+		new CFormField(
+			(new CComboBox('inventory_link'))->addItem(0, '-'._('None').'-', null)
 		),
-		new CFormGridItemDetail(
-			$hostInventoryFieldComboBox
-		),
-		new CFormGridItemLabel(
-			new CLabel(_('Description'))
-		),
-		new CFormGridItemDetail(
+
+		new CLabel(_('Description')),
+		new CFormField(
 			(new CTextArea('description', ''))
 				->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
 				->setMaxlength(DB::getFieldLength('items', 'description'))
 		),
-		new CFormGridItemLabel(
-			new CLabel(_('Enabled'))
-		),
-		new CFormGridItemDetail(
+
+		new CLabel(_('Enabled')),
+		new CFormField(
 			(new CCheckBox('status', ITEM_STATUS_ACTIVE))->setChecked(true)
 		),
+
+		new CFormActions(
+			new CSubmit('add', _('Add')),
+			[(new CSimpleButton(_('Test')))->setId('test_item'), new CButtonCancel(url_param('hostid'))]
+		)
 	]);
 
-$f->addItem($form);
-
 $divTabs = new CTabView();
-$divTabs->addTab('test', 'Test', $f);
-$divTabs->setFooter(makeFormFooter(
-	new CSubmit('add', _('Add')),
-	[(new CSimpleButton(_('Test')))->setId('test_item'), new CButtonCancel(url_param('hostid'))]
-));
+$divTabs->addTab('test', 'Test', (new CForm())
+	->setId('item-form')
+	->setName('itemForm')
+	->setAttribute('aria-labeledby', ZBX_STYLE_PAGE_TITLE)
+	->addVar('form', 'create')
+	->addVar('hostid', '10290')
+	->addItem($form)
+);
 
 (new CWidget())
 	->setTitle(_('Form Grid'))
