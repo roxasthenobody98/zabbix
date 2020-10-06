@@ -118,6 +118,7 @@ class CTrigger extends CTriggerGeneral {
 		$options = zbx_array_merge($defOptions, $options);
 
 		// editable + PERMISSION CHECK
+		/*
 		if (self::$userData['type'] != USER_TYPE_SUPER_ADMIN && !$options['nopermissions']) {
 			$permission = $options['editable'] ? PERM_READ_WRITE : PERM_READ;
 			$userGroups = getUserGroupsByUserId(self::$userData['userid']);
@@ -144,6 +145,27 @@ class CTrigger extends CTriggerGeneral {
 				' WHERE t.triggerid=f.triggerid '.
 					' AND f.itemid=i.itemid'.
 					$test.
+			')';
+		}*/
+
+		// editable + PERMISSION CHECK
+		if (self::$userData['type'] != USER_TYPE_SUPER_ADMIN && !$options['nopermissions']) {
+			$permission = $options['editable'] ? PERM_READ_WRITE : PERM_READ;
+			$userGroups = getUserGroupsByUserId(self::$userData['userid']);
+
+			$sqlParts['where'][] = 'NOT EXISTS ('.
+				'SELECT NULL'.
+				' FROM functions f,items i,hosts_groups hgg'.
+					' LEFT JOIN rights r'.
+						' ON r.id=hgg.groupid'.
+							' AND '.dbConditionInt('r.groupid', $userGroups).
+				' WHERE t.triggerid=f.triggerid '.
+					' AND f.itemid=i.itemid'.
+					' AND i.hostid=hgg.hostid'.
+				' GROUP BY i.hostid'.
+				' HAVING MAX(permission)<'.zbx_dbstr($permission).
+					' OR MIN(permission) IS NULL'.
+					' OR MIN(permission)='.PERM_DENY.
 			')';
 		}
 
