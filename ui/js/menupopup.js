@@ -925,7 +925,7 @@ function getMenuPopupDropdown(options, trigger_elem) {
 			clickCallback: () => {
 				jQuery(trigger_elem)
 					.removeClass()
-					.addClass(['btn-alt', 'btn-toggle-chevron', item.class].join(' '));
+					.addClass(['btn-alt', 'btn-dropdown-toggle', item.class].join(' '));
 
 				jQuery('input[type=hidden]', jQuery(trigger_elem).parent())
 					.val(item.value)

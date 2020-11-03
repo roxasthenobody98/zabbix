@@ -1,1 +1,1 @@
-..F....... [ZBX-18144] removed chevron from sprite file and created with CSS, fixed sidebar and macro type dropdowns (kustalovs)
+..F....... [ZBX-18144] replaced design of chevrons from SVG images to CSS rules (kustalovs, vmaksimovs)

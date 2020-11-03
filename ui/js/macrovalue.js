@@ -69,7 +69,7 @@
 			.val(ZBX_MACRO_TYPE_SECRET)
 			.trigger('change');
 
-		$('.btn-dropdown-container button', $container).addClass('btn-alt btn-toggle-chevron icon-secret');
+		$('.btn-dropdown-container button', $container).addClass('btn-alt btn-dropdown-toggle icon-secret');
 
 		$this.hide();
 	}

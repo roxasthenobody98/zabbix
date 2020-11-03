@@ -6974,7 +6974,7 @@ table.preprocessing-test-results {
 			}
 		}
 
-		&.btn-toggle-chevron {
+		&.btn-dropdown-toggle {
 			border-color: $form-border-focus-color;
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
@@ -7053,7 +7053,7 @@ table.preprocessing-test-results {
 	}
 }
 
-.btn-toggle-chevron {
+.btn-dropdown-toggle {
 	position: relative;
 
 	&[aria-expanded="true"] {

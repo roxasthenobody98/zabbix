@@ -2443,7 +2443,7 @@ button[disabled], button[disabled]:hover, button[disabled]:active {
     background-color: transparent; }
 
 .multiselect[aria-disabled], .radio-list-control input[type="radio"][disabled] + label, input[disabled], input[readonly], textarea[disabled], textarea[readonly], select option[disabled], select[disabled], select[readonly], .checkbox-radio[readonly] span,
-.checkbox-radio[readonly] + label span, .checkbox-radio[disabled] + label span, .input-group button.btn-toggle-chevron:disabled {
+.checkbox-radio[readonly] + label span, .checkbox-radio[disabled] + label span, .input-group button.btn-dropdown-toggle:disabled {
   color: #525252;
   background-color: #2b2b2b !important;
   border-color: #3d3d3d; }
@@ -5419,7 +5419,7 @@ table.preprocessing-test-results .rel-container {
         border-color: #5e737e; }
         .input-group button.btn-undo:hover::before, .input-group button.btn-undo:focus::before, .input-group button.btn-undo:active::before {
           background-position: -431px -474px; }
-    .input-group button.btn-toggle-chevron {
+    .input-group button.btn-dropdown-toggle {
       border-color: #768d99;
       border-top-left-radius: 0;
       border-bottom-left-radius: 0; }
@@ -5453,13 +5453,13 @@ table.preprocessing-test-results .rel-container {
 .icon-secret:not(.highlighted):enabled:hover::before, .icon-secret:not(.highlighted):enabled:focus::before, .icon-secret:not(.highlighted):enabled:active::before, .icon-secret:not(.highlighted):enabled[aria-expanded="true"]::before {
   background-position: -399px -510px; }
 
-.btn-toggle-chevron {
+.btn-dropdown-toggle {
   position: relative; }
-  .btn-toggle-chevron[aria-expanded="true"] {
+  .btn-dropdown-toggle[aria-expanded="true"] {
     color: #f2f2f2;
     background-color: #5e737e;
     border-color: #5e737e; }
-  .btn-toggle-chevron::after {
+  .btn-dropdown-toggle::after {
     content: '';
     position: absolute;
     right: 8px;
@@ -5470,9 +5470,9 @@ table.preprocessing-test-results .rel-container {
     border-right: 1px solid #768d99;
     transform: rotate(135deg) translate(-1px, 1px);
     transition: transform .3s; }
-  .btn-toggle-chevron[class*='icon-'] {
+  .btn-dropdown-toggle[class*='icon-'] {
     padding-left: 22px; }
-    .btn-toggle-chevron[class*='icon-']::before {
+    .btn-dropdown-toggle[class*='icon-']::before {
       position: absolute;
       top: 0;
       left: 0;
@@ -5480,17 +5480,17 @@ table.preprocessing-test-results .rel-container {
       width: 22px;
       height: 22px;
       content: ''; }
-    .btn-toggle-chevron[class*='icon-']::after {
+    .btn-dropdown-toggle[class*='icon-']::after {
       right: 5px;
       top: calc(50% - 1px);
       width: 3px;
       height: 3px; }
-  .btn-toggle-chevron[disabled]::after {
+  .btn-dropdown-toggle[disabled]::after {
     border-top-color: #525252;
     border-right-color: #525252; }
-  .btn-toggle-chevron:enabled:active::after, .btn-toggle-chevron:enabled[aria-expanded="true"]::after {
+  .btn-dropdown-toggle:enabled:active::after, .btn-dropdown-toggle:enabled[aria-expanded="true"]::after {
     transform: rotate(315deg) translate(-1px, 1px); }
-  .btn-toggle-chevron:enabled:hover::after, .btn-toggle-chevron:enabled:focus::after, .btn-toggle-chevron:enabled:active::after, .btn-toggle-chevron:enabled[aria-expanded="true"]::after {
+  .btn-dropdown-toggle:enabled:hover::after, .btn-dropdown-toggle:enabled:focus::after, .btn-dropdown-toggle:enabled:active::after, .btn-dropdown-toggle:enabled[aria-expanded="true"]::after {
     border-top-color: #f2f2f2;
     border-right-color: #f2f2f2; }
 

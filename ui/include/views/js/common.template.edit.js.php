@@ -144,9 +144,10 @@
 
 						$dropdown_btn
 							.removeClass()
-							.addClass(['btn-alt', 'btn-toggle-chevron', (macro_type == <?= ZBX_MACRO_TYPE_SECRET ?>)
-								? '<?= ZBX_STYLE_ICON_SECRET_TEXT ?>'
-								: '<?= ZBX_STYLE_ICON_TEXT ?>'
+							.addClass(['btn-alt', '<?= CButtonDropdown::ZBX_STYLE_BTN_TOGGLE ?>',
+								(macro_type == <?= ZBX_MACRO_TYPE_SECRET ?>)
+									? '<?= ZBX_STYLE_ICON_SECRET_TEXT ?>'
+									: '<?= ZBX_STYLE_ICON_TEXT ?>'
 							].join(' '));
 
 						jQuery('input[type=hidden]', $dropdown_btn.parent())
