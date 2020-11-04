@@ -67,7 +67,7 @@ $menu-main-submenu-selected-border-color: #787878;
 
 $menu-main-icons-opacity: 1;
 
-$menu-main-arrow-color: #000000;
+$menu-main-chevron-color: #000000;
 
 $menu-user-color: #131619;
 $menu-user-hover-color: #000000;
@@ -261,13 +261,6 @@ $multiselect-selected-bg-color: #222222;
 // components/menu-main
 .menu-main {
 	& > li.has-submenu {
-		& > a {
-			&::after {
-				border-top-color: $menu-main-arrow-color;
-				border-right-color: $menu-main-arrow-color;
-			}
-		}
-
 		&.is-expanded > a,
 		& > a:hover,
 		& > a:focus {
@@ -276,8 +269,8 @@ $multiselect-selected-bg-color: #222222;
 			}
 
 			&::after {
-				border-top-color: $menu-main-arrow-hover-color;
-				border-right-color: $menu-main-arrow-hover-color;
+				border-top-color: $menu-main-chevron-hover-color;
+				border-right-color: $menu-main-chevron-hover-color;
 			}
 		}
 	}

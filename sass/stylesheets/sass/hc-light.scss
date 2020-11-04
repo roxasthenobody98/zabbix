@@ -61,7 +61,7 @@ $menu-main-submenu-selected-color: #000000;
 $menu-main-submenu-selected-bg-color: #f3f3f3;
 $menu-main-submenu-selected-border-color: #949494;
 
-$menu-main-arrow-hover-color: #000000;
+$menu-main-chevron-hover-color: #000000;
 
 $menu-main-icons-opacity: 1;
 
@@ -239,8 +239,8 @@ $multiselect-selected-bg-color: #777777;
 			}
 
 			&::after {
-				border-top-color: $menu-main-arrow-hover-color;
-				border-right-color: $menu-main-arrow-hover-color;
+				border-top-color: $menu-main-chevron-hover-color;
+				border-right-color: $menu-main-chevron-hover-color;
 			}
 		}
 	}

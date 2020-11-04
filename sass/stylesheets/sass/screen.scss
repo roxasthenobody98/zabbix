@@ -2052,6 +2052,10 @@ button {
 			}
 		}
 	}
+
+	&[aria-expanded="true"] {
+		@include btn-hover-active($btn-font-color, $btn-bg-color);
+	}
 }
 
 .btn-grey {
@@ -2184,12 +2188,12 @@ $icon-widget-btn: (
 	border-right: 2px solid $btn-chevron-color;
 }
 
-.btn-widget-collapse:after {
+.btn-widget-collapse::after {
 	transform: rotate(315deg) translate(-1px, 1px);
 	@extend %btn-chevron;
 }
 
-.btn-widget-expand:after {
+.btn-widget-expand::after {
 	transform: rotate(135deg) translate(-2px, 2px);
 	@extend %btn-chevron;
 }
@@ -2392,25 +2396,27 @@ $icon-widget-btn: (
 	}
 }
 
-.btn-time-left:after {
+.btn-time-left::after {
 	transform: rotate(225deg) translate(0px, 1px);
 	@extend %btn-chevron;
 }
 
-.btn-time-right:after {
+.btn-time-right::after {
 	transform: rotate(45deg) translate(-2px, 1px);
 	@extend %btn-chevron;
 }
 
 .btn-time-left,
 .btn-time-right {
-	&:focus:after,
-	&:hover:after {
-		border-color: $btn-font-color;
+	&:focus::after,
+	&:hover::after {
+		border-top-color: $btn-font-color;
+		border-right-color: $btn-font-color;
 	}
 
-	&:disabled:after {
-		border-color: $btn-chevron-color;
+	&:disabled::after {
+		border-top-color: $btn-chevron-color;
+		border-right-color: $btn-chevron-color;
 	}
 }
 
@@ -7074,10 +7080,6 @@ table.preprocessing-test-results {
 .btn-dropdown-toggle {
 	position: relative;
 
-	&[aria-expanded="true"] {
-		@include btn-hover-active($btn-font-color, $btn-bg-color);
-	}
-
 	&::after {
 		content: '';
 		position: absolute;
@@ -7105,8 +7107,8 @@ table.preprocessing-test-results {
 		}
 
 		&::after {
+			top: 9px;
 			right: 5px;
-			top: calc(50% - 1px);
 			width: 3px;
 			height: 3px;
 		}

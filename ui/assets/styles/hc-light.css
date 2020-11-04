@@ -567,8 +567,8 @@ footer {
   .menu-main > li.has-submenu > a::after {
     content: '';
     position: absolute;
-    right: 15px;
     top: calc(50% - 1px);
+    right: 15px;
     width: 3px;
     height: 3px;
     border-top: 1px solid #FFFFFF;
@@ -2035,6 +2035,10 @@ button {
       background-color: #ffffff; }
       .btn-alt:active .plus-icon::after {
         background-color: #ffffff; }
+  .btn-alt[aria-expanded="true"] {
+    color: #ffffff;
+    background-color: #484848;
+    border-color: #484848; }
 
 .btn-grey {
   color: #333333;
@@ -2128,7 +2132,7 @@ button {
 .btn-info-clock {
   background: url("../img/icon-sprite.svg?20200407") no-repeat -87px -762px; }
 
-.btn-widget-collapse:after, .interface-row.list-accordion-item[data-type="2"].list-accordion-item-opened .interface-btn-toggle:after, .btn-widget-expand:after, .interface-row.list-accordion-item[data-type="2"].list-accordion-item-closed .interface-btn-toggle:after, .btn-time-left:after, .btn-time-right:after {
+.btn-widget-collapse::after, .interface-row.list-accordion-item[data-type="2"].list-accordion-item-opened .interface-btn-toggle::after, .btn-widget-expand::after, .interface-row.list-accordion-item[data-type="2"].list-accordion-item-closed .interface-btn-toggle::after, .btn-time-left::after, .btn-time-right::after {
   content: ' ';
   position: absolute;
   top: calc(50% - 4px);
@@ -2138,10 +2142,10 @@ button {
   border-top: 2px solid #000000;
   border-right: 2px solid #000000; }
 
-.btn-widget-collapse:after, .interface-row.list-accordion-item[data-type="2"].list-accordion-item-opened .interface-btn-toggle:after {
+.btn-widget-collapse::after, .interface-row.list-accordion-item[data-type="2"].list-accordion-item-opened .interface-btn-toggle::after {
   transform: rotate(315deg) translate(-1px, 1px); }
 
-.btn-widget-expand:after, .interface-row.list-accordion-item[data-type="2"].list-accordion-item-closed .interface-btn-toggle:after {
+.btn-widget-expand::after, .interface-row.list-accordion-item[data-type="2"].list-accordion-item-closed .interface-btn-toggle::after {
   transform: rotate(135deg) translate(-2px, 2px); }
 
 .ui-tabs-nav {
@@ -2276,19 +2280,21 @@ button {
     border: 0;
     opacity: .4; }
 
-.btn-time-left:after {
+.btn-time-left::after {
   transform: rotate(225deg) translate(0px, 1px); }
 
-.btn-time-right:after {
+.btn-time-right::after {
   transform: rotate(45deg) translate(-2px, 1px); }
 
-.btn-time-left:focus:after, .btn-time-left:hover:after,
-.btn-time-right:focus:after,
-.btn-time-right:hover:after {
-  border-color: #ffffff; }
-.btn-time-left:disabled:after,
-.btn-time-right:disabled:after {
-  border-color: #000000; }
+.btn-time-left:focus::after, .btn-time-left:hover::after,
+.btn-time-right:focus::after,
+.btn-time-right:hover::after {
+  border-top-color: #ffffff;
+  border-right-color: #ffffff; }
+.btn-time-left:disabled::after,
+.btn-time-right:disabled::after {
+  border-top-color: #000000;
+  border-right-color: #000000; }
 
 .btn-time-out {
   background: none;
@@ -5415,10 +5421,6 @@ table.preprocessing-test-results .rel-container {
 
 .btn-dropdown-toggle {
   position: relative; }
-  .btn-dropdown-toggle[aria-expanded="true"] {
-    color: #ffffff;
-    background-color: #484848;
-    border-color: #484848; }
   .btn-dropdown-toggle::after {
     content: '';
     position: absolute;
@@ -5441,8 +5443,8 @@ table.preprocessing-test-results .rel-container {
       height: 22px;
       content: ''; }
     .btn-dropdown-toggle[class*='icon-']::after {
+      top: 9px;
       right: 5px;
-      top: calc(50% - 1px);
       width: 3px;
       height: 3px; }
   .btn-dropdown-toggle[disabled]::after {

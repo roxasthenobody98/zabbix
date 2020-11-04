@@ -1,7 +1,7 @@
 $menu-main-icons-opacity: .75 !default;
 
-$menu-main-arrow-color: #FFFFFF !default;
-$menu-main-arrow-hover-color: #FFFFFF !default;
+$menu-main-chevron-color: #FFFFFF !default;
+$menu-main-chevron-hover-color: #FFFFFF !default;
 
 $menu-main-icons: (
 		dashboard: -540px -664px,
@@ -107,12 +107,12 @@ $menu-main-icons: (
 				&::after {
 					content: '';
 					position: absolute;
-					right: 15px;
 					top: calc(50% - 1px);
+					right: 15px;
 					width: 3px;
 					height: 3px;
-					border-top: 1px solid $menu-main-arrow-color;
-					border-right: 1px solid $menu-main-arrow-color;
+					border-top: 1px solid $menu-main-chevron-color;
+					border-right: 1px solid $menu-main-chevron-color;
 					transform: rotate(135deg) translate(-1px,1px);
 					transition: transform .3s;
 
