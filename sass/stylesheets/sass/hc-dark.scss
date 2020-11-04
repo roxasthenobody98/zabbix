@@ -170,6 +170,8 @@ $btn-back-map-background-color: rgba(0, 0, 0, .8);
 $btn-back-text-color: #ffffff;
 $btn-back-background-hover: #8f8f8f;
 
+$btn-chevron-color: #ffffff;
+
 // Links
 $link-color: #f8f8f8;
 $link-hover-color: #ffffff;
@@ -469,8 +471,8 @@ $icon-widget-btn: (
 	iterator-page-previous: url($sprite-path) no-repeat -397px -657px,
 	iterator-page-next: url($sprite-path) no-repeat -395px -623px,
 	widget-action: url($sprite-path) no-repeat -318px -618px,
-	widget-collapse: url($sprite-path) no-repeat -318px -654px,
-	widget-expand: url($sprite-path) no-repeat -318px -690px,
+	widget-collapse: none,
+	widget-expand: none,
 	widget-edit: url($sprite-path) no-repeat -354px -619px,
 	alarm-on: url($sprite-path) no-repeat -318px -546px,
 	alarm-off: url($sprite-path) no-repeat -318px -582px,

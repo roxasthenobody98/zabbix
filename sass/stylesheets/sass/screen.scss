@@ -2144,8 +2144,8 @@ $icon-widget-btn: (
 	iterator-page-previous: url($sprite-path) no-repeat -85px -657px,
 	iterator-page-next: url($sprite-path) no-repeat -83px -623px,
 	widget-action: url($sprite-path) no-repeat -6px -618px,
-	widget-collapse: url($sprite-path) no-repeat -6px -654px,
-	widget-expand: url($sprite-path) no-repeat -6px -689px,
+	widget-collapse: none,
+	widget-expand: none,
 	widget-edit: url($sprite-path) no-repeat -42px -619px,
 	alarm-on: url($sprite-path) no-repeat -6px -546px,
 	alarm-off: url($sprite-path) no-repeat -6px -582px,
@@ -2171,6 +2171,27 @@ $icon-widget-btn: (
 		background: $bgimage;
 		@extend %btn-widget;
 	}
+}
+
+%btn-chevron {
+	content: ' ';
+	position: absolute;
+	top: calc(50% - 4px);
+	left: 7px;
+	width: 7px;
+	height: 7px;
+	border-top: 2px solid $btn-chevron-color;
+	border-right: 2px solid $btn-chevron-color;
+}
+
+.btn-widget-collapse:after {
+	transform: rotate(315deg) translate(-1px, 1px);
+	@extend %btn-chevron;
+}
+
+.btn-widget-expand:after {
+	transform: rotate(135deg) translate(-2px, 2px);
+	@extend %btn-chevron;
 }
 
 // Time selection.
@@ -2351,11 +2372,12 @@ $icon-widget-btn: (
 
 .btn-time-left,
 .btn-time-right {
-	background: url($sprite-path) no-repeat;
+	background: none;
 	content: '';
-	border: 0;
+	position: relative;
 	height: 24px;
 	width: 24px;
+	border: 1px solid transparent;
 	vertical-align: top;
 
 	&:focus,
@@ -2370,29 +2392,25 @@ $icon-widget-btn: (
 	}
 }
 
-.btn-time-right {
-	background-position: -83px -623px;
-
-	&:focus,
-	&:hover {
-		background-position: -396px -624px;
-	}
-
-	&:disabled {
-		background-position: -83px -623px;
-	}
+.btn-time-left:after {
+	transform: rotate(225deg) translate(0px, 1px);
+	@extend %btn-chevron;
 }
 
-.btn-time-left {
-	background-position: -85px -657px;
+.btn-time-right:after {
+	transform: rotate(45deg) translate(-2px, 1px);
+	@extend %btn-chevron;
+}
 
-	&:focus,
-	&:hover {
-		background-position: -398px -658px;
+.btn-time-left,
+.btn-time-right {
+	&:focus:after,
+	&:hover:after {
+		border-color: $btn-font-color;
 	}
 
-	&:disabled {
-		background-position: -85px -657px;
+	&:disabled:after {
+		border-color: $btn-chevron-color;
 	}
 }
 
