@@ -108,7 +108,7 @@ $menu-main-icons: (
 				@include set-chevron-color($menu-main-chevron-color);
 
 				&::after {
-					right: 15px;
+					right: 11px;
 
 					@if $menu-main-icons-opacity < 1 {
 						opacity: $menu-main-icons-opacity;

@@ -2373,9 +2373,8 @@ $icon-widget-btn: (
 
 .btn-time-left,
 .btn-time-right {
-	background: none;
+	background-color: transparent;
 	content: '';
-	position: relative;
 	height: 24px;
 	width: 24px;
 	border: 1px solid transparent;

@@ -607,7 +607,7 @@ footer {
   .menu-main > li.has-submenu > a::after {
     border-color: #FFFFFF transparent transparent #FFFFFF; }
   .menu-main > li.has-submenu > a::after {
-    right: 15px;
+    right: 11px;
     opacity: 0.75;
     transition: transform 0.3s, opacity 0.3s; }
   .menu-main > li.has-submenu > a:hover::after, .menu-main > li.has-submenu > a:focus::after {
@@ -2319,9 +2319,8 @@ button {
 
 .btn-time-left,
 .btn-time-right {
-  background: none;
+  background-color: transparent;
   content: '';
-  position: relative;
   height: 24px;
   width: 24px;
   border: 1px solid transparent;
