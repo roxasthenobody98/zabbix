@@ -153,9 +153,15 @@ class CMacroValue extends CInput {
 		}
 
 		$elements[] = (new CButtonDropdown($name.'[type]',  $value_type, [
-				['label' => _('Text'), 'value' => ZBX_MACRO_TYPE_TEXT, 'class' => ZBX_STYLE_ICON_TEXT],
-				['label' => _('Secret text'), 'value' => ZBX_MACRO_TYPE_SECRET, 'class' => ZBX_STYLE_ICON_INVISIBLE],
-				['label' => _('Vault secret'), 'value' => ZBX_MACRO_TYPE_VAULT, 'class' => ZBX_STYLE_ICON_SECRET_TEXT]
+				'items' => [
+					['label' => _('Text'), 'value' => ZBX_MACRO_TYPE_TEXT, 'class' => ZBX_STYLE_ICON_TEXT],
+					['label' => _('Secret text'), 'value' => ZBX_MACRO_TYPE_SECRET,
+						'class' => ZBX_STYLE_ICON_INVISIBLE
+					],
+					['label' => _('Vault secret'), 'value' => ZBX_MACRO_TYPE_VAULT,
+						'class' => ZBX_STYLE_ICON_SECRET_TEXT
+					]
+				]
 			]))
 				->addClass($dropdown_btn_class)
 				->setAttribute('disabled', ($readonly !== null) ? 'disabled' : null)

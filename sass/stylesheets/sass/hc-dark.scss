@@ -54,6 +54,7 @@ $menu-main-selected-bg-color: #ffffff;
 $menu-main-selected-border-color: #0c0c0c;
 $menu-main-expanded-color: #ffffff;
 $menu-main-expanded-bg-color: #0c0c0c;
+$menu-main-chevron-color: #000000;
 
 $menu-main-submenu-color: #0c0c0c;
 $menu-main-submenu-bg-color: #cccccc;
@@ -171,6 +172,8 @@ $btn-back-map-background-color: rgba(0, 0, 0, .8);
 $btn-back-text-color: #ffffff;
 $btn-back-background-hover: #8f8f8f;
 
+$btn-chevron-color: #ffffff;
+
 // Links
 $link-color: #f8f8f8;
 $link-hover-color: #ffffff;
@@ -267,12 +270,10 @@ $dashboard-my-bg-color: #e0e0e0;
 		&.is-expanded > a,
 		& > a:hover,
 		& > a:focus {
+			@include set-chevron-color($menu-main-chevron-hover-color);
+
 			&::before {
 				background-position-x: -570px;
-			}
-
-			&::after {
-				background-position-x: -606px;
 			}
 		}
 	}
@@ -466,8 +467,8 @@ $icon-widget-btn: (
 	iterator-page-previous: url($sprite-path) no-repeat -397px -657px,
 	iterator-page-next: url($sprite-path) no-repeat -395px -623px,
 	widget-action: url($sprite-path) no-repeat -318px -618px,
-	widget-collapse: url($sprite-path) no-repeat -318px -654px,
-	widget-expand: url($sprite-path) no-repeat -318px -690px,
+	widget-collapse: none,
+	widget-expand: none,
 	widget-edit: url($sprite-path) no-repeat -354px -619px,
 	alarm-on: url($sprite-path) no-repeat -318px -546px,
 	alarm-off: url($sprite-path) no-repeat -318px -582px,

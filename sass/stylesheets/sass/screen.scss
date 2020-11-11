@@ -18,6 +18,7 @@ $browser-sprite-path: '../img/browser-sprite.png?20200407';
 
 @import "utils/indicator";
 @import "utils/scrollable";
+@import "utils/chevron";
 
 @import "layout/grid";
 @import "layout/header";
@@ -2056,6 +2057,10 @@ button {
 			}
 		}
 	}
+
+	&[aria-expanded="true"] {
+		@include btn-hover-active($btn-font-color, $btn-bg-color);
+	}
 }
 
 .btn-grey {
@@ -2148,8 +2153,8 @@ $icon-widget-btn: (
 	iterator-page-previous: url($sprite-path) no-repeat -85px -657px,
 	iterator-page-next: url($sprite-path) no-repeat -83px -623px,
 	widget-action: url($sprite-path) no-repeat -6px -618px,
-	widget-collapse: url($sprite-path) no-repeat -6px -654px,
-	widget-expand: url($sprite-path) no-repeat -6px -689px,
+	widget-collapse: none,
+	widget-expand: none,
 	widget-edit: url($sprite-path) no-repeat -42px -619px,
 	alarm-on: url($sprite-path) no-repeat -6px -546px,
 	alarm-off: url($sprite-path) no-repeat -6px -582px,
@@ -2175,6 +2180,23 @@ $icon-widget-btn: (
 		background: $bgimage;
 		@extend %btn-widget;
 	}
+}
+
+.btn-widget-collapse,
+.btn-widget-expand {
+	position: relative;
+	@extend %chevron;
+
+	&::after {
+		right: 1px;
+		width: 7px;
+		height: 7px;
+		border-width: 2px;
+	}
+}
+
+.btn-widget-collapse {
+	@include set-chevron-direction(up);
 }
 
 // Time selection.
@@ -2355,48 +2377,47 @@ $icon-widget-btn: (
 
 .btn-time-left,
 .btn-time-right {
-	background: url($sprite-path) no-repeat;
+	background-color: transparent;
 	content: '';
-	border: 0;
 	height: 24px;
 	width: 24px;
+	border: 1px solid transparent;
 	vertical-align: top;
+	@extend %chevron;
+
+	&::after {
+		width: 7px;
+		height: 7px;
+		border-width: 2px;
+	}
 
 	&:focus,
 	&:hover {
 		border: 1px solid $ui-border-color;
 		@include btn-hover-active($btn-font-color, $btn-bg-color);
+		@include set-chevron-color($btn-font-color);
 	}
 
 	&:disabled {
 		border: 0;
 		opacity: .4;
-	}
-}
-
-.btn-time-right {
-	background-position: -83px -623px;
-
-	&:focus,
-	&:hover {
-		background-position: -396px -624px;
-	}
-
-	&:disabled {
-		background-position: -83px -623px;
+		@include set-chevron-color($btn-chevron-color);
 	}
 }
 
 .btn-time-left {
-	background-position: -85px -657px;
+	@include set-chevron-direction(left);
 
-	&:focus,
-	&:hover {
-		background-position: -398px -658px;
+	&::after {
+		right: 1px;
 	}
+}
 
-	&:disabled {
-		background-position: -85px -657px;
+.btn-time-right {
+	@include set-chevron-direction(right);
+
+	&::after {
+		right: -1px;
 	}
 }
 
@@ -7094,57 +7115,13 @@ table.preprocessing-test-results {
 	}
 }
 
-.btn-toggle-chevron {
-	position: relative;
-
-	&[aria-expanded="true"] {
-		@include btn-hover-active($btn-font-color, $btn-bg-color);
-	}
+.btn-dropdown-toggle {
+	@extend %chevron;
+	@include set-chevron-color($btn-alt-font-color);
 
 	&::after {
-		content: '';
-		position: absolute;
-		right: 8px;
-		top: calc(50% - 3px);
-		width: 5px;
-		height: 5px;
-		border-top: 1px solid $btn-alt-font-color;
-		border-right: 1px solid $btn-alt-font-color;
-		transform: rotate(135deg) translate(-1px,1px);
-		transition: transform .3s;
+		transition: transform 0s;
 	}
-
-	&[disabled] {
-		&::after {
-			border-top-color: $btn-disabled-font-color;
-			border-right-color: $btn-disabled-font-color;
-		}
-	}
-
-	&:enabled {
-		&:active,
-		&[aria-expanded="true"] {
-			&::after {
-				transform: rotate(315deg) translate(-1px,1px);
-			}
-		}
-
-		&:hover,
-		&:focus,
-		&:active,
-		&[aria-expanded="true"] {
-			&::after {
-				border-top-color:  $btn-font-color;
-				border-right-color: $btn-font-color;
-			}
-		}
-	}
-}
-
-.btn-dropdown-toggle {
-	white-space: nowrap;
-	overflow: hidden;
-	text-indent: -200px;
 
 	&[class*='icon-'] {
 		padding-left: 22px;
@@ -7160,44 +7137,36 @@ table.preprocessing-test-results {
 		}
 
 		&::after {
-			top: 6px;
+			top: 11px;
 			right: 2px;
+			width: 3px;
+			height: 3px;
 		}
 	}
 
-	&::after {
-		position: absolute;
-		top: 7px;
-		right: 6px;
-		width: 10px;
-		height: 10px;
-		content: '';
-		background: url($sprite-path) no-repeat -547px -431px;
+	&#export_btn {
+		&::after {
+			right: 4px;
+			width: 5px;
+			height: 5px;
+		}
+	}
+
+	&[disabled] {
+		@include set-chevron-color($btn-disabled-font-color);
 	}
 
 	&:enabled {
-		&:hover,
-		&:focus,
-		&:active {
-			&::after {
-				background-position: -604px -431px;
-			}
-		}
-	}
-
-	&[aria-expanded="true"] {
-		@include btn-hover-active($btn-font-color, $btn-bg-color);
-
-		&::after {
-			background: url($sprite-path) no-repeat -604px -503px;
+		&:active,
+		&[aria-expanded="true"] {
+			@include set-chevron-direction(up);
 		}
 
 		&:hover,
 		&:focus,
-		&:active {
-			&::after {
-				background: url($sprite-path) no-repeat -604px -503px;
-			}
+		&:active,
+		&[aria-expanded="true"] {
+			@include set-chevron-color($btn-font-color);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 $menu-main-icons-opacity: .75 !default;
 
-$menu-main-arrow-bg-position: -606px -434px !default;
-$menu-main-arrow-hover-bg-position: -606px -434px !default;
+$menu-main-chevron-color: #FFFFFF !default;
+$menu-main-chevron-hover-color: #FFFFFF !default;
 
 $menu-main-icons: (
 		dashboard: -540px -664px,
@@ -104,15 +104,12 @@ $menu-main-icons: (
 
 		&.has-submenu {
 			& > a {
+				@extend %chevron;
+				@include set-chevron-color($menu-main-chevron-color);
+
 				&::after {
-					content: '';
-					position: absolute;
-					top: 19px;
-					right: 14px;
-					width: 6px;
-					height: 4px;
-					background: url($sprite-path) no-repeat $menu-main-arrow-bg-position;
-					transform: rotate(0deg);
+					right: 11px;
+
 					@if $menu-main-icons-opacity < 1 {
 						opacity: $menu-main-icons-opacity;
 					}
@@ -126,8 +123,6 @@ $menu-main-icons: (
 				&:hover,
 				&:focus {
 					&::after {
-						background-position: $menu-main-arrow-hover-bg-position;
-
 						@if $menu-main-icons-opacity < 1 {
 							opacity: 1;
 						}
@@ -137,10 +132,7 @@ $menu-main-icons: (
 
 			&.is-expanded {
 				& > a {
-					&::after {
-						background-position: $menu-main-arrow-hover-bg-position;
-						transform: rotate(-180deg);
-					}
+					@include set-chevron-direction(up);
 
 					@if $menu-main-icons-opacity < 1 {
 						&::before,

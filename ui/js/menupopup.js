@@ -968,18 +968,7 @@ function getMenuPopupDropdown(options, trigger_elem) {
 			row.class = item.class;
 		}
 
-		if (options.toggle_class) {
-			row.clickCallback = () => {
-				jQuery(trigger_elem)
-					.removeClass()
-					.addClass(['btn-alt', options.toggle_class, item.class].join(' '));
-
-				jQuery('input[type=hidden]', jQuery(trigger_elem).parent())
-					.val(item.value)
-					.trigger('change');
-			}
-		}
-		else if (options.submit_form) {
+		if (options.submit_form) {
 			row.url = 'javascript:void(0);';
 			row.clickCallback = () => {
 				var $_form = trigger_elem.closest('form');
@@ -990,6 +979,17 @@ function getMenuPopupDropdown(options, trigger_elem) {
 
 				$_form.attr("action", item.url);
 				$_form.submit();
+			}
+		}
+		else if (options.toggle_class) {
+			row.clickCallback = () => {
+				jQuery(trigger_elem)
+					.removeClass()
+					.addClass(['btn-alt', options.toggle_class, item.class].join(' '));
+
+				jQuery('input[type=hidden]', jQuery(trigger_elem).parent())
+					.val(item.value)
+					.trigger('change');
 			}
 		}
 
@@ -1338,6 +1338,10 @@ jQuery(function($) {
 				options = $(menu_popup).data('menu_popup') || {};
 
 			if (!menu_popup.is(trigger_elem) && menu_popup.has(trigger_elem).length === 0) {
+				if (trigger_elem && typeof trigger_elem.attr('aria-expanded') !== 'undefined') {
+					trigger_elem.attr('aria-expanded', 'false');
+				}
+
 				$('[aria-expanded="true"]', trigger_elem).attr({'aria-expanded': 'false'});
 				menu_popup.fadeOut(0);
 

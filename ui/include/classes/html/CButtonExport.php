@@ -47,41 +47,35 @@ class CButtonExport extends CList {
 							->getUrl()
 					).');'
 				),
-			(new CButton('export', '&#8203;'))
-				->addClass(ZBX_STYLE_BTN_ALT)
-				->addClass(ZBX_STYLE_BTN_TOGGLE_CHEVRON)
-				->setMenuPopup([
-					'type' => 'dropdown',
-					'data' => [
-						'submit_form' => true,
-						'items' => [
-							[
-								'label' => _('YAML'),
-								'url' => (new CUrl('zabbix.php'))
-											->setArgument('action', $action)
-											->setArgument('format', CExportWriterFactory::YAML)
-											->setArgument('backurl', $back_url)
-											->getUrl()
-							],
-							[
-								'label' => _('XML'),
-								'url' => (new CUrl('zabbix.php'))
-											->setArgument('action', $action)
-											->setArgument('format', CExportWriterFactory::XML)
-											->setArgument('backurl', $back_url)
-											->getUrl()
-							],
-							[
-								'label' => _('JSON'),
-								'url' => (new CUrl('zabbix.php'))
-											->setArgument('action', $action)
-											->setArgument('format', CExportWriterFactory::JSON)
-											->setArgument('backurl', $back_url)
-											->getUrl()
-							]
-						]
+			(new CButtonDropdown('export', '&#8203;', [
+				'submit_form' => true,
+				'items' => [
+					[
+						'label' => _('YAML'),
+						'url' => (new CUrl('zabbix.php'))
+									->setArgument('action', $action)
+									->setArgument('format', CExportWriterFactory::YAML)
+									->setArgument('backurl', $back_url)
+									->getUrl()
+					],
+					[
+						'label' => _('XML'),
+						'url' => (new CUrl('zabbix.php'))
+									->setArgument('action', $action)
+									->setArgument('format', CExportWriterFactory::XML)
+									->setArgument('backurl', $back_url)
+									->getUrl()
+					],
+					[
+						'label' => _('JSON'),
+						'url' => (new CUrl('zabbix.php'))
+									->setArgument('action', $action)
+									->setArgument('format', CExportWriterFactory::JSON)
+									->setArgument('backurl', $back_url)
+									->getUrl()
 					]
-				])
+				]
+			]))
 		]);
 
 		$this->addClass(ZBX_STYLE_BTN_SPLIT);
