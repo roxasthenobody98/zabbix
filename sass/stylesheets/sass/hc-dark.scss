@@ -264,13 +264,10 @@ $multiselect-selected-bg-color: #222222;
 		&.is-expanded > a,
 		& > a:hover,
 		& > a:focus {
+			@include set-chevron-color($menu-main-chevron-hover-color);
+
 			&::before {
 				background-position-x: -570px;
-			}
-
-			&::after {
-				border-top-color: $menu-main-chevron-hover-color;
-				border-right-color: $menu-main-chevron-hover-color;
 			}
 		}
 	}

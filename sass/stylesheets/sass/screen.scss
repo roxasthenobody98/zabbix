@@ -17,6 +17,7 @@ $browser-sprite-path: '../img/browser-sprite.png?20200407';
 @import "base/common";
 
 @import "utils/scrollable";
+@import "utils/chevron";
 
 @import "layout/grid";
 @import "layout/header";
@@ -2177,25 +2178,21 @@ $icon-widget-btn: (
 	}
 }
 
-%btn-chevron {
-	content: ' ';
-	position: absolute;
-	top: calc(50% - 4px);
-	left: 7px;
-	width: 7px;
-	height: 7px;
-	border-top: 2px solid $btn-chevron-color;
-	border-right: 2px solid $btn-chevron-color;
+.btn-widget-collapse,
+.btn-widget-expand {
+	position: relative;
+	@extend %chevron;
+
+	&::after {
+		right: 1px;
+		width: 7px;
+		height: 7px;
+		border-width: 2px;
+	}
 }
 
-.btn-widget-collapse::after {
-	transform: rotate(315deg) translate(-1px, 1px);
-	@extend %btn-chevron;
-}
-
-.btn-widget-expand::after {
-	transform: rotate(135deg) translate(-2px, 2px);
-	@extend %btn-chevron;
+.btn-widget-collapse {
+	@include set-chevron-direction(up);
 }
 
 // Time selection.
@@ -2383,40 +2380,41 @@ $icon-widget-btn: (
 	width: 24px;
 	border: 1px solid transparent;
 	vertical-align: top;
+	@extend %chevron;
+
+	&::after {
+		width: 7px;
+		height: 7px;
+		border-width: 2px;
+	}
 
 	&:focus,
 	&:hover {
 		border: 1px solid $ui-border-color;
 		@include btn-hover-active($btn-font-color, $btn-bg-color);
+		@include set-chevron-color($btn-font-color);
 	}
 
 	&:disabled {
 		border: 0;
 		opacity: .4;
+		@include set-chevron-color($btn-chevron-color);
 	}
 }
 
-.btn-time-left::after {
-	transform: rotate(225deg) translate(0px, 1px);
-	@extend %btn-chevron;
+.btn-time-left {
+	@include set-chevron-direction(left);
+
+	&::after {
+		right: 1px;
+	}
 }
 
-.btn-time-right::after {
-	transform: rotate(45deg) translate(-2px, 1px);
-	@extend %btn-chevron;
-}
-
-.btn-time-left,
 .btn-time-right {
-	&:focus::after,
-	&:hover::after {
-		border-top-color: $btn-font-color;
-		border-right-color: $btn-font-color;
-	}
+	@include set-chevron-direction(right);
 
-	&:disabled::after {
-		border-top-color: $btn-chevron-color;
-		border-right-color: $btn-chevron-color;
+	&::after {
+		right: -1px;
 	}
 }
 
@@ -7078,19 +7076,11 @@ table.preprocessing-test-results {
 }
 
 .btn-dropdown-toggle {
-	position: relative;
+	@extend %chevron;
+	@include set-chevron-color($btn-alt-font-color);
 
 	&::after {
-		content: '';
-		position: absolute;
-		right: 8px;
-		top: calc(50% - 3px);
-		width: 5px;
-		height: 5px;
-		border-top: 1px solid $btn-alt-font-color;
-		border-right: 1px solid $btn-alt-font-color;
-		transform: rotate(135deg) translate(-1px,1px);
-		transition: transform .3s;
+		transition: transform 0s;
 	}
 
 	&[class*='icon-'] {
@@ -7107,36 +7097,28 @@ table.preprocessing-test-results {
 		}
 
 		&::after {
-			top: 9px;
-			right: 5px;
+			top: 11px;
+			right: 2px;
 			width: 3px;
 			height: 3px;
 		}
 	}
 
 	&[disabled] {
-		&::after {
-			border-top-color: $btn-disabled-font-color;
-			border-right-color: $btn-disabled-font-color;
-		}
+		@include set-chevron-color($btn-disabled-font-color);
 	}
 
 	&:enabled {
 		&:active,
 		&[aria-expanded="true"] {
-			&::after {
-				transform: rotate(315deg) translate(-1px,1px);
-			}
+			@include set-chevron-direction(up);
 		}
 
 		&:hover,
 		&:focus,
 		&:active,
 		&[aria-expanded="true"] {
-			&::after {
-				border-top-color:  $btn-font-color;
-				border-right-color: $btn-font-color;
-			}
+			@include set-chevron-color($btn-font-color);
 		}
 	}
 }

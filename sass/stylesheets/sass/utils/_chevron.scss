@@ -1,0 +1,38 @@
+%chevron {
+	position: relative;
+
+	&::after {
+		content: ' ';
+		position: absolute;
+		top: 50%;
+		right: 0;
+		width: 3px;
+		height: 3px;
+		border: 1px solid;
+		border-color: $btn-chevron-color transparent transparent $btn-chevron-color;
+		transform: rotate(225deg) translate(-25%, -25%);
+		transform-origin: 0 0;
+		transition: transform .3s;
+	}
+}
+
+@mixin set-chevron-color($color) {
+	&::after {
+		border-color: $color transparent transparent $color;
+	}
+}
+
+@mixin set-chevron-direction($direction) {
+	$direction-map: (
+		up: 45deg,
+		right: 135deg,
+		down: 225deg,
+		left: 315deg
+	);
+
+	&::after {
+		@if map-has-key($direction-map, $direction) {
+			transform: rotate(map-get($direction-map, $direction)) translate(-25%, -25%);
+		}
+	}
+}

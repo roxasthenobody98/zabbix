@@ -104,17 +104,11 @@ $menu-main-icons: (
 
 		&.has-submenu {
 			& > a {
+				@extend %chevron;
+				@include set-chevron-color($menu-main-chevron-color);
+
 				&::after {
-					content: '';
-					position: absolute;
-					top: calc(50% - 1px);
 					right: 15px;
-					width: 3px;
-					height: 3px;
-					border-top: 1px solid $menu-main-chevron-color;
-					border-right: 1px solid $menu-main-chevron-color;
-					transform: rotate(135deg) translate(-1px,1px);
-					transition: transform .3s;
 
 					@if $menu-main-icons-opacity < 1 {
 						opacity: $menu-main-icons-opacity;
@@ -138,9 +132,7 @@ $menu-main-icons: (
 
 			&.is-expanded {
 				& > a {
-					&::after {
-						transform: rotate(315deg) translate(-1px,1px);
-					}
+					@include set-chevron-direction(up);
 
 					@if $menu-main-icons-opacity < 1 {
 						&::before,

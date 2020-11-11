@@ -1276,6 +1276,10 @@ jQuery(function($) {
 				options = $(menu_popup).data('menu_popup') || {};
 
 			if (!menu_popup.is(trigger_elem) && menu_popup.has(trigger_elem).length === 0) {
+				if (trigger_elem && typeof trigger_elem.attr('aria-expanded') !== 'undefined') {
+					trigger_elem.attr('aria-expanded', 'false');
+				}
+
 				$('[aria-expanded="true"]', trigger_elem).attr({'aria-expanded': 'false'});
 				menu_popup.fadeOut(0);
 
