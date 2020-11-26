@@ -1040,7 +1040,7 @@ function getItemsDataOverview(array $groupids, $application, $viewMode,
 	]);
 
 	$db_triggers = getTriggersWithActualSeverity([
-		'output' => ['triggerid', 'priority', 'value'],
+		'output' => ['triggerid', 'priority', 'value', 'lastchange'],
 		'selectItems' => ['itemid'],
 		'groupids' => $groupids ? $groupids : null,
 		'applicationids' => $applicationids,
@@ -1062,6 +1062,7 @@ function getItemsDataOverview(array $groupids, $application, $viewMode,
 					$db_item['triggerid'] = $db_trigger['triggerid'];
 					$db_item['priority'] = $db_trigger['priority'];
 					$db_item['value'] = $db_trigger['value'];
+					$db_item['lastchange'] = $db_trigger['lastchange'];
 				}
 
 				$db_item['acknowledged'] = $db_trigger['problem']['acknowledged'];
@@ -1136,14 +1137,16 @@ function getItemsDataOverview(array $groupids, $application, $viewMode,
 				$item += [
 					'triggerid' => $db_item['triggerid'],
 					'severity' => $db_item['priority'],
-					'tr_value' => $db_item['value']
+					'tr_value' => $db_item['value'],
+					'lastchange' => $db_item['lastchange']
 				];
 			}
 			else {
 				$item += [
 					'triggerid' => null,
 					'severity' => null,
-					'tr_value' => null
+					'tr_value' => null,
+					'lastchange' => null
 				];
 			}
 
@@ -1238,6 +1241,16 @@ function getItemDataOverviewCells($tableRow, $ithosts, $hostName) {
 			->setMenuPopup(CMenuPopupHelper::getHistory($item['itemid']))
 			->addClass(ZBX_STYLE_CURSOR_POINTER)
 			->addClass(ZBX_STYLE_NOWRAP);
+	}
+
+	$config = select_config();
+	$config['blink_period'] = timeUnitToSeconds($config['blink_period']);
+	$duration = time() - $item['lastchange'];
+
+	if ($config['blink_period'] > 0 && $duration < $config['blink_period']) {
+		$column->addClass('blink');
+		$column->setAttribute('data-time-to-blink', $config['blink_period'] - $duration);
+		$column->setAttribute('data-toggle-class', ZBX_STYLE_BLINK_HIDDEN);
 	}
 
 	$tableRow[] = $column;
