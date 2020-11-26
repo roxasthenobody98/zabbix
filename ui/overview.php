@@ -135,7 +135,10 @@ $data = [
 	'triggers_by_name' => [],
 	'hosts_by_name' => [],
 	'exceeded_hosts' => false,
-	'exceeded_trigs' => false
+	'exceeded_trigs' => false,
+	'config' => [
+		'blink_period' => CSettingsHelper::get(CSettingsHelper::BLINK_PERIOD)
+	]
 ];
 
 // fetch trigger data
@@ -224,10 +227,6 @@ if ($type == SHOW_TRIGGERS) {
 	) = getTriggersOverviewData($groupids, $filter['application'], $host_options, $trigger_options, $problem_options);
 
 	$data['filter'] = $filter;
-
-	$data['config'] = [
-		'blink_period' => CSettingsHelper::get(CSettingsHelper::BLINK_PERIOD)
-	];
 
 	// Render view.
 	echo (new CView('monitoring.overview.triggers', $data))->getOutput();
