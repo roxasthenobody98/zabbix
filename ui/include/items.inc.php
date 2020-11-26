@@ -1014,7 +1014,7 @@ function getDataOverviewCellData(array &$db_hosts, array &$db_items, array &$ite
 	$history = Manager::History()->getLastValues($visible_items, 1, ZBX_HISTORY_PERIOD);
 
 	$db_triggers = getTriggersWithActualSeverity([
-		'output' => ['triggerid', 'priority', 'value'],
+		'output' => ['triggerid', 'priority', 'value', 'lastchange'],
 		'selectItems' => ['itemid'],
 		'itemids' => array_keys($visible_items),
 		'monitored' => true,
@@ -1305,11 +1305,23 @@ function getItemDataOverviewCell(array $item, ?array $trigger = null): CCol {
 		$value = formatHistoryValue($item['value'], $item);
 	}
 
-	return (new CCol([$value, $ack]))
+	$column = (new CCol([$value, $ack]))
 		->addClass($css)
 		->setMenuPopup(CMenuPopupHelper::getHistory($item['itemid']))
 		->addClass(ZBX_STYLE_CURSOR_POINTER)
 		->addClass(ZBX_STYLE_NOWRAP);
+
+	$config = select_config();
+	$config['blink_period'] = timeUnitToSeconds($config['blink_period']);
+	$duration = time() - $trigger['lastchange'];
+
+	if ($config['blink_period'] > 0 && $duration < $config['blink_period']) {
+		$column->addClass('blink');
+		$column->setAttribute('data-time-to-blink', $config['blink_period'] - $duration);
+		$column->setAttribute('data-toggle-class', ZBX_STYLE_BLINK_HIDDEN);
+	}
+
+	return $column;
 }
 
 /**

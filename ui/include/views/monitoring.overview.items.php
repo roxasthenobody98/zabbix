@@ -23,6 +23,8 @@
  * @var CView $this
  */
 
+zbx_add_post_js('jqBlink.blink();');
+
 // hint table
 $help_hint = (new CList())
 	->addClass(ZBX_STYLE_NOTIF_BODY)
@@ -35,6 +37,34 @@ for ($severity = TRIGGER_SEVERITY_NOT_CLASSIFIED; $severity < TRIGGER_SEVERITY_C
 		new CTag('h4', true, getSeverityName($severity, $data['config'])),
 		(new CTag('p', true, _('PROBLEM')))->addClass(ZBX_STYLE_GREY)
 	]);
+}
+
+// blinking preview in help popup (only if blinking is enabled)
+$blink_period = timeUnitToSeconds($data['config']['blink_period']);
+if ($blink_period > 0) {
+	$indic_container = (new CDiv())
+		->addClass(ZBX_STYLE_NOTIF_INDIC_CONTAINER)
+		->addItem(
+			(new CDiv())
+				->addClass(ZBX_STYLE_NOTIF_INDIC)
+				->addClass(getSeverityStyle(null, false))
+				->addClass('blink')
+				->setAttribute('data-toggle-class', ZBX_STYLE_BLINK_HIDDEN)
+		);
+	for ($severity = TRIGGER_SEVERITY_NOT_CLASSIFIED; $severity < TRIGGER_SEVERITY_COUNT; $severity++) {
+		$indic_container->addItem(
+			(new CDiv())
+				->addClass(ZBX_STYLE_NOTIF_INDIC)
+				->addClass(getSeverityStyle($severity))
+				->addClass('blink')
+				->setAttribute('data-toggle-class', ZBX_STYLE_BLINK_HIDDEN)
+			);
+	}
+	$indic_container->addItem(
+		(new CTag('p', true, _s('Age less than %1$s', convertUnitsS($blink_period))))->addClass(ZBX_STYLE_GREY)
+	);
+
+	$help_hint->addItem($indic_container);
 }
 
 // header right
