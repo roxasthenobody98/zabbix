@@ -319,8 +319,11 @@ static int	prepare_count_parameters(const AGENT_REQUEST *request, AGENT_RESULT *
 
 	if (0 == types_incl)
 		types_incl = ZBX_FT_ALLMASK;
-
+#if defined(_WINDOWS) || defined(__MINGW32__)
+	*types_out = types_incl & (~types_excl) & (ZBX_FT_ALLMASK | ZBX_FT_FHL);
+#else
 	*types_out = types_incl & (~types_excl) & ZBX_FT_ALLMASK;
+#endif
 
 	/* min/max output variables must be already initialized to default values */
 
@@ -990,16 +993,23 @@ static int	vfs_dir_count(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE ti
 						++count;
 					break;
 				default:	/* not a directory => regular file */
-					if (0 != (types & ZBX_FT_FILE) && 0 != match)
+					if (0 != match)
 					{
-						wpath = zbx_utf8_to_unicode(path);
-						if (FAIL == link_processed(data.dwFileAttributes, wpath, &descriptors,
-								path))
+						if (0 != (types & ZBX_FT_FHL))
 						{
 							++count;
 						}
+						else if (0 != (types & ZBX_FT_FILE))
+						{
+							wpath = zbx_utf8_to_unicode(path);
+							if (FAIL == link_processed(data.dwFileAttributes, wpath,
+									&descriptors, path))
+							{
+								++count;
+							}
 
-						zbx_free(wpath);
+							zbx_free(wpath);
+						}
 					}
 free_path:
 					zbx_free(path);

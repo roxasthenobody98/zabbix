@@ -39,8 +39,14 @@
 #define ZBX_FT_FIFO		0x040
 #define ZBX_FT_ALL		0x080
 #define ZBX_FT_DEV		0x100
+#if defined(_WINDOWS) || defined(__MINGW32__)
+#define ZBX_FT_FHL	0x200
+#define ZBX_FT_OVERFLOW	0x400
+#define ZBX_FT_TEMPLATE	"file\0dir\0sym\0sock\0bdev\0cdev\0fifo\0all\0dev\0fhl\0"
+#else
 #define ZBX_FT_OVERFLOW	0x200
 #define ZBX_FT_TEMPLATE	"file\0dir\0sym\0sock\0bdev\0cdev\0fifo\0all\0dev\0"
+#endif
 #define ZBX_FT_ALLMASK	(ZBX_FT_FILE | ZBX_FT_DIR | ZBX_FT_SYM | ZBX_FT_SOCK | ZBX_FT_BDEV | ZBX_FT_CDEV | ZBX_FT_FIFO)
 #define ZBX_FT_DEV2		(ZBX_FT_BDEV | ZBX_FT_CDEV)
 
