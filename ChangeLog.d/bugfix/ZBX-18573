@@ -1,0 +1,1 @@
+...G...... [ZBX-18573] added new type to 'types_incl' parameter for vfs.dir.count[] item to improve performance on Windows (viktors)
