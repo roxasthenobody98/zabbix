@@ -1,0 +1,2144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+   <version>5.0</version>
+   <date>2020-12-09T06:13:07Z</date>
+   <groups>
+      <group>
+         <name>Templates/Applications</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App Aranet Cloud</template>
+         <name>Template App Aranet Cloud</name>
+         <description>Template tooling version used: 0.38</description>
+         <groups>
+            <group>
+               <name>Templates/Applications</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>Aranet</name>
+            </application>
+            <application>
+               <name>Zabbix raw items</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>Aranet: Sensors discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.sensor.discovery</key>
+               <delay>0</delay>
+               <history>0</history>
+               <trends>0</trends>
+               <value_type>TEXT</value_type>
+               <description>Discovery for Aranet Cloud sensors</description>
+               <applications>
+                  <application>
+                     <name>Zabbix raw items</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>JAVASCRIPT</type>
+                     <params>var input = JSON.parse(value),
+    output = [];
+
+input.forEach(function (sensor) {
+    sensor.metrics.forEach(function (metric) {
+        output.push(
+            {
+                '{#SENSOR_ID}': sensor.id,
+                '{#SENSOR_NAME}': sensor.name,
+                '{#GATEWAY_ID}': sensor.gateway.id,
+                '{#GATEWAY_NAME}': sensor.gateway.name,
+                '{#METRIC}': metric.name,
+                '{#UNIT}': metric.unit
+            }
+        );
+    })
+});
+
+return JSON.stringify(output);</params>
+                  </step>
+                  <step>
+                     <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                     <params>15m</params>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>zabbix[uptime]</key>
+               </master_item>
+            </item>
+            <item>
+               <name>Aranet: Get data</name>
+               <type>INTERNAL</type>
+               <key>zabbix[uptime]</key>
+               <history>0</history>
+               <trends>0</trends>
+               <value_type>TEXT</value_type>
+               <applications>
+                  <application>
+                     <name>Zabbix raw items</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>JAVASCRIPT</type>
+                     <params>var Aranet = {
+  params: {},
+  auth_token: null,
+  refresh_token: null,
+  space_id: null,
+
+  setParams: function (params) {
+      ['api_endpoint', 'username', 'password', 'space_name'].forEach(function (field) {
+          if (typeof params !== 'object' || typeof params[field] === 'undefined'
+                || params[field] === '') {
+              throw 'Required param is not set: "' + field + '".';
+          }
+      });
+
+      Aranet.params = params;
+      if (typeof Aranet.params.api_endpoint === 'string') {
+          if (!Aranet.params.api_endpoint.endsWith('/')) {
+              Aranet.params.api_endpoint += '/';
+          }
+      }
+  },
+
+  request: function (method, query, data) {
+      var response,
+          request = new CurlHttpRequest(),
+          url = Aranet.params.api_endpoint + query;
+
+      request.AddHeader('Content-Type: application/json');
+
+      if (Aranet.auth_token !== null) {
+          request.AddHeader('Authorization: Bearer ' + Aranet.auth_token);
+      }
+
+      if (typeof data !== 'undefined') {
+          data = JSON.stringify(data);
+      }
+
+      switch (method) {
+          case 'get':
+              response = request.Get(url, data);
+              break;
+
+          case 'post':
+              response = request.Post(url, data);
+              break;
+
+          default:
+              throw 'Unsupported HTTP request method: ' + method;
+      }
+
+      Zabbix.Log(4, '[ Aranet scraper ] Received response with status code ' + request.Status() + ': ' + response);
+
+      if (request.Status() &lt; 200 || request.Status() &gt;= 300) {
+          var message = 'Request failed with status code ' + request.Status();
+
+          message += ': ' + response;
+          throw message;
+      }
+
+      if (response !== null) {
+          try {
+              response = JSON.parse(response);
+          }
+          catch (error) {
+              throw 'Failed to parse response received from Aranet Cloud. Check debug log for more information.';
+          }
+      }
+
+      return {
+          status: request.Status(),
+          response: response
+      };
+  },
+
+  login: function () {
+      var result,
+          data = {
+              login: Aranet.params.username,
+              passw: Aranet.params.password
+          };
+
+      result = Aranet.request('post', 'user/login', data);
+      if (typeof result.response !== 'object'
+            || typeof result.response.auth === 'undefined'
+            || result.status != 200) {
+          throw 'Cannot login to Aranet Cloud. Check debug log for more information.';
+      }
+
+      Aranet.auth_token = result.response.auth;
+      Aranet.refresh_token = result.response.refresh;
+
+      var spaces = result.response.spaces;
+      for (var key in spaces) {
+          if (spaces[key] == Aranet.params.space_name) {
+              Aranet.space_id = key;
+              break;
+          }
+      }
+
+      return result.response;
+  },
+
+  logout: function () {
+      var result,
+          data = {
+              refresh: Aranet.refresh_token
+          };
+
+      try {
+          result = Aranet.request('post', 'user/logout', data);
+          if (result.status != 204) {
+              throw 'Cannot logout from Aranet Cloud ' + request.Status() + ': ' + result.response;
+          }
+      }
+      catch (error) {
+          Zabbix.Log(4, '[ Aranet scraper ] ' + error)
+      }
+  },
+
+  getMetrics: function () {
+      var result = Aranet.request('get', 'metrics/' + Aranet.space_id);
+
+      if (typeof result.response !== 'object'
+            || typeof result.response.data === 'undefined'
+            || result.status != 200) {
+          throw 'Cannot get metrics data from Aranet Cloud. Check debug log for more information.';
+      };
+
+      return result.response;
+  },
+
+  getSensors: function () {
+      var result = Aranet.request('get', 'sensors/' + Aranet.space_id + '?fields=devices,metrics,telemetry,name');
+
+      if (typeof result.response !== 'object'
+            || typeof result.response.data === 'undefined'
+            || result.status != 200) {
+          throw 'Cannot get sensors data from Aranet Cloud. Check debug log for more information.';
+      };
+
+      return result.response;
+  },
+
+  getGateways: function () {
+      var result = Aranet.request('get', 'gateways/' + Aranet.space_id);
+
+      if (typeof result.response !== 'object'
+            || typeof result.response.devices === 'undefined'
+            || result.status != 200) {
+          throw 'Cannot get gateways data from Aranet Cloud. Check debug log for more information.';
+      };
+
+      return result.response;
+  }
+}
+
+var processed_metrics = {},
+    processed_sensors = [];
+
+try {
+    Aranet.setParams({
+        api_endpoint: '{$ARANET.API.ENDPOINT}',
+        username: '{$ARANET.API.USERNAME}',
+        password: '{$ARANET.API.PASSWORD}',
+        space_name: '{$ARANET.API.SPACE_NAME}'
+    });
+
+    Aranet.login();
+
+    var raw_metrics = Aranet.getMetrics(),
+        raw_sensors = Aranet.getSensors(),
+        raw_gateways = Aranet.getGateways();
+
+    Aranet.logout();
+
+    var items = raw_metrics.data.items;
+    for (item_idx in items) {
+        var unit_name,
+            units = items[item_idx].units;
+
+        units.some(function (unit) {
+            unit_name = unit.name;
+            if (unit.selected) {
+                return true;
+            }
+        });
+
+        processed_metrics[items[item_idx].id] = {
+            name: items[item_idx].name,
+            unit: unit_name
+        }
+
+        delete items[item_idx];
+    }
+
+    var items = raw_sensors.data.items;
+    for (item_idx in items) {
+        var upd_ts = 0,
+            gateway = {},
+            sensor_metrics = [],
+            metrics = items[item_idx].metrics,
+            telemetry = items[item_idx].telemetry;
+
+        if (items[item_idx].name.trim() === '') {
+            continue;
+        }
+
+        for (m_idx in metrics) {
+            var unit = processed_metrics[metrics[m_idx].id];
+
+            if (upd_ts &lt; metrics[m_idx].t) {
+                upd_ts = metrics[m_idx].t;
+            }
+
+            sensor_metrics.push({
+                name: unit.name,
+                unit: unit.unit,
+                value: metrics[m_idx].v
+            });
+        }
+
+        for (var t_idx in telemetry) {
+            var unit = processed_metrics[telemetry[t_idx].id];
+
+            if (upd_ts &lt; telemetry[t_idx].t) {
+                upd_ts = telemetry[t_idx].t;
+            }
+
+            sensor_metrics.push({
+                name: unit.name,
+                unit: unit.unit,
+                value: telemetry[t_idx].v
+            });
+        }
+
+        raw_gateways.devices.some(function (dev) {
+            if (items[item_idx].devices[0].id === dev.id) {
+                gateway = {
+                    id: dev.id,
+                    name: dev.device
+                }
+                return true;
+            }
+        })
+
+        if (upd_ts) {
+            sensor_metrics.push({
+                name: 'Last update',
+                unit: 's',
+                value: upd_ts
+            });
+        }
+
+        processed_sensors.push({
+            id: items[item_idx].id,
+            name: items[item_idx].name,
+            gateway: gateway,
+            metrics: sensor_metrics
+        });
+
+        delete items[item_idx];
+    }
+
+    return JSON.stringify(processed_sensors);
+}
+catch (error) {
+    Zabbix.Log(3, '[ Aranet scraper ] ERROR: ' + error);
+    throw 'Scraping failed: ' + error;
+}</params>
+                  </step>
+               </preprocessing>
+            </item>
+         </items>
+         <discovery_rules>
+            <discovery_rule>
+               <name>Battery voltage discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.battery.voltage.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Battery voltage</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Battery voltage sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.battery.voltage["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{max(5m)} &lt; {$ARANET.BATT.VOLTAGE.MIN.WARN:"{#SENSOR_NAME}"}</expression>
+                           <name>{#METRIC}: Low battery voltage on "[{#GATEWAY_NAME}] {#SENSOR_NAME}" (below {$ARANET.BATT.VOLTAGE.MIN.WARN:"{#SENSOR_NAME}"}{#UNIT} for 5m)</name>
+                           <priority>WARNING</priority>
+                           <dependencies>
+                              <dependency>
+                                 <name>{#METRIC}: Critically low battery voltage on "[{#GATEWAY_NAME}] {#SENSOR_NAME}" (below {$ARANET.BATT.VOLTAGE.MIN.CRIT:"{#SENSOR_NAME}"}{#UNIT} for 5m)</name>
+                                 <expression>{Template App Aranet Cloud:aranet.battery.voltage["{#GATEWAY_ID}", "{#SENSOR_ID}"].max(5m)} &lt; {$ARANET.BATT.VOLTAGE.MIN.CRIT:"{#SENSOR_NAME}"}</expression>
+                              </dependency>
+                           </dependencies>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                           <expression>{max(5m)} &lt; {$ARANET.BATT.VOLTAGE.MIN.CRIT:"{#SENSOR_NAME}"}</expression>
+                           <name>{#METRIC}: Critically low battery voltage on "[{#GATEWAY_NAME}] {#SENSOR_NAME}" (below {$ARANET.BATT.VOLTAGE.MIN.CRIT:"{#SENSOR_NAME}"}{#UNIT} for 5m)</name>
+                           <priority>HIGH</priority>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>CO2 discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.co2.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>CO₂</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud CO2 sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.co2["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{min(5m)} &gt; {$ARANET.CO2.MAX.WARN:"{#SENSOR_NAME}"}</expression>
+                           <name>{#METRIC}: High CO2 level on "[{#GATEWAY_NAME}] {#SENSOR_NAME}" (over {$ARANET.CO2.MAX.WARN:"{#SENSOR_NAME}"}{#UNIT} for 5m)</name>
+                           <priority>WARNING</priority>
+                           <dependencies>
+                              <dependency>
+                                 <name>{#METRIC}: Critically high CO2 level on "[{#GATEWAY_NAME}] {#SENSOR_NAME}" (over {$ARANET.CO2.MAX.CRIT:"{#SENSOR_NAME}"}{#UNIT} for 5m)</name>
+                                 <expression>{Template App Aranet Cloud:aranet.co2["{#GATEWAY_ID}", "{#SENSOR_ID}"].min(5m)} &gt; {$ARANET.CO2.MAX.CRIT:"{#SENSOR_NAME}"}</expression>
+                              </dependency>
+                           </dependencies>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                           <expression>{min(5m)} &gt; {$ARANET.CO2.MAX.CRIT:"{#SENSOR_NAME}"}</expression>
+                           <name>{#METRIC}: Critically high CO2 level on "[{#GATEWAY_NAME}] {#SENSOR_NAME}" (over {$ARANET.CO2.MAX.CRIT:"{#SENSOR_NAME}"}{#UNIT} for 5m)</name>
+                           <priority>HIGH</priority>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Current discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.current.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Current</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Current sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.current["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Differential Pressure discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.diff_pressure.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Differential Pressure</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Differential Pressure sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.diff_pressure["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Distance discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.distance.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Distance</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Distance sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.distance["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Humidity discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.humidity.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Humidity</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud humidity sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.humidity["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{max(5m)} &lt; {$ARANET.HUMIDITY.MIN.WARN:"{#SENSOR_NAME}"}</expression>
+                           <name>{#METRIC}: Low humidity on "[{#GATEWAY_NAME}] {#SENSOR_NAME}" (below {$ARANET.HUMIDITY.MIN.WARN:"{#SENSOR_NAME}"}{#UNIT} for 5m)</name>
+                           <priority>WARNING</priority>
+                           <dependencies>
+                              <dependency>
+                                 <name>{#METRIC}: High humidity on "[{#GATEWAY_NAME}] {#SENSOR_NAME}" (over {$ARANET.HUMIDITY.MAX.WARN:"{#SENSOR_NAME}"}{#UNIT} for 5m)</name>
+                                 <expression>{Template App Aranet Cloud:aranet.humidity["{#GATEWAY_ID}", "{#SENSOR_ID}"].min(5m)} &gt; {$ARANET.HUMIDITY.MAX.WARN:"{#SENSOR_NAME}"}</expression>
+                              </dependency>
+                           </dependencies>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                           <expression>{min(5m)} &gt; {$ARANET.HUMIDITY.MAX.WARN:"{#SENSOR_NAME}"}</expression>
+                           <name>{#METRIC}: High humidity on "[{#GATEWAY_NAME}] {#SENSOR_NAME}" (over {$ARANET.HUMIDITY.MAX.WARN:"{#SENSOR_NAME}"}{#UNIT} for 5m)</name>
+                           <priority>HIGH</priority>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Illuminance discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.illuminance.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Illuminance</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Illuminance sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.illuminance["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Last update discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.last_update.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Last update</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Last update metric</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.last_update["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                        <step>
+                           <type>JAVASCRIPT</type>
+                           <params>return Math.floor(Date.now()/1000 - Number(value));</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{last()} &gt; {$ARANET.LAST_UPDATE.MAX.WARN:"{#SENSOR_NAME}"}</expression>
+                           <name>{#METRIC}: Sensor data "[{#GATEWAY_NAME}] {#SENSOR_NAME}" is not updated (more than {$ARANET.LAST_UPDATE.MAX.WARN:"{#SENSOR_NAME}"})</name>
+                           <priority>WARNING</priority>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>pH discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.ph.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>pH</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud pH sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.ph["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Pore Electrical Conductivity discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.pore_electric_cond.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Pore Electrical Conductivity</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Pore Electrical Conductivity sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.pore_electric_cond["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>PPFD discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.ppfd.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>PPFD</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud PPFD sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.ppfd["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Atmospheric pressure discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.pressure.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Atmospheric Pressure</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud atmospheric pressure sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.pressure["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Pulses Cumulative discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.pulses_cumulative.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Pulses Cumulative</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Pulses Cumulative sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.pulses_cumulative["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Pulses discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.pulses.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Pulses</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Pulses sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.pulses["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>RSSI discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.rssi.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>RSSI</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud RSSI sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.rssi["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Soil Dielectric Permittivity discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.soil_dielectric_perm.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Soil Dielectric Permittivity</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Soil Dielectric Permittivity sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.soil_dielectric_perm["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Soil Electrical Conductivity discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.soil_electric_cond.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Soil Electrical Conductivity</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Soil Electrical Conductivity sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.soil_electric_cond["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Temperature discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.temp.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Temperature</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud temperature sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.temp["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Voltage discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.voltage.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Voltage</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Voltage sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.voltage["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Volumetric Water Content discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.volum_water_content.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Volumetric Water Content</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Volumetric Water Content sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.volumetric.water.content["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+            <discovery_rule>
+               <name>Weight discovery</name>
+               <type>DEPENDENT</type>
+               <key>aranet.weight.discovery</key>
+               <delay>0</delay>
+               <filter>
+                  <evaltype>AND</evaltype>
+                  <conditions>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#SENSOR_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_NAME}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</value>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#GATEWAY_ID}</macro>
+                        <value>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</value>
+                        <formulaid>A</formulaid>
+                     </condition>
+                     <condition>
+                        <macro>{#METRIC}</macro>
+                        <value>Weight</value>
+                        <formulaid>C</formulaid>
+                     </condition>
+                  </conditions>
+               </filter>
+               <description>Discovery for Aranet Cloud Weight sensors</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>{#METRIC}: [{#GATEWAY_NAME}] {#SENSOR_NAME}</name>
+                     <type>DEPENDENT</type>
+                     <key>aranet.weight["{#GATEWAY_ID}", "{#SENSOR_ID}"]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <value_type>FLOAT</value_type>
+                     <units>{#UNIT}</units>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>{#METRIC}</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$[?(@.id == "{#SENSOR_ID}" &amp;&amp; @.name == "{#SENSOR_NAME}")].metrics[?(@.name == "{#METRIC}")].value.first()</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>zabbix[uptime]</key>
+                     </master_item>
+                  </item_prototype>
+               </item_prototypes>
+               <host_prototypes/>
+               <master_item>
+                  <key>aranet.sensor.discovery</key>
+               </master_item>
+            </discovery_rule>
+         </discovery_rules>
+         <macros>
+            <macro>
+               <macro>{$ARANET.API.ENDPOINT}</macro>
+               <value>https://aranet.cloud/api</value>
+            </macro>
+            <macro>
+               <macro>{$ARANET.API.PASSWORD}</macro>
+               <value>&lt;PUT YOUR PASSWORD&gt;</value>
+            </macro>
+            <macro>
+               <macro>{$ARANET.API.SPACE_NAME}</macro>
+               <value>&lt;PUT YOUR SPACE NAME&gt;</value>
+            </macro>
+            <macro>
+               <macro>{$ARANET.API.USERNAME}</macro>
+               <value>&lt;PUT YOUR USERNAME&gt;</value>
+            </macro>
+            <macro>
+               <macro>{$ARANET.BATT.VOLTAGE.MIN.CRIT}</macro>
+               <value>2</value>
+            </macro>
+            <macro>
+               <macro>{$ARANET.BATT.VOLTAGE.MIN.WARN}</macro>
+               <value>1</value>
+            </macro>
+            <macro>
+               <macro>{$ARANET.CO2.MAX.CRIT}</macro>
+               <value>1000</value>
+            </macro>
+            <macro>
+               <macro>{$ARANET.CO2.MAX.WARN}</macro>
+               <value>600</value>
+            </macro>
+            <macro>
+               <macro>{$ARANET.HUMIDITY.MAX.WARN}</macro>
+               <value>70</value>
+            </macro>
+            <macro>
+               <macro>{$ARANET.HUMIDITY.MIN.WARN}</macro>
+               <value>20</value>
+            </macro>
+            <macro>
+               <macro>{$ARANET.LAST_UPDATE.MAX.WARN}</macro>
+               <value>1h</value>
+            </macro>
+            <macro>
+               <macro>{$ARANET.LLD.FILTER.GATEWAY_ID.MATCHES}</macro>
+               <value>.+</value>
+               <description>Filter of discoverable sensors by gateway id</description>
+            </macro>
+            <macro>
+               <macro>{$ARANET.LLD.FILTER.GATEWAY_NAME.MATCHES}</macro>
+               <value>.+</value>
+               <description>Filter of discoverable sensors by gateway name</description>
+            </macro>
+            <macro>
+               <macro>{$ARANET.LLD.FILTER.GATEWAY_NAME.NOT_MATCHES}</macro>
+               <value>CHANGE_IF_NEEDED</value>
+               <description>Filter to exclude discoverable sensors by gateway name</description>
+            </macro>
+            <macro>
+               <macro>{$ARANET.LLD.FILTER.SENSOR_ID.MATCHES}</macro>
+               <value>.+</value>
+               <description>Filter of discoverable sensors by id</description>
+            </macro>
+            <macro>
+               <macro>{$ARANET.LLD.FILTER.SENSOR_NAME.MATCHES}</macro>
+               <value>.+</value>
+               <description>Filter of discoverable sensors by name</description>
+            </macro>
+            <macro>
+               <macro>{$ARANET.LLD.FILTER.SENSOR_NAME.NOT_MATCHES}</macro>
+               <value>CHANGE_IF_NEEDED</value>
+               <description>Filter to exclude discoverable sensors by name</description>
+            </macro>
+         </macros>
+      </template>
+   </templates>
+</zabbix_export>
