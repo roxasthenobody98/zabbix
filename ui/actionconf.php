@@ -31,7 +31,7 @@ $page['scripts'] = ['multiselect.js', 'textareaflexible.js', 'popup.condition.co
 ];
 
 require_once dirname(__FILE__).'/include/page_header.php';
-// VAR							TYPE	OPTIONAL	FLAGS	VALIDATION	EXCEPTION
+// VAR							TYPE	OPTIONAL	FLAGS	VALIDATION	EXCEPTION:
 $fields = [
 	'actionid' =>						[T_ZBX_INT, O_OPT, P_SYS,	DB_ID,		'isset({form}) && {form} == "update"'],
 	'name' =>							[T_ZBX_STR, O_OPT, null,	NOT_EMPTY,	'isset({add}) || isset({update})',
