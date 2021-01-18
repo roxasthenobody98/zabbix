@@ -24,6 +24,7 @@ require_once dirname(__FILE__).'/include/graphs.inc.php';
 require_once dirname(__FILE__).'/include/screens.inc.php';
 require_once dirname(__FILE__).'/include/blocks.inc.php';
 
+/* init page */
 $page['title'] = _('Custom screens');
 $page['file'] = 'screens.php';
 $page['scripts'] = [
