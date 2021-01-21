@@ -1441,7 +1441,7 @@ class testDashboardProblemsBySeverityWidget extends CWebTest {
 			}
 			else {
 				// If test fails and widget isn't canceled, need to wait until widget appears on the dashboard.
-				sleep(5);
+				$this->my_sleep(5);
 				if ($widget->getID() !== $dashboard->getWidgets()->last()->getID()) {
 					$this->fail('New widget was added after pressing "Cancel"');
 				}

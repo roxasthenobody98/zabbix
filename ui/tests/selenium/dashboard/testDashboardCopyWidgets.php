@@ -115,7 +115,7 @@ class testDashboardCopyWidgets extends CWebTest {
 		else {
 			$dashboard->pasteWidget();
 		}
-		sleep(1);
+		$this->my_sleep(1);
 		// Wait until widget is pasted and loading spinner disappeared.
 		$this->query('xpath://div[contains(@class, "is-loading")]')->waitUntilNotPresent();
 		$copied_widget = $dashboard->getWidgets()->last();

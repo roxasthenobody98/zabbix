@@ -142,7 +142,7 @@ class testFormAdministrationGeneralAutoregistration extends CWebTest {
 		$this->page->login()->open('zabbix.php?action=autoreg.edit');
 		// Added sleep, because sorting on Audit page is by time,
 		// but sometimes there is no time difference between test cases and they are sorted unpredictably
-		sleep(1);
+		$this->my_sleep(1);
 		$form = $this->query('id:autoreg-form')->asForm()->one();
 		$form->fill($data['fields']);
 		$form->submit();

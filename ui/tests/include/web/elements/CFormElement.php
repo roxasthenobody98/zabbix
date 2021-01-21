@@ -360,7 +360,7 @@ class CFormElement extends CElement {
 					$this->setFieldValue($field, $values);
 				}
 				catch (\Exception $e1) {
-					sleep(1);
+					$this->my_sleep(1);
 
 					try {
 						$this->invalidate();

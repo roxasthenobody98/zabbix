@@ -114,7 +114,7 @@ class testDashboardGraphWidget extends CWebTest {
 			}
 
 			$this->page->removeFocus();
-			sleep(1);
+			$this->my_sleep(1);
 			// Collect all screenshot errors.
 			try {
 				$this->assertScreenshotExcept($overlay, [$element], 'tab_'.$tab);
@@ -163,7 +163,7 @@ class testDashboardGraphWidget extends CWebTest {
 				$form->fill($data[$tab]);
 		}
 
-		sleep(2);
+		$this->my_sleep(2);
 		$form->submit();
 		COverlayDialogElement::find()->one()->waitUntilReady()->query('xpath:div[@class="overlay-dialogue-footer"]'.
 				'//button[@class="dialogue-widget-save"]')->one()->waitUntilClickable();
@@ -2226,7 +2226,7 @@ class testDashboardGraphWidget extends CWebTest {
 		// Check canceled graph widget.
 		$dashboard = CDashboardElement::find()->one();
 		// If test fails and widget isn't canceled, need to wait until widget appears on the dashboard.
-		sleep(2);
+		$this->my_sleep(2);
 		$this->assertTrue(!$dashboard->query('xpath:.//div[contains(@class, "dashbrd-grid-widget-head")]/h4[text()='.
 				CXPathHelper::escapeQuotes($data['main_fields']['Name']).']')->one(false)->isValid());
 		$dashboard->save();

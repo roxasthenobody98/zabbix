@@ -150,7 +150,7 @@ class testFormLogin extends CLegacyWebTest {
 		$this->zbxTestClickWait('enter');
 		$this->zbxTestTextPresent(['account is temporarily blocked', 'Username', 'Password']);
 		// account is blocked, waiting 30 sec and trying to login
-		sleep(30);
+		$this->my_sleep(30);
 
 		$this->zbxTestInputTypeWait('name', 'user-for-blocking');
 		$this->zbxTestInputTypeWait('password', 'zabbix');

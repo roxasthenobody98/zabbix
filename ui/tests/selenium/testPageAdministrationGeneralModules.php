@@ -549,7 +549,7 @@ class testPageAdministrationGeneralModules extends CWebTest {
 
 		$this->query('link', $top_entry)->one()->waitUntilClickable()->click();
 		foreach ($module['menu_entries'] as $entry) {
-			sleep(1);
+			$this->my_sleep(1);
 			$this->query($xpath.$entry['name'].'"]')->one()->waitUntilClickable()->click();
 			$this->page->waitUntilReady();
 			$this->assertContains('zabbix.php?action='.$entry['action'], $this->page->getCurrentURL());

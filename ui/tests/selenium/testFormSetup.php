@@ -836,7 +836,7 @@ class testFormSetup extends CWebTest {
 		$this->query('button:Next step')->one()->click();
 
 		// Need to wait for 3s for php cache to reload and for zabbix server parameter the changes to take place.
-		sleep(3);
+		$this->my_sleep(3);
 		$this->query('button:Finish')->one()->click();
 
 		// Check Zabbix server params.
@@ -879,7 +879,7 @@ class testFormSetup extends CWebTest {
 		$this->query('button:Next step')->one()->click();
 		$this->query('button:Next step')->one()->click();
 		// Need to wait for 3s for php cache to reload and for zabbix server parameter the changes to take place.
-		sleep(3);
+		$this->my_sleep(3);
 		$this->query('button:Finish')->one()->click();
 	}
 

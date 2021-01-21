@@ -126,7 +126,7 @@ class testFormItemTest extends CWebTest {
 					// TODO: workaround for ZBXNEXT-5365
 					if ($item_type === 'Item prototype'
 						&& array_key_exists('Master item', $update)) {
-							sleep(2);
+							$this->my_sleep(2);
 							$item_form->getFieldContainer('Master item')
 									->asMultiselect()->select($update['Master item']);
 					}

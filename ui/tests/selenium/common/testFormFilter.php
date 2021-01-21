@@ -126,7 +126,7 @@ class testFormFilter extends CWebTest {
 		}
 
 		// This time needed for filter to update table with results.
-		sleep(1);
+		$this->my_sleep(1);
 
 		// Getting changed host/problem result and then comparing it with displayed result from dropdown.
 		$result = $this->getTableResults();

@@ -624,4 +624,57 @@ class CWebTest extends CTest {
 			return false;
 		}
 	}
+
+	private function formatCallStack() {
+		$calls = debug_backtrace(0);
+
+		// never show the call to this method
+		array_shift($calls);
+
+		$functions = [];
+		$call_with_file = [];
+		$root_dir = realpath(dirname(__FILE__).'/../..');
+
+		$calls = array_reverse($calls);
+		$first_call = reset($calls);
+
+		foreach ($calls as $call) {
+			// do not show the call to the error handler function
+			if ($call['function'] != 'zbx_err_handler') {
+				if (array_key_exists('class', $call)) {
+					$functions[] = $call['class'].$call['type'].$call['function'].'()';
+				}
+				else {
+					$functions[] = $call['function'].'()';
+				}
+			}
+
+			if (array_key_exists('file', $call)) {
+				$call_with_file = $call;
+			}
+		}
+
+		$call_stack_string = '';
+
+		if ($functions) {
+			$call_stack_string .= pathinfo($first_call['file'], PATHINFO_BASENAME).':'.$first_call['line'].' -> ';
+			$call_stack_string .= implode(' -> ', $functions);
+		}
+
+		if ($call_with_file) {
+			$file_name = $call_with_file['file'];
+
+			if (substr_compare($file_name, $root_dir, 0, strlen($root_dir)) === 0) {
+				$file_name = substr($file_name, strlen($root_dir) + 1);
+			}
+			$call_stack_string .= ' in '.$file_name.':'.$call_with_file['line'];
+		}
+
+		return $call_stack_string;
+	}
+
+	public function my_sleep($t) {
+		file_put_contents('/tmp/sleep.log', 'sleep('.$t.') ['.$this->formatCallStack().']'."\n\n", FILE_APPEND);
+		sleep($t);
+	}
 }

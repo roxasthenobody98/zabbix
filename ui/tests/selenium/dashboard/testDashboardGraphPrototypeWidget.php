@@ -255,7 +255,7 @@ class testDashboardGraphPrototypeWidget extends CWebTest {
 			$form->waitUntilReloaded();
 		}
 		$this->page->removeFocus();
-		sleep(1);
+		$this->my_sleep(1);
 		$dialog = COverlayDialogElement::find()->one();
 		$this->assertScreenshot($dialog);
 	}
@@ -349,7 +349,7 @@ class testDashboardGraphPrototypeWidget extends CWebTest {
 		$dashboard->getWidget($widget['Name']);
 		$dashboard->save();
 		$this->page->removeFocus();
-		sleep(1);
+		$this->my_sleep(1);
 		$screenshot_area = $this->query('class:dashbrd-grid-container')->one();
 		$screenshot_area->query('xpath:.//div[contains(@class, "dashbrd-grid-iterator-focus")]')->waitUntilNotVisible();
 		$this->assertScreenshot($screenshot_area, $data['screenshot_id']);
