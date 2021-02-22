@@ -27,7 +27,7 @@ class CControllerMenuPopup extends CController {
 			'data' => 'array'
 		];
 
-		$ret = $this->validateInput($fields);
+		$ret = $this->validateInput($fields) && $this->validateInputData();
 
 		if (!$ret) {
 			$output = [];
@@ -39,6 +39,91 @@ class CControllerMenuPopup extends CController {
 		}
 
 		return $ret;
+	}
+
+	protected function validateInputData(): bool {
+		$data = $this->hasInput('data') ? $this->getInput('data') : [];
+		$type = $this->getInput('type');
+
+		if (in_array($type, ['history', 'host', 'item', 'item_prototype', 'map_element', 'refresh', 'trigger',
+				'widget_actions'])) {
+			if (!$data) {
+				error(_s('Field "%1$s" is mandatory.', 'data'));
+
+				return false;
+			}
+
+			switch ($type) {
+				case 'host':
+					$rules = [
+						'hostid' => 'required|db hosts.hostid',
+						'has_goto' => 'in 0,1',
+						'severity_min' => 'in '.implode(',', [TRIGGER_SEVERITY_NOT_CLASSIFIED, TRIGGER_SEVERITY_INFORMATION, TRIGGER_SEVERITY_WARNING, TRIGGER_SEVERITY_AVERAGE, TRIGGER_SEVERITY_HIGH, TRIGGER_SEVERITY_DISASTER]),
+						'show_suppressed' => 'in 0,1',
+						'urls' => 'array',
+						'filter_application' => 'string'
+					];
+					break;
+
+				case 'history':
+				case 'item':
+				case 'item_prototype':
+					$rules = [
+						'itemid' => 'required|db items.itemid'
+					];
+					break;
+
+				case 'map_element':
+					$rules = [
+						'sysmapid' => 'required|db sysmaps.sysmapid',
+						'selementid' => 'required|db sysmaps_elements.selementid',
+						'severity_min' => 'in '.implode(',', [TRIGGER_SEVERITY_NOT_CLASSIFIED, TRIGGER_SEVERITY_INFORMATION, TRIGGER_SEVERITY_WARNING, TRIGGER_SEVERITY_AVERAGE, TRIGGER_SEVERITY_HIGH, TRIGGER_SEVERITY_DISASTER]),
+						'widget_uniqueid' => 'string',
+						'hostid' => 'db hosts.hostid'
+					];
+					break;
+
+				case 'refresh':
+					$rules = [
+						'widgetName' => 'required|string',
+						'currentRate' => 'required|int32',
+						'multiplier' => 'required|int32',
+						'params' => 'array'
+					];
+					break;
+
+				case 'trigger':
+					$rules = [
+						'triggerid' => 'required|db triggers.triggerid',
+						'eventid' => 'db events.eventid',
+						'acknowledge' => 'in 0,1'
+					];
+					break;
+
+				case 'widget_actions':
+					$rules = [
+						'widget_uniqueid' => 'required|string',
+						'currentRate' => 'required|int32',
+						'multiplier' => 'required|int32',
+						'widgetType' => 'required|in '.implode(',', [WIDGET_ACTION_LOG, WIDGET_CLOCK, WIDGET_DATA_OVER, WIDGET_DISCOVERY, WIDGET_FAV_GRAPHS, WIDGET_FAV_MAPS, WIDGET_FAV_SCREENS, WIDGET_SVG_GRAPH, WIDGET_GRAPH, WIDGET_GRAPH_PROTOTYPE, WIDGET_HOST_AVAIL, WIDGET_MAP, WIDGET_NAV_TREE, WIDGET_PLAIN_TEXT, WIDGET_PROBLEM_HOSTS, WIDGET_PROBLEMS, WIDGET_PROBLEMS_BY_SV, WIDGET_SYSTEM_INFO, WIDGET_TRIG_OVER, WIDGET_URL, WIDGET_WEB]),
+						'params' => 'array',
+						'dynamic_hostid' => 'db hosts.hostid',
+						'graphid' => 'db graphs.graphid',
+						'itemid' => 'db items.itemid'
+					];
+					break;
+			}
+
+			$validator = new CNewValidator($data, $rules);
+			$errors = $validator->getAllErrors();
+			array_map('error', $errors);
+
+			$ret = !$validator->isError() && !$validator->isErrorFatal();
+
+			return $ret;
+		}
+
+		return true;
 	}
 
 	protected function checkPermissions() {
@@ -322,7 +407,6 @@ class CControllerMenuPopup extends CController {
 	 * @param array  $data
 	 * @param string $data['sysmapid']
 	 * @param string $data['selementid']
-	 * @param array  $data['options']        (optional)
 	 * @param int    $data['severity_min']   (optional)
 	 * @param string $data['widget_uniqueid] (optional)
 	 * @param string $data['hostid']         (optional)
@@ -453,10 +537,10 @@ class CControllerMenuPopup extends CController {
 	 * Prepare data for refresh menu popup.
 	 *
 	 * @param array  $data
-	 * @param string $data['widgetName']
-	 * @param string $data['currentRate']
+	 * @param string $data['widgetName']   Widget name.
+	 * @param string $data['currentRate']  Refresh rate for widget.
 	 * @param bool   $data['multiplier']   Multiplier or time mode.
-	 * @param array  $data['params']       (optional) URL parameters.
+	 * @param array  $data['params']       URL parameters. (optional)
 	 *
 	 * @return mixed
 	 */
@@ -479,14 +563,9 @@ class CControllerMenuPopup extends CController {
 	 * Prepare data for trigger context menu popup.
 	 *
 	 * @param array  $data
-	 * @param string $data['triggerid']
-	 * @param string $data['eventid']                 (optional) Mandatory for Acknowledge menu.
-	 * @param bool   $data['acknowledge']             (optional) Whether to show Acknowledge menu.
-	 * @param int    $data['severity_min']            (optional)
-	 * @param bool   $data['show_suppressed']         (optional)
-	 * @param array  $data['urls']                    (optional)
-	 * @param string $data['urls']['name']
-	 * @param string $data['urls']['url']
+	 * @param string $data['triggerid']    Trigger ID.
+	 * @param string $data['eventid']      Event ID. (optional)
+	 * @param bool   $data['acknowledge']  Whether to show Acknowledge menu. (optional)
 	 *
 	 * @return mixed
 	 */
@@ -643,9 +722,14 @@ class CControllerMenuPopup extends CController {
 	 * Prepare data for widget actions menu popup.
 	 *
 	 * @param array  $data
-	 * @param string $data['widget_uniqueid']  Widget instance unique id.
+	 * @param string $data['widget_uniqueid']  Widget instance unique ID.
 	 * @param string $data['currentRate']      Refresh rate for widget.
 	 * @param bool   $data['multiplier']       Multiplier or time mode.
+	 * @param string $data['widgetType']       Widget type.
+	 * @param array  $data['params']           URL Parameters. (optional)
+	 * @param string $data['dynamic_hostid']   Host ID. (optional)
+	 * @param string $data['graphid']          Graph ID. (optional)
+	 * @param string $data['itemid']           Item ID. (optional)
 	 *
 	 * @return mixed
 	 */
