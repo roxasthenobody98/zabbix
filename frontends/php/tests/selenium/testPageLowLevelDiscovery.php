@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ class testPageLowLevelDiscovery extends CWebTest {
 		$this->assertSame($headers, $table->getHeadersText());
 
 		// Check that 3 rows displayed
-		$this->assertRowCount(3);
+		$this->assertTableStats(3);
 
 		// Check buttons.
 		$buttons_name = ['Disable', 'Enable', 'Check now', 'Delete'];

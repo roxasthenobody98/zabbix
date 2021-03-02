@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -185,30 +185,12 @@ foreach ($hosts as $hnum => $host) {
 		// host
 		$host_name = new CSpan($visibleName);
 
-		$applications_link = [
-			_('Applications'),
-			CViewHelper::showNum($host['applications'])
-		];
-		$items_link = [
-			_('Items'),
-			CViewHelper::showNum($host['items'])
-		];
-		$triggers_link = [
-			_('Triggers'),
-			CViewHelper::showNum($host['triggers'])
-		];
-		$graphs_link = [
-			_('Graphs'),
-			CViewHelper::showNum($host['graphs'])
-		];
-		$discoveryLink = [
-			_('Discovery'),
-			CViewHelper::showNum($host['discoveries'])
-		];
-		$httpTestsLink = [
-			_('Web'),
-			CViewHelper::showNum($host['httpTests'])
-		];
+		$applications_link = _('Applications');
+		$items_link = _('Items');
+		$triggers_link = _('Triggers');
+		$graphs_link = _('Graphs');
+		$discoveryLink = _('Discovery');
+		$httpTestsLink = _('Web');
 	}
 
 	if ($host['status'] == HOST_STATUS_NOT_MONITORED) {
@@ -462,13 +444,13 @@ if ($admin) {
 			// host
 			$templateCell = [new CSpan($templateVisibleName)];
 
-			$applications_link = _('Applications').' ('.$template['applications'].')';
-			$items_link = _('Items').' ('.$template['items'].')';
-			$triggers_link = _('Triggers').' ('.$template['triggers'].')';
-			$graphs_link = _('Graphs').' ('.$template['graphs'].')';
-			$screensLink = _('Screens').' ('.$template['screens'].')';
-			$discoveryLink = _('Discovery').' ('.$template['discoveries'].')';
-			$httpTestsLink = _('Web').' ('.$template['httpTests'].')';
+			$applications_link = _('Applications');
+			$items_link = _('Items');
+			$triggers_link = _('Triggers');
+			$graphs_link = _('Graphs');
+			$screensLink = _('Screens');
+			$discoveryLink = _('Discovery');
+			$httpTestsLink = _('Web');
 		}
 
 		// display the template host name only if it matches the search string and is different from the visible name

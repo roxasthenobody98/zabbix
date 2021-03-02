@@ -1,6 +1,6 @@
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -411,7 +411,7 @@ static void	add_icmpping_item(icmpitem_t **items, int *items_alloc, int *items_c
 static void	get_pinger_hosts(icmpitem_t **icmp_items, int *icmp_items_alloc, int *icmp_items_count)
 {
 	const char		*__function_name = "get_pinger_hosts";
-	DC_ITEM			items[MAX_PINGER_ITEMS];
+	DC_ITEM			item, *items;
 	int			i, num, count, interval, size, timeout, rc, errcode = SUCCEED;
 	char			error[MAX_STRING_LEN], *addr = NULL;
 	icmpping_t		icmpping;
@@ -419,7 +419,8 @@ static void	get_pinger_hosts(icmpitem_t **icmp_items, int *icmp_items_alloc, int
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __function_name);
 
-	num = DCconfig_get_poller_items(ZBX_POLLER_TYPE_PINGER, items);
+	items = &item;
+	num = DCconfig_get_poller_items(ZBX_POLLER_TYPE_PINGER, &items);
 
 	for (i = 0; i < num; i++)
 	{
@@ -455,6 +456,9 @@ static void	get_pinger_hosts(icmpitem_t **icmp_items, int *icmp_items_alloc, int
 	}
 
 	DCconfig_clean_items(items, NULL, num);
+
+	if (items != &item)
+		zbx_free(items);
 
 	zbx_preprocessor_flush();
 

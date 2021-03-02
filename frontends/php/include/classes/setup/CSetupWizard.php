@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -210,7 +210,7 @@ class CSetupWizard extends CForm {
 	}
 
 	function stage2() {
-		$DB['TYPE'] = $this->getConfig('DB_TYPE');
+		$DB['TYPE'] = $this->getConfig('DB_TYPE', key(CFrontendSetup::getSupportedDatabases()));
 
 		$table = new CFormList();
 
