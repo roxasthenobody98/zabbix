@@ -1241,16 +1241,16 @@ function getItemDataOverviewCells($tableRow, $ithosts, $hostName) {
 			->setMenuPopup(CMenuPopupHelper::getHistory($item['itemid']))
 			->addClass(ZBX_STYLE_CURSOR_POINTER)
 			->addClass(ZBX_STYLE_NOWRAP);
-	}
 
-	$config = select_config();
-	$config['blink_period'] = timeUnitToSeconds($config['blink_period']);
-	$duration = time() - $item['lastchange'];
+		$config = select_config();
+		$config['blink_period'] = timeUnitToSeconds($config['blink_period']);
+		$duration = time() - $item['lastchange'];
 
-	if ($config['blink_period'] > 0 && $duration < $config['blink_period']) {
-		$column->addClass('blink');
-		$column->setAttribute('data-time-to-blink', $config['blink_period'] - $duration);
-		$column->setAttribute('data-toggle-class', ZBX_STYLE_BLINK_HIDDEN);
+		if ($config['blink_period'] > 0 && $duration < $config['blink_period']) {
+			$column->addClass('blink');
+			$column->setAttribute('data-time-to-blink', $config['blink_period'] - $duration);
+			$column->setAttribute('data-toggle-class', ZBX_STYLE_BLINK_HIDDEN);
+		}
 	}
 
 	$tableRow[] = $column;
