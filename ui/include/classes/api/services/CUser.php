@@ -1,7 +1,7 @@
 <?php
 /*
 ** Zabbix
-** Copyright (C) 2001-2020 Zabbix SIA
+** Copyright (C) 2001-2021 Zabbix SIA
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -272,7 +272,7 @@ class CUser extends CApiService {
 		}
 
 		$locales = LANG_DEFAULT.','.implode(',', array_keys(getLocales()));
-		$timezones = TIMEZONE_DEFAULT.','.implode(',', DateTimeZone::listIdentifiers());
+		$timezones = TIMEZONE_DEFAULT.','.implode(',', array_keys((new CDateTimeZoneHelper())->getAllDateTimeZones()));
 		$themes = THEME_DEFAULT.','.implode(',', array_keys(APP::getThemes()));
 
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['alias']], 'fields' => [
@@ -402,7 +402,7 @@ class CUser extends CApiService {
 	 */
 	private function validateUpdate(array &$users, array &$db_users = null) {
 		$locales = LANG_DEFAULT.','.implode(',', array_keys(getLocales()));
-		$timezones = TIMEZONE_DEFAULT.','.implode(',', DateTimeZone::listIdentifiers());
+		$timezones = TIMEZONE_DEFAULT.','.implode(',', array_keys((new CDateTimeZoneHelper())->getAllDateTimeZones()));
 		$themes = THEME_DEFAULT.','.implode(',', array_keys(APP::getThemes()));
 
 		$api_input_rules = ['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY | API_NORMALIZE, 'uniq' => [['userid'], ['alias']], 'fields' => [
@@ -541,9 +541,8 @@ class CUser extends CApiService {
 						' GROUP BY ug.userid'.
 						' HAVING MAX(g.gui_access)<'.GROUP_GUI_ACCESS_DISABLED.
 							' AND MAX(g.users_status)='.GROUP_STATUS_ENABLED.
-					')'.
-				' LIMIT 1'
-			);
+					')'
+			, 1);
 
 			if (!DBfetch($db_superadmins)) {
 				self::exception(ZBX_API_ERROR_PARAMETERS,
@@ -1154,9 +1153,8 @@ class CUser extends CApiService {
 						' GROUP BY ug.userid'.
 						' HAVING MAX(g.gui_access)<'.GROUP_GUI_ACCESS_DISABLED.
 							' AND MAX(g.users_status)='.GROUP_STATUS_ENABLED.
-					')'.
-				' LIMIT 1'
-			);
+					')'
+			, 1);
 
 			if (!DBfetch($db_superadmins)) {
 				self::exception(ZBX_API_ERROR_PARAMETERS,

@@ -1055,7 +1055,7 @@ INSERT INTO lld_override_opdiscover (lld_override_operationid,discover) VALUES (
 INSERT INTO lld_override_opdiscover (lld_override_operationid,discover) VALUES (1010,1);
 INSERT INTO lld_override_opdiscover (lld_override_operationid,discover) VALUES (1011,1);
 INSERT INTO lld_override_ophistory (lld_override_operationid,history) VALUES (1008,'92d');
-INSERT INTO lld_override_opinventory (lld_override_operationid,inventory_mode) VALUES (111,1);
+INSERT INTO lld_override_opinventory (lld_override_operationid,inventory_mode) VALUES (1011,1);
 INSERT INTO lld_override_opperiod (lld_override_operationid,delay) VALUES (1008,'1m;wd1-3h4-16;10s/1-5,00:00-20:00;5s/5-7,00:00-24:00');
 INSERT INTO lld_override_opseverity (lld_override_operationid,severity) VALUES (1009,3);
 INSERT INTO lld_override_opstatus (lld_override_operationid,status) VALUES (1007,1);
@@ -1459,3 +1459,18 @@ INSERT INTO host_discovery (hostid, parent_hostid, host) VALUES (99012, 99011, '
 INSERT INTO interface (interfaceid, hostid, main, type, useip, ip, port) VALUES (50026, 99010, 1, 1, 1, '127.0.0.1', '10050');
 INSERT INTO interface (interfaceid, hostid, main, type, useip, ip, port) VALUES (50027, 99012, 1, 1, 1, '127.0.0.1', '10050');
 INSERT INTO interface_discovery (interfaceid, parent_interfaceid) VALUES (50027, 50026);
+
+-- test trigger validation
+INSERT INTO hosts (hostid, host, name, status, description) VALUES (99013, 'Trigger validation test host', 'Trigger validation test host', 0, '');
+INSERT INTO hosts (hostid, host, name, status, description) VALUES (99014, 'Trigger validation test template', 'Trigger validation test template', 3, '');
+INSERT INTO hstgrp (groupid, name, internal) VALUES (50027, 'Trigger validation test host group', 0);
+INSERT INTO hosts_groups (hostgroupid, hostid, groupid) VALUES (50023, 99013, 50027);
+INSERT INTO hosts_groups (hostgroupid, hostid, groupid) VALUES (50024, 99014, 50027);
+INSERT INTO items (itemid, hostid, interfaceid, type, value_type, name, key_, delay, history, status, params, description, posts, headers) VALUES (58736, 99013, NULL, 2, 3, 'item', 'item', '1d', '90d', 0, '', '', '', '');
+INSERT INTO items (itemid, hostid, interfaceid, type, value_type, name, key_, delay, history, status, params, description, posts, headers) VALUES (58737, 99014, NULL, 2, 3, 'item', 'item', '1d', '90d', 0, '', '', '', '');
+INSERT INTO triggers (triggerid, description, expression, comments) VALUES (50172, 'test-trigger-1', '{50232}=0', '');
+INSERT INTO functions (functionid, triggerid, itemid, name, parameter) VALUES (50232, 50172, 58736, 'last', '');
+INSERT INTO triggers (triggerid, description, expression, comments) VALUES (50173, 'test-trigger-2', '{50233}=0', '');
+INSERT INTO functions (functionid, triggerid, itemid, name, parameter) VALUES (50233, 50173, 58736, 'last', '');
+INSERT INTO triggers (triggerid, description, expression, comments) VALUES (50174, 'template-trigger', '{50234}=0', '');
+INSERT INTO functions (functionid, triggerid, itemid, name, parameter) VALUES (50234, 50174, 58737, 'last', '');
