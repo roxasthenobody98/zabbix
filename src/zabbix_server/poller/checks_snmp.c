@@ -839,6 +839,24 @@ static int	zbx_snmp_print_oid(char *buffer, size_t buffer_len, const oid *objid,
 		return -1;
 	}
 
+	if (ZBX_OID_INDEX_STRING == format)
+	{
+		int	ret, old_oid_fmt, old_suffix;
+
+		old_oid_fmt = netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT);
+		old_suffix = netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_SUFFIX_ONLY);
+
+		netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_SUFFIX_ONLY, 1);
+		netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, NETSNMP_OID_OUTPUT_SUFFIX);
+
+		ret = snprint_objid(buffer, buffer_len, objid, objid_len);
+
+		netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_SUFFIX_ONLY, old_suffix);
+		netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, old_oid_fmt);
+
+		return ret;
+	}
+
 	return snprint_objid(buffer, buffer_len, objid, objid_len);
 }
 
@@ -914,7 +932,7 @@ static int	zbx_snmp_choose_index(char *buffer, size_t buffer_len, const oid *obj
 
 	if (NULL == strchr(printed_oid, '"') && NULL == strchr(printed_oid, '\''))
 	{
-		zbx_strlcpy(buffer, printed_oid + root_string_len + 1, buffer_len);
+		zbx_strlcpy(buffer, printed_oid, buffer_len);
 		return SUCCEED;
 	}
 
