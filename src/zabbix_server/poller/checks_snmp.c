@@ -830,6 +830,32 @@ static void	zbx_snmp_dump_oid(char *buffer, size_t buffer_len, const oid *objid,
 #define ZBX_OID_INDEX_STRING	0
 #define ZBX_OID_INDEX_NUMERIC	1
 
+static int	zbx_snmp_print_oid_suffix(char *buffer, size_t buffer_len, const oid *objid, size_t objid_len)
+{
+	int	ret, old_fmt;
+
+	old_fmt = netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT);
+
+	if (SNMPERR_SUCCESS != netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
+			NETSNMP_OID_OUTPUT_SUFFIX))
+	{
+		zabbix_log(LOG_LEVEL_WARNING, "cannot set OID suffix output format to %d for Net-SNMP",
+				NETSNMP_OID_OUTPUT_SUFFIX);
+		return -1;
+	}
+
+	ret = snprint_objid(buffer, buffer_len, objid, objid_len);
+
+	if (SNMPERR_SUCCESS != netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, old_fmt))
+	{
+		zabbix_log(LOG_LEVEL_WARNING, "cannot set OID suffix output format to %d for Net-SNMP",
+				old_fmt);
+		return -1;
+	}
+
+	return ret;
+}
+
 static int	zbx_snmp_print_oid(char *buffer, size_t buffer_len, const oid *objid, size_t objid_len, int format)
 {
 	if (SNMPERR_SUCCESS != netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_DONT_BREAKDOWN_OIDS,
@@ -840,22 +866,7 @@ static int	zbx_snmp_print_oid(char *buffer, size_t buffer_len, const oid *objid,
 	}
 
 	if (ZBX_OID_INDEX_STRING == format)
-	{
-		int	ret, old_oid_fmt, old_suffix;
-
-		old_oid_fmt = netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT);
-		old_suffix = netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_SUFFIX_ONLY);
-
-		netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_SUFFIX_ONLY, 1);
-		netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, NETSNMP_OID_OUTPUT_SUFFIX);
-
-		ret = snprint_objid(buffer, buffer_len, objid, objid_len);
-
-		netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_SUFFIX_ONLY, old_suffix);
-		netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, old_oid_fmt);
-
-		return ret;
-	}
+		return zbx_snmp_print_oid_suffix(buffer, buffer_len, objid, objid_len);
 
 	return snprint_objid(buffer, buffer_len, objid, objid_len);
 }
