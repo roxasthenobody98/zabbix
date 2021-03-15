@@ -71,6 +71,9 @@
 				: data['widget_defaults'][widget['type']]['header']
 			));
 
+		// Names should be synced with CWidgetConfig::CONTEXT_DASHBOARD and CWidgetConfig::CONTEXT_TEMPLATE_DASHBOARD.
+		widget_actions['context'] = (data.dashboard.templateid === null) ? 'dashboard' : 'template_dashboard';
+
 		if (!widget['parent']) {
 			// Do not add action buttons for child widgets of iterators.
 			widget['content_header']

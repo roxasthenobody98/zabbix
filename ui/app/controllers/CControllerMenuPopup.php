@@ -101,11 +101,14 @@ class CControllerMenuPopup extends CController {
 					break;
 
 				case 'widget_actions':
+					$data = $this->getInput('data');
+
 					$rules = [
 						'widget_uniqueid' => 'required|string',
 						'currentRate' => 'required|int32',
 						'multiplier' => 'required|int32',
-						'widgetType' => 'required|in '.implode(',', [WIDGET_ACTION_LOG, WIDGET_CLOCK, WIDGET_DATA_OVER, WIDGET_DISCOVERY, WIDGET_FAV_GRAPHS, WIDGET_FAV_MAPS, WIDGET_FAV_SCREENS, WIDGET_SVG_GRAPH, WIDGET_GRAPH, WIDGET_GRAPH_PROTOTYPE, WIDGET_HOST_AVAIL, WIDGET_MAP, WIDGET_NAV_TREE, WIDGET_PLAIN_TEXT, WIDGET_PROBLEM_HOSTS, WIDGET_PROBLEMS, WIDGET_PROBLEMS_BY_SV, WIDGET_SYSTEM_INFO, WIDGET_TRIG_OVER, WIDGET_URL, WIDGET_WEB]),
+						'context' => ' in '.implode(',', [CWidgetConfig::CONTEXT_DASHBOARD, CWidgetConfig::CONTEXT_TEMPLATE_DASHBOARD]),
+						'widgetType' => 'required|in '.implode(',', array_keys(CWidgetConfig::getKnownWidgetTypes($data['context']))),
 						'params' => 'array',
 						'dynamic_hostid' => 'db hosts.hostid',
 						'graphid' => 'db graphs.graphid',
