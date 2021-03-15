@@ -18,6 +18,8 @@
 #define DISCRETE_VALUES	1679616
 
 #define CUID_TIMESTAMP_SIZE	8
+#define PID_TMP_36_BASE_BUF_LEN 10
+#define HOST_TMP_36_BASE_BUF_LEN 10
 
 static int32_t	counterValue;
 
@@ -33,6 +35,7 @@ static int32_t	next()
 
 	ret = counterValue;
 	counterValue++;
+
 	if (counterValue > DISCRETE_VALUES)
 		counterValue = 0;
 
@@ -85,14 +88,27 @@ static void	fromDeci(char res[], int base, unsigned long inputNum)
 static void	pad(char *input, size_t pad_size, char *output)
 {
 	size_t	i;
+	size_t offset;
+	size_t input_len;
+
+	input_len = strlen(input);
+
+	offset = pad_size > input_len ? pad_size - input_len : 0;
+
+	printf("NNN PAD SIZE: %d and strlen: %d, offset: %d", pad_size, strlen(input), offset);
+
 	memset(output, '0', pad_size);
 
 	for (i = 0; i < strlen(input);i++)
 	{
-		output[i + pad_size - strlen(input)] = input[i];
+		printf("output at: %d, equals %c\n", i + offset,  input[i]);
+		output[i + offset] = input[i];
 	}
 
+
 	output[pad_size] = '\0';
+	printf("FINAL OUTPUT: ->%s<- \n", output);
+
 }
 
 int	new_cuid(char cuid[CUID_LEN])
@@ -104,8 +120,10 @@ int	new_cuid(char cuid[CUID_LEN])
 		rand_block_2_tmp[CUID_BLOCK_SIZE + 1];
 
 	char hostname_block_tmp[3];
-	char pid_block_tmp[3];
-	char host_block_tmp[3];
+	char pid_block_tmp[PID_TMP_36_BASE_BUF_LEN];
+	char host_block_tmp[HOST_TMP_36_BASE_BUF_LEN];
+	char	pid_block[3], host_block[3];
+
 	char	*hostname = NULL;
 	time_t	seconds;
 	struct utsname	name;
@@ -122,7 +140,6 @@ int	new_cuid(char cuid[CUID_LEN])
 
 	{
 		int	x, y, i;
-		char	pid_block[3], host_block[3];
 
 		y = strlen(hostname);
 		x = y + CUID_BASE_36;
@@ -133,18 +150,17 @@ int	new_cuid(char cuid[CUID_LEN])
 		printf("X: ->%d<- \n",x);
 		printf("X PID: ->%d<- \n",pid);
 
-		fromDeci(host_block, 10, x );
-		fromDeci(pid_block, CUID_BASE_36, pid );
+		fromDeci(host_block_tmp, 10, x );
+		fromDeci(pid_block_tmp, CUID_BASE_36, pid );
 
-		printf("PID_BLOCK 0 : ->%s<- \n", pid_block);
+		printf("PID_BLOCK TMP : ->%s<- \n", pid_block_tmp);
+		pad(pid_block_tmp, CUID_PID_BLOCK_SIZE, pid_block);
+		printf("PID_BLOCK: ->%s<- \n", pid_block);
 
-		pad(pid_block, CUID_PID_BLOCK_SIZE, pid_block_tmp);
-		pad(host_block, CUID_HOSTNAME_BLOCK_SIZE, host_block_tmp);
-
-		printf("SIZE OF FINGERPRINT: %d \n", sizeof(fingerprint));
-		printf("HOST_BLOCK: ->%s<-, PID_BLCOK ->%s<- \n", host_block, pid_block_tmp);
-		printf("HOST_BLOCK JKJK: ->%s<- ->%s<- \n", host_block, host_block_tmp);
-		zbx_snprintf(fingerprint, sizeof(fingerprint), "%s%s", host_block, pid_block_tmp);
+		printf("HOST_BLOCK TMP : ->%s<- \n", host_block_tmp);
+		pad(host_block_tmp, CUID_HOSTNAME_BLOCK_SIZE, host_block);
+		printf("HOST_BLOCK ->%s<- \n", host_block);
+		zbx_snprintf(fingerprint, sizeof(fingerprint), "%s%s", host_block, pid_block);
 	}
 
 	seconds = time(NULL);
