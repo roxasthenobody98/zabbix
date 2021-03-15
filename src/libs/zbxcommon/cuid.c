@@ -29,7 +29,7 @@ void	cuid_init(void)
 	srand(time(NULL));
 }
 
-static int32_t	next()
+static int32_t	next(void)
 {
 	int32_t	ret;
 
@@ -65,7 +65,7 @@ static char	reVal(int num)
 		return (char)(num - 10 + 'a');
 }
 
-static void	fromDeci(char res[], int base, unsigned long inputNum)
+static void	fromDeci(char res[], int base, size_t inputNum)
 {
 	int	index = 0;
 
@@ -87,43 +87,26 @@ static void	fromDeci(char res[], int base, unsigned long inputNum)
 
 static void	pad(char *input, size_t pad_size, char *output)
 {
-	size_t	i;
-	size_t offset;
-	size_t input_len;
+	size_t	i, offset, input_len;
 
 	input_len = strlen(input);
-
 	offset = pad_size > input_len ? pad_size - input_len : 0;
-
-	printf("NNN PAD SIZE: %d and strlen: %d, offset: %d", pad_size, strlen(input), offset);
-
 	memset(output, '0', pad_size);
 
 	for (i = 0; i < strlen(input);i++)
-	{
-		printf("output at: %d, equals %c\n", i + offset,  input[i]);
 		output[i + offset] = input[i];
-	}
-
 
 	output[pad_size] = '\0';
-	printf("FINAL OUTPUT: ->%s<- \n", output);
-
 }
 
 int	new_cuid(char cuid[CUID_LEN])
 {
 	int	pid;
 	char	rand_block_1[CUID_BLOCK_SIZE + 1], rand_block_2[CUID_BLOCK_SIZE + 1], fingerprint[CUID_BLOCK_SIZE + 1],
-		timestamp[CUID_TIMESTAMP_SIZE + 1], counter_tmp[CUID_BLOCK_SIZE + 1],
-		counter[CUID_BLOCK_SIZE+1], rand_block_1_tmp[CUID_BLOCK_SIZE + 1],
-		rand_block_2_tmp[CUID_BLOCK_SIZE + 1];
-
-	char hostname_block_tmp[3];
-	char pid_block_tmp[PID_TMP_36_BASE_BUF_LEN];
-	char host_block_tmp[HOST_TMP_36_BASE_BUF_LEN];
-	char	pid_block[3], host_block[3];
-
+		timestamp[CUID_TIMESTAMP_SIZE + 1], counter_tmp[CUID_BLOCK_SIZE + 1], counter[CUID_BLOCK_SIZE+1],
+		rand_block_1_tmp[CUID_BLOCK_SIZE + 1], rand_block_2_tmp[CUID_BLOCK_SIZE + 1],
+		pid_block_tmp[PID_TMP_36_BASE_BUF_LEN], host_block_tmp[HOST_TMP_36_BASE_BUF_LEN],
+		pid_block[CUID_PID_BLOCK_SIZE + 1], host_block[CUID_HOSTNAME_BLOCK_SIZE + 1];
 	char	*hostname = NULL;
 	time_t	seconds;
 	struct utsname	name;
@@ -139,27 +122,18 @@ int	new_cuid(char cuid[CUID_LEN])
 	hostname = zbx_strdup(NULL, name.nodename);
 
 	{
-		int	x, y, i;
+		size_t	hostname_num, hostname_len, i;
 
-		y = strlen(hostname);
-		x = y + CUID_BASE_36;
+		hostname_len = strlen(hostname);
+		hostname_num = hostname_len + CUID_BASE_36;
 
-		for (i = 0; i < y; i++)
-			x = x + hostname[i];
+		for (i = 0; i < hostname_len; i++)
+			hostname_num = hostname_num + hostname[i];
 
-		printf("X: ->%d<- \n",x);
-		printf("X PID: ->%d<- \n",pid);
-
-		fromDeci(host_block_tmp, 10, x );
+		fromDeci(host_block_tmp, 10, hostname_num);
 		fromDeci(pid_block_tmp, CUID_BASE_36, pid );
-
-		printf("PID_BLOCK TMP : ->%s<- \n", pid_block_tmp);
 		pad(pid_block_tmp, CUID_PID_BLOCK_SIZE, pid_block);
-		printf("PID_BLOCK: ->%s<- \n", pid_block);
-
-		printf("HOST_BLOCK TMP : ->%s<- \n", host_block_tmp);
 		pad(host_block_tmp, CUID_HOSTNAME_BLOCK_SIZE, host_block);
-		printf("HOST_BLOCK ->%s<- \n", host_block);
 		zbx_snprintf(fingerprint, sizeof(fingerprint), "%s%s", host_block, pid_block);
 	}
 
@@ -172,24 +146,10 @@ int	new_cuid(char cuid[CUID_LEN])
 
 	pad(rand_block_1_tmp, CUID_BLOCK_SIZE, rand_block_1);
 
-	// printf("rand_block_1 0000: ->%s<-\n", rand_block_1);
-	// printf("counter1X: ->%s<-\n", counter);
-
 	zbx_snprintf(rand_block_2_tmp, sizeof(rand_block_2_tmp), "%x", rand() & 0xffff);
 	pad(rand_block_2_tmp, CUID_BLOCK_SIZE, rand_block_2);
 
-	// printf("rand_block_1: ->%s<-\n", rand_block_1);
-
-	printf("FINGERPRINT: %s\n",fingerprint);
-
-	printf("timestamp: ->%s<-\n", timestamp);
-	printf("counter: ->%s<-\n", counter);
-	printf("rand_block_1: ->%s<-\n", rand_block_1);
-	printf("rand_block_12 ->%s<-\n", rand_block_2);
-
-	// zbx_snprintf(cuid, 300, "c - timestamp: %s - counter %s - fingerprint %s - rand_block_1 %s - rand_block_2 %s", timestamp, counter, fingerprint, rand_block_1 ,rand_block_2);
-
-	zbx_snprintf(cuid, CUID_LEN, "c%s%s%s%s%s", timestamp, counter, fingerprint, rand_block_1 ,rand_block_2);
+	zbx_snprintf(cuid, CUID_LEN, "c%s%s%s%s%s", timestamp, counter, fingerprint, rand_block_1, rand_block_2);
 
 	zbx_free(hostname);
 
