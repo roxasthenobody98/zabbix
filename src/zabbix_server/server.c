@@ -1033,7 +1033,6 @@ int	MAIN_ZABBIX_ENTRY(int flags)
 	zbx_socket_t	listen_sock;
 	char		*error = NULL;
 	int		i, db_type;
-	int		iii;
 
 	if (0 != (flags & ZBX_TASK_FLAG_FOREGROUND))
 	{
@@ -1257,14 +1256,6 @@ int	MAIN_ZABBIX_ENTRY(int flags)
 			zabbix_log(LOG_LEVEL_CRIT, "listener failed: %s", zbx_socket_strerror());
 			exit(EXIT_FAILURE);
 		}
-	}
-
-	cuid_init();
-	for (iii = 0; iii < 10; iii++)
-	{
-		char x[26];
-		new_cuid(x);
-		printf("RES CUID: ->%s<-\n",x);
 	}
 
 #if defined(HAVE_GNUTLS) || defined(HAVE_OPENSSL)
