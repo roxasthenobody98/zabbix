@@ -1741,4 +1741,8 @@ int	zbx_open_xml(char *data, int options, int maxerrlen, void **xml_doc, void **
 int	zbx_check_xml_memory(char *mem, int maxerrlen, char **errmsg);
 #endif
 
+#define CUID_LEN	26
+void	cuid_init(void);
+int	new_cuid(char cuid[CUID_LEN]);
+
 #endif
