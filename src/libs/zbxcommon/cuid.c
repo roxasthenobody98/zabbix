@@ -1,14 +1,14 @@
+
 #include "string.h"
-#include "stdio.h"
+#include "sysinfo.h"
 #include <time.h>
-#include <math.h>
-#include "stdint.h"
 #include <stdlib.h>
 
-#include "sysinfo.h"
 #ifdef HAVE_SYS_UTSNAME_H
 #	include <sys/utsname.h>
 #endif
+
+#include "common.h"
 
 #define CUID_PID_BLOCK_SIZE		2
 #define CUID_HOSTNAME_BLOCK_SIZE	2
