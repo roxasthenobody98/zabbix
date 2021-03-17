@@ -1,4 +1,3 @@
-
 #include "string.h"
 #include "sysinfo.h"
 #include <time.h>
@@ -79,14 +78,22 @@ static void	from_deci(char res[], size_t base, size_t inputNum)
 
 static void	pad(char *input, size_t pad_size, char *output)
 {
-	size_t	i, offset, input_len;
+	size_t	i, input_len;
 
 	input_len = strlen(input);
-	offset = pad_size > input_len ? pad_size - input_len : 0;
-	memset(output, '0', pad_size);
 
-	for (i = 0; i < strlen(input); i++)
-		output[i + offset] = input[i];
+	if (pad_size > input_len)
+	{
+		memset(output, '0', pad_size);
+
+		for (i = 0; i < input_len; i++)
+			output[i + pad_size - input_len] = input[i];
+	}
+	else
+	{
+		for (i = 0; i < pad_size; i++)
+			output[i] = input[i + input_len - pad_size];
+	}
 
 	output[pad_size] = '\0';
 }
@@ -101,7 +108,7 @@ static void	pad(char *input, size_t pad_size, char *output)
 void	zbx_cuid_init(void)
 {
 	counterValue = 0;
-	srand((unsigned int)time(NULL));
+	srand((unsigned int)time(NULL) + getpid());
 }
 
 /******************************************************************************
