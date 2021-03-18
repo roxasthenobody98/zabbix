@@ -135,14 +135,6 @@ func (p *Plugin) Stop() {
 }
 
 func (p *Plugin) Export(key string, params []string, ctx plugin.ContextProvider) (result interface{}, err error) {
-	// for _, px := range p.cpus {
-	// 	fmt.Printf("px.:%+v\n", px.tail)
-	// 	fmt.Printf("px.:%+v\n", px.head)
-
-	// }
-	// fmt.Println("p.cpus[0].head", p.cpus[0].head)
-	// fmt.Println("p.cpus[0].tail", p.cpus[0].tail)
-
 	if p.cpus == nil || p.cpus[0].head == p.cpus[0].tail {
 		// no data gathered yet
 		return
