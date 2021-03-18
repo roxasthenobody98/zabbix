@@ -1524,7 +1524,7 @@ static int	DBpatch_5030069(void)
 			}
 =======
 	const ZBX_TABLE table =
-		{"auditlog", "", 0,
+		{"auditlog", "auditid", 0,
 			{
 				{"auditid", NULL, NULL, NULL, 25, ZBX_TYPE_CHAR, ZBX_NOTNULL, 0},
 				{"userid", NULL, NULL, NULL, 0, ZBX_TYPE_ID, ZBX_NOTNULL, 0},
@@ -1534,7 +1534,7 @@ static int	DBpatch_5030069(void)
 				{"resourceid", NULL, NULL, NULL, 0, ZBX_TYPE_ID, 0, 0},
 				{"resourcename", "", NULL, NULL, 255, ZBX_TYPE_CHAR, ZBX_NOTNULL, 0},
 				{"resourcetype", "0", NULL, NULL, 0, ZBX_TYPE_INT, ZBX_NOTNULL, 0},
-				{"recsetid", NULL, NULL, NULL, 25, ZBX_TYPE_CHAR, ZBX_NOTNULL, 0},
+				{"recsetid", "", NULL, NULL, 25, ZBX_TYPE_CHAR, ZBX_NOTNULL, 0},
 				{"details", "", NULL, NULL, 0, ZBX_TYPE_SHORTTEXT, ZBX_NOTNULL, 0},
 				{0}
 			},
