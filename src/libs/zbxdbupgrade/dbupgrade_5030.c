@@ -3695,7 +3695,7 @@ static int	DBpatch_5030114(void)
 
 static int	DBpatch_5030115(void)
 {
-	return DBcreate_index("auditlog", "auditlog_2", "resourcetype,resourceid", 0);
+	return DBcreate_index("auditlog", "auditlog_3", "resourcetype,resourceid", 0);
 }
 
 #endif
@@ -3820,5 +3820,6 @@ DBPATCH_ADD(5030112, 0, 1)
 DBPATCH_ADD(5030113, 0, 1)
 DBPATCH_ADD(5030114, 0, 1)
 DBPATCH_ADD(5030115, 0, 1)
+
 
 DBPATCH_END()
