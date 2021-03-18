@@ -1027,6 +1027,7 @@ static int	DBpatch_5030058(void)
 
 static int	DBpatch_5030059(void)
 {
+<<<<<<< HEAD
 	const ZBX_FIELD	field = {"port", "", NULL, NULL, 64, ZBX_TYPE_CHAR, ZBX_NOTNULL, 0};
 
 	return DBadd_field("scripts", &field);
@@ -1521,6 +1522,25 @@ static int	DBpatch_5030069(void)
 				ret = FAIL;
 				break;
 			}
+=======
+	const ZBX_TABLE table =
+		{"auditlog", "", 0,
+			{
+				{"auditid", NULL, NULL, NULL, 25, ZBX_TYPE_CHAR, ZBX_NOTNULL, 0},
+				{"userid", NULL, NULL, NULL, 0, ZBX_TYPE_ID, ZBX_NOTNULL, 0},
+				{"clock", "0", NULL, NULL, 0, ZBX_TYPE_INT, ZBX_NOTNULL, 0},
+				{"action", "0", NULL, NULL, 0, ZBX_TYPE_INT, ZBX_NOTNULL, 0},
+				{"ip", "", NULL, NULL, 39, ZBX_TYPE_CHAR, ZBX_NOTNULL, 0},
+				{"resourceid", NULL, NULL, NULL, 0, ZBX_TYPE_ID, 0, 0},
+				{"resourcename", "", NULL, NULL, 255, ZBX_TYPE_CHAR, ZBX_NOTNULL, 0},
+				{"resourcetype", "0", NULL, NULL, 0, ZBX_TYPE_INT, ZBX_NOTNULL, 0},
+				{"recsetid", NULL, NULL, NULL, 25, ZBX_TYPE_CHAR, ZBX_NOTNULL, 0},
+				{"details", "", NULL, NULL, 0, ZBX_TYPE_SHORTTEXT, ZBX_NOTNULL, 0},
+				{0}
+			},
+			NULL
+		};
+>>>>>>> ........S. [ZBXNEXT-6470] added upgrade patch and schema changes 2
 
 			scriptid = DBget_maxid("scripts");
 
@@ -1604,6 +1624,7 @@ static int	DBpatch_5030071(void)
 	return DBdrop_field("opcommand", "execute_on");
 }
 
+<<<<<<< HEAD
 static int	DBpatch_5030072(void)
 {
 	return DBdrop_field("opcommand", "port");
@@ -3682,6 +3703,23 @@ static int	DBpatch_5030112(void)
 
 	return DBcreate_table(&table);
 }
+=======
+static int	DBpatch_5030060(void)
+{
+	return DBcreate_index("auditlog", "auditlog_1", "auditid", 0);
+}
+
+static int	DBpatch_5030061(void)
+{
+	return DBcreate_index("auditlog", "auditlog_2", "userid,clock", 0);
+}
+
+static int	DBpatch_5030062(void)
+{
+	return DBcreate_index("auditlog", "auditlog_2", "resourcetype,resourceid", 0);
+}
+
+>>>>>>> ........S. [ZBXNEXT-6470] added upgrade patch and schema changes 2
 #endif
 
 DBPATCH_START(5030)
