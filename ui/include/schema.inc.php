@@ -5010,8 +5010,8 @@ return [
 		'fields' => [
 			'auditid' => [
 				'null' => false,
-				'type' => DB::FIELD_TYPE_ID,
-				'length' => 20
+				'type' => DB::FIELD_TYPE_CHAR,
+				'length' => 25
 			],
 			'userid' => [
 				'null' => false,
@@ -5032,18 +5032,6 @@ return [
 				'length' => 10,
 				'default' => '0'
 			],
-			'resourcetype' => [
-				'null' => false,
-				'type' => DB::FIELD_TYPE_INT,
-				'length' => 10,
-				'default' => '0'
-			],
-			'note' => [
-				'null' => false,
-				'type' => DB::FIELD_TYPE_CHAR,
-				'length' => 128,
-				'default' => ''
-			],
 			'ip' => [
 				'null' => false,
 				'type' => DB::FIELD_TYPE_CHAR,
@@ -5060,42 +5048,20 @@ return [
 				'type' => DB::FIELD_TYPE_CHAR,
 				'length' => 255,
 				'default' => ''
-			]
-		]
-	],
-	'auditlog_details' => [
-		'key' => 'auditdetailid',
-		'fields' => [
-			'auditdetailid' => [
-				'null' => false,
-				'type' => DB::FIELD_TYPE_ID,
-				'length' => 20
 			],
-			'auditid' => [
+			'resourcetype' => [
 				'null' => false,
-				'type' => DB::FIELD_TYPE_ID,
-				'length' => 20,
-				'ref_table' => 'auditlog',
-				'ref_field' => 'auditid'
+				'type' => DB::FIELD_TYPE_INT,
+				'length' => 10,
+				'default' => '0'
 			],
-			'table_name' => [
+			'recsetid' => [
 				'null' => false,
 				'type' => DB::FIELD_TYPE_CHAR,
-				'length' => 64,
+				'length' => 25,
 				'default' => ''
 			],
-			'field_name' => [
-				'null' => false,
-				'type' => DB::FIELD_TYPE_CHAR,
-				'length' => 64,
-				'default' => ''
-			],
-			'oldvalue' => [
-				'null' => false,
-				'type' => DB::FIELD_TYPE_NCLOB,
-				'default' => ''
-			],
-			'newvalue' => [
+			'details' => [
 				'null' => false,
 				'type' => DB::FIELD_TYPE_NCLOB,
 				'default' => ''
