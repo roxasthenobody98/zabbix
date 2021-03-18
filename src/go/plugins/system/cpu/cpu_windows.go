@@ -62,21 +62,35 @@ func numCPU() (numCpu int) {
 
 func (p *Plugin) getCpuLoad(params []string) (result interface{}, err error) {
 	period := historyIndex(60)
+	var percpu bool
 	switch len(params) {
 	case 2: // mode parameter
 		if period = periodByMode(params[1]); period < 0 {
-			return nil, errors.New("Invalid third parameter.")
+			return nil, errors.New("Invalid second parameter.")
 		}
 		fallthrough
 	case 1: // cpu number or all
-		if params[0] != "" && params[0] != "all" {
+		switch params[0] {
+		case "", "all":
+		case "percpu":
+			percpu = true
+		default:
 			return nil, errors.New("Invalid first parameter.")
 		}
 	case 0:
 	default:
 		return nil, errors.New("Too many parameters.")
 	}
-	return p.cpus[0].counterAverage(counterLoad, period), nil
+
+	cpuAvg := p.cpus[0].counterAverage(counterLoad, period)
+	if !percpu && cpuAvg != nil {
+		switch avg := cpuAvg.(type) {
+		case float64:
+			return avg * float64(numCPU()), nil
+		}
+	}
+
+	return cpuAvg, nil
 }
 
 func (p *Plugin) Collect() (err error) {
@@ -121,6 +135,14 @@ func (p *Plugin) Stop() {
 }
 
 func (p *Plugin) Export(key string, params []string, ctx plugin.ContextProvider) (result interface{}, err error) {
+	// for _, px := range p.cpus {
+	// 	fmt.Printf("px.:%+v\n", px.tail)
+	// 	fmt.Printf("px.:%+v\n", px.head)
+
+	// }
+	// fmt.Println("p.cpus[0].head", p.cpus[0].head)
+	// fmt.Println("p.cpus[0].tail", p.cpus[0].tail)
+
 	if p.cpus == nil || p.cpus[0].head == p.cpus[0].tail {
 		// no data gathered yet
 		return
