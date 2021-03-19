@@ -17,6 +17,7 @@
 #define CUID_TIMESTAMP_SIZE		8
 #define PID_TMP_36_BASE_BUF_LEN		10
 #define HOST_TMP_36_BASE_BUF_LEN	10
+#define RAND_TMP_36_BASE_BUF_LEN	10
 
 static size_t	counterValue;
 
@@ -130,7 +131,7 @@ int	zbx_new_cuid(char cuid[CUID_LEN])
 	size_t	pid, seconds, hostname_num, hostname_len, i;
 	char	rand_block_1[CUID_BLOCK_SIZE + 1], rand_block_2[CUID_BLOCK_SIZE + 1], fingerprint[CUID_BLOCK_SIZE + 1],
 		timestamp[CUID_TIMESTAMP_SIZE + 1], counter_tmp[CUID_BLOCK_SIZE + 1], counter[CUID_BLOCK_SIZE+1],
-		rand_block_1_tmp[CUID_BLOCK_SIZE + 1], rand_block_2_tmp[CUID_BLOCK_SIZE + 1],
+		rand_block_1_tmp[RAND_TMP_36_BASE_BUF_LEN + 1], rand_block_2_tmp[RAND_TMP_36_BASE_BUF_LEN + 1],
 		pid_block_tmp[PID_TMP_36_BASE_BUF_LEN], host_block_tmp[HOST_TMP_36_BASE_BUF_LEN],
 		pid_block[CUID_PID_BLOCK_SIZE + 1], host_block[CUID_HOSTNAME_BLOCK_SIZE + 1];
 	char	*hostname = NULL;
@@ -160,9 +161,9 @@ int	zbx_new_cuid(char cuid[CUID_LEN])
 	from_deci(timestamp, CUID_BASE_36, seconds * 1000);
 	from_deci(counter_tmp, CUID_BASE_36, next());
 	pad(counter_tmp, CUID_BLOCK_SIZE, counter);
-	zbx_snprintf(rand_block_1_tmp, sizeof(rand_block_1_tmp), "%lx", (size_t)rand() & 0xffff);
+	from_deci(rand_block_1_tmp, CUID_BASE_36, (size_t)rand());
 	pad(rand_block_1_tmp, CUID_BLOCK_SIZE, rand_block_1);
-	zbx_snprintf(rand_block_2_tmp, sizeof(rand_block_2_tmp), "%lx", (size_t)rand() & 0xffff);
+	from_deci(rand_block_2_tmp, CUID_BASE_36, (size_t)rand());
 	pad(rand_block_2_tmp, CUID_BLOCK_SIZE, rand_block_2);
 	zbx_snprintf(cuid, CUID_LEN, "c%s%s%s%s%s", timestamp, counter, fingerprint, rand_block_1, rand_block_2);
 	zbx_free(hostname);
