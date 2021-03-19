@@ -2967,6 +2967,37 @@ clean:
 	return ret;
 }
 
+#define ZBX_AUDIT_ACTION_ADD		0
+#define ZBX_AUDIT__ACTION_UPDATE	1
+#define AUDIT_ACTION_DELETE		2
+#define AUDIT_ACTION_LOGIN		3
+#define AUDIT_ACTION_LOGOUT		4
+#define AUDIT_ACTION_EXECUTE		7
+
+static int	do_it(int action, zbx_uint64_t resourceid, char* resourcename, int resourcetype,
+		zbx_uint64_t recsetid, char* details)
+{
+	int	res = SUCCEED;
+	char	auditid_cuid[CUID_LEN];
+
+	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
+
+	zbx_new_cuid(auditid_cuid);
+	printf("CIUD %s\n", auditid_cuid);
+
+
+	DBexecute("insert into auditlog (auditid,userid,clock,action,ip,resourceid,resourcename,resourcetype,"
+			"recsetid,details) values (%s,%d,%d,%d,%s," ZBX_FS_UI64 ",%s,%d," ZBX_FS_UI64 ",%s )",
+			auditid_cuid, USER_TYPE_SUPER_ADMIN, (int)time(NULL), action, "127.0.0,1", resourceid,
+			resourcename, resourcetype, recsetid, details);
+
+	zabbix_log(LOG_LEVEL_DEBUG, "End of %s():%s", __func__, zbx_result_string(res));
+
+	return res;
+
+}
+
 /******************************************************************************
  *                                                                            *
  * Function: execute_operations                                               *

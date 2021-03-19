@@ -145,6 +145,8 @@ void	zbx_thread_start(ZBX_THREAD_ENTRY_POINTER(handler), zbx_thread_args_t *thre
 		zbx_error("failed to fork: %s", zbx_strerror(errno));
 		*thread = (ZBX_THREAD_HANDLE)ZBX_THREAD_ERROR;
 	}
+
+	zbx_cuid_init();
 #endif
 }
 
