@@ -19,11 +19,25 @@
 #define HOST_TMP_36_BASE_BUF_LEN	10
 #define RAND_TMP_36_BASE_BUF_LEN	10
 
-static size_t	counterValue;
+/******************************************************************************
+ *                                                                            *
+ * Function: zbx_cuid_init                                                    *
+ *                                                                            *
+ * Purpose: initializes context for the cuid generation                       *
+ *                                                                            *
+ ******************************************************************************/
+static void	zbx_cuid_init(void)
+{
+	srand((unsigned int)time(NULL) + getpid());
+}
 
 static size_t	next(void)
 {
-	size_t	ret;
+	size_t		ret;
+	static int	counterValue = -1;
+
+	if (-1 == counterValue)
+		zbx_cuid_init();
 
 	ret = counterValue;
 	counterValue++;
@@ -97,19 +111,6 @@ static void	pad(char *input, size_t pad_size, char *output)
 	}
 
 	output[pad_size] = '\0';
-}
-
-/******************************************************************************
- *                                                                            *
- * Function: zbx_cuid_init                                                    *
- *                                                                            *
- * Purpose: initializes context for the cuid generation                       *
- *                                                                            *
- ******************************************************************************/
-void	zbx_cuid_init(void)
-{
-	counterValue = 0;
-	srand((unsigned int)time(NULL) + getpid());
 }
 
 /******************************************************************************

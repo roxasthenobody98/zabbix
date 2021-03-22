@@ -1727,7 +1727,6 @@ int	zbx_check_xml_memory(char *mem, int maxerrlen, char **errmsg);
 #endif
 
 #define CUID_LEN	26
-void	zbx_cuid_init(void);
 int	zbx_new_cuid(char cuid[CUID_LEN]);
 
 #endif
