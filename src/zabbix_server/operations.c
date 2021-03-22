@@ -571,6 +571,24 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event)
 				DBadd_interface(hostid, INTERFACE_TYPE_AGENT, useip, row[2], row[3], port, flags);
 
 				add_discovered_host_groups(hostid, &groupids);
+
+				{
+					char	recsetid_cuid[CUID_LEN];
+					struct zbx_json	details_json;
+
+					zbx_new_cuid(recsetid_cuid);
+					zabbix_log(LOG_LEVEL_INFORMATION, "RECSETID: ->%s<-\n",recsetid_cuid);
+
+					zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+					zbx_json_addobject(&details_json, NULL);
+					zbx_json_addstring(&details_json, "name", row[1], ZBX_JSON_TYPE_STRING);
+					zbx_json_close(&details_json);
+
+					zbx_audit_create_entry(ZBX_AUDIT_ACTION_ADD, hostid, host_esc,
+							AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
+
+					zbx_json_free(&details_json);
+				}
 			}
 			else
 			{

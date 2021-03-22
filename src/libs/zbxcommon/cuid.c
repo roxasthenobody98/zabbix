@@ -39,8 +39,8 @@ static size_t	next(void)
 	if (-1 == counterValue)
 		zbx_cuid_init();
 
-	ret = counterValue;
 	counterValue++;
+	ret = counterValue;
 
 	if (counterValue > DISCRETE_VALUES)
 		counterValue = 0;
