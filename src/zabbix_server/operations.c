@@ -236,6 +236,7 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event)
 
 	if (EVENT_OBJECT_DHOST == event->object || EVENT_OBJECT_DSERVICE == event->object)
 	{
+		zabbix_log(LOG_LEVEL_INFORMATION, "BBBBBBBBBBBBBBBBBBBBBBBBb\n");
 		if (EVENT_OBJECT_DHOST == event->object)
 		{
 			result = DBselect(
@@ -565,13 +566,6 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event)
 				zbx_db_insert_execute(&db_insert);
 				zbx_db_insert_clean(&db_insert);
 
-				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
-					DBadd_host_inventory(hostid, cfg.default_inventory_mode);
-
-				DBadd_interface(hostid, INTERFACE_TYPE_AGENT, useip, row[2], row[3], port, flags);
-
-				add_discovered_host_groups(hostid, &groupids);
-
 				{
 					char	recsetid_cuid[CUID_LEN];
 					struct zbx_json	details_json;
@@ -589,6 +583,14 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event)
 
 					zbx_json_free(&details_json);
 				}
+
+				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
+					DBadd_host_inventory(hostid, cfg.default_inventory_mode);
+
+				DBadd_interface(hostid, INTERFACE_TYPE_AGENT, useip, row[2], row[3], port, flags);
+
+				add_discovered_host_groups(hostid, &groupids);
+
 			}
 			else
 			{
