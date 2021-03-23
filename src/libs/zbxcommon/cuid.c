@@ -23,7 +23,7 @@ static char	host_block[HOST_TMP_36_BASE_BUF_LEN];
 
 static void	pad(char *input, size_t pad_size)
 {
-	size_t  i, input_len;
+	size_t	i, input_len;
 
 	input_len = strlen(input);
 
@@ -105,8 +105,6 @@ static void	zbx_cuid_init(void)
 	else
 		hostname = zbx_strdup(NULL, name.nodename);
 
-	zabbix_log(LOG_LEVEL_INFORMATION, "HOSTNAME X: ->%s<-",hostname);
-
 	hostname_len = strlen(hostname);
 	hostname_num = hostname_len + CUID_BASE_36;
 
@@ -116,8 +114,6 @@ static void	zbx_cuid_init(void)
 	from_decimal(host_block, 10, hostname_num);
 
 	pad(host_block, CUID_HOSTNAME_BLOCK_SIZE);
-
-	zabbix_log(LOG_LEVEL_INFORMATION, "HOST_BLOCK 1: ->%s<-",host_block);
 
 	zbx_free(hostname);
 
@@ -149,9 +145,6 @@ static size_t	next(void)
  *          consider using mutexes around it if used inside threads           *
  *                                                                            *
  * Parameters: cuid      - [OUT] resulting cuid                               *
- *                                                                            *
- * Return value: SUCCEED - if cuid was generated successfully                 *
- *               FAIL    - otherwise                                          *
  *                                                                            *
  ******************************************************************************/
 void	zbx_new_cuid(char *cuid)
