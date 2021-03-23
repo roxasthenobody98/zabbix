@@ -773,6 +773,38 @@ void	op_host_enable(const DB_EVENT *event)
 			HOST_STATUS_MONITORED,
 			hostid);
 
+	{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result;
+		DB_ROW			row;
+
+		result = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
+
+		if (NULL == result)
+		{
+			goto out;
+		}
+
+		while (NULL != (row = DBfetch(result)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_HOST_ENABLED RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
+
+			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+			zbx_json_addobject(&details_json, NULL);
+			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
+			zbx_json_close(&details_json);
+
+			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
+					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result);
+	}
+out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -803,7 +835,38 @@ void	op_host_disable(const DB_EVENT *event)
 			" where hostid=" ZBX_FS_UI64,
 			HOST_STATUS_NOT_MONITORED,
 			hostid);
+	{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result;
+		DB_ROW			row;
 
+		result = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
+
+		if (NULL == result)
+		{
+			goto out;
+		}
+
+		while (NULL != (row = DBfetch(result)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_HOST_DISABLE RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
+
+			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+			zbx_json_addobject(&details_json, NULL);
+			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
+			zbx_json_close(&details_json);
+
+			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
+					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result);
+	}
+out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -835,6 +898,39 @@ void	op_host_inventory_mode(const DB_EVENT *event, int inventory_mode)
 
 	DBset_host_inventory(hostid, inventory_mode);
 
+
+	{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result;
+		DB_ROW			row;
+
+		result = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
+
+		if (NULL == result)
+		{
+			goto out;
+		}
+
+		while (NULL != (row = DBfetch(result)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_HOST_INVENOTY_MODE RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
+
+			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+			zbx_json_addobject(&details_json, NULL);
+			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
+			zbx_json_close(&details_json);
+
+			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
+					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result);
+	}
+out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -864,6 +960,38 @@ void	op_groups_add(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 
 	add_discovered_host_groups(hostid, groupids);
 
+	{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result;
+		DB_ROW			row;
+
+		result = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
+
+		if (NULL == result)
+		{
+			goto out;
+		}
+
+		while (NULL != (row = DBfetch(result)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_GROUPS_ADD RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
+
+			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+			zbx_json_addobject(&details_json, NULL);
+			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
+			zbx_json_close(&details_json);
+
+			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
+					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result);
+	}
+out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -929,6 +1057,38 @@ void	op_groups_del(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 
 	zbx_free(sql);
 
+	{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result2;
+		DB_ROW			row;
+
+		result2 = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
+
+		if (NULL == result2)
+		{
+			goto out;
+		}
+
+		while (NULL != (row = DBfetch(result2)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_GROUPS_DEL RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
+
+			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+			zbx_json_addobject(&details_json, NULL);
+			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
+			zbx_json_close(&details_json);
+
+			zbx_audit_create_entry(AUDIT_ACTION_DELETE, hostid, row[0],
+					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result2);
+	}
+out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -963,6 +1123,38 @@ void	op_template_add(const DB_EVENT *event, zbx_vector_uint64_t *lnk_templateids
 		zbx_free(error);
 	}
 
+	{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result;
+		DB_ROW			row;
+
+		result = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
+
+		if (NULL == result)
+		{
+			goto out;
+		}
+
+		while (NULL != (row = DBfetch(result)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_TEMPLATE_ADD RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
+
+			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+			zbx_json_addobject(&details_json, NULL);
+			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
+			zbx_json_close(&details_json);
+
+			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
+					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result);
+	}
+out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -998,5 +1190,37 @@ void	op_template_del(const DB_EVENT *event, zbx_vector_uint64_t *del_templateids
 		zbx_free(error);
 	}
 
+	{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result;
+		DB_ROW			row;
+
+		result = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
+
+		if (NULL == result)
+		{
+			goto out;
+		}
+
+		while (NULL != (row = DBfetch(result)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_TEMPLATE_DEL RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
+
+			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+			zbx_json_addobject(&details_json, NULL);
+			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
+			zbx_json_close(&details_json);
+
+			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
+					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result);
+	}
+out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
