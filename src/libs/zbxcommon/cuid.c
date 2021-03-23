@@ -19,36 +19,37 @@
 #define HOST_TMP_36_BASE_BUF_LEN	10
 #define RAND_TMP_36_BASE_BUF_LEN	10
 
-/******************************************************************************
- *                                                                            *
- * Function: zbx_cuid_init                                                    *
- *                                                                            *
- * Purpose: initializes context for the cuid generation                       *
- *                                                                            *
- ******************************************************************************/
-static void	zbx_cuid_init(void)
+static char	host_block[HOST_TMP_36_BASE_BUF_LEN];
+
+static void	pad(char *input, size_t pad_size)
 {
-	srand((unsigned int)time(NULL) + getpid());
+	size_t  i, input_len;
+
+	input_len = strlen(input);
+
+	if (pad_size > input_len)
+	{
+		for (i = 0; i < input_len; i++)
+			input[i + pad_size - input_len] = input[i];
+		memset(input, '0', pad_size-input_len);
+	}
+	else
+	{
+		for (i = 0; i < pad_size; i++)
+			input[i] = input[i + input_len - pad_size];
+	}
+	input[pad_size] = '\0';
 }
 
-static size_t	next(void)
+static char	base36_digit(size_t num)
 {
-	size_t		ret;
-	static int	counterValue = -1;
-
-	if (-1 == counterValue)
-		zbx_cuid_init();
-
-	counterValue++;
-	ret = counterValue;
-
-	if (counterValue > DISCRETE_VALUES)
-		counterValue = 0;
-
-	return ret;
+	if (num <= 9)
+		return (char)(num + '0');
+	else
+		return (char)(num - 10 + 'a');
 }
 
-static void	strev(char *str)
+static void	str_rev(char *str)
 {
 	size_t	len, i;
 	char	temp;
@@ -62,55 +63,81 @@ static void	strev(char *str)
 		str[len - i - 1] = temp;
 	}
 }
-
-static char	re_val(size_t num)
-{
-	if (num <= 9)
-		return (char)(num + '0');
-	else
-		return (char)(num - 10 + 'a');
-}
-
-static void	from_deci(char res[], size_t base, size_t inputNum)
+static void	from_decimal(char *res, size_t base, size_t input_num)
 {
 	size_t	index = 0;
 
-	if (0 == inputNum)
+	if (0 == input_num)
 	{
 		res[0] = '0';
 		res[1] = '\0';
 	}
-
-	while (0 < inputNum)
-	{
-		res[index++] = re_val(inputNum % base);
-		inputNum /= base;
-	}
-	res[index] = '\0';
-
-	strev(res);
-}
-
-static void	pad(char *input, size_t pad_size, char *output)
-{
-	size_t	i, input_len;
-
-	input_len = strlen(input);
-
-	if (pad_size > input_len)
-	{
-		memset(output, '0', pad_size);
-
-		for (i = 0; i < input_len; i++)
-			output[i + pad_size - input_len] = input[i];
-	}
 	else
 	{
-		for (i = 0; i < pad_size; i++)
-			output[i] = input[i + input_len - pad_size];
+		while (0 < input_num)
+		{
+			res[index++] = base36_digit(input_num % base);
+			input_num /= base;
+		}
+		res[index] = '\0';
 	}
 
-	output[pad_size] = '\0';
+	str_rev(res);
+}
+
+/******************************************************************************
+ *                                                                            *
+ * Function: zbx_cuid_init                                                    *
+ *                                                                            *
+ * Purpose: initializes context for the cuid generation                       *
+ *                                                                            *
+ ******************************************************************************/
+static void	zbx_cuid_init(void)
+{
+	char		*hostname;
+	size_t		hostname_num, hostname_len, i;
+	struct utsname	name;
+
+	srand((unsigned int)time(NULL) + getpid());
+
+	if (-1 == uname(&name))
+		hostname = zbx_strdup(NULL, "dummy");
+	else
+		hostname = zbx_strdup(NULL, name.nodename);
+
+	zabbix_log(LOG_LEVEL_INFORMATION, "HOSTNAME X: ->%s<-",hostname);
+
+	hostname_len = strlen(hostname);
+	hostname_num = hostname_len + CUID_BASE_36;
+
+	for (i = 0; i < hostname_len; i++)
+		hostname_num = hostname_num + (size_t)hostname[i];
+
+	from_decimal(host_block, 10, hostname_num);
+
+	pad(host_block, CUID_HOSTNAME_BLOCK_SIZE);
+
+	zabbix_log(LOG_LEVEL_INFORMATION, "HOST_BLOCK 1: ->%s<-",host_block);
+
+	zbx_free(hostname);
+
+}
+
+static size_t	next(void)
+{
+	size_t		out;
+	static int	counter_value = -1;
+
+	if (-1 == counter_value)
+		zbx_cuid_init();
+
+	counter_value++;
+	out = counter_value;
+
+	if (counter_value > DISCRETE_VALUES)
+		counter_value = 0;
+
+	return out;
 }
 
 /******************************************************************************
@@ -127,47 +154,23 @@ static void	pad(char *input, size_t pad_size, char *output)
  *               FAIL    - otherwise                                          *
  *                                                                            *
  ******************************************************************************/
-int	zbx_new_cuid(char cuid[CUID_LEN])
+void	zbx_new_cuid(char *cuid)
 {
-	size_t	pid, seconds, hostname_num, hostname_len, i;
-	char	rand_block_1[CUID_BLOCK_SIZE + 1], rand_block_2[CUID_BLOCK_SIZE + 1], fingerprint[CUID_BLOCK_SIZE + 1],
-		timestamp[CUID_TIMESTAMP_SIZE + 1], counter_tmp[CUID_BLOCK_SIZE + 1], counter[CUID_BLOCK_SIZE+1],
-		rand_block_1_tmp[RAND_TMP_36_BASE_BUF_LEN + 1], rand_block_2_tmp[RAND_TMP_36_BASE_BUF_LEN + 1],
-		pid_block_tmp[PID_TMP_36_BASE_BUF_LEN], host_block_tmp[HOST_TMP_36_BASE_BUF_LEN],
-		pid_block[CUID_PID_BLOCK_SIZE + 1], host_block[CUID_HOSTNAME_BLOCK_SIZE + 1];
-	char	*hostname = NULL;
-	struct utsname	name;
+	char	rand_block_1[RAND_TMP_36_BASE_BUF_LEN + 1], rand_block_2[RAND_TMP_36_BASE_BUF_LEN + 1],
+		fingerprint[CUID_BLOCK_SIZE + 1], timestamp[CUID_TIMESTAMP_SIZE + 1], counter[CUID_BLOCK_SIZE+1],
+		pid_block[PID_TMP_36_BASE_BUF_LEN];
+	struct timeval	current_time;
 
-	pid = (size_t)getpid();
-
-	if (-1 == uname(&name))
-	{
-		zbx_error("failed to call uname");
-		return FAIL;
-	}
-
-	hostname = zbx_strdup(NULL, name.nodename);
-	hostname_len = strlen(hostname);
-	hostname_num = hostname_len + CUID_BASE_36;
-
-	for (i = 0; i < hostname_len; i++)
-		hostname_num = hostname_num + (size_t)hostname[i];
-
-	from_deci(host_block_tmp, 10, hostname_num);
-	from_deci(pid_block_tmp, CUID_BASE_36, pid);
-	pad(pid_block_tmp, CUID_PID_BLOCK_SIZE, pid_block);
-	pad(host_block_tmp, CUID_HOSTNAME_BLOCK_SIZE, host_block);
+	from_decimal(counter, CUID_BASE_36, next());
+	pad(counter, CUID_BLOCK_SIZE);
+	from_decimal(pid_block, CUID_BASE_36, (size_t)getpid());
+	pad(pid_block, CUID_PID_BLOCK_SIZE);
 	zbx_snprintf(fingerprint, sizeof(fingerprint), "%s%s", host_block, pid_block);
-	seconds = (size_t)time(NULL);
-	from_deci(timestamp, CUID_BASE_36, seconds * 1000);
-	from_deci(counter_tmp, CUID_BASE_36, next());
-	pad(counter_tmp, CUID_BLOCK_SIZE, counter);
-	from_deci(rand_block_1_tmp, CUID_BASE_36, (size_t)rand());
-	pad(rand_block_1_tmp, CUID_BLOCK_SIZE, rand_block_1);
-	from_deci(rand_block_2_tmp, CUID_BASE_36, (size_t)rand());
-	pad(rand_block_2_tmp, CUID_BLOCK_SIZE, rand_block_2);
+	gettimeofday(&current_time, NULL);
+	from_decimal(timestamp, CUID_BASE_36, current_time.tv_sec * 1000 + current_time.tv_usec / 1000);
+	from_decimal(rand_block_1, CUID_BASE_36, (size_t)rand());
+	pad(rand_block_1, CUID_BLOCK_SIZE);
+	from_decimal(rand_block_2, CUID_BASE_36, (size_t)rand());
+	pad(rand_block_2, CUID_BLOCK_SIZE);
 	zbx_snprintf(cuid, CUID_LEN, "c%s%s%s%s%s", timestamp, counter, fingerprint, rand_block_1, rand_block_2);
-	zbx_free(hostname);
-
-	return SUCCEED;
 }

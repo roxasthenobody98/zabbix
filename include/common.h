@@ -1727,7 +1727,7 @@ int	zbx_check_xml_memory(char *mem, int maxerrlen, char **errmsg);
 #endif
 
 #define CUID_LEN	26
-int	zbx_new_cuid(char cuid[CUID_LEN]);
+void	zbx_new_cuid(char *cuid);
 
 #define AUDIT_RESOURCE_USER			0
 #define AUDIT_RESOURCE_MEDIA_TYPE		3
