@@ -5010,8 +5010,8 @@ return [
 		'fields' => [
 			'auditid' => [
 				'null' => false,
-				'type' => DB::FIELD_TYPE_CHAR,
-				'length' => 25
+				'type' => DB::FIELD_TYPE_ID,
+				'length' => 20
 			],
 			'userid' => [
 				'null' => false,
@@ -5019,6 +5019,101 @@ return [
 				'length' => 20,
 				'ref_table' => 'users',
 				'ref_field' => 'userid'
+			],
+			'clock' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_INT,
+				'length' => 10,
+				'default' => '0'
+			],
+			'action' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_INT,
+				'length' => 10,
+				'default' => '0'
+			],
+			'resourcetype' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_INT,
+				'length' => 10,
+				'default' => '0'
+			],
+			'note' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_CHAR,
+				'length' => 128,
+				'default' => ''
+			],
+			'ip' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_CHAR,
+				'length' => 39,
+				'default' => ''
+			],
+			'resourceid' => [
+				'null' => true,
+				'type' => DB::FIELD_TYPE_ID,
+				'length' => 20
+			],
+			'resourcename' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_CHAR,
+				'length' => 255,
+				'default' => ''
+			]
+		]
+	],
+	'auditlog_details' => [
+		'key' => 'auditdetailid',
+		'fields' => [
+			'auditdetailid' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_ID,
+				'length' => 20
+			],
+			'auditid' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_ID,
+				'length' => 20,
+				'ref_table' => 'auditlog',
+				'ref_field' => 'auditid'
+			],
+			'table_name' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_CHAR,
+				'length' => 64,
+				'default' => ''
+			],
+			'field_name' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_CHAR,
+				'length' => 64,
+				'default' => ''
+			],
+			'oldvalue' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_NCLOB,
+				'default' => ''
+			],
+			'newvalue' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_NCLOB,
+				'default' => ''
+			]
+		]
+	],
+	'auditlog2' => [
+		'key' => 'auditid',
+		'fields' => [
+			'auditid' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_CHAR,
+				'length' => 25
+			],
+			'userid' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_ID,
+				'length' => 20
 			],
 			'clock' => [
 				'null' => false,
