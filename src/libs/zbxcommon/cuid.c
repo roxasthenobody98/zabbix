@@ -112,11 +112,8 @@ static void	zbx_cuid_init(void)
 		hostname_num = hostname_num + (size_t)hostname[i];
 
 	from_decimal(host_block, 10, hostname_num);
-
 	pad(host_block, CUID_HOSTNAME_BLOCK_SIZE);
-
 	zbx_free(hostname);
-
 }
 
 static size_t	next(void)

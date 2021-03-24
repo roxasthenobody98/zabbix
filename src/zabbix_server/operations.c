@@ -48,7 +48,7 @@ zbx_dcheck_source_t;
  * Author: Alexei Vladishev                                                   *
  *                                                                            *
  ******************************************************************************/
-static zbx_uint64_t	select_discovered_host(const DB_EVENT *event, char **hostname)
+static zbx_uint64_t	select_discovered_host(const DB_EVENT *event)
 {
 	DB_RESULT	result;
 	DB_ROW		row;
@@ -114,10 +114,7 @@ static zbx_uint64_t	select_discovered_host(const DB_EVENT *event, char **hostnam
 	zbx_free(sql);
 
 	if (NULL != (row = DBfetch(result)))
-	{
 		ZBX_STR2UINT64(hostid, row[0]);
-		*hostname = zbx_strdup(NULL, row[1]);
-	}
 	DBfree_result(result);
 exit:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s():" ZBX_FS_UI64, __func__, hostid);
@@ -194,6 +191,71 @@ static void	add_discovered_host_groups(zbx_uint64_t hostid, zbx_vector_uint64_t 
 	}
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
+}
+
+static void	audit_host(zbx_uint64_t hostid, int action)
+{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result;
+		DB_ROW			row;
+
+		result = DBselect("select hostid,proxy_hostid,host,status,lastaccess, ipmi_authtype,ipmi_privilege,ipmi_username,"
+				"ipmi_password,maintenanceid,maintenance_status,maintenance_type,maintenance_from,"
+				"name,flags,templateid,description,tls_connect,tls_accept,tls_issuer,tls_subject,"
+				"tls_psk_identity,tls_psk,proxy_address,auto_compress,discover,custom_interfaces"
+				" from hosts where hostid=" ZBX_FS_UI64, hostid);
+
+		if (NULL == result)
+		{
+			return;
+		}
+
+		while (NULL != (row = DBfetch(result)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_TEMPLATE_ADD RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[13]);
+
+			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+			zbx_json_addobject(&details_json, NULL);
+			zbx_json_addstring(&details_json, "hostid", row[0], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "proxy_hostid", row[1], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "host", row[2], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "status", row[3], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "lastaccess", row[4], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "ipmi_authtype", row[5], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "ipmi_privilege", row[6], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "ipmi_username", row[7], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "ipmi_password", row[8], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "maintenanceid", row[9], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "maintenance_status", row[10], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "maintenance_type", row[11], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "maintenance_from", row[12], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "name", row[13], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "flags", row[14], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "templateid", row[15], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "description", row[16], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "tls_connect", row[17], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "tls_accept", row[18], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "tls_issuer", row[19], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "tls_subject", row[20], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "tls_psk_identity", row[21], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "tls_psk", row[22], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "proxy_address", row[23], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "auto_compress", row[24], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "discover", row[25], ZBX_JSON_TYPE_STRING);
+			zbx_json_addstring(&details_json, "custom_interfaces", row[26], ZBX_JSON_TYPE_STRING);
+
+			zbx_json_close(&details_json);
+
+			zbx_audit_create_entry(action, hostid, row[13],
+					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result);
+
 }
 
 /******************************************************************************
@@ -438,21 +500,8 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event)
 				zbx_db_insert_clean(&db_insert);
 
 				{
-					char	recsetid_cuid[CUID_LEN];
-					struct zbx_json	details_json;
-
-					zbx_new_cuid(recsetid_cuid);
-					zabbix_log(LOG_LEVEL_INFORMATION, "NET DISCOVERY RECSETID: ->%s<-\n",recsetid_cuid);
-
-					zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
-					zbx_json_addobject(&details_json, NULL);
-					zbx_json_addstring(&details_json, "name", host_visible_unique, ZBX_JSON_TYPE_STRING);
-					zbx_json_close(&details_json);
-
-					zbx_audit_create_entry(AUDIT_ACTION_ADD, hostid, host_visible_unique,
-							AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
-
-					zbx_json_free(&details_json);
+					zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
+					audit_host(hostid, AUDIT_ACTION_ADD);
 				}
 
 				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
@@ -588,21 +637,8 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event)
 				zbx_db_insert_clean(&db_insert);
 
 				{
-					char	recsetid_cuid[CUID_LEN];
-					struct zbx_json	details_json;
-
-					zbx_new_cuid(recsetid_cuid);
-					zabbix_log(LOG_LEVEL_INFORMATION, "RECSETID: ->%s<-\n",recsetid_cuid);
-
-					zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
-					zbx_json_addobject(&details_json, NULL);
-					zbx_json_addstring(&details_json, "name", row[1], ZBX_JSON_TYPE_STRING);
-					zbx_json_close(&details_json);
-
-					zbx_audit_create_entry(AUDIT_ACTION_ADD, hostid, host_esc,
-							AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
-
-					zbx_json_free(&details_json);
+					zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
+					audit_host(hostid, AUDIT_ACTION_ADD);
 				}
 
 				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
@@ -705,14 +741,13 @@ void	op_host_del(const DB_EVENT *event)
 {
 	zbx_vector_uint64_t	hostids;
 	zbx_uint64_t		hostid;
-	char			*hostname;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
 	if (FAIL == is_discovery_or_autoregistration(event))
 		return;
 
-	if (0 == (hostid = select_discovered_host(event, &hostname)))
+	if (0 == (hostid = select_discovered_host(event)))
 		return;
 
 	zbx_vector_uint64_create(&hostids);
@@ -723,24 +758,8 @@ void	op_host_del(const DB_EVENT *event)
 
 	zbx_vector_uint64_destroy(&hostids);
 
-	{
-		char	recsetid_cuid[CUID_LEN];
-		struct zbx_json	details_json;
-
-		zbx_new_cuid(recsetid_cuid);
-		zabbix_log(LOG_LEVEL_INFORMATION, "NET DISCOVERY RECSETID: ->%s<-\n",recsetid_cuid);
-		zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", hostname);
-
-		zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
-		zbx_json_addobject(&details_json, NULL);
-		zbx_json_addstring(&details_json, "name", hostname, ZBX_JSON_TYPE_STRING);
-		zbx_json_close(&details_json);
-
-		zbx_audit_create_entry(AUDIT_ACTION_DELETE, hostid, hostname,
-				AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
-
-		zbx_json_free(&details_json);
-	}
+	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_host_del");
+	audit_host(hostid, AUDIT_ACTION_DELETE);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -773,38 +792,9 @@ void	op_host_enable(const DB_EVENT *event)
 			HOST_STATUS_MONITORED,
 			hostid);
 
-	{
-		char	recsetid_cuid[CUID_LEN];
-		struct zbx_json	details_json;
-		DB_RESULT	result;
-		DB_ROW			row;
+	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_host_enable");
+	audit_host(hostid, AUDIT_ACTION_UPDATE);
 
-		result = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
-
-		if (NULL == result)
-		{
-			goto out;
-		}
-
-		while (NULL != (row = DBfetch(result)))
-		{
-			zbx_new_cuid(recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "OP_HOST_ENABLED RECSETID: ->%s<-\n",recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
-
-			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
-			zbx_json_addobject(&details_json, NULL);
-			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
-			zbx_json_close(&details_json);
-
-			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
-					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
-
-			zbx_json_free(&details_json);
-		}
-		DBfree_result(result);
-	}
-out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -835,38 +825,10 @@ void	op_host_disable(const DB_EVENT *event)
 			" where hostid=" ZBX_FS_UI64,
 			HOST_STATUS_NOT_MONITORED,
 			hostid);
-	{
-		char	recsetid_cuid[CUID_LEN];
-		struct zbx_json	details_json;
-		DB_RESULT	result;
-		DB_ROW			row;
 
-		result = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
+	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_host_disable");
+	audit_host(hostid, AUDIT_ACTION_UPDATE);
 
-		if (NULL == result)
-		{
-			goto out;
-		}
-
-		while (NULL != (row = DBfetch(result)))
-		{
-			zbx_new_cuid(recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "OP_HOST_DISABLE RECSETID: ->%s<-\n",recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
-
-			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
-			zbx_json_addobject(&details_json, NULL);
-			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
-			zbx_json_close(&details_json);
-
-			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
-					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
-
-			zbx_json_free(&details_json);
-		}
-		DBfree_result(result);
-	}
-out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -898,39 +860,9 @@ void	op_host_inventory_mode(const DB_EVENT *event, int inventory_mode)
 
 	DBset_host_inventory(hostid, inventory_mode);
 
+	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_host_inventory_mode");
+	audit_host(hostid, AUDIT_ACTION_UPDATE);
 
-	{
-		char	recsetid_cuid[CUID_LEN];
-		struct zbx_json	details_json;
-		DB_RESULT	result;
-		DB_ROW			row;
-
-		result = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
-
-		if (NULL == result)
-		{
-			goto out;
-		}
-
-		while (NULL != (row = DBfetch(result)))
-		{
-			zbx_new_cuid(recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "OP_HOST_INVENOTY_MODE RECSETID: ->%s<-\n",recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
-
-			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
-			zbx_json_addobject(&details_json, NULL);
-			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
-			zbx_json_close(&details_json);
-
-			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
-					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
-
-			zbx_json_free(&details_json);
-		}
-		DBfree_result(result);
-	}
-out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -960,38 +892,9 @@ void	op_groups_add(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 
 	add_discovered_host_groups(hostid, groupids);
 
-	{
-		char	recsetid_cuid[CUID_LEN];
-		struct zbx_json	details_json;
-		DB_RESULT	result;
-		DB_ROW			row;
+	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_groups_add");
+	audit_host(hostid, AUDIT_ACTION_UPDATE);
 
-		result = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
-
-		if (NULL == result)
-		{
-			goto out;
-		}
-
-		while (NULL != (row = DBfetch(result)))
-		{
-			zbx_new_cuid(recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "OP_GROUPS_ADD RECSETID: ->%s<-\n",recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
-
-			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
-			zbx_json_addobject(&details_json, NULL);
-			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
-			zbx_json_close(&details_json);
-
-			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
-					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
-
-			zbx_json_free(&details_json);
-		}
-		DBfree_result(result);
-	}
-out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -1013,14 +916,13 @@ void	op_groups_del(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 	zbx_uint64_t	hostid;
 	char		*sql = NULL;
 	size_t		sql_alloc = 256, sql_offset = 0;
-	char		*hostname;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
 	if (FAIL == is_discovery_or_autoregistration(event))
 		return;
 
-	if (0 == (hostid = select_discovered_host(event, &hostname)))
+	if (0 == (hostid = select_discovered_host(event)))
 		return;
 
 	sql = (char *)zbx_malloc(sql, sql_alloc);
@@ -1057,38 +959,9 @@ void	op_groups_del(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 
 	zbx_free(sql);
 
-	{
-		char	recsetid_cuid[CUID_LEN];
-		struct zbx_json	details_json;
-		DB_RESULT	result2;
-		DB_ROW			row;
+	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_groups_del");
+	audit_host(hostid, AUDIT_ACTION_DELETE);
 
-		result2 = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
-
-		if (NULL == result2)
-		{
-			goto out;
-		}
-
-		while (NULL != (row = DBfetch(result2)))
-		{
-			zbx_new_cuid(recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "OP_GROUPS_DEL RECSETID: ->%s<-\n",recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
-
-			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
-			zbx_json_addobject(&details_json, NULL);
-			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
-			zbx_json_close(&details_json);
-
-			zbx_audit_create_entry(AUDIT_ACTION_DELETE, hostid, row[0],
-					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
-
-			zbx_json_free(&details_json);
-		}
-		DBfree_result(result2);
-	}
-out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -1123,38 +996,9 @@ void	op_template_add(const DB_EVENT *event, zbx_vector_uint64_t *lnk_templateids
 		zbx_free(error);
 	}
 
-	{
-		char	recsetid_cuid[CUID_LEN];
-		struct zbx_json	details_json;
-		DB_RESULT	result;
-		DB_ROW			row;
+zabbix_log(LOG_LEVEL_INFORMATION,  "AUDIT op_template_add");
+	audit_host(hostid, AUDIT_ACTION_ADD);
 
-		result = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
-
-		if (NULL == result)
-		{
-			goto out;
-		}
-
-		while (NULL != (row = DBfetch(result)))
-		{
-			zbx_new_cuid(recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "OP_TEMPLATE_ADD RECSETID: ->%s<-\n",recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
-
-			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
-			zbx_json_addobject(&details_json, NULL);
-			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
-			zbx_json_close(&details_json);
-
-			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
-					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
-
-			zbx_json_free(&details_json);
-		}
-		DBfree_result(result);
-	}
-out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -1174,14 +1018,13 @@ void	op_template_del(const DB_EVENT *event, zbx_vector_uint64_t *del_templateids
 {
 	zbx_uint64_t	hostid;
 	char		*error;
-	char		*hostname;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
 	if (FAIL == is_discovery_or_autoregistration(event))
 		return;
 
-	if (0 == (hostid = select_discovered_host(event, &hostname)))
+	if (0 == (hostid = select_discovered_host(event)))
 		return;
 
 	if (SUCCEED != DBdelete_template_elements(hostid, del_templateids, &error))
@@ -1190,37 +1033,8 @@ void	op_template_del(const DB_EVENT *event, zbx_vector_uint64_t *del_templateids
 		zbx_free(error);
 	}
 
-	{
-		char	recsetid_cuid[CUID_LEN];
-		struct zbx_json	details_json;
-		DB_RESULT	result;
-		DB_ROW			row;
+	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_template_del");
+	audit_host(hostid, AUDIT_ACTION_DELETE);
 
-		result = DBselect("select name from hosts where hostid=" ZBX_FS_UI64, hostid);
-
-		if (NULL == result)
-		{
-			goto out;
-		}
-
-		while (NULL != (row = DBfetch(result)))
-		{
-			zbx_new_cuid(recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "OP_TEMPLATE_DEL RECSETID: ->%s<-\n",recsetid_cuid);
-			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
-
-			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
-			zbx_json_addobject(&details_json, NULL);
-			zbx_json_addstring(&details_json, "name", row[0], ZBX_JSON_TYPE_STRING);
-			zbx_json_close(&details_json);
-
-			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
-					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
-
-			zbx_json_free(&details_json);
-		}
-		DBfree_result(result);
-	}
-out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
