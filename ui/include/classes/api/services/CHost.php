@@ -841,84 +841,333 @@ class CHost extends CHostGeneral {
 	 */
 	public function update($hosts) {
 		$hosts = zbx_toArray($hosts);
-		$hostids = zbx_objectValues($hosts, 'hostid');
+		$hostids = array_column($hosts, 'hostid');
+		$additional_fields = array_flip(['groups', 'interfaces', 'templates_clear', 'templates', 'tags', 'macros',
+			'inventory'
+		]);
 
-		$db_hosts = $this->get([
-			'output' => ['hostid', 'host', 'flags', 'tls_connect', 'tls_accept', 'tls_issuer', 'tls_subject',
-				'tls_psk_identity', 'tls_psk'
+		$options = [
+			'output' => ['hostid', 'proxy_hostid', 'host', 'status', 'ipmi_authtype', 'ipmi_privilege', 'ipmi_username',
+				'ipmi_password', 'name', 'flags', 'description', 'tls_connect', 'tls_accept', 'tls_issuer', 'tls_subject',
+				'tls_psk_identity', 'tls_psk', 'inventory_mode'
 			],
 			'hostids' => $hostids,
 			'editable' => true,
 			'preservekeys' => true
-		]);
+		];
+
+		if (array_column($hosts, 'interfaces')) {
+			$options['selectInterfaces'] = ['interfaceid', 'hostid', 'main', 'type'];
+		}
+
+		if (array_column($hosts, 'templates')) {
+			$options['selectParentTemplates'] = ['templateid'];
+		}
+
+		if (array_column($hosts, 'tags')) {
+			$options['selectTags'] = ['tag', 'value'];
+		}
+
+		if (array_column($hosts, 'macros')) {
+			$options['selectMacros'] = ['hostmacroid'];
+		}
+
+		$db_hosts = $this->get($options);
 
 		$hosts = $this->validateUpdate($hosts, $db_hosts);
 
-		$inventories = [];
+		$hosts_params = [];
+
+		$hosts_interfaces = [];
+		$db_hosts_interfaces = [];
+
+		$templates_clear_hostids = [];
+		$templates_unlink_hostids = [];
+		$templates_hostids = [];
+
+		$hosts_tags_to_add = [];
+		$hosts_tags_to_delete = [];
+
+		$hosts_macros_to_add = [];
+		$hosts_macros_to_update = [];
+		$hosts_macros_to_delete = [];
+
+		$hosts_inventory = [];
+
 		foreach ($hosts as &$host) {
 			// If visible name is not given or empty it should be set to host name.
-			if (array_key_exists('host', $host) && (!array_key_exists('name', $host) || !trim($host['name']))) {
+			if (array_key_exists('host', $host) && (!array_key_exists('name', $host) || trim($host['name']) === '')) {
 				$host['name'] = $host['host'];
 			}
 
-			// Fetch fields required to update host inventory.
-			if (array_key_exists('inventory', $host)) {
-				$inventory = $host['inventory'];
-				$inventory['hostid'] = $host['hostid'];
-
-				$inventories[] = $inventory;
-			}
-		}
-		unset($host);
-
-		$inventories = $this->extendObjects('host_inventory', $inventories, ['inventory_mode']);
-		$inventories = zbx_toHash($inventories, 'hostid');
-
-		$macros = [];
-		foreach ($hosts as &$host) {
-			if (isset($host['macros'])) {
-				$macros[$host['hostid']] = zbx_toArray($host['macros']);
-
-				unset($host['macros']);
+			$host_params = array_diff_key($host, $additional_fields);
+			if ($host_params) {
+				$hosts_params[$host['hostid']] = $host_params;
 			}
 
-			if (array_key_exists('tags', $host)) {
-				$host['tags'] = zbx_toArray($host['tags']);
+			if (array_key_exists('interface', $host)) {
+				foreach (zbx_toArray($host['interfaces']) as $interface) {
+					$hosts_interfaces = ['hostid' => $host['hostid']] + $interface;
+				}
+
+				$db_hosts_interfaces[$host['hostid']] = zbx_toHash($db_hosts[$host['hostid']]['interfaces'],
+					'interfaceid'
+				);
 			}
-		}
-		unset($host);
 
-		if ($macros) {
-			API::UserMacro()->replaceMacros($macros);
-		}
+			$clear_templateids = [];
 
-		$hosts = $this->extendObjectsByKey($hosts, $db_hosts, 'hostid', ['tls_connect', 'tls_accept', 'tls_issuer',
-			'tls_subject', 'tls_psk_identity', 'tls_psk'
-		]);
-
-		foreach ($hosts as $host) {
-			// Extend host inventory with the required data.
-			if (array_key_exists('inventory', $host) && $host['inventory']) {
-				// If inventory mode is HOST_INVENTORY_DISABLED, database record is not created.
-				if (array_key_exists('inventory_mode', $inventories[$host['hostid']])
-						&& ($inventories[$host['hostid']]['inventory_mode'] == HOST_INVENTORY_MANUAL
-							|| $inventories[$host['hostid']]['inventory_mode'] == HOST_INVENTORY_AUTOMATIC)) {
-					$host['inventory'] = $inventories[$host['hostid']];
+			if (array_key_exists('templates_clear', $host)) {
+				foreach (zbx_toArray($host['templates_clear']) as $template) {
+					$templates_clear_hostids[$template['templateid']][] = $host['hostid'];
+					$clear_templateids[$template['templateid']] = true;
 				}
 			}
 
-			$data = $host;
-			$data['hosts'] = ['hostid' => $host['hostid']];
-			$result = $this->massUpdate($data);
+			if (array_key_exists('templates', $host)) {
+				$host_db_templates = zbx_toHash($db_hosts[$host['hostid']]['parentTemplates'], 'templateid');
+				$host_db_templates = array_diff_key($host_db_templates, $clear_templateids);
+				$templateids = [];
 
-			if (!$result) {
-				self::exception(ZBX_API_ERROR_INTERNAL, _('Host update failed.'));
+				foreach (zbx_toArray($host['templates']) as $template) {
+					if (!array_key_exists($template['templateid'], $host_db_templates)) {
+						$templates_hostids[$template['templateid']][] = $host['hostid'];
+					} else {
+						$templateids[$template['templateid']] = true;
+					}
+				}
+
+				foreach (array_diff_key($host_db_templates, $templateids) as $templateid => $foo) {
+					$templates_unlink_hostids[$templateid][] = $host['hostid'];
+				}
+			}
+
+			if (array_key_exists('tags', $host) && $host['tags']) {
+				$host_db_tags = zbx_toHash($db_hosts[$host['hostid']]['tags'], 'tag');
+				$host_tags = [];
+
+				foreach (zbx_toArray($host['tags']) as $tag) {
+					$tag += ['value' => ''];
+
+					if (!array_key_exists($tag['tag'], $host_db_tags) || $tag['value'] !== $host_db_tags[$tag['tag']]) {
+						$hosts_tags_to_add[] = ['hostid' => $host['hostid']] + $tag;
+						$host_tags[$tag['tag']] = true;
+					}
+				}
+
+				foreach (array_diff_key($host_db_tags, $host_tags) as $tag) {
+					$hosts_tags_to_delete[$host['hostid']][] = $tag['tag'];
+				}
+			}
+
+			if (array_key_exists('macros', $host) && $host['macros']) {
+				$host_db_macros = zbx_toHash($db_hosts[$host['hostid']]['macros'], 'hostmacroid');
+				$hostmacroids = [];
+
+				foreach (zbx_toArray($host['macros']) as $macro) {
+					if (array_key_exists('hostmacroid', $macro)
+							&& array_key_exists($macro['hostmacroid'], $host_db_macros)) {
+						$hosts_macros_to_update[] = $macro;
+						$hostmacroids[$macro['hostmacroid']] = true;
+					}
+					else {
+						$hosts_macros_to_add[] = ['hostid' => $host['hostid']] + $macro;
+					}
+				};
+
+				$hosts_macros_to_delete += array_diff_key($host_db_macros, $hostmacroids);
+			}
+
+			if (array_key_exists('inventory', $host) && $host['inventory']) {
+				$hosts_inventory[] = [
+					'hostid' => $host['hostid'],
+					'inventory_mode' => $db_hosts[$hosts['hostid']]['inventory_mode']
+				] + $host['inventory'];
+			}
+		}
+		unset($host);
+
+		while ($hosts_params) {
+			$hostid = key($hosts_params);
+			$host_params = reset($hosts_params);
+			$params_hostids = [$hostid];
+			unset($hosts_params[$hostid]);
+
+			foreach ($hosts_params as $hostid => $params) {
+				if ($host_params === $params) {
+					$params_hostids[] = $hostid;
+					unset($hosts_params[$hostid]);
+				}
+			}
+
+			DB::update('hosts', [
+				'values' => $host_params,
+				'where' => ['hostid' => $params_hostids]
+			]);
+		}
+
+		$this->replaceHostsInterfaces($hosts_interfaces, $db_hosts_interfaces);
+
+		while ($templates_clear_hostids) {
+			$templateid = key($templates_clear_hostids);
+			$unlink_hostids = reset($templates_clear_hostids);
+			$unlink_templateids = [$templateid];
+			unset($templates_clear_hostids[$templateid]);
+
+			foreach ($templates_clear_hostids as $templateid => $hostids) {
+				if ($unlink_hostids === $hostids) {
+					$unlink_templateids[] = $templateid;
+					unset($templates_clear_hostids[$templateid]);
+				}
+			}
+
+			$this->unlink($unlink_templateids, $unlink_hostids, true);
+		}
+
+		while ($templates_unlink_hostids) {
+			$templateid = key($templates_unlink_hostids);
+			$unlink_hostids = reset($templates_unlink_hostids);
+			$unlink_templateids = [$templateid];
+			unset($templates_unlink_hostids[$templateid]);
+
+			foreach ($templates_unlink_hostids as $templateid => $hostids) {
+				if ($unlink_hostids === $hostids) {
+					$unlink_templateids[] = $templateid;
+					unset($templates_unlink_hostids[$templateid]);
+				}
+			}
+
+			$this->unlink($unlink_templateids, $unlink_hostids);
+		}
+
+		$this->replaceHostsInterfaces($hosts_interfaces, $db_hosts_interfaces);
+
+		while ($templates_hostids) {
+			$templateid = key($templates_hostids);
+			$link_hostids = reset($templates_hostids);
+			$link_templateids = [$templateid];
+			unset($templates_hostids[$templateid]);
+
+			foreach ($templates_hostids as $templateid => $hostids) {
+				if ($link_hostids === $hostids) {
+					$link_templateids[] = $templateid;
+					unset($templates_hostids[$templateid]);
+				}
+			}
+
+			$this->link($link_templateids, $link_hostids);
+		}
+
+		if ($hosts_tags_to_delete) {
+			$where_parts = [];
+
+			foreach ($hosts_tags_to_delete as $hostid => $tags) {
+				$where_parts[] = '('.dbConditionId('ht.hostid', [$hostid])
+					.' AND '.dbConditionString('ht.tag', $tags).')';
+			}
+
+			$hosttagids = DBfetchColumn(DBselect(
+				'SELECT ht.hosttagid'.
+				' FROM host_tag ht'.
+				' WHERE '.implode(' OR ', $where_parts)
+			), 'hosttagid');
+
+			DB::delete('host_tag', ['hosttagid' => $hosttagids]);
+		}
+
+		if ($hosts_tags_to_add) {
+			DB::insert('host_tag', $hosts_tags_to_add);
+		}
+
+		if ($hosts_macros_to_add) {
+			API::UserMacro()->create($hosts_macros_to_add);
+		}
+
+		if ($hosts_macros_to_update) {
+			API::UserMacro()->update($hosts_macros_to_update);
+		}
+
+		if ($hosts_macros_to_delete) {
+			API::UserMacro()->delete(array_keys($hosts_macros_to_delete));
+		}
+
+		return ['hostids' => $hostids];
+	}
+
+	private function replaceHostsInterfaces(array $hosts_interfaces, array $db_hosts_interfaces) {
+		foreach ($hosts_interfaces as &$interface) {
+			if (array_key_exists('interfaceid', $interface)) {
+				if (!array_key_exists('main', $interface) || !array_key_exists('type', $interface)) {
+					if (!array_key_exists($interface['hostid'], $db_hosts_interfaces)
+							|| !array_key_exists($interface['interfaceid'],
+								$db_hosts_interfaces[$interface['hostid']]
+							)) {
+						self::exception(ZBX_API_ERROR_PERMISSIONS,
+							_('No permissions to referred object or it does not exist!')
+						);
+					}
+
+					$interface += array_intersect_key(
+						$db_hosts_interfaces[$interface['hostid']][$interface['interfaceid']],
+						['main' => true, 'type' => true]
+					);
+				}
+			}
+			elseif (!array_key_exists('main', $interface) || !array_key_exists('type', $interface)) {
+				self::exception(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
+			}
+		}
+		unset($interface);
+
+		CApiHostInterfaceHelper::checkMainInterfaces($hosts_interfaces);
+
+		$interfaces_to_add = [];
+		$interfaces_to_update = [];
+		$interfaces_to_delete = [];
+
+		foreach ($hosts_interfaces as $interface) {
+			if (!array_key_exists('interfaceid', $interface)) {
+				$interfaces_to_add[] = $interface;
+			}
+			else {
+				$interfaces_to_update[] = $interface;
+				unset($db_hosts_interfaces[$interface['hostid']][$interface['interfaceid']]);
 			}
 		}
 
-		$this->updateTags($hosts, 'hostid');
+		foreach ($db_hosts_interfaces as $interfaces) {
+			$interfaces_to_delete[] += $interfaces;
+		}
 
-		return ['hostids' => $hostids];
+		if ($interfaces_to_add) {
+			CApiHostInterfaceHelper::checkInput($interfaces_to_add, 'create');
+			$interfaceids = DB::insert('interface', $interfaces_to_add);
+
+			CApiHostInterfaceHelper::checkSnmpInput($interfaces_to_add);
+
+			$snmp_interfaces = [];
+			foreach ($interfaceids as $key => $id) {
+				if ($interfaces_to_add[$key]['type'] == INTERFACE_TYPE_SNMP) {
+					$snmp_interfaces[] = ['interfaceid' => $id] + $interfaces_to_add[$key]['details'];
+				}
+			}
+
+			if ($snmp_interfaces) {
+				CApiHostInterfaceHelper::sanitizeSnmpFields($snmp_interfaces);
+				DB::insert('interface_snmp', $snmp_interfaces, false);
+			}
+		}
+
+		if ($interfaces_to_update) {
+			CApiHostInterfaceHelper::checkInput($interfaces_to_update, 'update');
+			DB::update('interface', CApiHostInterfaceHelper::prepareUpdateData($interfaces_to_update));
+
+			$this->updateInterfaceDetails($interfaces_update);
+		}
+
+		if ($interfaces_to_delete) {
+			// $this->delete(array_keys($interfaces_to_delete));
+		}
 	}
 
 	/**
