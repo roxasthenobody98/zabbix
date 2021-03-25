@@ -547,10 +547,11 @@ static void	update_template_lld_rule_formulas(zbx_vector_ptr_t *items, zbx_vecto
  *                                                                            *
  ******************************************************************************/
 static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_template_item_t *item,
-		zbx_db_insert_t *db_insert_items, zbx_db_insert_t *db_insert_irtdata, char **sql, size_t *sql_alloc,
-		size_t *sql_offset)
+		zbx_db_insert_t *db_insert_items, zbx_db_insert_t *db_insert_irtdata,
+		zbx_db_insert_t *db_insert_items_audit, char *recsetid_cuid, char **sql,
+		size_t *sql_alloc, size_t *sql_offset)
 {
-	int			i;
+	int			i, audit_action;
 	zbx_template_item_t	*dependent;
 
 	if (NULL == item->key) /* existing item */
@@ -561,6 +562,8 @@ static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_te
 			*jmx_endpoint_esc, *timeout_esc, *url_esc,
 			*query_fields_esc, *posts_esc, *status_codes_esc, *http_proxy_esc, *headers_esc,
 			*ssl_cert_file_esc, *ssl_key_file_esc, *ssl_key_password_esc;
+
+		audit_action = AUDIT_ACTION_UPDATE;
 
 		name_esc = DBdyn_escape_string(item->name);
 		delay_esc = DBdyn_escape_string(item->delay);
@@ -686,6 +689,8 @@ static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_te
 	}
 	else
 	{
+		audit_action = AUDIT_ACTION_ADD;
+
 		zbx_db_insert_add_values(db_insert_items, *itemid, item->name, item->key, hostid, (int)item->type,
 				(int)item->value_type, item->delay, item->history, item->trends,
 				(int)item->status, item->trapper_hosts, item->units, item->formula, item->logtimefmt,
@@ -704,11 +709,80 @@ static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_te
 		item->itemid = (*itemid)++;
 	}
 
+
+	{
+	char	item_audit_cuid[CUID_LEN];
+	struct zbx_json	details_json;
+
+	zbx_new_cuid(item_audit_cuid);
+
+
+	zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+	zbx_json_addobject(&details_json, NULL);
+
+	zbx_json_adduint64(&details_json, "itemid", *itemid);
+	zbx_json_addstring(&details_json, "name", item->name, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "key", item->key, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&details_json, "hostid", hostid);
+	zbx_json_adduint64(&details_json, "type", item->type);
+	zbx_json_adduint64(&details_json, "value_type", item->value_type);
+	zbx_json_addstring(&details_json, "delay", item->delay, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "history", item->history, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "trends", item->trends, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&details_json, "status", item->status);
+	zbx_json_addstring(&details_json, "trapper_hosts", item->trapper_hosts, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "units", item->units, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "formula", item->formula, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "logtimefmt", item->logtimefmt, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&details_json, "valuemapid", item->valuemapid);
+	zbx_json_addstring(&details_json, "params", item->params, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "ipmi_sensor", item->ipmi_sensor, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "snmp_oid", item->snmp_oid, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&details_json, "authtype", item->authtype);
+	zbx_json_addstring(&details_json, "username", item->username, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "password", item->password, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "publickey", item->publickey, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "privatekey", item->privatekey, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&details_json, "templateid", item->templateid);
+	zbx_json_adduint64(&details_json, "flags", item->flags);
+	zbx_json_addstring(&details_json, "description", item->description, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&details_json, "inventory_link", item->inventory_link);
+	zbx_json_adduint64(&details_json, "interfaceid", item->interfaceid);
+	zbx_json_addstring(&details_json, "lifetime", item->lifetime, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&details_json, "evaltype", item->evaltype);
+	zbx_json_addstring(&details_json, "jmx_endpoint", item->jmx_endpoint, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&details_json, "master_itemid", item->master_itemid);
+	zbx_json_addstring(&details_json, "timeout", item->timeout, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "url", item->url, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "query_fields", item->query_fields, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "posts", item->posts, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "status_codes", item->status_codes, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&details_json, "follow_redirects", item->follow_redirects);
+	zbx_json_adduint64(&details_json, "post_type", item->post_type);
+	zbx_json_addstring(&details_json, "http_proxy", item->http_proxy, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "headers", item->headers, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&details_json, "retrieve_mode", item->retrieve_mode);
+	zbx_json_adduint64(&details_json, "request_method", item->request_method);
+	zbx_json_adduint64(&details_json, "output_format", item->output_format);
+	zbx_json_addstring(&details_json, "ssl_cert_file", item->ssl_cert_file, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "ssl_key_file", item->ssl_key_file, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&details_json, "ssl_key_password", item->ssl_key_password, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&details_json, "verify_peer", item->verify_peer);
+	zbx_json_adduint64(&details_json, "verify_host", item->verify_host);
+	zbx_json_adduint64(&details_json, "allowed_traps", item->allow_traps);
+	zbx_json_adduint64(&details_json, "discover", item->discover);
+
+	zbx_json_close(&details_json);
+
+	zbx_db_insert_add_values(db_insert_items_audit, item_audit_cuid, USER_TYPE_SUPER_ADMIN, (int)time(NULL), audit_action,"",itemid,
+				AUDIT_RESOURCE_ITEM, recsetid_cuid, details_json);
+	}
+
 	for (i = 0; i < item->dependent_items.values_num; i++)
 	{
 		dependent = (zbx_template_item_t *)item->dependent_items.values[i];
 		dependent->master_itemid = item->itemid;
-		save_template_item(hostid, itemid, dependent, db_insert_items, db_insert_irtdata, sql, sql_alloc,
+		save_template_item(hostid, itemid, dependent, db_insert_items, db_insert_irtdata, db_insert_items_audit, recsetid_cuid, sql, sql_alloc,
 				sql_offset);
 	}
 }
@@ -723,13 +797,13 @@ static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_te
  *              items  - [IN] the template items                              *
  *                                                                            *
  ******************************************************************************/
-static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items)
+static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items, char *recsetid_cuid)
 {
 	char			*sql = NULL;
 	size_t			sql_alloc = 16 * ZBX_KIBIBYTE, sql_offset = 0;
 	int			new_items = 0, upd_items = 0, i;
 	zbx_uint64_t		itemid = 0;
-	zbx_db_insert_t		db_insert_items, db_insert_irtdata;
+	zbx_db_insert_t		db_insert_items, db_insert_irtdata, db_insert_items_audit;
 	zbx_template_item_t	*item;
 
 	if (0 == items->values_num)
@@ -760,6 +834,8 @@ static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items)
 				"output_format", "ssl_cert_file", "ssl_key_file", "ssl_key_password", "verify_peer",
 				"verify_host", "allow_traps", "discover", NULL);
 
+		zbx_db_insert_prepare(&db_insert_items_audit, "auditlog2","auditid","userid","clock","action","ip","resourceid","resourcename","resourcetype,","recsetid","details", NULL);
+
 		zbx_db_insert_prepare(&db_insert_irtdata, "item_rtdata", "itemid", NULL);
 	}
 
@@ -776,7 +852,7 @@ static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items)
 		/* dependent items are saved within recursive save_template_item calls while saving master */
 		if (0 == item->master_itemid)
 		{
-			save_template_item(hostid, &itemid, item, &db_insert_items, &db_insert_irtdata,
+			save_template_item(hostid, &itemid, item, &db_insert_items, &db_insert_irtdata, &db_insert_items_audit, recsetid_cuid,
 					&sql, &sql_alloc, &sql_offset);
 		}
 	}
@@ -785,6 +861,9 @@ static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items)
 	{
 		zbx_db_insert_execute(&db_insert_items);
 		zbx_db_insert_clean(&db_insert_items);
+
+		zbx_db_insert_execute(&db_insert_items_audit);
+		zbx_db_insert_clean(&db_insert_items_audit);
 
 		zbx_db_insert_execute(&db_insert_irtdata);
 		zbx_db_insert_clean(&db_insert_irtdata);
@@ -1936,8 +2015,11 @@ void	DBcopy_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *templ
 	int			new_conditions = 0;
 	zbx_vector_uint64_t	lld_itemids;
 	zbx_hashset_t		lld_items;
+	char	recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
+	zbx_new_cuid(recsetid_cuid);
 
 	zbx_vector_ptr_create(&items);
 	zbx_vector_ptr_create(&lld_rules);
@@ -1953,7 +2035,7 @@ void	DBcopy_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *templ
 	update_template_lld_rule_formulas(&items, &lld_rules);
 
 	link_template_dependent_items(&items);
-	save_template_items(hostid, &items);
+	save_template_items(hostid, &items, recsetid_cuid);
 	save_template_lld_rules(&items, &lld_rules, new_conditions);
 	save_template_item_applications(&items);
 	save_template_discovery_prototypes(hostid, &items);

@@ -122,6 +122,72 @@ exit:
 	return hostid;
 }
 
+static void	audit_groups_add(zbx_uint64_t hostid, zbx_uint64_t hostgroupid, zbx_uint64_t groupid)
+{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result;
+		DB_ROW			row;
+
+		result = DBselect("select name from hstgrp where groupid=" ZBX_FS_UI64, groupid);
+
+		if (NULL == result)
+		{
+			return;
+		}
+
+		while (NULL != (row = DBfetch(result)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_AUDIT_GROUPS_ADD RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "NEW GROUPID NAME: ->%s<-\n", row[0]);
+
+			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+			zbx_json_addobject(&details_json, NULL);
+			zbx_json_adduint64(&details_json, "hostgroupid", hostgroupid);
+			zbx_json_adduint64(&details_json, "hostid", hostid);
+			zbx_json_adduint64(&details_json, "groupid", groupid);
+
+			zbx_json_close(&details_json);
+
+			zbx_audit_create_entry(AUDIT_ACTION_ADD, hostid, row[0],
+					AUDIT_RESOURCE_HOST_GROUP, recsetid_cuid, details_json.buffer);
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result);
+}
+
+static void	audit_groups_delete(zbx_uint64_t hostid)
+{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result;
+		DB_ROW			row;
+
+		result = DBselect("select name from hstgrp where hostid=" ZBX_FS_UI64, hostid);
+
+		if (NULL == result)
+		{
+			return;
+		}
+
+		while (NULL != (row = DBfetch(result)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_AUDIT_GROUPS_DELETE RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "DEL GROUPID NAME: ->%s<-\n", row[0]);
+
+			zbx_audit_create_entry(AUDIT_ACTION_DELETE, hostid, row[0],
+					AUDIT_RESOURCE_HOST_GROUP, recsetid_cuid, "");
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result);
+}
+
+
+
 /******************************************************************************
  *                                                                            *
  * Function: add_discovered_host_groups                                       *
@@ -183,7 +249,9 @@ static void	add_discovered_host_groups(zbx_uint64_t hostid, zbx_vector_uint64_t 
 
 		for (i = 0; i < groupids->values_num; i++)
 		{
-			zbx_db_insert_add_values(&db_insert, hostgroupid++, hostid, groupids->values[i]);
+			zbx_db_insert_add_values(&db_insert, hostgroupid, hostid, groupids->values[i]);
+			audit_groups_add(hostid, hostgroupid, groupids->values[i]);
+			hostgroupid++;
 		}
 
 		zbx_db_insert_execute(&db_insert);
@@ -193,7 +261,7 @@ static void	add_discovered_host_groups(zbx_uint64_t hostid, zbx_vector_uint64_t 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
-static void	audit_host(zbx_uint64_t hostid, int action)
+static void	audit_host_add(zbx_uint64_t hostid)
 {
 		char	recsetid_cuid[CUID_LEN];
 		struct zbx_json	details_json;
@@ -249,13 +317,111 @@ static void	audit_host(zbx_uint64_t hostid, int action)
 
 			zbx_json_close(&details_json);
 
-			zbx_audit_create_entry(action, hostid, row[13],
+			zbx_audit_create_entry(AUDIT_ACTION_ADD, hostid, row[13],
 					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
 
 			zbx_json_free(&details_json);
 		}
 		DBfree_result(result);
+}
 
+static void	audit_host_del(zbx_uint64_t hostid)
+{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result;
+		DB_ROW			row;
+
+		result = DBselect("name from hosts where hostid=" ZBX_FS_UI64, hostid);
+
+		if (NULL == result)
+		{
+			return;
+		}
+
+		while (NULL != (row = DBfetch(result)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_TEMPLATE_DELETE RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
+
+
+			zbx_audit_create_entry(AUDIT_ACTION_DELETE, hostid, row[0],
+					AUDIT_RESOURCE_HOST, recsetid_cuid, "");
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result);
+}
+
+static void	audit_host_status(zbx_uint64_t hostid, int status)
+{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result;
+		DB_ROW			row;
+
+		result = DBselect("name from hosts where hostid=" ZBX_FS_UI64, hostid);
+
+		if (NULL == result)
+		{
+			return;
+		}
+
+		while (NULL != (row = DBfetch(result)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+
+			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+			zbx_json_addobject(&details_json, NULL);
+			zbx_json_adduint64(&details_json, "status", status);
+			zbx_json_close(&details_json);
+
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_ENABLE_DISABLE RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
+
+
+			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
+					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result);
+}
+
+static void	audit_host_inventory(zbx_uint64_t hostid, int inventory_mode)
+{
+		char	recsetid_cuid[CUID_LEN];
+		struct zbx_json	details_json;
+		DB_RESULT	result;
+		DB_ROW			row;
+
+		result = DBselect("name from hosts where hostid=" ZBX_FS_UI64, hostid);
+
+		if (NULL == result)
+		{
+			return;
+		}
+
+		while (NULL != (row = DBfetch(result)))
+		{
+			zbx_new_cuid(recsetid_cuid);
+
+			zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+			zbx_json_addobject(&details_json, NULL);
+			zbx_json_adduint64(&details_json, "inventory_mode", inventory_mode);
+			zbx_json_close(&details_json);
+
+			zabbix_log(LOG_LEVEL_INFORMATION, "OP_ENABLE_DISABLE RECSETID: ->%s<-\n",recsetid_cuid);
+			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[0]);
+
+
+			zbx_audit_create_entry(AUDIT_ACTION_UPDATE, hostid, row[0],
+					AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
+
+			zbx_json_free(&details_json);
+		}
+		DBfree_result(result);
 }
 
 /******************************************************************************
@@ -501,7 +667,7 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event)
 
 				{
 					zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
-					audit_host(hostid, AUDIT_ACTION_ADD);
+					audit_host_add(hostid);
 				}
 
 				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
@@ -638,7 +804,7 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event)
 
 				{
 					zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
-					audit_host(hostid, AUDIT_ACTION_ADD);
+					audit_host_add(hostid);
 				}
 
 				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
@@ -759,7 +925,7 @@ void	op_host_del(const DB_EVENT *event)
 	zbx_vector_uint64_destroy(&hostids);
 
 	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_host_del");
-	audit_host(hostid, AUDIT_ACTION_DELETE);
+	audit_host_del(hostid);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -793,7 +959,7 @@ void	op_host_enable(const DB_EVENT *event)
 			hostid);
 
 	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_host_enable");
-	audit_host(hostid, AUDIT_ACTION_UPDATE);
+	audit_host_status(hostid, HOST_STATUS_MONITORED);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -827,7 +993,7 @@ void	op_host_disable(const DB_EVENT *event)
 			hostid);
 
 	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_host_disable");
-	audit_host(hostid, AUDIT_ACTION_UPDATE);
+	audit_host_status(hostid, HOST_STATUS_NOT_MONITORED);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -861,7 +1027,7 @@ void	op_host_inventory_mode(const DB_EVENT *event, int inventory_mode)
 	DBset_host_inventory(hostid, inventory_mode);
 
 	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_host_inventory_mode");
-	audit_host(hostid, AUDIT_ACTION_UPDATE);
+	audit_host_inventory(hostid, inventory_mode);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -893,7 +1059,6 @@ void	op_groups_add(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 	add_discovered_host_groups(hostid, groupids);
 
 	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_groups_add");
-	audit_host(hostid, AUDIT_ACTION_UPDATE);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -960,7 +1125,7 @@ void	op_groups_del(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 	zbx_free(sql);
 
 	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_groups_del");
-	audit_host(hostid, AUDIT_ACTION_DELETE);
+	audit_groups_delete(hostid);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -996,8 +1161,7 @@ void	op_template_add(const DB_EVENT *event, zbx_vector_uint64_t *lnk_templateids
 		zbx_free(error);
 	}
 
-zabbix_log(LOG_LEVEL_INFORMATION,  "AUDIT op_template_add");
-	audit_host(hostid, AUDIT_ACTION_ADD);
+	zabbix_log(LOG_LEVEL_INFORMATION,  "AUDIT op_template_add");
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -1034,7 +1198,6 @@ void	op_template_del(const DB_EVENT *event, zbx_vector_uint64_t *del_templateids
 	}
 
 	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_template_del");
-	audit_host(hostid, AUDIT_ACTION_DELETE);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
