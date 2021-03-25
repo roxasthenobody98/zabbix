@@ -144,156 +144,29 @@ class CApiHostInterfaceHelper {
 		}
 	}
 
-	/**
-	 * Check interfaces input.
-	 *
-	 * @param array  $interfaces
-	 * @param string $method
-	 *
-	 * @throws APIException
-	 */
-	public static function checkInput(array &$interfaces, $method) {
-		$update = ($method == 'update');
-
-		// permissions
-		if ($update) {
-			$interfaceDBfields = ['interfaceid' => null];
-			$dbInterfaces = API::HostInterface()->get([
-				'output' => API_OUTPUT_EXTEND,
-				'interfaceids' => zbx_objectValues($interfaces, 'interfaceid'),
-				'editable' => true,
-				'preservekeys' => true
-			]);
-		}
-		else {
-			$interfaceDBfields = [
-				'hostid' => null,
-				'ip' => null,
-				'dns' => null,
-				'useip' => null,
-				'port' => null,
-				'main' => null
-			];
+	public static function checkInterfaceFields($interface, $host_name) {
+		if ($interface['ip'] === '' && $interface['dns'] === '') {
+			throw new APIException(ZBX_API_ERROR_PARAMETERS, _('IP and DNS cannot be empty for host interface.'));
 		}
 
-		$dbHosts = API::Host()->get([
-			'output' => ['host'],
-			'hostids' => zbx_objectValues($interfaces, 'hostid'),
-			'editable' => true,
-			'preservekeys' => true
-		]);
-
-		$dbProxies = API::Proxy()->get([
-			'output' => ['host'],
-			'proxyids' => zbx_objectValues($interfaces, 'hostid'),
-			'editable' => true,
-			'preservekeys' => true
-		]);
-
-		$check_have_items = [];
-		foreach ($interfaces as &$interface) {
-			if (!check_db_fields($interfaceDBfields, $interface)) {
-				throw new APIException(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
-			}
-
-			if ($update) {
-				if (!isset($dbInterfaces[$interface['interfaceid']])) {
-					throw new APIException(ZBX_API_ERROR_PARAMETERS,
-						_('No permissions to referred object or it does not exist!')
-					);
-				}
-
-				$dbInterface = $dbInterfaces[$interface['interfaceid']];
-				if (isset($interface['hostid']) && bccomp($dbInterface['hostid'], $interface['hostid']) != 0) {
-					throw new APIException(ZBX_API_ERROR_PARAMETERS, _s('Cannot switch host for interface.'));
-				}
-
-				if (array_key_exists('type', $interface) && $interface['type'] != $dbInterface['type']) {
-					$check_have_items[] = $interface['interfaceid'];
-				}
-
-				$interface['hostid'] = $dbInterface['hostid'];
-
-				// we check all fields on "updated" interface
-				$updInterface = $interface;
-				$interface = zbx_array_merge($dbInterface, $interface);
-			}
-			else {
-				if (!isset($dbHosts[$interface['hostid']]) && !isset($dbProxies[$interface['hostid']])) {
-					throw new APIException(ZBX_API_ERROR_PARAMETERS,
-						_('No permissions to referred object or it does not exist!')
-					);
-				}
-
-				if (isset($dbProxies[$interface['hostid']])) {
-					$interface['type'] = INTERFACE_TYPE_UNKNOWN;
-				}
-				elseif (!isset($interface['type'])) {
-					throw new APIException(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
-				}
-			}
-
-			if (zbx_empty($interface['ip']) && zbx_empty($interface['dns'])) {
-				throw new APIException(ZBX_API_ERROR_PARAMETERS, _('IP and DNS cannot be empty for host interface.'));
-			}
-
-			if ($interface['useip'] == INTERFACE_USE_IP && zbx_empty($interface['ip'])) {
-				throw new APIException(ZBX_API_ERROR_PARAMETERS,
-					_s('Interface with DNS "%1$s" cannot have empty IP address.', $interface['dns'])
-				);
-			}
-
-			if ($interface['useip'] == INTERFACE_USE_DNS && zbx_empty($interface['dns'])) {
-				if ($dbHosts && !empty($dbHosts[$interface['hostid']]['host'])) {
-					throw new APIException(ZBX_API_ERROR_PARAMETERS,
-						_s('Interface with IP "%1$s" cannot have empty DNS name while having "Use DNS" property on "%2$s".',
-							$interface['ip'],
-							$dbHosts[$interface['hostid']]['host']
-						)
-					);
-				}
-				elseif ($dbProxies && !empty($dbProxies[$interface['hostid']]['host'])) {
-					throw new APIException(ZBX_API_ERROR_PARAMETERS,
-						_s('Interface with IP "%1$s" cannot have empty DNS name while having "Use DNS" property on "%2$s".',
-							$interface['ip'],
-							$dbProxies[$interface['hostid']]['host']
-						)
-					);
-				}
-				else {
-					throw new APIException(ZBX_API_ERROR_PARAMETERS,
-						_s('Interface with IP "%1$s" cannot have empty DNS name.', $interface['ip'])
-					);
-				}
-			}
-
-			if (isset($interface['dns'])) {
-				self::checkDns($interface);
-			}
-			if (isset($interface['ip'])) {
-				self::checkIp($interface);
-			}
-			if (isset($interface['port']) || $method == 'create') {
-				self::checkPort($interface);
-			}
-
-			if ($update) {
-				$interface = $updInterface;
-			}
+		if ($interface['useip'] == INTERFACE_USE_IP && $interface['ip'] === '') {
+			throw new APIException(ZBX_API_ERROR_PARAMETERS,
+				_s('Interface with DNS "%1$s" cannot have empty IP address.', $interface['dns'])
+			);
 		}
-		unset($interface);
 
-		// check if any of the affected hosts are discovered
-		if ($update) {
-			$interfaces = $this->extendObjects('interface', $interfaces, ['hostid']);
-
-			if ($check_have_items) {
-				$this->checkIfInterfaceHasItems($check_have_items);
-			}
+		if ($interface['useip'] == INTERFACE_USE_DNS && $interface['dns'] === '') {
+			throw new APIException(ZBX_API_ERROR_PARAMETERS,
+				_s('Interface with IP "%1$s" cannot have empty DNS name while having "Use DNS" property on "%2$s".',
+					$interface['ip'],
+					$host_name
+				)
+			);
 		}
-		$this->checkValidator(zbx_objectValues($interfaces, 'hostid'), new CHostNormalValidator([
-			'message' => _('Cannot update interface for discovered host "%1$s".')
-		]));
+
+		self::checkDns($interface);
+		self::checkIp($interface);
+		self::checkPort($interface);
 	}
 
 	/**
@@ -354,7 +227,7 @@ class CApiHostInterfaceHelper {
 	 * @throws APIException if the field is empty or invalid.
 	 */
 	private static function checkPort(array $interface) {
-		if (!isset($interface['port']) || zbx_empty($interface['port'])) {
+		if ($interface['port'] === '') {
 			throw new APIException(ZBX_API_ERROR_PARAMETERS, _('Port cannot be empty for host interface.'));
 		}
 		elseif (!validatePortNumberOrMacro($interface['port'])) {

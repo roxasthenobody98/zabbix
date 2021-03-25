@@ -857,7 +857,7 @@ class CHost extends CHostGeneral {
 		];
 
 		if (array_column($hosts, 'interfaces')) {
-			$options['selectInterfaces'] = ['interfaceid', 'hostid', 'main', 'type'];
+			$options['selectInterfaces'] = ['interfaceid', 'hostid', 'main', 'type', 'details'];
 		}
 
 		if (array_column($hosts, 'templates')) {
@@ -989,12 +989,12 @@ class CHost extends CHostGeneral {
 
 		while ($hosts_params) {
 			$hostid = key($hosts_params);
-			$host_params = reset($hosts_params);
+			$host_params = array_diff_key(reset($hosts_params), ['hostid' => true]);
 			$params_hostids = [$hostid];
 			unset($hosts_params[$hostid]);
 
 			foreach ($hosts_params as $hostid => $params) {
-				if ($host_params === $params) {
+				if ($host_params === array_diff_key($params, ['hostid' => true])) {
 					$params_hostids[] = $hostid;
 					unset($hosts_params[$hostid]);
 				}
@@ -1039,8 +1039,6 @@ class CHost extends CHostGeneral {
 
 			$this->unlink($unlink_templateids, $unlink_hostids);
 		}
-
-		$this->replaceHostsInterfaces($hosts_interfaces, $db_hosts_interfaces);
 
 		while ($templates_hostids) {
 			$templateid = key($templates_hostids);
@@ -1109,7 +1107,7 @@ class CHost extends CHostGeneral {
 
 					$interface += array_intersect_key(
 						$db_hosts_interfaces[$interface['hostid']][$interface['interfaceid']],
-						['main' => true, 'type' => true]
+						['main' => true, 'type' => true, 'details' => true]
 					);
 				}
 			}
@@ -1136,7 +1134,7 @@ class CHost extends CHostGeneral {
 		}
 
 		foreach ($db_hosts_interfaces as $interfaces) {
-			$interfaces_to_delete[] += $interfaces;
+			$interfaces_to_delete += $interfaces;
 		}
 
 		if ($interfaces_to_add) {
@@ -1162,11 +1160,27 @@ class CHost extends CHostGeneral {
 			CApiHostInterfaceHelper::checkInput($interfaces_to_update, 'update');
 			DB::update('interface', CApiHostInterfaceHelper::prepareUpdateData($interfaces_to_update));
 
-			$this->updateInterfaceDetails($interfaces_update);
+			CApiHostInterfaceHelper::checkSnmpInput($interfaces_to_update);
+			DB::delete('interface_snmp', ['interfaceid' => array_column($interfaces_to_update, 'interfaceid')]);
+
+			$snmp_interfaces = [];
+			foreach ($interfaces_to_update as $interface) {
+				if ($interface['type'] == INTERFACE_TYPE_SNMP) {
+					$snmp_interfaces[] = ['interfaceid' => $interface['interfaceid']] + $interface['details'];
+				}
+			}
+
+			CApiHostInterfaceHelper::sanitizeSnmpFields($snmp_interfaces);
+			DB::insert('interface_snmp', $snmp_interfaces, false);
 		}
 
 		if ($interfaces_to_delete) {
-			// $this->delete(array_keys($interfaces_to_delete));
+			$interfaceids = array_keys($interfaces_to_delete);
+
+			CApiHostInterfaceHelper::checkIfInterfaceHasItems($interfaceids);
+
+			DB::delete('interface', ['interfaceid' => $interfaceids]);
+			DB::delete('interface_snmp', ['interfaceid' => $interfaceids]);
 		}
 	}
 

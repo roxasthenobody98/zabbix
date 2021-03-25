@@ -298,7 +298,7 @@ class CHostInterface extends CApiService {
 	public function create(array $interfaces) {
 		$interfaces = zbx_toArray($interfaces);
 
-		CApiHostInterfaceHelper::checkInput($interfaces, __FUNCTION__);
+		$this->validateCreate($interfaces);
 		CApiHostInterfaceHelper::checkSnmpInput($interfaces);
 		$this->checkMainInterfacesOnCreate($interfaces);
 
@@ -314,6 +314,66 @@ class CHostInterface extends CApiService {
 		$this->createSnmpInterfaceDetails($snmp_interfaces);
 
 		return ['interfaceids' => $interfaceids];
+	}
+
+	private function validateCreate(array &$interfaces) {
+		$db_fields = [
+			'hostid' => null,
+			'ip' => null,
+			'dns' => null,
+			'useip' => null,
+			'port' => null,
+			'main' => null
+		];
+
+		$hostids = array_column($interfaces, 'hostid');
+
+		$db_hosts = API::Host()->get([
+			'output' => ['host', 'flags'],
+			'hostids' => $hostids,
+			'editable' => true,
+			'preservekeys' => true
+		]);
+
+		$db_proxies = API::Proxy()->get([
+			'output' => ['host'],
+			'proxyids' => $hostids,
+			'editable' => true,
+			'preservekeys' => true
+		]);
+
+		foreach ($interfaces as &$interface) {
+			if (!check_db_fields($db_fields, $interface)) {
+				throw new APIException(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
+			}
+
+			if (!array_key_exists($interface['hostid'], $db_hosts)
+					&& !array_key_exists($interface['hostid'], $db_proxies)) {
+				throw new APIException(ZBX_API_ERROR_PARAMETERS,
+					_('No permissions to referred object or it does not exist!')
+				);
+			}
+
+			if ($db_hosts[$interface['hostid']]['flags'] & ZBX_FLAG_DISCOVERY_CREATED) {
+				throw new APIException(ZBX_API_ERROR_INTERNAL, _s('Cannot update interface for discovered host "%1$s".',
+					$db_hosts[$interface['hostid']]['host']
+				));
+			}
+
+			if (array_key_exists($interface['hostid'], $db_hosts)) {
+				if (!array_key_exists('type', $interface) || $interface['type'] === '') {
+					throw new APIException(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
+				}
+
+				$host_name = $db_hosts[$interface['hostid']]['host'];
+			}
+			else {
+				$interface['type'] = INTERFACE_TYPE_UNKNOWN;
+				$host_name = $db_proxies[$interface['hostid']]['host'];
+			}
+
+			CApiHostInterfaceHelper::checkInterfaceFields($interface, $host_name);
+		}
 	}
 
 	protected function updateInterfaceDetails(array $interfaces): bool {
@@ -363,7 +423,7 @@ class CHostInterface extends CApiService {
 	public function update(array $interfaces) {
 		$interfaces = zbx_toArray($interfaces);
 
-		CApiHostInterfaceHelper::checkInput($interfaces, __FUNCTION__);
+		$this->validateUpdate($interfaces);
 		$this->checkMainInterfacesOnUpdate($interfaces);
 
 		DB::update('interface', CApiHostInterfaceHelper::prepareUpdateData($interfaces));
@@ -371,6 +431,79 @@ class CHostInterface extends CApiService {
 		$this->updateInterfaceDetails($interfaces);
 
 		return ['interfaceids' => array_column($interfaces, 'interfaceid')];
+	}
+
+	private function validateUpdate(array &$interfaces) {
+		$db_fields = ['interfaceid' => null];
+
+		$db_interfaces = API::HostInterface()->get([
+			'output' => ['interfaceid', 'hostid', 'main', 'type', 'useip', 'ip', 'dns', 'port', 'details'],
+			'interfaceids' => array_column($interfaces, 'interfaceid'),
+			'editable' => true,
+			'preservekeys' => true
+		]);
+
+		$hostids = array_column($db_interfaces, 'hostid');
+
+		$db_hosts = API::Host()->get([
+			'output' => ['host', 'flags'],
+			'hostids' => $hostids,
+			'nopermissions' => true,
+			'preservekeys' => true
+		]);
+
+		$db_proxies = API::Proxy()->get([
+			'output' => ['host'],
+			'proxyids' => $hostids,
+			'nopermissions' => true,
+			'preservekeys' => true
+		]);
+
+		$interfaces_to_check_has_items = [];
+
+		foreach ($interfaces as &$interface) {
+			if (!check_db_fields($db_fields, $interface)) {
+				throw new APIException(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
+			}
+
+			if (!isset($db_interfaces[$interface['interfaceid']])) {
+				throw new APIException(ZBX_API_ERROR_PARAMETERS,
+					_('No permissions to referred object or it does not exist!')
+				);
+			}
+
+			$db_interface = $db_interfaces[$interface['interfaceid']];
+
+			if (isset($interface['hostid']) && bccomp($db_interface['hostid'], $interface['hostid']) != 0) {
+				throw new APIException(ZBX_API_ERROR_PARAMETERS, _s('Cannot switch host for interface.'));
+			}
+
+			if (array_key_exists('type', $interface) && $interface['type'] != $db_interface['type']) {
+				$interfaces_to_check_has_items[] = $interface['interfaceid'];
+			}
+
+			$interface['hostid'] = $db_interface['hostid'];
+
+			if (array_key_exists($interface['hostid'], $db_hosts)) {
+				if ($db_hosts[$interface['hostid']]['flags'] & ZBX_FLAG_DISCOVERY_CREATED) {
+					throw new APIException(ZBX_API_ERROR_INTERNAL, _s('Cannot update interface for discovered host "%1$s".',
+						$db_hosts[$interface['hostid']]['host']
+					));
+				}
+
+				$host_name = $db_hosts[$interface['hostid']]['host'];
+			}
+			else {
+				$host_name = $db_proxies[$interface['hostid']]['host'];
+			}
+
+			CApiHostInterfaceHelper::checkInterfaceFields(zbx_array_merge($db_interface, $interface), $host_name);
+		}
+		unset($interface);
+
+		if ($interfaces_to_check_has_items) {
+			CApiHostInterfaceHelper::checkIfInterfaceHasItems($interfaces_to_check_has_items);
+		}
 	}
 
 	/**
@@ -538,7 +671,7 @@ class CHostInterface extends CApiService {
 			}
 
 			if ($interfaces_update) {
-				CApiHostInterfaceHelper::checkInput($interfaces_update, 'update');
+				$this->validateUpdate($interfaces_update);
 
 				DB::update('interface', CApiHostInterfaceHelper::prepareUpdateData($interfaces_update));
 
@@ -546,7 +679,7 @@ class CHostInterface extends CApiService {
 			}
 
 			if ($interfaces_add) {
-				CApiHostInterfaceHelper::checkInput($interfaces_add, 'create');
+				$this->validateCreate($interfaces_add);
 				$interfaceids = DB::insert('interface', $interfaces_add);
 
 				CApiHostInterfaceHelper::checkSnmpInput($interfaces_add);
