@@ -316,16 +316,14 @@ class CHostInterface extends CApiService {
 		return ['interfaceids' => $interfaceids];
 	}
 
+	/**
+	 * Validates the input parameters for the create() method.
+	 *
+	 * @param array $interfaces  Array of interfaces.
+	 *
+	 * @throws APIException if the input is invalid.
+	 */
 	private function validateCreate(array &$interfaces) {
-		$db_fields = [
-			'hostid' => null,
-			'ip' => null,
-			'dns' => null,
-			'useip' => null,
-			'port' => null,
-			'main' => null
-		];
-
 		$hostids = array_column($interfaces, 'hostid');
 
 		$db_hosts = API::Host()->get([
@@ -341,6 +339,8 @@ class CHostInterface extends CApiService {
 			'editable' => true,
 			'preservekeys' => true
 		]);
+
+		$db_fields = array_fill_keys(['hostid', 'main', 'useip', 'ip', 'dns', 'port'], null);
 
 		foreach ($interfaces as &$interface) {
 			if (!check_db_fields($db_fields, $interface)) {
@@ -372,7 +372,7 @@ class CHostInterface extends CApiService {
 				$host_name = $db_proxies[$interface['hostid']]['host'];
 			}
 
-			CApiHostInterfaceHelper::checkInterfaceFields($interface, $host_name);
+			CApiHostInterfaceHelper::checkAddressFields($interface, $host_name);
 		}
 	}
 
@@ -433,9 +433,14 @@ class CHostInterface extends CApiService {
 		return ['interfaceids' => array_column($interfaces, 'interfaceid')];
 	}
 
+	/**
+	 * Validates the input parameters for the update() method.
+	 *
+	 * @param array $interfaces  Array of interfaces.
+	 *
+	 * @throws APIException if the input is invalid.
+	 */
 	private function validateUpdate(array &$interfaces) {
-		$db_fields = ['interfaceid' => null];
-
 		$db_interfaces = API::HostInterface()->get([
 			'output' => ['interfaceid', 'hostid', 'main', 'type', 'useip', 'ip', 'dns', 'port', 'details'],
 			'interfaceids' => array_column($interfaces, 'interfaceid'),
@@ -462,11 +467,11 @@ class CHostInterface extends CApiService {
 		$interfaces_to_check_has_items = [];
 
 		foreach ($interfaces as &$interface) {
-			if (!check_db_fields($db_fields, $interface)) {
+			if (!check_db_fields(['interfaceid' => null], $interface)) {
 				throw new APIException(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
 			}
 
-			if (!isset($db_interfaces[$interface['interfaceid']])) {
+			if (!array_key_exists($interface['interfaceid'], $db_interfaces)) {
 				throw new APIException(ZBX_API_ERROR_PARAMETERS,
 					_('No permissions to referred object or it does not exist!')
 				);
@@ -474,7 +479,7 @@ class CHostInterface extends CApiService {
 
 			$db_interface = $db_interfaces[$interface['interfaceid']];
 
-			if (isset($interface['hostid']) && bccomp($db_interface['hostid'], $interface['hostid']) != 0) {
+			if (array_key_exists('hostid', $interface) && bccomp($db_interface['hostid'], $interface['hostid']) != 0) {
 				throw new APIException(ZBX_API_ERROR_PARAMETERS, _s('Cannot switch host for interface.'));
 			}
 
@@ -497,7 +502,7 @@ class CHostInterface extends CApiService {
 				$host_name = $db_proxies[$interface['hostid']]['host'];
 			}
 
-			CApiHostInterfaceHelper::checkInterfaceFields(zbx_array_merge($db_interface, $interface), $host_name);
+			CApiHostInterfaceHelper::checkAddressFields(zbx_array_merge($db_interface, $interface), $host_name);
 		}
 		unset($interface);
 

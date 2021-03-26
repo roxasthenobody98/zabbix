@@ -38,7 +38,7 @@ class CApiHostInterfaceHelper {
 		if (!$interfaces && $db_interfaces) {
 			$host = API::Host()->get([
 				'output' => ['name', 'hostid'],
-				'hostids' => zbx_objectValues($db_interfaces, 'hostid'),
+				'hostids' => array_column($db_interfaces, 'hostid'),
 				'preservekeys' => true,
 				'nopermissions' => true
 			]);
@@ -144,7 +144,15 @@ class CApiHostInterfaceHelper {
 		}
 	}
 
-	public static function checkInterfaceFields($interface, $host_name) {
+	/**
+	 * Validates the interface fields connected with address settings.
+	 *
+	 * @param array  $interface  Array with interface fields ("useip"", "ip", "dns", "port" fields are required).
+	 * @param string $host_name  Name of the interface host to show in error message.
+	 *
+	 * @throws APIException
+	 */
+	public static function checkAddressFields(array $interface, string $host_name) {
 		if ($interface['ip'] === '' && $interface['dns'] === '') {
 			throw new APIException(ZBX_API_ERROR_PARAMETERS, _('IP and DNS cannot be empty for host interface.'));
 		}
@@ -430,6 +438,13 @@ class CApiHostInterfaceHelper {
 		return $interfaces;
 	}
 
+	/**
+	 * Prepares the interfaces data to update by grouping it to multiple bulk update requests.
+	 *
+	 * @param array $interfaces  Array of interfaces to update.
+	 *
+	 * @return array  Prepared data to update.
+	 */
 	public static function prepareUpdateData(array $interfaces): array {
 		$data = [];
 

@@ -857,7 +857,9 @@ class CHost extends CHostGeneral {
 		];
 
 		if (array_column($hosts, 'interfaces')) {
-			$options['selectInterfaces'] = ['interfaceid', 'hostid', 'main', 'type', 'details'];
+			$options['selectInterfaces'] = ['interfaceid', 'hostid', 'main', 'type', 'useip', 'ip', 'dns', 'port',
+				'details'
+			];
 		}
 
 		if (array_column($hosts, 'templates')) {
@@ -907,7 +909,10 @@ class CHost extends CHostGeneral {
 
 			if (array_key_exists('interface', $host)) {
 				foreach (zbx_toArray($host['interfaces']) as $interface) {
-					$hosts_interfaces = ['hostid' => $host['hostid']] + $interface;
+					$hosts_interfaces = [
+						'hostid' => $host['hostid'],
+						'host' => (array_key_exists('host', $host) ? $host['host'] : $db_hosts[$host['hostid']]['host'])
+					] + $interface;
 				}
 
 				$db_hosts_interfaces[$host['hostid']] = zbx_toHash($db_hosts[$host['hostid']]['interfaces'],
@@ -1138,7 +1143,16 @@ class CHost extends CHostGeneral {
 		}
 
 		if ($interfaces_to_add) {
-			CApiHostInterfaceHelper::checkInput($interfaces_to_add, 'create');
+			$db_fields = array_fill_keys(['hostid', 'main', 'type', 'useip', 'ip', 'dns', 'port'], null);
+
+			foreach ($interfaces_to_add as $interface) {
+				if (!check_db_fields($db_fields, $interface)) {
+					throw new APIException(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
+				}
+
+				CApiHostInterfaceHelper::checkAddressFields($interface, $interface['host']);
+			}
+
 			$interfaceids = DB::insert('interface', $interfaces_to_add);
 
 			CApiHostInterfaceHelper::checkSnmpInput($interfaces_to_add);
@@ -1157,7 +1171,27 @@ class CHost extends CHostGeneral {
 		}
 
 		if ($interfaces_to_update) {
-			CApiHostInterfaceHelper::checkInput($interfaces_to_update, 'update');
+			$interfaces_to_check_has_items = [];
+
+			foreach ($interfaces_to_update as $interface) {
+				if (!check_db_fields(['interfaceid' => null], $interface)) {
+					throw new APIException(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
+				}
+
+				$db_interface = $db_hosts_interfaces[$interface['hostid']][$interface['interfaceid']];
+				if ($interface['type'] != $db_interface['type']) {
+					$interfaces_to_check_has_items[] = $interface['interfaceid'];
+				}
+
+				CApiHostInterfaceHelper::checkAddressFields(zbx_array_merge($db_interface, $interface),
+					$interface['host']
+				);
+			}
+
+			if ($interfaces_to_check_has_items) {
+				CApiHostInterfaceHelper::checkIfInterfaceHasItems($interfaces_to_check_has_items);
+			}
+
 			DB::update('interface', CApiHostInterfaceHelper::prepareUpdateData($interfaces_to_update));
 
 			CApiHostInterfaceHelper::checkSnmpInput($interfaces_to_update);
