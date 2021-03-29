@@ -894,7 +894,9 @@ class CHost extends CHostGeneral {
 		$hosts_macros_to_update = [];
 		$hosts_macros_to_delete = [];
 
+		$automatic_inventory_hostids = [];
 		$hosts_inventory = [];
+		$hostids_to_delete_inventory = [];
 
 		foreach ($hosts as &$host) {
 			// If visible name is not given or empty it should be set to host name.
@@ -984,10 +986,36 @@ class CHost extends CHostGeneral {
 			}
 
 			if (array_key_exists('inventory', $host) && $host['inventory']) {
-				$hosts_inventory[] = [
-					'hostid' => $host['hostid'],
-					'inventory_mode' => $db_hosts[$hosts['hostid']]['inventory_mode']
-				] + $host['inventory'];
+				/*
+				 * There is no check on $host['inventory_mode'] == HOST_INVENTORY_DISABLED because this check was done
+				 * in validateUpdate() method. In this place such case will never exists.
+				 */
+				if (array_key_exists('inventory_mode', $host)
+						|| $db_hosts[$host['hostid']]['inventory_mode'] != HOST_INVENTORY_DISABLED) {
+					$inventory_mode = (array_key_exists('inventory_mode', $host)
+						? $host['inventory_mode']
+						: $db_hosts[$host['hostid']]['inventory_mode']);
+
+					if ($inventory_mode == HOST_INVENTORY_AUTOMATIC) {
+						$automatic_inventory_hostids[] = $host['hostid'];
+					}
+
+					$hosts_inventory[$host['hostid']] = ['inventory_mode' => $inventory_mode] + $host['inventory'];
+				}
+				else {
+					self::exception(ZBX_API_ERROR_PARAMETERS, _s('Inventory disabled for host "%1$s".',
+						(array_key_exists('host', $host) ? $host['host'] : $db_hosts[$host['hostid']]['host'])
+					));
+				}
+			}
+			elseif (array_key_exists('inventory_mode', $host)
+					&& $host['inventory_mode'] != $db_hosts[$host['hostid']]['inventory_mode']) {
+				if ($host['inventory_mode'] != HOST_INVENTORY_DISABLED) {
+					$hosts_inventory[$host['hostid']] = ['inventory_mode' => $host['inventory_mode']];
+				}
+				else {
+					$hostids_to_delete_inventory[] = $host['hostid'];
+				}
 			}
 		}
 		unset($host);
@@ -1092,6 +1120,58 @@ class CHost extends CHostGeneral {
 
 		if ($hosts_macros_to_delete) {
 			API::UserMacro()->delete(array_keys($hosts_macros_to_delete));
+		}
+
+		if  ($hostids_to_delete_inventory) {
+			DB::delete('host_inventory', ['hostid' => $hostids_to_delete_inventory]);
+		}
+
+		if ($automatic_inventory_hostids) {
+			$inventory_fields = getHostInventories();
+			$items_with_inventory_links = API::item()->get([
+				'output' => ['inventory_link', 'hostid'],
+				'hostids' => $automatic_inventory_hostids,
+				'filter' => ['inventory_link'  => array_keys($inventory_fields)],
+				'nopermissions' => true
+			]);
+
+			foreach ($items_with_inventory_links as $item) {
+				$field_name = $inventory_fields[$item['inventory_link']]['db_field'];
+				if (array_key_exists($field_name, $hosts_inventory[$item['hostid']])) {
+					unset($hosts_inventory[$item['hostid']][$field_name]);
+				}
+			}
+		}
+
+		$inventory_to_insert = [];
+		foreach ($hosts_inventory as $hostid => $inventory) {
+			if ($db_hosts[$hostid]['inventory_mode'] == HOST_INVENTORY_DISABLED) {
+				$inventory_to_insert[] = ['hostid' => $hostid] + $inventory;
+				unset($hosts_inventory[$hostid]);
+			}
+		}
+
+		if ($inventory_to_insert) {
+			DB::insert('host_inventory', $inventory_to_insert, false);
+		}
+
+		while ($hosts_inventory) {
+			$hostid = key($hosts_inventory);
+			$inventory_params = reset($hosts_inventory);
+			$params_hostids = [$hostid];
+			unset($hosts_inventory[$hostid]);
+
+			foreach ($hosts_inventory as $hostid => $params) {
+				if ($inventory_params === $params) {
+					$params_hostids[] = $hostid;
+					unset($hosts_inventory[$hostid]);
+				}
+			}
+
+			DB::update('host_inventory', [
+				'values' => $inventory_params,
+				'where' => ['hostid' => $params_hostids]
+			]);
 		}
 
 		return ['hostids' => $hostids];
