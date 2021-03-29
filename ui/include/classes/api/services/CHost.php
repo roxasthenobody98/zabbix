@@ -909,7 +909,7 @@ class CHost extends CHostGeneral {
 
 			if (array_key_exists('interface', $host)) {
 				foreach (zbx_toArray($host['interfaces']) as $interface) {
-					$hosts_interfaces = [
+					$hosts_interfaces[] = [
 						'hostid' => $host['hostid'],
 						'host' => (array_key_exists('host', $host) ? $host['host'] : $db_hosts[$host['hostid']]['host'])
 					] + $interface;
