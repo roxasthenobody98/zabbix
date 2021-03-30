@@ -29,17 +29,18 @@ class CScreenTriggersOverview extends CScreenBase {
 	public function get() {
 		$groups = API::HostGroup()->get([
 			'output' => ['name'],
-			'groupids' => $this->screenitem['resourceid']
+			'groupids' => $this->screenitem['resourceid'],
+			'preservekeys' => true
 		]);
+		$group = reset($groups);
+		$groupids = array_merge(getChildGroupIds($group['name']), array_keys($groups));
 
 		$header = (new CDiv([
 			new CTag('h4', true, _('Trigger overview')),
-			(new CList())->addItem([_('Group'), ':', SPACE, $groups[0]['name']])
+			(new CList())->addItem([_('Group'), ':', SPACE, $group['name']])
 		]))->addClass(ZBX_STYLE_DASHBRD_WIDGET_HEAD);
 
-		list($hosts, $triggers) = getTriggersOverviewData((array) $this->screenitem['resourceid'],
-			$this->screenitem['application']
-		);
+		list($hosts, $triggers) = getTriggersOverviewData($groupids, $this->screenitem['application']);
 
 		$table = getTriggersOverview($hosts, $triggers, $this->pageFile, $this->screenitem['style'], $this->screenid);
 

@@ -27,20 +27,31 @@ class CScreenDataOverview extends CScreenBase {
 	 * @return CDiv (screen inside container)
 	 */
 	public function get() {
-		$groupid = $this->screenitem['resourceid'];
+		$groupids = (array) $this->screenitem['resourceid'];
 
 		$groups = API::HostGroup()->get([
 			'output' => ['name'],
-			'groupids' => $groupid
+			'groupids' => $groupids,
+			'preservekeys' => true
 		]);
+		$group = reset($groups);
+		$child_groupids = getChildGroupIds($group['name']);
+
+		if ($child_groupids) {
+			$groupids += array_keys(API::HostGroup()->get([
+				'output' => ['name'],
+				'groupids' => $child_groupids,
+				'preservekeys' => true
+			]));
+		}
 
 		$header = (new CDiv([
 			new CTag('h4', true, _('Data overview')),
 			(new CList())
-				->addItem([_('Group'), ':', SPACE, $groups[0]['name']])
+				->addItem([_('Group'), ':', SPACE, $group['name']])
 		]))->addClass(ZBX_STYLE_DASHBRD_WIDGET_HEAD);
 
-		$table = getItemsDataOverview((array) $groupid, $this->screenitem['application'], $this->screenitem['style'],
+		$table = getItemsDataOverview($groupids, $this->screenitem['application'], $this->screenitem['style'],
 			ZBX_PROBLEM_SUPPRESSED_FALSE
 		);
 

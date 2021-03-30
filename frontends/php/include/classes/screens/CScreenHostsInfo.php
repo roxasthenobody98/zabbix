@@ -37,8 +37,16 @@ class CScreenHostsInfo extends CScreenBase {
 		$hostids = array_keys($hosts);
 
 		if ($this->screenitem['resourceid'] != 0) {
+			$groups = API::HostGroup()->get([
+				'output' => ['name'],
+				'groupids' => [$this->screenitem['resourceid']],
+				'preservekeys' => true
+			]);
+			$group = reset($groups);
 			$cond_from = ',hosts_groups hg';
-			$cond_where = ' AND hg.hostid=h.hostid AND hg.groupid='.zbx_dbstr($this->screenitem['resourceid']);
+			$cond_where = ' AND hg.hostid=h.hostid AND '.dbConditionInt('hg.groupid',
+				array_merge(getChildGroupIds($group['name']), array_keys($groups))
+			);
 		}
 		else {
 			$cond_from = '';

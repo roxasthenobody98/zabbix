@@ -22,13 +22,13 @@
 class CTriggersInfo extends CTable {
 
 	private $style = STYLE_HORIZONTAL;
-	private $groupid;
+	private $groupids;
 
-	public function __construct($groupid) {
+	public function __construct(array $groupids) {
 		parent::__construct();
 
 		$this->addClass(ZBX_STYLE_LIST_TABLE);
-		$this->groupid = $groupid;
+		$this->groupids = $groupids;
 	}
 
 	public function setOrientation($value) {
@@ -53,8 +53,8 @@ class CTriggersInfo extends CTable {
 			'skipDependent' => true
 		];
 
-		if ($this->groupid != 0) {
-			$options['groupids'] = $this->groupid;
+		if ($this->groupids) {
+			$options['groupids'] = $this->groupids;
 		}
 		$triggers = API::Trigger()->get($options);
 

@@ -27,6 +27,7 @@ class CScreenTriggersInfo extends CScreenBase {
 	 * @return CDiv (screen inside container)
 	 */
 	public function get() {
+		$groupids = [];
 		$header = (new CDiv([
 			new CTag('h4', true, _('Trigger info'))
 		]))->addClass(ZBX_STYLE_DASHBRD_WIDGET_HEAD);
@@ -34,13 +35,15 @@ class CScreenTriggersInfo extends CScreenBase {
 		if ($this->screenitem['resourceid'] != 0) {
 			$groups = API::HostGroup()->get([
 				'output' => ['name'],
-				'groupids' => [$this->screenitem['resourceid']]
+				'groupids' => [$this->screenitem['resourceid']],
+				'preservekeys' => true
 			]);
-
-			$header->addItem((new CList())->addItem([_('Host'), ':', SPACE, $groups[0]['name']]));
+			$group = reset($groups);
+			$header->addItem((new CList())->addItem([_('Host'), ':', SPACE, $group['name']]));
+			$groupids = array_merge(getChildGroupIds($group['name']), array_keys($groups));
 		}
 
-		$table = (new CTriggersInfo($this->screenitem['resourceid']))->setOrientation($this->screenitem['style']);
+		$table = (new CTriggersInfo($groupids))->setOrientation($this->screenitem['style']);
 
 		$footer = (new CList())
 			->addItem(_s('Updated: %s', zbx_date2str(TIME_FORMAT_SECONDS)))
