@@ -842,8 +842,8 @@ class CHost extends CHostGeneral {
 	public function update($hosts) {
 		$hosts = zbx_toArray($hosts);
 		$hostids = array_column($hosts, 'hostid');
-		$additional_fields = array_flip(['groups', 'interfaces', 'templates_clear', 'templates', 'tags', 'macros',
-			'inventory'
+		$not_host_params_fields = array_flip(['hostid', 'inventory_mode', 'groups', 'interfaces', 'templates_clear',
+			'templates', 'tags', 'macros', 'inventory'
 		]);
 
 		$options = [
@@ -919,7 +919,7 @@ class CHost extends CHostGeneral {
 					: $db_hosts[$host['hostid']]['host']);
 			}
 
-			$host_params = array_diff_key($host, $additional_fields);
+			$host_params = array_diff_key($host, $not_host_params_fields);
 			if ($host_params) {
 				$hosts_params[$host['hostid']] = $host_params;
 			}
@@ -1054,12 +1054,12 @@ class CHost extends CHostGeneral {
 
 		while ($hosts_params) {
 			$hostid = key($hosts_params);
-			$host_params = array_diff_key(reset($hosts_params), ['hostid' => true]);
+			$host_params = reset($hosts_params);
 			$params_hostids = [$hostid];
 			unset($hosts_params[$hostid]);
 
 			foreach ($hosts_params as $hostid => $params) {
-				if ($host_params === array_diff_key($params, ['hostid' => true])) {
+				if ($host_params === $params) {
 					$params_hostids[] = $hostid;
 					unset($hosts_params[$hostid]);
 				}
