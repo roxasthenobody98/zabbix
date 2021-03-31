@@ -848,8 +848,8 @@ class CHost extends CHostGeneral {
 
 		$options = [
 			'output' => ['hostid', 'proxy_hostid', 'host', 'status', 'ipmi_authtype', 'ipmi_privilege', 'ipmi_username',
-				'ipmi_password', 'name', 'flags', 'description', 'tls_connect', 'tls_accept', 'tls_issuer', 'tls_subject',
-				'tls_psk_identity', 'tls_psk', 'inventory_mode'
+				'ipmi_password', 'name', 'flags', 'description', 'tls_connect', 'tls_accept', 'tls_issuer',
+				'tls_subject', 'tls_psk_identity', 'tls_psk', 'inventory_mode'
 			],
 			'hostids' => $hostids,
 			'editable' => true,
@@ -874,9 +874,15 @@ class CHost extends CHostGeneral {
 			$options['selectMacros'] = ['hostmacroid'];
 		}
 
+		if (array_column($hosts, 'groups')) {
+			$options['selectGroups'] = ['groupid'];
+		}
+
 		$db_hosts = $this->get($options);
 
 		$hosts = $this->validateUpdate($hosts, $db_hosts);
+
+		$host_names_with_updated_status = [];
 
 		$hosts_params = [];
 
@@ -898,10 +904,19 @@ class CHost extends CHostGeneral {
 		$hosts_inventory = [];
 		$hostids_to_delete_inventory = [];
 
+		$hosts_groups_to_add = [];
+		$hosts_groupids_to_delete = [];
+
 		foreach ($hosts as &$host) {
 			// If visible name is not given or empty it should be set to host name.
 			if (array_key_exists('host', $host) && (!array_key_exists('name', $host) || trim($host['name']) === '')) {
 				$host['name'] = $host['host'];
+			}
+
+			if (array_key_exists('status', $host) && $host['status'] != $db_hosts[$host['hostid']]['status']) {
+				$host_names_with_updated_status[] = (array_key_exists('host', $host)
+					? $host['host']
+					: $db_hosts[$host['hostid']]['host']);
 			}
 
 			$host_params = array_diff_key($host, $additional_fields);
@@ -980,7 +995,7 @@ class CHost extends CHostGeneral {
 					else {
 						$hosts_macros_to_add[] = ['hostid' => $host['hostid']] + $macro;
 					}
-				};
+				}
 
 				$hosts_macros_to_delete += array_diff_key($host_db_macros, $hostmacroids);
 			}
@@ -1015,6 +1030,23 @@ class CHost extends CHostGeneral {
 				}
 				else {
 					$hostids_to_delete_inventory[] = $host['hostid'];
+				}
+			}
+
+			if (array_key_exists('groups', $host) && $host['groups']) {
+				$host_db_groupids = array_column($db_hosts[$host['hostid']]['groups'], 'groupid');
+				$host_groupids = array_unique(array_column(zbx_toArray($host['groups']), 'groupid'));
+
+				foreach (array_diff($host_groupids, $host_db_groupids) as $groupid) {
+					$hosts_groups_to_add[] = [
+						'hostid' => $host['hostid'],
+						'groupid' => $groupid
+					];
+				}
+
+				$host_groupids_to_delete = array_diff($host_db_groupids, $host_groupids);
+				if ($host_groupids_to_delete) {
+					$hosts_groupids_to_delete[$host['hostid']] = $host_groupids_to_delete;
 				}
 			}
 		}
@@ -1173,6 +1205,35 @@ class CHost extends CHostGeneral {
 				'where' => ['hostid' => $params_hostids]
 			]);
 		}
+
+		if ($hosts_groups_to_add) {
+			DB::insertBatch('hosts_groups', $hosts_groups_to_add);
+		}
+
+		while ($hosts_groupids_to_delete) {
+			$hostid = key($hosts_groupids_to_delete);
+			$host_groupids = reset($hosts_groupids_to_delete);
+			$groups_hostids = [$hostid];
+			unset($hosts_groupids_to_delete[$hostid]);
+
+			foreach ($hosts_groupids_to_delete as $hostid => $groupids) {
+				if ($host_groupids === $groupids) {
+					$groups_hostids[] = $hostid;
+					unset($hosts_groupids_to_delete[$hostid]);
+				}
+			}
+
+			DB::delete('host_groups', [
+				'hostid' => $groups_hostids,
+				'groupid' => $host_groupids
+			]);
+		}
+
+		foreach ($host_names_with_updated_status as $host) {
+			info(_s('Updated status of host "%1$s".', $host));
+		}
+
+		$this->addAuditBulk(AUDIT_ACTION_UPDATE, AUDIT_RESOURCE_HOST, $hosts, $db_hosts);
 
 		return ['hostids' => $hostids];
 	}
@@ -2526,6 +2587,7 @@ class CHost extends CHostGeneral {
 	protected function validateUpdate(array $hosts, array $db_hosts) {
 		$host_db_fields = ['hostid' => null];
 
+		$groupids_to_check_permissions = [];
 		foreach ($hosts as &$host) {
 			// Validate mandatory fields.
 			if (!check_db_fields($host_db_fields, $host)) {
@@ -2565,11 +2627,29 @@ class CHost extends CHostGeneral {
 						);
 					}
 				}
-			}
 
-			// Permissions to host groups is validated in massUpdate().
+				$host_db_groupids = array_column($db_hosts[$host['hostid']]['groups'], 'groupid');
+				$host_groupids = array_unique(array_column($host['groups'], 'groupid'));
+
+				$groupids_to_check_permissions = array_merge($groupids_to_check_permissions,
+					array_diff($host_db_groupids, $host_groupids),
+					array_diff($host_groupids, $host_db_groupids)
+				);
+			}
 		}
 		unset($host);
+
+		$editable_group_count = API::HostGroup()->get([
+			'countOutput' => true,
+			'groupids' => $groupids_to_check_permissions,
+			'editable' => true
+		]);
+
+		if ($editable_group_count != count($groupids_to_check_permissions)) {
+			self::exception(ZBX_API_ERROR_PERMISSIONS,
+				_('No permissions to referred object or it does not exist!')
+			);
+		}
 
 		$inventory_fields = zbx_objectValues(getHostInventories(), 'db_field');
 
