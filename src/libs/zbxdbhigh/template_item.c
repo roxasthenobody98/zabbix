@@ -834,7 +834,7 @@ static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items, ch
 				"output_format", "ssl_cert_file", "ssl_key_file", "ssl_key_password", "verify_peer",
 				"verify_host", "allow_traps", "discover", NULL);
 
-		zbx_db_insert_prepare(&db_insert_items_audit, "auditlog2","auditid","userid","clock","action","ip","resourceid","resourcename","resourcetype,","recsetid","details", NULL);
+		zbx_db_insert_prepare(&db_insert_items_audit, "auditlog2","auditid","userid","clock","action","ip","resourceid","resourcename","resourcetype","recsetid","details", NULL);
 
 		zbx_db_insert_prepare(&db_insert_irtdata, "item_rtdata", "itemid", NULL);
 	}
