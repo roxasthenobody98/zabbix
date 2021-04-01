@@ -775,7 +775,7 @@ static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_te
 	zbx_json_close(&details_json);
 
 	zbx_db_insert_add_values(db_insert_items_audit, item_audit_cuid, USER_TYPE_SUPER_ADMIN, (int)time(NULL), audit_action,"",itemid,
-				AUDIT_RESOURCE_ITEM, recsetid_cuid, details_json);
+				item->name, AUDIT_RESOURCE_ITEM, recsetid_cuid, details_json);
 	}
 
 	for (i = 0; i < item->dependent_items.values_num; i++)
