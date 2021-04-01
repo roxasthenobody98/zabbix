@@ -486,9 +486,6 @@ elseif (hasRequest('action') && getRequest('action') === 'host.massupdate' && ha
 			}
 		}
 
-		$host_macros_add = [];
-		$host_macros_update = [];
-		$host_macros_remove = [];
 		foreach ($hosts as &$host) {
 			if (array_key_exists('groups', $visible)) {
 				if ($new_groupids && $mass_update_groups == ZBX_ACTION_ADD) {
@@ -579,21 +576,17 @@ elseif (hasRequest('action') && getRequest('action') === 'host.massupdate' && ha
 					case ZBX_ACTION_ADD:
 						if ($macros) {
 							$update_existing = getRequest('macros_add', 0);
+							$host['macros'] = zbx_toHash($host['macros'], 'hostmacroid');
+							$host_macros_by_macro = zbx_toHash($host['macros'], 'macro');
 
 							foreach ($macros as $macro) {
-								foreach ($host['macros'] as $host_macro) {
-									if ($macro['macro'] === $host_macro['macro']) {
-										if ($update_existing) {
-											$macro['hostmacroid'] = $host_macro['hostmacroid'];
-											$host_macros_update[] = $macro;
-										}
-
-										continue 2;
-									}
+								if ($update_existing && array_key_exists($macro['macro'], $host_macros_by_macro)) {
+									$hostmacroid = $host_macros_by_macro[$macro['macro']];
+									$host['macros'][$hostmacroid] = ['hostmacroid' => $hostmacroid] + $macro;
 								}
-
-								$macro['hostid'] = $host['hostid'];
-								$host_macros_add[] = $macro;
+								else {
+									$host['macros'][] = $macro;
+								}
 							}
 						}
 						break;
@@ -601,20 +594,16 @@ elseif (hasRequest('action') && getRequest('action') === 'host.massupdate' && ha
 					case ZBX_ACTION_REPLACE: // In Macros its update.
 						if ($macros) {
 							$add_missing = getRequest('macros_update', 0);
+							$host['macros'] = zbx_toHash($host['macros'], 'hostmacroid');
+							$host_macros_by_macro = zbx_toHash($host['macros'], 'macro');
 
 							foreach ($macros as $macro) {
-								foreach ($host['macros'] as $host_macro) {
-									if ($macro['macro'] === $host_macro['macro']) {
-										$macro['hostmacroid'] = $host_macro['hostmacroid'];
-										$host_macros_update[] = $macro;
-
-										continue 2;
-									}
+								if ($add_missing && !array_key_exists($macro['macro'], $host_macros_by_macro)) {
+									$host['macros'][] = $macro;
 								}
-
-								if ($add_missing) {
-									$macro['hostid'] = $host['hostid'];
-									$host_macros_add[] = $macro;
+								else if (array_key_exists($macro['macro'], $host_macros_by_macro)) {
+									$hostmacroid = $host_macros_by_macro[$macro['macro']];
+									$host['macros'][$hostmacroid] = ['hostmacroid' => $hostmacroid] + $macro;
 								}
 							}
 						}
@@ -623,14 +612,14 @@ elseif (hasRequest('action') && getRequest('action') === 'host.massupdate' && ha
 					case ZBX_ACTION_REMOVE:
 						if ($macros) {
 							$except_selected = getRequest('macros_remove', 0);
+							$host_macros_by_macro = zbx_toHash($host['macros'], 'macro');
+							$macros_by_macro =  zbx_toHash($macros, 'macro');
 
-							$macro_names = array_column($macros, 'macro');
-
-							foreach ($host['macros'] as $host_macro) {
-								if ((!$except_selected && in_array($host_macro['macro'], $macro_names))
-										|| ($except_selected && !in_array($host_macro['macro'], $macro_names))) {
-									$host_macros_remove[] = $host_macro['hostmacroid'];
-								}
+							if ($except_selected) {
+								$host['macros'] = array_intersect_key($host_macros_by_macro, $macros_by_macro);
+							}
+							else {
+								$host['macros'] = array_diff_key($host_macros_by_macro, $macros_by_macro);
 							}
 						}
 						break;
@@ -643,10 +632,6 @@ elseif (hasRequest('action') && getRequest('action') === 'host.massupdate' && ha
 						$host['macros'] = [];
 						break;
 				}
-
-				if ($mass_update_macros != ZBX_ACTION_REMOVE_ALL) {
-					unset($host['macros']);
-				}
 			}
 
 			unset($host['parentTemplates']);
@@ -657,28 +642,6 @@ elseif (hasRequest('action') && getRequest('action') === 'host.massupdate' && ha
 
 		if (!API::Host()->update($hosts)) {
 			throw new Exception();
-		}
-
-		/**
-		 * Macros must be updated separately, since calling API::UserMacro->replaceMacros() inside
-		 * API::Host->update() results in loss of secret macro values.
-		 */
-		if ($host_macros_remove) {
-			if (!API::UserMacro()->delete($host_macros_remove)) {
-				throw new Exception();
-			}
-		}
-
-		if ($host_macros_add) {
-			if (!API::UserMacro()->create($host_macros_add)) {
-				throw new Exception();
-			}
-		}
-
-		if ($host_macros_update) {
-			if (!API::UserMacro()->update($host_macros_update)) {
-				throw new Exception();
-			}
 		}
 
 		DBend(true);

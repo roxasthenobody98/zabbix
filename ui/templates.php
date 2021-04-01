@@ -300,9 +300,6 @@ elseif (hasRequest('action') && getRequest('action') === 'template.massupdate' &
 			$new_values['description'] = getRequest('description');
 		}
 
-		$template_macros_add = [];
-		$template_macros_update = [];
-		$template_macros_remove = [];
 		foreach ($templates as &$template) {
 			if (array_key_exists('groups', $visible)) {
 				if ($new_groupids && $mass_update_groups == ZBX_ACTION_ADD) {
@@ -387,21 +384,17 @@ elseif (hasRequest('action') && getRequest('action') === 'template.massupdate' &
 					case ZBX_ACTION_ADD:
 						if ($macros) {
 							$update_existing = getRequest('macros_add', 0);
+							$template['macros'] = zbx_toHash($template['macros'], 'hostmacroid');
+							$template_macros_by_macro = zbx_toHash($template['macros'], 'macro');
 
 							foreach ($macros as $macro) {
-								foreach ($template['macros'] as $template_macro) {
-									if ($macro['macro'] === $template_macro['macro']) {
-										if ($update_existing) {
-											$macro['hostmacroid'] = $template_macro['hostmacroid'];
-											$template_macros_update[] = $macro;
-										}
-
-										continue 2;
-									}
+								if ($update_existing && array_key_exists($macro['macro'], $template_macros_by_macro)) {
+									$hostmacroid = $template_macros_by_macro[$macro['macro']];
+									$template['macros'][$hostmacroid] = ['hostmacroid' => $hostmacroid] + $macro;
 								}
-
-								$macro['hostid'] = $template['templateid'];
-								$template_macros_add[] = $macro;
+								else {
+									$template['macros'][] = $macro;
+								}
 							}
 						}
 						break;
@@ -409,20 +402,16 @@ elseif (hasRequest('action') && getRequest('action') === 'template.massupdate' &
 					case ZBX_ACTION_REPLACE: // In Macros its update.
 						if ($macros) {
 							$add_missing = getRequest('macros_update', 0);
+							$template['macros'] = zbx_toHash($template['macros'], 'hostmacroid');
+							$template_macros_by_macro = zbx_toHash($template['macros'], 'macro');
 
 							foreach ($macros as $macro) {
-								foreach ($template['macros'] as $template_macro) {
-									if ($macro['macro'] === $template_macro['macro']) {
-										$macro['hostmacroid'] = $template_macro['hostmacroid'];
-										$template_macros_update[] = $macro;
-
-										continue 2;
-									}
+								if ($add_missing && !array_key_exists($macro['macro'], $template_macros_by_macro)) {
+									$template['macros'][] = $macro;
 								}
-
-								if ($add_missing) {
-									$macro['hostid'] = $template['templateid'];
-									$template_macros_add[] = $macro;
+								else if (array_key_exists($macro['macro'], $template_macros_by_macro)) {
+									$hostmacroid = $template_macros_by_macro[$macro['macro']];
+									$template['macros'][$hostmacroid] = ['hostmacroid' => $hostmacroid] + $macro;
 								}
 							}
 						}
@@ -431,14 +420,14 @@ elseif (hasRequest('action') && getRequest('action') === 'template.massupdate' &
 					case ZBX_ACTION_REMOVE:
 						if ($macros) {
 							$except_selected = getRequest('macros_remove', 0);
+							$template_macros_by_macro = zbx_toHash($template['macros'], 'macro');
+							$macros_by_macro =  zbx_toHash($macros, 'macro');
 
-							$macro_names = array_column($macros, 'macro');
-
-							foreach ($template['macros'] as $template_macro) {
-								if ((!$except_selected && in_array($template_macro['macro'], $macro_names))
-										|| ($except_selected && !in_array($template_macro['macro'], $macro_names))) {
-									$template_macros_remove[] = $template_macro['hostmacroid'];
-								}
+							if ($except_selected) {
+								$template['macros'] = array_intersect_key($template_macros_by_macro, $macros_by_macro);
+							}
+							else {
+								$template['macros'] = array_diff_key($template_macros_by_macro, $macros_by_macro);
 							}
 						}
 						break;
@@ -451,10 +440,6 @@ elseif (hasRequest('action') && getRequest('action') === 'template.massupdate' &
 						$template['macros'] = [];
 						break;
 				}
-
-				if ($mass_update_macros != ZBX_ACTION_REMOVE_ALL) {
-					unset($template['macros']);
-				}
 			}
 
 			unset($template['parentTemplates']);
@@ -465,28 +450,6 @@ elseif (hasRequest('action') && getRequest('action') === 'template.massupdate' &
 
 		if (!API::Template()->update($templates)) {
 			throw new Exception();
-		}
-
-		/**
-		 * Macros must be updated separately, since calling API::UserMacro->replaceMacros() inside
-		 * API::Template->update() results in loss of secret macro values.
-		 */
-		if ($template_macros_remove) {
-			if (!API::UserMacro()->delete($template_macros_remove)) {
-				throw new Exception();
-			}
-		}
-
-		if ($template_macros_add) {
-			if (!API::UserMacro()->create($template_macros_add)) {
-				throw new Exception();
-			}
-		}
-
-		if ($template_macros_update) {
-			if (!API::UserMacro()->update($template_macros_update)) {
-				throw new Exception();
-			}
 		}
 
 		DBend(true);
