@@ -884,6 +884,10 @@ class CHost extends CHostGeneral {
 				'filter' => ['hostid' => $hostids]
 			]);
 
+			foreach ($db_hosts as &$db_host) {
+				$db_host['tags'] = [];
+			}
+
 			foreach ($db_tags as $db_tag) {
 				if (array_key_exists($db_tag['hostid'], $db_hosts)) {
 					$db_hosts[$db_tag['hostid']]['tags'][] = $db_tag;
