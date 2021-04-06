@@ -29,6 +29,7 @@ install:
 	CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" GOBIN=${GOBIN} \
 		go install -ldflags="${GOLDFLAGS}" zabbix.com/cmd/zabbix_agent2
 	test -f "$(DESTDIR)@AGENT2_CONFIG_FILE@" || cp "conf/zabbix_agent2.conf" "$(DESTDIR)@AGENT2_CONFIG_FILE@"
+	test -d "$(DESTDIR)@AGENT2_CONFIG_PLUGINS_DIR@" || mkdir -p "$(DESTDIR)@AGENT2_CONFIG_PLUGINS_DIR@"; cp -r "conf/zabbix_agent2.d/plugins.d/" "$(DESTDIR)@AGENT2_CONFIG_PLUGINS_DIR@"
 
 check:
 	CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" go test ./...
