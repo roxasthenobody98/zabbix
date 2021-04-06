@@ -1103,7 +1103,7 @@ static int	zbx_snmp_walk(struct snmp_session *ss, const DC_ITEM *item, const cha
 	root_string_len = strlen(oid_index);
 
 	if (-1 == zbx_snmp_print_oid(oid_index, sizeof(oid_index), rootOID, rootOID_len, ZBX_OID_INDEX_NUMERIC,
-			fmt_suffix))
+			ZBX_OID_FMT_DEFAULT))
 	{
 		zbx_snprintf(error, max_error_len, "zbx_snmp_print_oid(): cannot print OID \"%s\""
 				" with numeric indices.", snmp_oid);
@@ -1840,7 +1840,7 @@ static int	zbx_snmp_process_discovery(struct snmp_session *ss, const DC_ITEM *it
 
 		if (SUCCEED != (ret = zbx_snmp_walk(ss, item, oid_translated, error, max_error_len,
 				max_succeed, min_fail, max_vars, bulk, zbx_snmp_walk_discovery_cb, (void *)&data,
-				ZBX_OID_FMT_SUFFIX)))
+				ZBX_OID_FMT_DEFAULT)))
 		{
 			goto clean;
 		}
