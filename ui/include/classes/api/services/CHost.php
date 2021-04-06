@@ -812,9 +812,9 @@ class CHost extends CHostGeneral {
 	 * @param int    $hosts[]['interfaces']['main']               Is this the default interface to use.
 	 * @param string $hosts[]['interfaces']['ip']                 Interface IP (optional).
 	 * @param int    $hosts[]['interfaces']['port']               Interface port (optional).
-	 * @param int    $hosts[]['interfaces']['useip']              Interface should use IP (optional).
-	 * @param string $hosts[]['interfaces']['dns']                Interface should use DNS (optional).
-	 * @param int    $hosts[]['interfaces']['details']            Interface additional fields (optional).
+	 * @param int    $hosts[]['interfaces']['useip']              Interface should use IP or DNS (optional).
+	 * @param string $hosts[]['interfaces']['dns']                Interface DNS (optional).
+	 * @param array  $hosts[]['interfaces']['details']            Interface additional fields (optional).
 	 * @param int    $hosts[]['proxy_hostid']                     ID of the proxy that is used to monitor the host (optional).
 	 * @param int    $hosts[]['ipmi_authtype']                    IPMI authentication type (optional).
 	 * @param int    $hosts[]['ipmi_privilege']                   IPMI privilege (optional).
@@ -1245,6 +1245,36 @@ class CHost extends CHostGeneral {
 		return ['hostids' => $hostids];
 	}
 
+	/**
+	 * Replace hosts interfaces.
+	 *
+	 * @param array  $hosts_interfaces                                             Array of hosts interfaces to replace
+	 *                                                                             on hosts.
+	 * @param string $hosts_interfaces[]['hostid']                                 Host ID.
+	 * @param string $hosts_interfaces[]['host']                                   Name of the host to show in error
+	 *                                                                             messages.
+	 * @param string $hosts_interfaces[]['interfaceid']                            Interface ID.
+	 * @param int    $hosts_interfaces[]['main']                                   Is this the default interface to use.
+	 * @param int    $hosts_interfaces[]['type']                                   Interface type.
+	 * @param int    $hosts_interfaces[]['useip']                                  Interface should use IP or DNS
+	 *                                                                             (optional).
+	 * @param string $hosts_interfaces[]['ip']                                     Interface IP (optional).
+	 * @param string $hosts_interfaces[]['dns']                                    Interface DNS (optional).
+	 * @param int    $hosts_interfaces[]['port']                                   Interface port (optional).
+	 * @param array  $hosts_interfaces[]['details']                                Interface additional fields
+	 *                                                                             (optional).
+	 * @param array  $db_hosts_interfaces                                          Array of existing hosts interfaces
+	 *                                                                             before replacement.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['main']         Is this the default interface to use.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['type']         Interface type.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['useip']        Interface should use IP or DNS.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['ip']           Interface IP.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['dns']          Interface DNS.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['port']         Interface DNS.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['details']      Interface additional fields.
+	 *
+	 * @throws APIException
+	 */
 	private function replaceHostsInterfaces(array $hosts_interfaces, array $db_hosts_interfaces) {
 		foreach ($hosts_interfaces as &$interface) {
 			if (array_key_exists('interfaceid', $interface)) {

@@ -29,6 +29,8 @@ class CApiHostInterfaceHelper {
 	 * interface for each interface type, or have no interface of that type at all. If no interfaces are given, it means
 	 * the last remaining main interface is trying to be deleted. In that case use $db_interfaces as reference.
 	 *
+	 * @static
+	 *
 	 * @param array $interfaces     Array of interfaces that are created, updated (plus DB) or deleted (plus DB).
 	 * @param array $db_interfaces  Array of interfaces from DB (used for delete only and if no interfaces are given).
 	 *
@@ -147,6 +149,8 @@ class CApiHostInterfaceHelper {
 	/**
 	 * Validates the interface fields connected with address settings.
 	 *
+	 * @static
+	 *
 	 * @param array  $interface  Array with interface fields ("useip"", "ip", "dns", "port" fields are required).
 	 * @param string $host_name  Name of the interface host to show in error message.
 	 *
@@ -180,6 +184,8 @@ class CApiHostInterfaceHelper {
 	/**
 	 * Validates the "dns" field.
 	 *
+	 * @static
+	 *
 	 * @param array $interface
 	 * @param string $interface['dns']
 	 *
@@ -202,6 +208,8 @@ class CApiHostInterfaceHelper {
 
 	/**
 	 * Validates the "ip" field.
+	 *
+	 * @static
 	 *
 	 * @param array $interface
 	 * @param string $interface['ip']
@@ -230,6 +238,8 @@ class CApiHostInterfaceHelper {
 	/**
 	 * Validates the "port" field.
 	 *
+	 * @static
+	 *
 	 * @param array $interface
 	 *
 	 * @throws APIException if the field is empty or invalid.
@@ -247,6 +257,8 @@ class CApiHostInterfaceHelper {
 
 	/**
 	 * Check weather interfaces is linked to item(s).
+	 *
+	 * @static
 	 *
 	 * @param array $interfaceids
 	 *
@@ -273,6 +285,8 @@ class CApiHostInterfaceHelper {
 
 	/**
 	 * Check SNMP related inputs.
+	 *
+	 * @static
 	 *
 	 * @param array $interfaces
 	 *
@@ -305,6 +319,8 @@ class CApiHostInterfaceHelper {
 	/**
 	 * Check if SNMP version is valid. Valid versions: SNMP_V1, SNMP_V2C, SNMP_V3.
 	 *
+	 * @static
+	 *
 	 * @param array $interface
 	 *
 	 * @throws APIException if "version" value is incorrect.
@@ -318,6 +334,8 @@ class CApiHostInterfaceHelper {
 
 	/**
 	 * Check SNMP community. For SNMPv1 and SNMPv2c it required.
+	 *
+	 * @static
 	 *
 	 * @param array $interface
 	 *
@@ -333,6 +351,8 @@ class CApiHostInterfaceHelper {
 
 	/**
 	 * Validates SNMP interface "bulk" field.
+	 *
+	 * @static
 	 *
 	 * @param array $interface
 	 *
@@ -352,6 +372,8 @@ class CApiHostInterfaceHelper {
 	/**
 	 * Check SNMP Security level field.
 	 *
+	 * @static
+	 *
 	 * @param array $interface
 	 * @param array $interface['details']
 	 * @param array $interface['details']['version']        SNMP version
@@ -369,6 +391,8 @@ class CApiHostInterfaceHelper {
 
 	/**
 	 * Check SNMP authentication  protocol.
+	 *
+	 * @static
 	 *
 	 * @param array $interface
 	 * @param array $interface['details']
@@ -388,6 +412,8 @@ class CApiHostInterfaceHelper {
 	/**
 	 * Check SNMP Privacy protocol.
 	 *
+	 * @static
+	 *
 	 * @param array $interface
 	 * @param array $interface['details']
 	 * @param array $interface['details']['version']       SNMP version
@@ -404,6 +430,8 @@ class CApiHostInterfaceHelper {
 
 	/**
 	 * Sanitize SNMP fields by version.
+	 *
+	 * @static
 	 *
 	 * @param array $interfaces
 	 *
@@ -441,6 +469,8 @@ class CApiHostInterfaceHelper {
 	/**
 	 * Prepares the interfaces data to update by grouping it to multiple bulk update requests.
 	 *
+	 * @static
+	 *
 	 * @param array $interfaces  Array of interfaces to update.
 	 *
 	 * @return array  Prepared data to update.
@@ -450,8 +480,7 @@ class CApiHostInterfaceHelper {
 
 		while ($interfaces) {
 			$interface_params = reset($interfaces);
-			$interfaceid = $interface_params['interfaceid'];
-			$interfaceids = [$interfaceid];
+			$interfaceids = [$interface_params['interfaceid']];
 			unset($interface_params['interfaceid']);
 			unset($interfaces[key($interfaces)]);
 
