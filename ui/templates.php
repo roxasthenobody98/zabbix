@@ -389,7 +389,7 @@ elseif (hasRequest('action') && getRequest('action') === 'template.massupdate' &
 
 							foreach ($macros as $macro) {
 								if ($update_existing && array_key_exists($macro['macro'], $template_macros_by_macro)) {
-									$hostmacroid = $template_macros_by_macro[$macro['macro']];
+									$hostmacroid = $template_macros_by_macro[$macro['macro']]['hostmacroid'];
 									$template['macros'][$hostmacroid] = ['hostmacroid' => $hostmacroid] + $macro;
 								}
 								else {
@@ -410,7 +410,7 @@ elseif (hasRequest('action') && getRequest('action') === 'template.massupdate' &
 									$template['macros'][] = $macro;
 								}
 								else if (array_key_exists($macro['macro'], $template_macros_by_macro)) {
-									$hostmacroid = $template_macros_by_macro[$macro['macro']];
+									$hostmacroid = $template_macros_by_macro[$macro['macro']]['hostmacroid'];
 									$template['macros'][$hostmacroid] = ['hostmacroid' => $hostmacroid] + $macro;
 								}
 							}
@@ -424,10 +424,14 @@ elseif (hasRequest('action') && getRequest('action') === 'template.massupdate' &
 							$macros_by_macro =  zbx_toHash($macros, 'macro');
 
 							if ($except_selected) {
-								$template['macros'] = array_intersect_key($template_macros_by_macro, $macros_by_macro);
+								$template['macros'] = array_values(
+									array_intersect_key($template_macros_by_macro, $macros_by_macro)
+								);
 							}
 							else {
-								$template['macros'] = array_diff_key($template_macros_by_macro, $macros_by_macro);
+								$template['macros'] = array_values(
+									array_diff_key($template_macros_by_macro, $macros_by_macro)
+								);
 							}
 						}
 						break;

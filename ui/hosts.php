@@ -581,7 +581,7 @@ elseif (hasRequest('action') && getRequest('action') === 'host.massupdate' && ha
 
 							foreach ($macros as $macro) {
 								if ($update_existing && array_key_exists($macro['macro'], $host_macros_by_macro)) {
-									$hostmacroid = $host_macros_by_macro[$macro['macro']];
+									$hostmacroid = $host_macros_by_macro[$macro['macro']]['hostmacroid'];
 									$host['macros'][$hostmacroid] = ['hostmacroid' => $hostmacroid] + $macro;
 								}
 								else {
@@ -602,7 +602,7 @@ elseif (hasRequest('action') && getRequest('action') === 'host.massupdate' && ha
 									$host['macros'][] = $macro;
 								}
 								else if (array_key_exists($macro['macro'], $host_macros_by_macro)) {
-									$hostmacroid = $host_macros_by_macro[$macro['macro']];
+									$hostmacroid = $host_macros_by_macro[$macro['macro']]['hostmacroid'];
 									$host['macros'][$hostmacroid] = ['hostmacroid' => $hostmacroid] + $macro;
 								}
 							}
@@ -616,10 +616,12 @@ elseif (hasRequest('action') && getRequest('action') === 'host.massupdate' && ha
 							$macros_by_macro =  zbx_toHash($macros, 'macro');
 
 							if ($except_selected) {
-								$host['macros'] = array_intersect_key($host_macros_by_macro, $macros_by_macro);
+								$host['macros'] = array_values(
+									array_intersect_key($host_macros_by_macro, $macros_by_macro)
+								);
 							}
 							else {
-								$host['macros'] = array_diff_key($host_macros_by_macro, $macros_by_macro);
+								$host['macros'] = array_values(array_diff_key($host_macros_by_macro, $macros_by_macro));
 							}
 						}
 						break;
