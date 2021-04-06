@@ -866,10 +866,6 @@ class CHost extends CHostGeneral {
 			$options['selectParentTemplates'] = ['templateid'];
 		}
 
-		if (array_column($hosts, 'tags')) {
-			$options['selectTags'] = ['tag', 'value'];
-		}
-
 		if (array_column($hosts, 'macros')) {
 			$options['selectMacros'] = ['hostmacroid', 'macro', 'type'];
 		}
@@ -881,6 +877,39 @@ class CHost extends CHostGeneral {
 		$db_hosts = $this->get($options);
 
 		$hosts = $this->validateUpdate($hosts, $db_hosts);
+
+		if (array_column($hosts, 'tags')) {
+			$db_tags = DB::select('host_tag', [
+				'output' => ['hosttagid', 'hostid', 'tag', 'value'],
+				'filter' => ['hostid' => $hostids]
+			]);
+
+			foreach ($db_tags as $db_tag) {
+				if (array_key_exists($db_tag['hostid'], $db_hosts)) {
+					$db_hosts[$db_tag['hostid']]['tags'][] = $db_tag;
+				}
+			}
+		}
+
+		if (array_column($hosts, 'groups')) {
+			$db_groups = DB::select('hosts_groups', [
+				'output' => ['hostgroupid', 'hostid', 'groupid'],
+				'filter' => ['hostid' => $hostids]
+			]);
+
+			foreach ($db_hosts as &$db_host) {
+				$db_host['groups'] = zbx_toHash($db_host['groups'], 'groupid');
+			}
+
+			foreach ($db_groups as $db_group) {
+				if (array_key_exists($db_group['hostid'], $db_hosts)
+						&& array_key_exists($db_group['groupid'], $db_hosts[$db_group['hostid']]['groups'])) {
+					$hostid = $db_group['hostid'];
+					$groupid = $db_group['groupid'];
+					$db_hosts[$hostid]['groups'][$groupid]['hostgroupid'] = $db_group['hostgroupid'];
+				}
+			}
+		}
 
 		$host_names_with_updated_status = [];
 
@@ -894,7 +923,7 @@ class CHost extends CHostGeneral {
 		$templates_hostids = [];
 
 		$hosts_tags_to_add = [];
-		$hosts_tags_to_delete = [];
+		$hosttagids_to_delete = [];
 
 		$hosts_macros = [];
 		$db_hosts_macros = [];
@@ -904,7 +933,7 @@ class CHost extends CHostGeneral {
 		$hostids_to_delete_inventory = [];
 
 		$hosts_groups_to_add = [];
-		$hosts_groups_to_delete = [];
+		$hostgroupids_to_delete = [];
 
 		foreach ($hosts as &$host) {
 			// If visible name is not given or empty it should be set to host name.
@@ -964,26 +993,26 @@ class CHost extends CHostGeneral {
 			}
 
 			if (array_key_exists('tags', $host)) {
-				$host_db_tags = zbx_toHash($db_hosts[$host['hostid']]['tags'], 'tag');
-				$host_tags = [];
+				$host_db_tags = [];
+
+				foreach ($db_hosts[$host['hostid']]['tags'] as $tag) {
+					$host_db_tags[$tag['tag'].'|'.$tag['value']] = $tag;
+				}
+
+				$existing_host_tags = [];
 
 				foreach (zbx_toArray($host['tags']) as $tag) {
 					$tag += ['value' => ''];
 
-					if (!array_key_exists($tag['tag'], $host_db_tags)) {
+					if (!array_key_exists($tag['tag'].'|'.$tag['value'], $host_db_tags)) {
 						$hosts_tags_to_add[] = ['hostid' => $host['hostid']] + $tag;
-						$host_tags[$tag['tag']] = true;
-					}
-					elseif ($tag['value'] !== $host_db_tags[$tag['tag']]['value']) {
-						$hosts_tags_to_add[] = ['hostid' => $host['hostid']] + $tag;
-					}
-					else {
-						$host_tags[$tag['tag']] = true;
+					} else {
+						$existing_host_tags[$tag['tag'].'|'.$tag['value']] = true;
 					}
 				}
 
-				foreach (array_diff_key($host_db_tags, $host_tags) as $tag) {
-					$hosts_tags_to_delete[$host['hostid']][$tag['tag']] = true;
+				foreach (array_diff_key($host_db_tags, $existing_host_tags) as $tag) {
+					$hosttagids_to_delete[] = $tag['hosttagid'];
 				}
 			}
 
@@ -1029,7 +1058,7 @@ class CHost extends CHostGeneral {
 			}
 
 			if (array_key_exists('groups', $host)) {
-				$host_db_groupids = array_column($db_hosts[$host['hostid']]['groups'], 'groupid');
+				$host_db_groupids = array_keys($db_hosts[$host['hostid']]['groups']);
 				$host_groupids = array_unique(array_column(zbx_toArray($host['groups']), 'groupid'));
 
 				foreach (array_diff($host_groupids, $host_db_groupids) as $groupid) {
@@ -1040,7 +1069,7 @@ class CHost extends CHostGeneral {
 				}
 
 				foreach (array_diff($host_db_groupids, $host_groupids) as $groupid) {
-					$hosts_groups_to_delete[$host['hostid']][$groupid] = true;
+					$hostgroupids_to_delete[] = $db_hosts[$host['hostid']]['groups'][$groupid]['hostgroupid'];
 				}
 			}
 		}
@@ -1115,23 +1144,8 @@ class CHost extends CHostGeneral {
 			$this->link($link_templateids, $link_hostids);
 		}
 
-		while ($hosts_tags_to_delete) {
-			$hostid = key($hosts_tags_to_delete);
-			$host_tags = reset($hosts_tags_to_delete);
-			$tags_hostids = [$hostid];
-			unset($hosts_tags_to_delete[$hostid]);
-
-			foreach ($hosts_tags_to_delete as $hostid => $tags) {
-				if ($host_tags === $tags) {
-					$tags_hostids[] = $hostid;
-					unset($hosts_tags_to_delete[$hostid]);
-				}
-			}
-
-			DB::delete('host_tag', [
-				'hostid' => $tags_hostids,
-				'tag' => array_keys($host_tags)
-			]);
+		if ($hosttagids_to_delete) {
+			DB::delete('host_tag', ['hosttagid' => $hosttagids_to_delete]);
 		}
 
 		if ($hosts_tags_to_add) {
@@ -1192,27 +1206,12 @@ class CHost extends CHostGeneral {
 			]);
 		}
 
-		if ($hosts_groups_to_add) {
-			DB::insertBatch('hosts_groups', $hosts_groups_to_add);
+		if ($hostgroupids_to_delete) {
+			DB::delete('hosts_groups', ['hostgroupid' => $hostgroupids_to_delete]);
 		}
 
-		while ($hosts_groups_to_delete) {
-			$hostid = key($hosts_groups_to_delete);
-			$host_groupids = reset($hosts_groups_to_delete);
-			$groups_hostids = [$hostid];
-			unset($hosts_groups_to_delete[$hostid]);
-
-			foreach ($hosts_groups_to_delete as $hostid => $groupids) {
-				if ($host_groupids === $groupids) {
-					$groups_hostids[] = $hostid;
-					unset($hosts_groups_to_delete[$hostid]);
-				}
-			}
-
-			DB::delete('hosts_groups', [
-				'hostid' => $groups_hostids,
-				'groupid' => array_keys($host_groupids)
-			]);
+		if ($hosts_groups_to_add) {
+			DB::insertBatch('hosts_groups', $hosts_groups_to_add);
 		}
 
 		foreach ($host_names_with_updated_status as $host) {
