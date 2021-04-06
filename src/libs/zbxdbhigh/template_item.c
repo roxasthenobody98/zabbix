@@ -209,6 +209,9 @@ static void	get_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *t
 		item = (zbx_template_item_t *)zbx_malloc(NULL, sizeof(zbx_template_item_t));
 
 		ZBX_STR2UINT64(item->templateid, row[0]);
+
+		zabbix_log(LOG_LEVEL_INFORMATION, "STRATA1: ->%lu<-", item->templateid);
+
 		ZBX_STR2UCHAR(item->type, row[3]);
 		ZBX_STR2UCHAR(item->value_type, row[4]);
 		ZBX_STR2UCHAR(item->status, row[8]);
@@ -526,6 +529,9 @@ static void	update_template_lld_rule_formulas(zbx_vector_ptr_t *items, zbx_vecto
 	}
 }
 
+extern zbx_hashset_t items_audit;
+
+
 /******************************************************************************
  *                                                                            *
  * Function: save_template_item                                               *
@@ -548,7 +554,7 @@ static void	update_template_lld_rule_formulas(zbx_vector_ptr_t *items, zbx_vecto
  ******************************************************************************/
 static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_template_item_t *item,
 		zbx_db_insert_t *db_insert_items, zbx_db_insert_t *db_insert_irtdata,
-		zbx_db_insert_t *db_insert_items_audit, char *recsetid_cuid, char **sql,
+				/*zbx_db_insert_t *db_insert_items_audit, */ char *recsetid_cuid, char **sql,
 		size_t *sql_alloc, size_t *sql_offset)
 {
 	int			i, audit_action;
@@ -711,78 +717,93 @@ static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_te
 
 
 	{
-	char	item_audit_cuid[CUID_LEN];
-	struct zbx_json	details_json;
 
-	zbx_new_cuid(item_audit_cuid);
+	/* char	item_audit_cuid[CUID_LEN]; */
 
 
-	zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
-	zbx_json_addobject(&details_json, NULL);
+	/*struct zbx_json	details_json; */
 
-	zbx_json_adduint64(&details_json, "itemid", *itemid);
-	zbx_json_addstring(&details_json, "name", item->name, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "key", item->key, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&details_json, "hostid", hostid);
-	zbx_json_adduint64(&details_json, "type", item->type);
-	zbx_json_adduint64(&details_json, "value_type", item->value_type);
-	zbx_json_addstring(&details_json, "delay", item->delay, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "history", item->history, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "trends", item->trends, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&details_json, "status", item->status);
-	zbx_json_addstring(&details_json, "trapper_hosts", item->trapper_hosts, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "units", item->units, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "formula", item->formula, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "logtimefmt", item->logtimefmt, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&details_json, "valuemapid", item->valuemapid);
-	zbx_json_addstring(&details_json, "params", item->params, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "ipmi_sensor", item->ipmi_sensor, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "snmp_oid", item->snmp_oid, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&details_json, "authtype", item->authtype);
-	zbx_json_addstring(&details_json, "username", item->username, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "password", item->password, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "publickey", item->publickey, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "privatekey", item->privatekey, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&details_json, "templateid", item->templateid);
-	zbx_json_adduint64(&details_json, "flags", item->flags);
-	zbx_json_addstring(&details_json, "description", item->description, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&details_json, "inventory_link", item->inventory_link);
-	zbx_json_adduint64(&details_json, "interfaceid", item->interfaceid);
-	zbx_json_addstring(&details_json, "lifetime", item->lifetime, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&details_json, "evaltype", item->evaltype);
-	zbx_json_addstring(&details_json, "jmx_endpoint", item->jmx_endpoint, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&details_json, "master_itemid", item->master_itemid);
-	zbx_json_addstring(&details_json, "timeout", item->timeout, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "url", item->url, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "query_fields", item->query_fields, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "posts", item->posts, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "status_codes", item->status_codes, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&details_json, "follow_redirects", item->follow_redirects);
-	zbx_json_adduint64(&details_json, "post_type", item->post_type);
-	zbx_json_addstring(&details_json, "http_proxy", item->http_proxy, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "headers", item->headers, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&details_json, "retrieve_mode", item->retrieve_mode);
-	zbx_json_adduint64(&details_json, "request_method", item->request_method);
-	zbx_json_adduint64(&details_json, "output_format", item->output_format);
-	zbx_json_addstring(&details_json, "ssl_cert_file", item->ssl_cert_file, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "ssl_key_file", item->ssl_key_file, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&details_json, "ssl_key_password", item->ssl_key_password, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&details_json, "verify_peer", item->verify_peer);
-	zbx_json_adduint64(&details_json, "verify_host", item->verify_host);
-	zbx_json_adduint64(&details_json, "allowed_traps", item->allow_traps);
-	zbx_json_adduint64(&details_json, "discover", item->discover);
+	zbx_item_audit_entry_t *local_item_audit_entry = (zbx_item_audit_entry_t*)zbx_malloc(NULL, sizeof(zbx_item_audit_entry_t));
+	local_item_audit_entry->itemid = item->itemid;
+	local_item_audit_entry->name = zbx_strdup(NULL, item->name);
+	local_item_audit_entry->audit_action = audit_action;
 
-	zbx_json_close(&details_json);
+	zabbix_log(LOG_LEVEL_INFORMATION, "BADGER ITEMID: %lu", item->itemid);
+	/*zbx_new_cuid(item_audit_cuid);*/
 
+
+	zbx_json_init(&(local_item_audit_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
+	/* zbx_json_addobject(&local_item_audit_entry.details_json, NULL); */
+
+	zbx_json_adduint64(&(local_item_audit_entry->details_json), "item.itemid", item->itemid);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.name", item->name, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.key", item->key, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.hostid", hostid);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.type", item->type);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.value_type", item->value_type);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.delay", item->delay, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.history", item->history, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.trends", item->trends, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.status", item->status);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.trapper_hosts", item->trapper_hosts, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.units", item->units, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.formula", item->formula, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.logtimefmt", item->logtimefmt, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.valuemapid", item->valuemapid);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.params", item->params, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.ipmi_sensor", item->ipmi_sensor, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.snmp_oid", item->snmp_oid, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.authtype", item->authtype);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.username", item->username, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.password", item->password, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.publickey", item->publickey, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.privatekey", item->privatekey, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.templateid", item->templateid);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.flags", item->flags);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.description", item->description, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.inventory_link", item->inventory_link);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.interfaceid", item->interfaceid);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.lifetime", item->lifetime, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.evaltype", item->evaltype);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.jmx_endpoint", item->jmx_endpoint, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.master_itemid", item->master_itemid);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.timeout", item->timeout, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.url", item->url, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.query_fields", item->query_fields, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.posts", item->posts, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.status_codes", item->status_codes, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.follow_redirects", item->follow_redirects);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.post_type", item->post_type);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.http_proxy", item->http_proxy, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.headers", item->headers, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.retrieve_mode", item->retrieve_mode);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.request_method", item->request_method);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.output_format", item->output_format);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.ssl_cert_file", item->ssl_cert_file, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.ssl_key_file", item->ssl_key_file, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_item_audit_entry->details_json, "item.ssl_key_password", item->ssl_key_password, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.verify_peer", item->verify_peer);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.verify_host", item->verify_host);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.allowed_traps", item->allow_traps);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.discover", item->discover);
+
+	/*
+	zbx_json_close(&local_item_audit_entry.details_json);
 	zbx_db_insert_add_values(db_insert_items_audit, item_audit_cuid, USER_TYPE_SUPER_ADMIN, (int)time(NULL), audit_action,"",itemid,
-				item->name, AUDIT_RESOURCE_ITEM, recsetid_cuid, details_json);
+	item->name, AUDIT_RESOURCE_ITEM, recsetid_cuid, details_json);
+	*/
+
+	zabbix_log(LOG_LEVEL_INFORMATION, "name111: %s", local_item_audit_entry->details_json.buffer);
+
+	zbx_hashset_insert(&items_audit, &local_item_audit_entry, sizeof(local_item_audit_entry));
+
 	}
 
 	for (i = 0; i < item->dependent_items.values_num; i++)
 	{
 		dependent = (zbx_template_item_t *)item->dependent_items.values[i];
 		dependent->master_itemid = item->itemid;
-		save_template_item(hostid, itemid, dependent, db_insert_items, db_insert_irtdata, db_insert_items_audit, recsetid_cuid, sql, sql_alloc,
+		save_template_item(hostid, itemid, dependent, db_insert_items, db_insert_irtdata, /*db_insert_items_audit,*/ recsetid_cuid, sql, sql_alloc,
 				sql_offset);
 	}
 }
@@ -803,7 +824,7 @@ static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items, ch
 	size_t			sql_alloc = 16 * ZBX_KIBIBYTE, sql_offset = 0;
 	int			new_items = 0, upd_items = 0, i;
 	zbx_uint64_t		itemid = 0;
-	zbx_db_insert_t		db_insert_items, db_insert_irtdata, db_insert_items_audit;
+	zbx_db_insert_t		db_insert_items, db_insert_irtdata/*, db_insert_items_audit*/;
 	zbx_template_item_t	*item;
 
 	if (0 == items->values_num)
@@ -834,7 +855,7 @@ static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items, ch
 				"output_format", "ssl_cert_file", "ssl_key_file", "ssl_key_password", "verify_peer",
 				"verify_host", "allow_traps", "discover", NULL);
 
-		zbx_db_insert_prepare(&db_insert_items_audit, "auditlog2","auditid","userid","clock","action","ip","resourceid","resourcename","resourcetype","recsetid","details", NULL);
+		// zbx_db_insert_prepare(&db_insert_items_audit, "auditlog2","auditid","userid","clock","action","ip","resourceid","resourcename","resourcetype","recsetid","details", NULL);
 
 		zbx_db_insert_prepare(&db_insert_irtdata, "item_rtdata", "itemid", NULL);
 	}
@@ -852,7 +873,7 @@ static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items, ch
 		/* dependent items are saved within recursive save_template_item calls while saving master */
 		if (0 == item->master_itemid)
 		{
-			save_template_item(hostid, &itemid, item, &db_insert_items, &db_insert_irtdata, &db_insert_items_audit, recsetid_cuid,
+			save_template_item(hostid, &itemid, item, &db_insert_items, &db_insert_irtdata, recsetid_cuid,
 					&sql, &sql_alloc, &sql_offset);
 		}
 	}
@@ -862,8 +883,8 @@ static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items, ch
 		zbx_db_insert_execute(&db_insert_items);
 		zbx_db_insert_clean(&db_insert_items);
 
-		zbx_db_insert_execute(&db_insert_items_audit);
-		zbx_db_insert_clean(&db_insert_items_audit);
+		// zbx_db_insert_execute(&db_insert_items_audit);
+		// zbx_db_insert_clean(&db_insert_items_audit);
 
 		zbx_db_insert_execute(&db_insert_irtdata);
 		zbx_db_insert_clean(&db_insert_irtdata);
@@ -1305,7 +1326,7 @@ static int	template_item_compare_func(const void *d1, const void *d2)
  *                                                                            *
  * Purpose: copy template item preprocessing options                          *
  *                                                                            *
- * Parameters: templateids - [IN] array of template IDs                       *
+/ * Parameters: templateids - [IN] array of template IDs                       *
  *             items       - [IN] array of new/updated items                  *
  *                                                                            *
  ******************************************************************************/
@@ -1360,6 +1381,12 @@ static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, 
 
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "ti.hostid", templateids->values, templateids->values_num);
 
+	{
+	zbx_item_audit_entry_t local_item_audit_entry, **found_item_audit_entry;
+	zbx_item_audit_entry_t *local_item_audit_entry_x = &local_item_audit_entry;
+
+	char bbb[100];
+
 	result = DBselect("%s", sql);
 	while (NULL != (row = DBfetch(result)))
 	{
@@ -1375,6 +1402,54 @@ static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, atoi(row[1]), atoi(row[2]),
 				row[3], atoi(row[4]), row[5]);
 
+
+		/* zbx_json_addarray(j, "fields");
+		zbx_json_close(j); */
+
+		local_item_audit_entry.itemid = (*pitem)->itemid;
+
+		{
+			zbx_hashset_iter_t	iter;
+			zbx_item_audit_entry_t	**item_audit_entry;
+
+			zabbix_log(LOG_LEVEL_INFORMATION, "OH NO: %d",  (*pitem)->itemid);
+
+			zbx_hashset_iter_reset(&items_audit, &iter);
+
+			while (NULL != (item_audit_entry = (zbx_item_audit_entry_t **)zbx_hashset_iter_next(&iter)))
+			{
+				zabbix_log(LOG_LEVEL_INFORMATION, "itemid: %lu", (*item_audit_entry)->itemid);
+				zabbix_log(LOG_LEVEL_INFORMATION, "name222: %s", (*item_audit_entry)->name);
+				zabbix_log(LOG_LEVEL_INFORMATION, "name333: %d", (*item_audit_entry)->audit_action);
+				zabbix_log(LOG_LEVEL_INFORMATION, "json: %s", (*item_audit_entry)->details_json.buffer);
+			}
+		}
+
+		found_item_audit_entry = (zbx_item_audit_entry_t**)zbx_hashset_search(&items_audit, &(local_item_audit_entry_x));
+
+	if (NULL == found_item_audit_entry)
+	{
+		THIS_SHOULD_NEVER_HAPPEN;
+	}
+
+	zabbix_log(LOG_LEVEL_INFORMATION, "NAME: %s", (*found_item_audit_entry)->name);
+
+		zbx_snprintf( bbb, 100, "item.preprocessing[%s]", row[1] );
+
+		zabbix_log(LOG_LEVEL_INFORMATION, "BBB: ->%s<-", bbb);
+
+		zbx_json_addstring(&((*found_item_audit_entry)->details_json), bbb, row[2], ZBX_JSON_TYPE_STRING);
+		zbx_json_addstring(&((*found_item_audit_entry)->details_json), bbb, row[3], ZBX_JSON_TYPE_STRING);
+		zbx_json_addstring(&((*found_item_audit_entry)->details_json), bbb, row[4], ZBX_JSON_TYPE_STRING);
+		zbx_json_addstring(&((*found_item_audit_entry)->details_json), bbb, row[5], ZBX_JSON_TYPE_STRING);
+
+		zabbix_log(LOG_LEVEL_INFORMATION,
+			"badger iii preproc itemid: ->%lu<-, step ->%d<-, type: ->%d<-, params ->%s<-, error_handler ->%d<-, error_handler_params ->%s<- ",
+			(*pitem)->itemid, atoi(row[1]), atoi(row[2]), row[3], atoi(row[4]), row[5]);
+
+		/* find an item, get its json, add to it steps */
+
+	}
 	}
 	DBfree_result(result);
 

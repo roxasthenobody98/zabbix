@@ -20,4 +20,13 @@
 #include "zbxtypes.h"
 #include "zbxalgo.h"
 
+typedef struct zbx_item_audit_entry
+{
+	zbx_uint64_t	itemid;
+	char		*name;
+	struct zbx_json	details_json;
+	int		audit_action;
+} zbx_item_audit_entry_t;
+
+
 void	DBcopy_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *templateids);

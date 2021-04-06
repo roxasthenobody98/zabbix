@@ -261,9 +261,9 @@ static void	add_discovered_host_groups(zbx_uint64_t hostid, zbx_vector_uint64_t 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
-static void	audit_host_add(zbx_uint64_t hostid)
+static void	audit_host_add(zbx_uint64_t hostid, char *recsetid_cuid)
 {
-		char	recsetid_cuid[CUID_LEN];
+		// char	recsetid_cuid[CUID_LEN];
 		struct zbx_json	details_json;
 		DB_RESULT	result;
 		DB_ROW			row;
@@ -281,7 +281,7 @@ static void	audit_host_add(zbx_uint64_t hostid)
 
 		while (NULL != (row = DBfetch(result)))
 		{
-			zbx_new_cuid(recsetid_cuid);
+			// zbx_new_cuid(recsetid_cuid);
 			zabbix_log(LOG_LEVEL_INFORMATION, "OP_TEMPLATE_ADD RECSETID: ->%s<-\n",recsetid_cuid);
 			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[13]);
 
@@ -437,7 +437,7 @@ static void	audit_host_inventory(zbx_uint64_t hostid, int inventory_mode)
  * Author: Alexei Vladishev                                                   *
  *                                                                            *
  ******************************************************************************/
-static zbx_uint64_t	add_discovered_host(const DB_EVENT *event)
+static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char *recsetid_cuid)
 {
 	DB_RESULT		result;
 	DB_RESULT		result2;
@@ -667,7 +667,7 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event)
 
 				{
 					zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
-					audit_host_add(hostid);
+					audit_host_add(hostid, recsetid_cuid);
 				}
 
 				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
@@ -804,7 +804,7 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event)
 
 				{
 					zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
-					audit_host_add(hostid);
+					audit_host_add(hostid, recsetid_cuid);
 				}
 
 				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
@@ -884,12 +884,16 @@ static int	is_discovery_or_autoregistration(const DB_EVENT *event)
  ******************************************************************************/
 void	op_host_add(const DB_EVENT *event)
 {
+	char	recsetid_cuid[CUID_LEN];
+
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
+	zbx_new_cuid(recsetid_cuid);
 
 	if (FAIL == is_discovery_or_autoregistration(event))
 		return;
 
-	add_discovered_host(event);
+	add_discovered_host(event, recsetid_cuid);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -942,13 +946,16 @@ void	op_host_del(const DB_EVENT *event)
 void	op_host_enable(const DB_EVENT *event)
 {
 	zbx_uint64_t	hostid;
+	char	recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
+	zbx_new_cuid(recsetid_cuid);
 
 	if (FAIL == is_discovery_or_autoregistration(event))
 		return;
 
-	if (0 == (hostid = add_discovered_host(event)))
+	if (0 == (hostid = add_discovered_host(event, recsetid_cuid)))
 		return;
 
 	DBexecute(
@@ -976,13 +983,16 @@ void	op_host_enable(const DB_EVENT *event)
 void	op_host_disable(const DB_EVENT *event)
 {
 	zbx_uint64_t	hostid;
+	char	recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
+	zbx_new_cuid(recsetid_cuid);
 
 	if (FAIL == is_discovery_or_autoregistration(event))
 		return;
 
-	if (0 == (hostid = add_discovered_host(event)))
+	if (0 == (hostid = add_discovered_host(event, recsetid_cuid)))
 		return;
 
 	DBexecute(
@@ -1015,13 +1025,16 @@ void	op_host_disable(const DB_EVENT *event)
 void	op_host_inventory_mode(const DB_EVENT *event, int inventory_mode)
 {
 	zbx_uint64_t	hostid;
+	char	recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
+	zbx_new_cuid(recsetid_cuid);
 
 	if (FAIL == is_discovery_or_autoregistration(event))
 		return;
 
-	if (0 == (hostid = add_discovered_host(event)))
+	if (0 == (hostid = add_discovered_host(event, recsetid_cuid)))
 		return;
 
 	DBset_host_inventory(hostid, inventory_mode);
@@ -1047,13 +1060,16 @@ void	op_host_inventory_mode(const DB_EVENT *event, int inventory_mode)
 void	op_groups_add(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 {
 	zbx_uint64_t	hostid;
+	char	recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
+	zbx_new_cuid(recsetid_cuid);
 
 	if (FAIL == is_discovery_or_autoregistration(event))
 		return;
 
-	if (0 == (hostid = add_discovered_host(event)))
+	if (0 == (hostid = add_discovered_host(event, recsetid_cuid)))
 		return;
 
 	add_discovered_host_groups(hostid, groupids);
@@ -1146,16 +1162,19 @@ void	op_template_add(const DB_EVENT *event, zbx_vector_uint64_t *lnk_templateids
 {
 	zbx_uint64_t	hostid;
 	char		*error;
+	char	recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
+	zbx_new_cuid(recsetid_cuid);
 
 	if (FAIL == is_discovery_or_autoregistration(event))
 		return;
 
-	if (0 == (hostid = add_discovered_host(event)))
+	if (0 == (hostid = add_discovered_host(event, recsetid_cuid)))
 		return;
 
-	if (SUCCEED != DBcopy_template_elements(hostid, lnk_templateids, &error))
+	if (SUCCEED != DBcopy_template_elements(hostid, lnk_templateids, &error, recsetid_cuid))
 	{
 		zabbix_log(LOG_LEVEL_WARNING, "cannot link template(s) %s", error);
 		zbx_free(error);

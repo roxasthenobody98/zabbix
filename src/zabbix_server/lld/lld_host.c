@@ -3189,6 +3189,7 @@ static void	lld_templates_link(const zbx_vector_ptr_t *hosts, char **error)
 	int		i;
 	zbx_lld_host_t	*host;
 	char		*err;
+	char	recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
@@ -3210,7 +3211,7 @@ static void	lld_templates_link(const zbx_vector_ptr_t *hosts, char **error)
 
 		if (0 != host->lnk_templateids.values_num)
 		{
-			if (SUCCEED != DBcopy_template_elements(host->hostid, &host->lnk_templateids, &err))
+			if (SUCCEED != DBcopy_template_elements(host->hostid, &host->lnk_templateids, &err, recsetid_cuid))
 			{
 				*error = zbx_strdcatf(*error, "Cannot link template(s) %s.\n", err);
 				zbx_free(err);

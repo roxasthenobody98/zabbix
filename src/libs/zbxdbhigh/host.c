@@ -6014,6 +6014,41 @@ static void	DBcopy_template_httptests(zbx_uint64_t hostid, const zbx_vector_uint
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
+zbx_hashset_t items_audit;
+
+
+
+static unsigned	zbx_items_audit_hash_func(const void *data)
+{
+	const zbx_item_audit_entry_t	**item_audit_entry = (const zbx_item_audit_entry_t **)data;
+
+	return ZBX_DEFAULT_UINT64_HASH_ALGO(&((*item_audit_entry)->itemid), sizeof(zbx_uint64_t), ZBX_DEFAULT_HASH_SEED);
+}
+
+static int	zbx_items_audit_compare_func(const void *d1, const void *d2)
+{
+	const zbx_item_audit_entry_t	**item_audit_entry_1 = (const zbx_item_audit_entry_t **)d1;
+	const zbx_item_audit_entry_t	**item_audit_entry_2 = (const zbx_item_audit_entry_t **)d2;
+
+	return (*item_audit_entry_1)->itemid > (*item_audit_entry_2)->itemid;
+}
+
+static void	clean_items_audit(void)
+{
+	zbx_hashset_iter_t	iter;
+	zbx_item_audit_entry_t	**item_audit_entry;
+
+	zbx_hashset_iter_reset(&items_audit, &iter);
+
+	while (NULL != (item_audit_entry = (zbx_item_audit_entry_t **)zbx_hashset_iter_next(&iter)))
+	{
+		zbx_free((*item_audit_entry)->name);
+		zbx_free(*item_audit_entry);
+	}
+
+	zbx_hashset_destroy(&items_audit);
+}
+
 /******************************************************************************
  *                                                                            *
  * Function: DBcopy_template_elements                                         *
@@ -6026,7 +6061,7 @@ static void	DBcopy_template_httptests(zbx_uint64_t hostid, const zbx_vector_uint
  * Return value: upon successful completion return SUCCEED                    *
  *                                                                            *
  ******************************************************************************/
-int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templateids, char **error)
+int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templateids, char **error, char *recsetid_cuid)
 {
 	zbx_vector_uint64_t	templateids;
 	zbx_uint64_t		hosttemplateid;
@@ -6034,6 +6069,9 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 	char			*template_names, err[MAX_STRING_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
+
+	zbx_hashset_create(&items_audit, 10, zbx_items_audit_hash_func, zbx_items_audit_compare_func);
 
 	zbx_vector_uint64_create(&templateids);
 
@@ -6096,6 +6134,46 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 		DBcopy_template_graphs(hostid, lnk_templateids);
 		DBcopy_template_httptests(hostid, lnk_templateids);
 	}
+
+
+
+	{
+
+	zbx_hashset_iter_t	iter;
+	zbx_item_audit_entry_t	**item_audit_entry;
+	char			item_audit_cuid[CUID_LEN];
+	zbx_db_insert_t		db_insert_items_audit;
+
+	zbx_hashset_iter_reset(&items_audit, &iter);
+
+	zabbix_log(LOG_LEVEL_INFORMATION, "hello");
+
+	zbx_db_insert_prepare(&db_insert_items_audit, "auditlog2","auditid","userid","clock","action","ip","resourceid","resourcename","resourcetype","recsetid","details", NULL);
+
+	while (NULL != (item_audit_entry = (zbx_item_audit_entry_t **)zbx_hashset_iter_next(&iter)))
+	{
+		zbx_new_cuid(item_audit_cuid);
+
+		zabbix_log(LOG_LEVEL_INFORMATION, "itemid: %lu", (*item_audit_entry)->itemid);
+		zabbix_log(LOG_LEVEL_INFORMATION, "name222: %s", (*item_audit_entry)->name);
+		zabbix_log(LOG_LEVEL_INFORMATION, "name333: %d", (*item_audit_entry)->audit_action);
+		zabbix_log(LOG_LEVEL_INFORMATION, "json: %s", (*item_audit_entry)->details_json.buffer);
+
+		zbx_db_insert_add_values(&db_insert_items_audit, item_audit_cuid, USER_TYPE_SUPER_ADMIN,
+				(int)time(NULL), (*item_audit_entry)->audit_action, "",  (*item_audit_entry)->itemid,
+				(*item_audit_entry)->name, AUDIT_RESOURCE_ITEM, recsetid_cuid,
+				(*item_audit_entry)->details_json.buffer);
+
+	}
+
+	{
+		zbx_db_insert_execute(&db_insert_items_audit);
+		zbx_db_insert_clean(&db_insert_items_audit);
+	}
+
+	clean_items_audit();
+}
+
 clean:
 	zbx_vector_uint64_destroy(&templateids);
 
