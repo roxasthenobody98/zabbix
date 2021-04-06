@@ -871,7 +871,7 @@ class CHost extends CHostGeneral {
 		}
 
 		if (array_column($hosts, 'macros')) {
-			$options['selectMacros'] = ['hostmacroid'];
+			$options['selectMacros'] = ['hostmacroid', 'macro', 'type'];
 		}
 
 		if (array_column($hosts, 'groups')) {
@@ -896,9 +896,8 @@ class CHost extends CHostGeneral {
 		$hosts_tags_to_add = [];
 		$hosts_tags_to_delete = [];
 
-		$hosts_macros_to_add = [];
-		$hosts_macros_to_update = [];
-		$hosts_macros_to_delete = [];
+		$hosts_macros = [];
+		$db_hosts_macros = [];
 
 		$automatic_inventory_hostids = [];
 		$hosts_inventory = [];
@@ -989,21 +988,11 @@ class CHost extends CHostGeneral {
 			}
 
 			if (array_key_exists('macros', $host)) {
-				$host_db_macros = zbx_toHash($db_hosts[$host['hostid']]['macros'], 'hostmacroid');
-				$hostmacroids = [];
-
 				foreach (zbx_toArray($host['macros']) as $macro) {
-					if (array_key_exists('hostmacroid', $macro)
-							&& array_key_exists($macro['hostmacroid'], $host_db_macros)) {
-						$hosts_macros_to_update[] = $macro;
-						$hostmacroids[$macro['hostmacroid']] = true;
-					}
-					else {
-						$hosts_macros_to_add[] = ['hostid' => $host['hostid']] + $macro;
-					}
+					$hosts_macros[] = ['hostid' => $host['hostid']] + $macro;
 				}
 
-				$hosts_macros_to_delete += array_diff_key($host_db_macros, $hostmacroids);
+				$db_hosts_macros[$host['hostid']] = zbx_toHash($db_hosts[$host['hostid']]['macros'], 'hostmacroid');
 			}
 
 			if (array_key_exists('inventory', $host) && $host['inventory']) {
@@ -1149,17 +1138,7 @@ class CHost extends CHostGeneral {
 			DB::insert('host_tag', $hosts_tags_to_add);
 		}
 
-		if ($hosts_macros_to_add) {
-			API::UserMacro()->create($hosts_macros_to_add);
-		}
-
-		if ($hosts_macros_to_update) {
-			API::UserMacro()->update($hosts_macros_to_update);
-		}
-
-		if ($hosts_macros_to_delete) {
-			API::UserMacro()->delete(array_keys($hosts_macros_to_delete));
-		}
+		$this->replaceMacros($hosts_macros, $db_hosts_macros);
 
 		if  ($hostids_to_delete_inventory) {
 			DB::delete('host_inventory', ['hostid' => $hostids_to_delete_inventory]);
