@@ -477,15 +477,16 @@ class CApiHostInterfaceHelper {
 	 */
 	public static function prepareUpdateData(array $interfaces): array {
 		$data = [];
+		$fields_to_except = ['hostid' => true, 'details' => true];
 
 		while ($interfaces) {
-			$interface_params = reset($interfaces);
+			$interface_params = array_diff_key(reset($interfaces), $fields_to_except);
 			$interfaceids = [$interface_params['interfaceid']];
 			unset($interface_params['interfaceid']);
 			unset($interfaces[key($interfaces)]);
 
 			foreach ($interfaces as $index => $interface) {
-				if ($interface_params === array_diff_key($interface, ['interfaceid' => true])) {
+				if ($interface_params === array_diff_key($interface, ['interfaceid' => true] + $fields_to_except)) {
 					$interfaceids[] = $interface['interfaceid'];
 					unset($interfaces[$index]);
 				}

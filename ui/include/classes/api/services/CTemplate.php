@@ -349,7 +349,8 @@ class CTemplate extends CHostGeneral {
 
 			if (array_key_exists('macros', $template)) {
 				foreach (zbx_toArray($template['macros']) as $macro) {
-					$hosts_macros[] = ['hostid' => $template['templateid']] + $macro;
+					$hosts_macros[] = ['hostid' => $template['templateid']]
+						+ array_diff_key($macro, ['hostmacroid' => true]);
 				}
 			}
 
@@ -375,7 +376,7 @@ class CTemplate extends CHostGeneral {
 		}
 
 		if ($hosts_macros) {
-			API::UserMacro()->create($hosts_macros);
+			$this->replaceMacros($hosts_macros);
 		}
 
 		if ($hostids) {

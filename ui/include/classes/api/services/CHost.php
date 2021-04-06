@@ -727,13 +727,16 @@ class CHost extends CHostGeneral {
 
 			if (array_key_exists('interfaces', $host)) {
 				foreach (zbx_toArray($host['interfaces']) as $interface) {
-					$hosts_interfaces[] = ['hostid' => $host['hostid']] + $interface;
+					$hosts_interfaces[] = [
+						'hostid' => $host['hostid'],
+						'host' => $host['host']
+					] + array_diff_key($interface, ['interfaceid']);
 				}
 			}
 
 			if (array_key_exists('macros', $host)) {
 				foreach (zbx_toArray($host['macros']) as $macro) {
-					$hosts_macros[] = ['hostid' => $host['hostid']] + $macro;
+					$hosts_macros[] = ['hostid' => $host['hostid']] + array_diff_key($macro, ['hostmacroid' => true]);
 				}
 			}
 
@@ -766,11 +769,11 @@ class CHost extends CHostGeneral {
 		}
 
 		if ($hosts_interfaces) {
-			API::HostInterface()->create($hosts_interfaces);
+			$this->replaceHostsInterfaces($hosts_interfaces);
 		}
 
 		if ($hosts_macros) {
-			API::UserMacro()->create($hosts_macros);
+			$this->replaceMacros($hosts_macros);
 		}
 
 		while ($templates_hostids) {
@@ -956,7 +959,7 @@ class CHost extends CHostGeneral {
 				$hosts_params[$host['hostid']] = $host_params;
 			}
 
-			if (array_key_exists('interface', $host)) {
+			if (array_key_exists('interfaces', $host)) {
 				foreach (zbx_toArray($host['interfaces']) as $interface) {
 					$hosts_interfaces[] = [
 						'hostid' => $host['hostid'],
@@ -1098,7 +1101,9 @@ class CHost extends CHostGeneral {
 			]);
 		}
 
-		$this->replaceHostsInterfaces($hosts_interfaces, $db_hosts_interfaces);
+		if ($hosts_interfaces) {
+			$this->replaceHostsInterfaces($hosts_interfaces, $db_hosts_interfaces);
+		}
 
 		while ($templates_clear_hostids) {
 			$templateid = key($templates_clear_hostids);
@@ -1230,51 +1235,47 @@ class CHost extends CHostGeneral {
 	/**
 	 * Replace hosts interfaces.
 	 *
-	 * @param array  $hosts_interfaces                                             Array of hosts interfaces to replace
-	 *                                                                             on hosts.
-	 * @param string $hosts_interfaces[]['hostid']                                 Host ID.
-	 * @param string $hosts_interfaces[]['host']                                   Name of the host to show in error
-	 *                                                                             messages.
-	 * @param string $hosts_interfaces[]['interfaceid']                            Interface ID.
-	 * @param int    $hosts_interfaces[]['main']                                   Is this the default interface to use.
-	 * @param int    $hosts_interfaces[]['type']                                   Interface type.
-	 * @param int    $hosts_interfaces[]['useip']                                  Interface should use IP or DNS
-	 *                                                                             (optional).
-	 * @param string $hosts_interfaces[]['ip']                                     Interface IP (optional).
-	 * @param string $hosts_interfaces[]['dns']                                    Interface DNS (optional).
-	 * @param int    $hosts_interfaces[]['port']                                   Interface port (optional).
-	 * @param array  $hosts_interfaces[]['details']                                Interface additional fields
-	 *                                                                             (optional).
-	 * @param array  $db_hosts_interfaces                                          Array of existing hosts interfaces
-	 *                                                                             before replacement.
-	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['main']         Is this the default interface to use.
-	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['type']         Interface type.
-	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['useip']        Interface should use IP or DNS.
-	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['ip']           Interface IP.
-	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['dns']          Interface DNS.
-	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['port']         Interface DNS.
-	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['details']      Interface additional fields.
+	 * @param array  $hosts_interfaces                                         Array of hosts interfaces to replace on
+	 *                                                                         hosts.
+	 * @param string $hosts_interfaces[]['hostid']                             Host ID.
+	 * @param string $hosts_interfaces[]['host']                               Name of the host to show in error
+	 *                                                                         messages.
+	 * @param string $hosts_interfaces[]['interfaceid']                        Interface ID.
+	 * @param int    $hosts_interfaces[]['main']                               Is this the default interface to use.
+	 * @param int    $hosts_interfaces[]['type']                               Interface type.
+	 * @param int    $hosts_interfaces[]['useip']                              Interface should use IP or DNS
+	 *                                                                         (optional).
+	 * @param string $hosts_interfaces[]['ip']                                 Interface IP (optional).
+	 * @param string $hosts_interfaces[]['dns']                                Interface DNS (optional).
+	 * @param int    $hosts_interfaces[]['port']                               Interface port (optional).
+	 * @param array  $hosts_interfaces[]['details']                            Interface additional fields
+	 *                                                                         (optional).
+	 * @param array  $db_hosts_interfaces                                      Array of existing hosts interfaces
+	 *                                                                         before replacement (optional).
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['main']     Is this the default interface to use.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['type']     Interface type.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['useip']    Interface should use IP or DNS.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['ip']       Interface IP.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['dns']      Interface DNS.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['port']     Interface DNS.
+	 * @param string $db_hosts_interfaces[<hostid>][<interfaceid>]['details']  Interface additional fields.
 	 *
 	 * @throws APIException
 	 */
-	private function replaceHostsInterfaces(array $hosts_interfaces, array $db_hosts_interfaces) {
+	private function replaceHostsInterfaces(array $hosts_interfaces, array $db_hosts_interfaces = []) {
 		foreach ($hosts_interfaces as &$interface) {
 			if (array_key_exists('interfaceid', $interface)) {
-				if (!array_key_exists('main', $interface) || !array_key_exists('type', $interface)) {
-					if (!array_key_exists($interface['hostid'], $db_hosts_interfaces)
-							|| !array_key_exists($interface['interfaceid'],
-								$db_hosts_interfaces[$interface['hostid']]
-							)) {
-						self::exception(ZBX_API_ERROR_PERMISSIONS,
-							_('No permissions to referred object or it does not exist!')
-						);
-					}
-
-					$interface += array_intersect_key(
-						$db_hosts_interfaces[$interface['hostid']][$interface['interfaceid']],
-						['main' => true, 'type' => true, 'details' => true]
+				if (!array_key_exists($interface['hostid'], $db_hosts_interfaces)
+						|| !array_key_exists($interface['interfaceid'], $db_hosts_interfaces[$interface['hostid']])) {
+					self::exception(ZBX_API_ERROR_PERMISSIONS,
+						_('No permissions to referred object or it does not exist!')
 					);
 				}
+
+				$interface += array_intersect_key(
+					$db_hosts_interfaces[$interface['hostid']][$interface['interfaceid']],
+					['main' => true, 'type' => true, 'details' => true]
+				);
 			}
 			elseif (!array_key_exists('main', $interface) || !array_key_exists('type', $interface)) {
 				self::exception(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
@@ -1287,6 +1288,7 @@ class CHost extends CHostGeneral {
 		$interfaces_to_add = [];
 		$interfaces_to_update = [];
 		$interfaces_to_delete = [];
+		$existing_interfaceids = [];
 
 		foreach ($hosts_interfaces as $interface) {
 			if (!array_key_exists('interfaceid', $interface)) {
@@ -1294,12 +1296,23 @@ class CHost extends CHostGeneral {
 			}
 			else {
 				$interfaces_to_update[] = $interface;
-				unset($db_hosts_interfaces[$interface['hostid']][$interface['interfaceid']]);
+				$existing_interfaceids[] = $interface['interfaceid'];
 			}
 		}
 
-		foreach ($db_hosts_interfaces as $interfaces) {
-			$interfaces_to_delete += $interfaces;
+		$existing_interfaceids = array_unique($existing_interfaceids);
+
+		foreach ($db_hosts_interfaces as $db_host_interfaces) {
+			$interfaces_to_delete += array_flip(array_diff(array_keys($db_host_interfaces), $existing_interfaceids));
+		}
+
+		if ($interfaces_to_delete) {
+			$interfaceids = array_keys($interfaces_to_delete);
+
+			CApiHostInterfaceHelper::checkIfInterfaceHasItems($interfaceids);
+
+			DB::delete('interface', ['interfaceid' => $interfaceids]);
+			DB::delete('interface_snmp', ['interfaceid' => $interfaceids]);
 		}
 
 		if ($interfaces_to_add) {
@@ -1307,7 +1320,7 @@ class CHost extends CHostGeneral {
 
 			foreach ($interfaces_to_add as $interface) {
 				if (!check_db_fields($db_fields, $interface)) {
-					throw new APIException(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
+					self::exception(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
 				}
 
 				CApiHostInterfaceHelper::checkAddressFields($interface, $interface['host']);
@@ -1333,20 +1346,19 @@ class CHost extends CHostGeneral {
 		if ($interfaces_to_update) {
 			$interfaces_to_check_has_items = [];
 
-			foreach ($interfaces_to_update as $interface) {
-				if (!check_db_fields(['interfaceid' => null], $interface)) {
-					throw new APIException(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
-				}
-
+			foreach ($interfaces_to_update as &$interface) {
 				$db_interface = $db_hosts_interfaces[$interface['hostid']][$interface['interfaceid']];
 				if ($interface['type'] != $db_interface['type']) {
 					$interfaces_to_check_has_items[] = $interface['interfaceid'];
 				}
 
-				CApiHostInterfaceHelper::checkAddressFields(zbx_array_merge($db_interface, $interface),
+				CApiHostInterfaceHelper::checkAddressFields($interface + $db_interface,
 					$interface['host']
 				);
+
+				unset($interface['host']);
 			}
+			unset($interface);
 
 			if ($interfaces_to_check_has_items) {
 				CApiHostInterfaceHelper::checkIfInterfaceHasItems($interfaces_to_check_has_items);
@@ -1366,15 +1378,6 @@ class CHost extends CHostGeneral {
 
 			CApiHostInterfaceHelper::sanitizeSnmpFields($snmp_interfaces);
 			DB::insert('interface_snmp', $snmp_interfaces, false);
-		}
-
-		if ($interfaces_to_delete) {
-			$interfaceids = array_keys($interfaces_to_delete);
-
-			CApiHostInterfaceHelper::checkIfInterfaceHasItems($interfaceids);
-
-			DB::delete('interface', ['interfaceid' => $interfaceids]);
-			DB::delete('interface_snmp', ['interfaceid' => $interfaceids]);
 		}
 	}
 
@@ -2729,7 +2732,7 @@ class CHost extends CHostGeneral {
 
 			if (array_key_exists('interfaces', $host)) {
 				if (!is_array($host['interfaces']) || !$host['interfaces']) {
-					self::exception(ZBX_API_ERROR_PARAMETERS, _s('No interfaces for host "%1$s".', $host['host']));
+					self::exception(ZBX_API_ERROR_PARAMETERS, _s('No interfaces for host "%1$s".', $host_name));
 				}
 			}
 
