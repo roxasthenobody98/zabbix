@@ -2667,16 +2667,18 @@ class CHost extends CHostGeneral {
 		}
 		unset($host);
 
-		$editable_group_count = API::HostGroup()->get([
-			'countOutput' => true,
-			'groupids' => array_keys($groups_to_check_permissions),
-			'editable' => true
-		]);
+		if ($groups_to_check_permissions) {
+			$editable_group_count = API::HostGroup()->get([
+				'countOutput' => true,
+				'groupids' => array_keys($groups_to_check_permissions),
+				'editable' => true
+			]);
 
-		if ($editable_group_count != count($groups_to_check_permissions)) {
-			self::exception(ZBX_API_ERROR_PERMISSIONS,
-				_('No permissions to referred object or it does not exist!')
-			);
+			if ($editable_group_count != count($groups_to_check_permissions)) {
+				self::exception(ZBX_API_ERROR_PERMISSIONS,
+					_('No permissions to referred object or it does not exist!')
+				);
+			}
 		}
 
 		$inventory_fields = zbx_objectValues(getHostInventories(), 'db_field');
