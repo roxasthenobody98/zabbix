@@ -1218,6 +1218,11 @@ class CHost extends CHostGeneral {
 			]);
 		}
 
+		/*
+		 * We delete groups at the end due to possible case when user with user type "Admin" removes from host all
+		 * available to him read-write host groups. If we will remove all host groups at the beginning, there is
+		 * possible problems with permission checks in cases when for some of updated host components it carries out.
+		 */
 		if ($hostgroupids_to_delete) {
 			DB::delete('hosts_groups', ['hostgroupid' => $hostgroupids_to_delete]);
 		}
