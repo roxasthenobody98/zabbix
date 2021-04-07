@@ -354,7 +354,8 @@ class CHostInterface extends CApiService {
 				);
 			}
 
-			if ($db_hosts[$interface['hostid']]['flags'] & ZBX_FLAG_DISCOVERY_CREATED) {
+			if (array_key_exists($interface['hostid'], $db_hosts)
+					&& $db_hosts[$interface['hostid']]['flags'] & ZBX_FLAG_DISCOVERY_CREATED) {
 				throw new APIException(ZBX_API_ERROR_INTERNAL, _s('Cannot update interface for discovered host "%1$s".',
 					$db_hosts[$interface['hostid']]['host']
 				));

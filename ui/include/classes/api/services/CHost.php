@@ -730,7 +730,7 @@ class CHost extends CHostGeneral {
 					$hosts_interfaces[] = [
 						'hostid' => $host['hostid'],
 						'host' => $host['host']
-					] + array_diff_key($interface, ['interfaceid']);
+					] + array_diff_key($interface, ['interfaceid' => true]);
 				}
 			}
 
@@ -848,6 +848,7 @@ class CHost extends CHostGeneral {
 		$not_host_params_fields = array_flip(['hostid', 'inventory_mode', 'groups', 'interfaces', 'templates_clear',
 			'templates', 'tags', 'macros', 'inventory'
 		]);
+		$replace_macros = (bool) array_column($hosts, 'macros');
 
 		$options = [
 			'output' => ['hostid', 'proxy_hostid', 'host', 'status', 'ipmi_authtype', 'ipmi_privilege', 'ipmi_username',
@@ -869,7 +870,7 @@ class CHost extends CHostGeneral {
 			$options['selectParentTemplates'] = ['templateid'];
 		}
 
-		if (array_column($hosts, 'macros')) {
+		if ($replace_macros) {
 			$options['selectMacros'] = ['hostmacroid', 'macro', 'type'];
 		}
 
@@ -1161,7 +1162,9 @@ class CHost extends CHostGeneral {
 			DB::insert('host_tag', $hosts_tags_to_add);
 		}
 
-		$this->replaceMacros($hosts_macros, $db_hosts_macros);
+		if ($replace_macros) {
+			$this->replaceMacros($hosts_macros, $db_hosts_macros);
+		}
 
 		if  ($hostids_to_delete_inventory) {
 			DB::delete('host_inventory', ['hostid' => $hostids_to_delete_inventory]);
