@@ -542,78 +542,482 @@ class CTemplate extends CHostGeneral {
 	 */
 	public function update(array $templates) {
 		$templates = zbx_toArray($templates);
+		$templateids = array_column($templates, 'templateid');
+		$upd_template_fields = array_flip(['host', 'name', 'description']);
+		$replace_macros = (bool) array_column($templates, 'macros');
+		$replace_groups = (bool) array_column($templates, 'groups');
 
-		$this->validateUpdate($templates);
+		$options = [
+			'output' => ['templateid', 'host', 'name', 'description'],
+			'templateids' => $templateids,
+			'editable' => true,
+			'preservekeys' => true
+		];
 
-		$macros = [];
+		if (array_column($templates, 'templates')) {
+			$options['selectParentTemplates'] = ['templateid'];
+		}
+
+		if ($replace_macros) {
+			$options['selectMacros'] = ['hostmacroid', 'macro', 'type'];
+		}
+
+		if ($replace_groups) {
+			$options['selectGroups'] = ['groupid'];
+		}
+
+		$db_templates = $this->get($options);
+
+		$this->validateUpdate($templates, $db_templates);
+
+		if (array_column($templates, 'hosts')) {
+			$db_hosts = API::Host()->get([
+				'output' => ['hostid'],
+				'selectParentTemplates' => ['templateid'],
+				'templateids' => $templateids,
+				'templated_hosts' => true,
+				'filter' => ['flags' => ZBX_FLAG_DISCOVERY_NORMAL]
+			]);
+
+			foreach ($db_templates as &$db_template) {
+				$db_template['hostids'] = [];
+			}
+			unset($db_template);
+
+			foreach ($db_hosts as $db_host) {
+				$common_db_host_templateids = array_intersect(array_column($db_host['parentTemplates'], 'templateid'),
+					$templateids
+				);
+
+				foreach ($common_db_host_templateids as $templateid) {
+					$db_templates[$templateid]['hostids'][] = $db_host['hostid'];
+				}
+			}
+		}
+
+		if (array_column($templates, 'tags')) {
+			$db_tags = DB::select('host_tag', [
+				'output' => ['hosttagid', 'hostid', 'tag', 'value'],
+				'filter' => ['hostid' => $templateids]
+			]);
+
+			foreach ($db_templates as &$db_template) {
+				$db_template['tags'] = [];
+			}
+			unset($db_template);
+
+			foreach ($db_tags as $db_tag) {
+				$db_templates[$db_tag['hostid']]['tags'][] = $db_tag;
+			}
+		}
+
+		if ($replace_groups) {
+			$db_groups = DB::select('hosts_groups', [
+				'output' => ['hostgroupid', 'hostid', 'groupid'],
+				'filter' => ['hostid' => $templateids]
+			]);
+
+			foreach ($db_templates as &$db_template) {
+				$db_template['groups'] = zbx_toHash($db_template['groups'], 'groupid');
+			}
+			unset($db_template);
+
+			foreach ($db_groups as $db_group) {
+				if (array_key_exists($db_group['groupid'], $db_templates[$db_group['hostid']]['groups'])) {
+					$templateid = $db_group['hostid'];
+					$groupid = $db_group['groupid'];
+					$db_templates[$templateid]['groups'][$groupid]['hostgroupid'] = $db_group['hostgroupid'];
+				}
+			}
+		}
+
+		$upd_templates = [];
+
+		/*
+		 * To provide easier code readability the word "templates" in these variables names implies the parent templates
+		 * and the word "hostids" implies the IDs of updating templates.
+		 */
+		$templates_clear_hostids = [];
+		$templates_unlink_hostids = [];
+		$templates_hostids = [];
+		$hosts_to_check_permissions = [];
+
+		$hosts_tags_to_add = [];
+		$hosttagids_to_delete = [];
+
+		$hosts_macros = [];
+		$db_hosts_macros = [];
+
+		$hosts_groups_to_add = [];
+		$hostgroupids_to_delete = [];
+
 		foreach ($templates as &$template) {
-			if (isset($template['macros'])) {
-				$macros[$template['templateid']] = zbx_toArray($template['macros']);
+			// If visible name is not given or empty it should be set to host name.
+			if (array_key_exists('host', $template)
+					&& (!array_key_exists('name', $template) || trim($template['name']) === '')) {
+				$template['name'] = $template['host'];
+			}
 
-				unset($template['macros']);
+			$template_params = array_intersect_key($template, $upd_template_fields);
+			if ($template_params) {
+				$upd_templates[] = [
+					'values' => $template_params,
+					'where' => ['hostid' => $template['templateid']]
+				];
+			}
+
+			$clear_parenttemplates = [];
+
+			if (array_key_exists('templates_clear', $template)) {
+				foreach (zbx_toArray($template['templates_clear']) as $parent_template_clear) {
+					$templates_clear_hostids[$parent_template_clear['templateid']][] = $template['templateid'];
+					$clear_parenttemplates[$parent_template_clear['templateid']] = true;
+				}
+			}
+
+			if (array_key_exists('hosts', $template)) {
+				$template_hostids = array_column($template['hosts'], 'hostid');
+				$db_template_hostids = $db_templates[$template['templateid']]['hostids'];
+
+				$hostids_to_link = array_diff($template_hostids, $db_template_hostids);
+				$hostids_to_unlink = array_diff($db_template_hostids, $template_hostids);
+
+				$templates_hostids[$template['templateid']] = $hostids_to_link;
+				$templates_unlink_hostids[$template['templateid']] = $hostids_to_unlink;
+
+				$hosts_to_check_permissions += array_flip($hostids_to_link) + array_flip($hostids_to_unlink);
+			}
+
+			if (array_key_exists('templates', $template)) {
+				$template_db_parenttemplates = zbx_toHash($db_templates[$template['templateid']]['parentTemplates'],
+					'templateid'
+				);
+				$template_db_parenttemplates = array_diff_key($template_db_parenttemplates, $clear_parenttemplates);
+				$existing_parenttemplates = [];
+
+				foreach (zbx_toArray($template['templates']) as $parent_template) {
+					if (!array_key_exists($parent_template['templateid'], $template_db_parenttemplates)) {
+						$templates_hostids[$parent_template['templateid']][] = $template['templateid'];
+					} else {
+						$existing_parenttemplates[$parent_template['templateid']] = true;
+					}
+				}
+
+				$unlink_parenttemplates = array_diff_key($template_db_parenttemplates, $existing_parenttemplates);
+				foreach ($unlink_parenttemplates as $parent_templateid => $foo) {
+					$templates_unlink_hostids[$parent_templateid][] = $template['templateid'];
+				}
 			}
 
 			if (array_key_exists('tags', $template)) {
-				$template['tags'] = zbx_toArray($template['tags']);
+				$template_db_tags = [];
+
+				foreach ($db_templates[$template['templateid']]['tags'] as $tag) {
+					$template_db_tags[$tag['tag'].'|'.$tag['value']] = $tag;
+				}
+
+				$existing_host_tags = [];
+
+				foreach (zbx_toArray($template['tags']) as $tag) {
+					$tag += ['value' => ''];
+
+					if (!array_key_exists($tag['tag'].'|'.$tag['value'], $template_db_tags)) {
+						$hosts_tags_to_add[] = ['hostid' => $template['templateid']] + $tag;
+					} else {
+						$existing_host_tags[$tag['tag'].'|'.$tag['value']] = true;
+					}
+				}
+
+				foreach (array_diff_key($template_db_tags, $existing_host_tags) as $tag) {
+					$hosttagids_to_delete[] = $tag['hosttagid'];
+				}
+			}
+
+			if (array_key_exists('macros', $template)) {
+				foreach (zbx_toArray($template['macros']) as $macro) {
+					$hosts_macros[] = ['hostid' => $template['templateid']] + $macro;
+				}
+
+				$db_hosts_macros[$template['templateid']] = zbx_toHash($db_templates[$template['templateid']]['macros'],
+					'hostmacroid'
+				);
+			}
+
+			if (array_key_exists('groups', $template)) {
+				$template_db_groupids = array_keys($db_templates[$template['templateid']]['groups']);
+				$template_groupids = array_unique(array_column(zbx_toArray($template['groups']), 'groupid'));
+
+				foreach (array_diff($template_groupids, $template_db_groupids) as $groupid) {
+					$hosts_groups_to_add[] = [
+						'hostid' => $template['templateid'],
+						'groupid' => $groupid
+					];
+				}
+
+				foreach (array_diff($template_db_groupids, $template_groupids) as $groupid) {
+					$hostgroupids_to_delete[] =
+						$db_templates[$template['templateid']]['groups'][$groupid]['hostgroupid'];
+				}
 			}
 		}
 		unset($template);
 
-		if ($macros) {
-			API::UserMacro()->replaceMacros($macros);
+		if ($hosts_to_check_permissions) {
+			$this->checkHostPermissions($hosts_to_check_permissions);
 		}
 
-		foreach ($templates as $template) {
-			// if visible name is not given or empty it should be set to host name
-			if ((!isset($template['name']) || zbx_empty(trim($template['name']))) && isset($template['host'])) {
-				$template['name'] = $template['host'];
-			}
-
-			$templateCopy = $template;
-
-			$template['templates_link'] = array_key_exists('templates', $template) ? $template['templates'] : null;
-
-			unset($template['templates'], $template['templateid'], $templateCopy['templates']);
-			$template['templates'] = [$templateCopy];
-
-			if (!$this->massUpdate($template)) {
-				self::exception(ZBX_API_ERROR_PARAMETERS, _('Failed to update template.'));
-			}
+		if ($upd_templates) {
+			DB::update('hosts', $upd_templates);
 		}
 
-		$this->updateTags($templates, 'templateid');
+		while ($templates_clear_hostids) {
+			$templateid = key($templates_clear_hostids);
+			$unlink_hostids = reset($templates_clear_hostids);
+			$unlink_templateids = [$templateid];
+			unset($templates_clear_hostids[$templateid]);
 
-		return ['templateids' => zbx_objectValues($templates, 'templateid')];
+			foreach ($templates_clear_hostids as $templateid => $hostids) {
+				if ($unlink_hostids === $hostids) {
+					$unlink_templateids[] = $templateid;
+					unset($templates_clear_hostids[$templateid]);
+				}
+			}
+
+			$this->unlink($unlink_templateids, $unlink_hostids, true);
+		}
+
+		while ($templates_unlink_hostids) {
+			$templateid = key($templates_unlink_hostids);
+			$unlink_hostids = reset($templates_unlink_hostids);
+			$unlink_templateids = [$templateid];
+			unset($templates_unlink_hostids[$templateid]);
+
+			foreach ($templates_unlink_hostids as $templateid => $hostids) {
+				if ($unlink_hostids === $hostids) {
+					$unlink_templateids[] = $templateid;
+					unset($templates_unlink_hostids[$templateid]);
+				}
+			}
+
+			$this->unlink($unlink_templateids, $unlink_hostids);
+		}
+
+		while ($templates_hostids) {
+			$templateid = key($templates_hostids);
+			$link_hostids = reset($templates_hostids);
+			$link_templateids = [$templateid];
+			unset($templates_hostids[$templateid]);
+
+			foreach ($templates_hostids as $templateid => $hostids) {
+				if ($link_hostids === $hostids) {
+					$link_templateids[] = $templateid;
+					unset($templates_hostids[$templateid]);
+				}
+			}
+
+			$this->link($link_templateids, $link_hostids);
+		}
+
+		if ($hosttagids_to_delete) {
+			DB::delete('host_tag', ['hosttagid' => $hosttagids_to_delete]);
+		}
+
+		if ($hosts_tags_to_add) {
+			DB::insert('host_tag', $hosts_tags_to_add);
+		}
+
+		if ($replace_macros) {
+			$this->replaceMacros($hosts_macros, $db_hosts_macros);
+		}
+
+		/*
+		 * We delete groups at the end due to possible case when user with user type "Admin" removes from template all
+		 * available to him read-write host groups. If we will remove all host groups at the beginning, there is
+		 * possible problems with permission checks in cases when for some of updated template components it carries
+		 * out.
+		 */
+		if ($hostgroupids_to_delete) {
+			DB::delete('hosts_groups', ['hostgroupid' => $hostgroupids_to_delete]);
+		}
+
+		if ($hosts_groups_to_add) {
+			DB::insertBatch('hosts_groups', $hosts_groups_to_add);
+		}
+
+		$this->addAuditBulk(AUDIT_ACTION_UPDATE, AUDIT_RESOURCE_TEMPLATE, $templates, $db_templates);
+
+		return ['templateids' => $templateids];
 	}
 
 	/**
 	 * Validate update template.
 	 *
 	 * @param array $templates
+	 * @param array $db_templates
 	 *
 	 * @throws APIException if the input is invalid.
 	 */
-	protected function validateUpdate(array $templates) {
-		$dbTemplates = $this->get([
-			'output' => ['templateid'],
-			'templateids' => zbx_objectValues($templates, 'templateid'),
-			'editable' => true,
-			'preservekeys' => true
-		]);
+	protected function validateUpdate(array $templates, array $db_templates) {
+		$host_name_parser = new CHostNameParser();
+		$templates_hostnames = [];
+		$templates_names = [];
+		$groups_to_check_permissions = [];
 
 		foreach ($templates as $template) {
-			if (!isset($dbTemplates[$template['templateid']])) {
+			if (!check_db_fields(['templateid' => null], $template)) {
+				self::exception(ZBX_API_ERROR_PARAMETERS, _('Incorrect arguments passed to function.'));
+			}
+
+			if (!array_key_exists($template['templateid'], $db_templates)) {
 				self::exception(ZBX_API_ERROR_PERMISSIONS, _('You do not have permission to perform this operation.'));
 			}
+
+			$db_template = $db_templates[$template['templateid']];
+			$template_name = array_key_exists('host', $template) ? $template['host'] : $db_template['host'];
 
 			// Property 'auto_compress' is not supported for templates.
 			if (array_key_exists('auto_compress', $template)) {
 				self::exception(ZBX_API_ERROR_PARAMETERS, _('Incorrect input parameters.'));
 			}
 
+			if (array_key_exists('host', $template)) {
+				if ($host_name_parser->parse($template['host']) != CParser::PARSE_SUCCESS) {
+					self::exception(ZBX_API_ERROR_PARAMETERS,
+						_s('Incorrect characters used for template name "%1$s".', $template['host'])
+					);
+				}
+
+				if (array_key_exists($template['host'], $templates_hostnames)) {
+					self::exception(ZBX_API_ERROR_PARAMETERS,
+						_s('Duplicate template. Template with the same technical name "%1$s" already exists in data.',
+							$template['host']
+						)
+					);
+				}
+
+				$templates_hostnames[$template['host']] = $template['templateid'];
+			}
+
+			if (array_key_exists('name', $template)) {
+				if (trim($template['name']) === '' && !array_key_exists('host', $template)) {
+					self::exception(ZBX_API_ERROR_PARAMETERS, _('Cannot have empty visible template name.'));
+				}
+
+				if (array_key_exists($template['name'], $templates_names)) {
+					self::exception(ZBX_API_ERROR_PARAMETERS,
+						_s('Duplicate template. Template with the same visible name "%1$s" already exists in data.',
+							$template['name']
+						)
+					);
+				}
+
+				$templates_names[$template['name']] = $template['templateid'];
+			}
+
+			if (array_key_exists('groups', $template)) {
+				if (!is_array($template['groups']) || !$template['groups']) {
+					self::exception(ZBX_API_ERROR_PARAMETERS,
+						_s('Template "%1$s" cannot be without host group.', $template_name)
+					);
+				}
+
+				if (count($template['groups']) !== count(array_column($template['groups'], 'groupid'))) {
+					self::exception(ZBX_API_ERROR_PARAMETERS,
+						_s('Incorrect value for field "%1$s": %2$s.', 'groups',
+							_s('the parameter "%1$s" is missing', 'groupid')
+						)
+					);
+				}
+
+				$template_db_groupids = array_column($db_templates[$template['templateid']]['groups'], 'groupid');
+				$template_groupids = array_unique(array_column($template['groups'], 'groupid'));
+
+				foreach (array_diff($template_db_groupids, $template_groupids) as $groupid) {
+					$groups_to_check_permissions[$groupid] = true;
+				}
+
+				foreach (array_diff($template_groupids, $template_db_groupids) as $groupid) {
+					$groups_to_check_permissions[$groupid] = true;
+				}
+			}
+
 			// Validate tags.
 			if (array_key_exists('tags', $template)) {
 				$this->validateTags($template);
+			}
+		}
+
+		if ($groups_to_check_permissions) {
+			$editable_group_count = API::HostGroup()->get([
+				'countOutput' => true,
+				'groupids' => array_keys($groups_to_check_permissions),
+				'editable' => true
+			]);
+
+			if ($editable_group_count != count($groups_to_check_permissions)) {
+				self::exception(ZBX_API_ERROR_PERMISSIONS,
+					_('No permissions to referred object or it does not exist!')
+				);
+			}
+		}
+
+		if ($templates_hostnames || $templates_names) {
+			$filter = [];
+
+			if ($templates_hostnames) {
+				$filter['host'] = array_keys($templates_hostnames);
+			}
+
+			if ($templates_names) {
+				$filter['name'] = array_keys($templates_names);
+			}
+
+			$templates_exists = $this->get([
+				'output' => ['host', 'name'],
+				'filter' => $filter,
+				'searchByAny' => true,
+				'nopermissions' => true,
+				'preservekeys' => true
+			]);
+
+			foreach ($templates_exists as $hostid => $template_exists) {
+				if (array_key_exists($template_exists['host'], $templates_hostnames)
+						&& bccomp($hostid, $templates_hostnames[$template_exists['host']]) !== 0) {
+					self::exception(ZBX_API_ERROR_PARAMETERS,
+						_s('Template with the same name "%1$s" already exists.', $template_exists['host'])
+					);
+				}
+
+				if (array_key_exists($template_exists['name'], $templates_names)
+						&& bccomp($hostid, $templates_names[$template_exists['name']]) !== 0) {
+					self::exception(ZBX_API_ERROR_PARAMETERS,
+						_s('Template with the same visible name "%1$s" already exists.', $template_exists['name'])
+					);
+				}
+			}
+
+			$hosts_exists = API::Host()->get([
+				'output' => ['host', 'name'],
+				'filter' => $filter,
+				'searchByAny' => true,
+				'nopermissions' => true,
+				'preservekeys' => true
+			]);
+
+			foreach ($hosts_exists as $hostid => $host_exists) {
+				if (array_key_exists($host_exists['host'], $templates_hostnames)
+						&& bccomp($hostid, $templates_hostnames[$host_exists['host']]) !== 0) {
+					self::exception(ZBX_API_ERROR_PARAMETERS,
+						_s('Host with the same name "%1$s" already exists.', $host_exists['host'])
+					);
+				}
+
+				if (array_key_exists($host_exists['name'], $templates_names)
+						&& bccomp($hostid, $templates_names[$host_exists['name']]) !== 0) {
+					self::exception(ZBX_API_ERROR_PARAMETERS,
+						_s('Host with the same visible name "%1$s" already exists.', $host_exists['name'])
+					);
+				}
 			}
 		}
 	}

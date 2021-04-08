@@ -849,6 +849,7 @@ class CHost extends CHostGeneral {
 			'templates', 'tags', 'macros', 'inventory'
 		]);
 		$replace_macros = (bool) array_column($hosts, 'macros');
+		$replace_groups = (bool) array_column($hosts, 'groups');
 
 		$options = [
 			'output' => ['hostid', 'proxy_hostid', 'host', 'status', 'ipmi_authtype', 'ipmi_privilege', 'ipmi_username',
@@ -874,7 +875,7 @@ class CHost extends CHostGeneral {
 			$options['selectMacros'] = ['hostmacroid', 'macro', 'type'];
 		}
 
-		if (array_column($hosts, 'groups')) {
+		if ($replace_groups) {
 			$options['selectGroups'] = ['groupid'];
 		}
 
@@ -893,13 +894,11 @@ class CHost extends CHostGeneral {
 			}
 
 			foreach ($db_tags as $db_tag) {
-				if (array_key_exists($db_tag['hostid'], $db_hosts)) {
-					$db_hosts[$db_tag['hostid']]['tags'][] = $db_tag;
-				}
+				$db_hosts[$db_tag['hostid']]['tags'][] = $db_tag;
 			}
 		}
 
-		if (array_column($hosts, 'groups')) {
+		if ($replace_groups) {
 			$db_groups = DB::select('hosts_groups', [
 				'output' => ['hostgroupid', 'hostid', 'groupid'],
 				'filter' => ['hostid' => $hostids]
@@ -908,10 +907,10 @@ class CHost extends CHostGeneral {
 			foreach ($db_hosts as &$db_host) {
 				$db_host['groups'] = zbx_toHash($db_host['groups'], 'groupid');
 			}
+			unset($db_host);
 
 			foreach ($db_groups as $db_group) {
-				if (array_key_exists($db_group['hostid'], $db_hosts)
-						&& array_key_exists($db_group['groupid'], $db_hosts[$db_group['hostid']]['groups'])) {
+				if (array_key_exists($db_group['groupid'], $db_hosts[$db_group['hostid']]['groups'])) {
 					$hostid = $db_group['hostid'];
 					$groupid = $db_group['groupid'];
 					$db_hosts[$hostid]['groups'][$groupid]['hostgroupid'] = $db_group['hostgroupid'];
@@ -973,29 +972,29 @@ class CHost extends CHostGeneral {
 				);
 			}
 
-			$clear_templateids = [];
+			$clear_templates = [];
 
 			if (array_key_exists('templates_clear', $host)) {
 				foreach (zbx_toArray($host['templates_clear']) as $template) {
 					$templates_clear_hostids[$template['templateid']][] = $host['hostid'];
-					$clear_templateids[$template['templateid']] = true;
+					$clear_templates[$template['templateid']] = true;
 				}
 			}
 
 			if (array_key_exists('templates', $host)) {
 				$host_db_templates = zbx_toHash($db_hosts[$host['hostid']]['parentTemplates'], 'templateid');
-				$host_db_templates = array_diff_key($host_db_templates, $clear_templateids);
-				$templateids = [];
+				$host_db_templates = array_diff_key($host_db_templates, $clear_templates);
+				$existing_templates = [];
 
 				foreach (zbx_toArray($host['templates']) as $template) {
 					if (!array_key_exists($template['templateid'], $host_db_templates)) {
 						$templates_hostids[$template['templateid']][] = $host['hostid'];
 					} else {
-						$templateids[$template['templateid']] = true;
+						$existing_templates[$template['templateid']] = true;
 					}
 				}
 
-				foreach (array_diff_key($host_db_templates, $templateids) as $templateid => $foo) {
+				foreach (array_diff_key($host_db_templates, $existing_templates) as $templateid => $foo) {
 					$templates_unlink_hostids[$templateid][] = $host['hostid'];
 				}
 			}
