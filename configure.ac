@@ -1762,6 +1762,7 @@ if test "x$agent2" = "xyes"; then
 		AC_MSG_ERROR([Unable to find "go" executable in path])
 	fi
 	AC_DEFINE(ZBX_BUILD_AGENT2,1,[Define to 1 if Agent2 is being built.])
+	AC_SUBST(ZBX_GO_SOURCES, [`(cd src/go && find . -name \*.go| tr '\r\n' ' ')`])
 fi
 
 if test "x$java" = "xyes"; then
