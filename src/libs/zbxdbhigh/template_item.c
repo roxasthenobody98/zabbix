@@ -717,20 +717,12 @@ static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_te
 
 
 	{
-
-	/* char	item_audit_cuid[CUID_LEN]; */
-
-
-	/*struct zbx_json	details_json; */
-
-	zbx_item_audit_entry_t *local_item_audit_entry = (zbx_item_audit_entry_t*)zbx_malloc(NULL, sizeof(zbx_item_audit_entry_t));
+	zbx_item_audit_entry_t	*local_item_audit_entry = (zbx_item_audit_entry_t*)zbx_malloc(NULL, sizeof(zbx_item_audit_entry_t));
 	local_item_audit_entry->itemid = item->itemid;
 	local_item_audit_entry->name = zbx_strdup(NULL, item->name);
 	local_item_audit_entry->audit_action = audit_action;
 
 	zabbix_log(LOG_LEVEL_INFORMATION, "BADGER ITEMID: %lu", item->itemid);
-	/*zbx_new_cuid(item_audit_cuid);*/
-
 
 	zbx_json_init(&(local_item_audit_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
 	/* zbx_json_addobject(&local_item_audit_entry.details_json, NULL); */
@@ -1108,11 +1100,26 @@ static void	save_template_item_applications(zbx_vector_ptr_t *items)
 
 	zbx_db_insert_prepare(&db_insert, "items_applications", "itemappid", "itemid", "applicationid", NULL);
 
-	for (i = 0; i < itemapps.values_num; i++)
 	{
-		itemapp = (zbx_itemapp_t *)itemapps.values[i];
+		zbx_item_audit_entry_t local_item_audit_entry, **found_item_audit_entry;
+		zbx_item_audit_entry_t *local_item_audit_entry_x = &local_item_audit_entry;
 
-		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), itemapp->itemid, itemapp->applicationid);
+		for (i = 0; i < itemapps.values_num; i++)
+		{
+			itemapp = (zbx_itemapp_t *)itemapps.values[i];
+			zbx_db_insert_add_values(&db_insert, __UINT64_C(0), itemapp->itemid, itemapp->applicationid);
+			local_item_audit_entry.itemid = itemapp->itemid;
+
+			found_item_audit_entry = (zbx_item_audit_entry_t**)zbx_hashset_search(&items_audit, &(local_item_audit_entry_x));
+			if (NULL == found_item_audit_entry)
+			{
+				THIS_SHOULD_NEVER_HAPPEN;
+			}
+
+			/* zbx_snprintf(bbb, 100, "item.applications[]", itemapp->applicationid); */
+			zbx_json_adduint64(&((*found_item_audit_entry)->details_json), "item.applications[]", itemapp->applicationid);
+
+		}
 	}
 
 	zbx_db_insert_autoincrement(&db_insert, "itemappid");
@@ -1402,50 +1409,21 @@ static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, atoi(row[1]), atoi(row[2]),
 				row[3], atoi(row[4]), row[5]);
 
-
-		/* zbx_json_addarray(j, "fields");
-		zbx_json_close(j); */
-
 		local_item_audit_entry.itemid = (*pitem)->itemid;
-
-		{
-			zbx_hashset_iter_t	iter;
-			zbx_item_audit_entry_t	**item_audit_entry;
-
-			zabbix_log(LOG_LEVEL_INFORMATION, "OH NO: %d",  (*pitem)->itemid);
-
-			zbx_hashset_iter_reset(&items_audit, &iter);
-
-			while (NULL != (item_audit_entry = (zbx_item_audit_entry_t **)zbx_hashset_iter_next(&iter)))
-			{
-				zabbix_log(LOG_LEVEL_INFORMATION, "itemid: %lu", (*item_audit_entry)->itemid);
-				zabbix_log(LOG_LEVEL_INFORMATION, "name222: %s", (*item_audit_entry)->name);
-				zabbix_log(LOG_LEVEL_INFORMATION, "name333: %d", (*item_audit_entry)->audit_action);
-				zabbix_log(LOG_LEVEL_INFORMATION, "json: %s", (*item_audit_entry)->details_json.buffer);
-			}
-		}
 
 		found_item_audit_entry = (zbx_item_audit_entry_t**)zbx_hashset_search(&items_audit, &(local_item_audit_entry_x));
 
-	if (NULL == found_item_audit_entry)
-	{
-		THIS_SHOULD_NEVER_HAPPEN;
-	}
-
-	zabbix_log(LOG_LEVEL_INFORMATION, "NAME: %s", (*found_item_audit_entry)->name);
+		if (NULL == found_item_audit_entry)
+		{
+			THIS_SHOULD_NEVER_HAPPEN;
+		}
 
 		zbx_snprintf( bbb, 100, "item.preprocessing[%s]", row[1] );
-
-		zabbix_log(LOG_LEVEL_INFORMATION, "BBB: ->%s<-", bbb);
 
 		zbx_json_addstring(&((*found_item_audit_entry)->details_json), bbb, row[2], ZBX_JSON_TYPE_STRING);
 		zbx_json_addstring(&((*found_item_audit_entry)->details_json), bbb, row[3], ZBX_JSON_TYPE_STRING);
 		zbx_json_addstring(&((*found_item_audit_entry)->details_json), bbb, row[4], ZBX_JSON_TYPE_STRING);
 		zbx_json_addstring(&((*found_item_audit_entry)->details_json), bbb, row[5], ZBX_JSON_TYPE_STRING);
-
-		zabbix_log(LOG_LEVEL_INFORMATION,
-			"badger iii preproc itemid: ->%lu<-, step ->%d<-, type: ->%d<-, params ->%s<-, error_handler ->%d<-, error_handler_params ->%s<- ",
-			(*pitem)->itemid, atoi(row[1]), atoi(row[2]), row[3], atoi(row[4]), row[5]);
 
 		/* find an item, get its json, add to it steps */
 
@@ -1523,20 +1501,39 @@ static void	copy_template_item_script_params(const zbx_vector_uint64_t *template
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "ti.hostid", templateids->values, templateids->values_num);
 
 	result = DBselect("%s", sql);
-	while (NULL != (row = DBfetch(result)))
+
 	{
-		zbx_template_item_t	item_local, *pitem_local = &item_local;
+		char bbb[100];
+		zbx_item_audit_entry_t local_item_audit_entry, **found_item_audit_entry;
+		zbx_item_audit_entry_t *local_item_audit_entry_x = &local_item_audit_entry;
 
-		ZBX_STR2UINT64(item_local.templateid, row[0]);
-		if (NULL == (pitem = (const zbx_template_item_t **)zbx_hashset_search(&items_t, &pitem_local)))
+		while (NULL != (row = DBfetch(result)))
 		{
-			THIS_SHOULD_NEVER_HAPPEN;
-			continue;
+			zbx_template_item_t	item_local, *pitem_local = &item_local;
+
+			ZBX_STR2UINT64(item_local.templateid, row[0]);
+			if (NULL == (pitem = (const zbx_template_item_t **)zbx_hashset_search(&items_t, &pitem_local)))
+			{
+				THIS_SHOULD_NEVER_HAPPEN;
+				continue;
+			}
+
+			local_item_audit_entry.itemid = (*pitem)->itemid;
+
+			found_item_audit_entry = (zbx_item_audit_entry_t**)zbx_hashset_search(&items_audit,
+					&(local_item_audit_entry_x));
+			if (NULL == found_item_audit_entry)
+			{
+				THIS_SHOULD_NEVER_HAPPEN;
+			}
+
+			zbx_snprintf(bbb, 100, "item.parameters[%s]", row[1]);
+			zbx_json_addstring(&((*found_item_audit_entry)->details_json), bbb, row[2], ZBX_JSON_TYPE_STRING);
+
+			zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, row[1], row[2]);
 		}
-
-		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, row[1], row[2]);
-
 	}
+
 	DBfree_result(result);
 
 	zbx_db_insert_autoincrement(&db_insert, "item_parameterid");

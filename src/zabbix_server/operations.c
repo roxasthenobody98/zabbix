@@ -263,7 +263,6 @@ static void	add_discovered_host_groups(zbx_uint64_t hostid, zbx_vector_uint64_t 
 
 static void	audit_host_add(zbx_uint64_t hostid, char *recsetid_cuid)
 {
-		// char	recsetid_cuid[CUID_LEN];
 		struct zbx_json	details_json;
 		DB_RESULT	result;
 		DB_ROW			row;
@@ -281,7 +280,6 @@ static void	audit_host_add(zbx_uint64_t hostid, char *recsetid_cuid)
 
 		while (NULL != (row = DBfetch(result)))
 		{
-			// zbx_new_cuid(recsetid_cuid);
 			zabbix_log(LOG_LEVEL_INFORMATION, "OP_TEMPLATE_ADD RECSETID: ->%s<-\n",recsetid_cuid);
 			zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[13]);
 
@@ -946,7 +944,7 @@ void	op_host_del(const DB_EVENT *event)
 void	op_host_enable(const DB_EVENT *event)
 {
 	zbx_uint64_t	hostid;
-	char	recsetid_cuid[CUID_LEN];
+	char		recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
@@ -983,7 +981,7 @@ void	op_host_enable(const DB_EVENT *event)
 void	op_host_disable(const DB_EVENT *event)
 {
 	zbx_uint64_t	hostid;
-	char	recsetid_cuid[CUID_LEN];
+	char		recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
