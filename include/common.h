@@ -1773,7 +1773,5 @@ void	zbx_new_cuid(char *cuid);
 #define AUDIT_ACTION_LOGIN		3
 #define AUDIT_ACTION_LOGOUT		4
 #define AUDIT_ACTION_EXECUTE		7
-int	zbx_audit_create_entry(int action, zbx_uint64_t resourceid, char* resourcename, int resourcetype,
-		char *recsetid,  char *details);
 
 #endif

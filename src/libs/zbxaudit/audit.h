@@ -27,13 +27,12 @@
 
 void	zbx_items_audit_init(void);
 
-void	zbx_items_persist(char *recsetid_cuid);
+void	zbx_items_persist(const char *recsetid_cuid);
 
-int	zbx_audit_create_entry(int action, zbx_uint64_t resourceid, char* resourcename, int resourcetype,
-		char *recsetid, char *details);
-
-int	zbx_items_audit_create_entry(zbx_template_item_t *item, zbx_uint64_t hostid, int action);
-void	zbx_items_audit_update_json_string(zbx_uint64_t itemid, char *key, char *value);
-void	zbx_items_audit_update_json_uint64(zbx_uint64_t itemid, char *key, uint64_t value);
+int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, const char* resourcename,
+		const int resourcetype, const char *recsetid, const char *details);
+int	zbx_items_audit_create_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid, const int action);
+void	zbx_items_audit_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
+void	zbx_items_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
 
 #endif	/* ZABBIX_AUDIT_H */

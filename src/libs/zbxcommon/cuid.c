@@ -98,7 +98,7 @@ static void	zbx_cuid_init(void)
 	size_t		hostname_num, hostname_len, i;
 	struct utsname	name;
 
-	srand((unsigned int)time(NULL) + getpid());
+	srand((unsigned int)time(NULL) + (unsigned int)getpid());
 
 	if (-1 == uname(&name))
 		hostname = zbx_strdup(NULL, "dummy");
@@ -125,7 +125,7 @@ static size_t	next(void)
 		zbx_cuid_init();
 
 	counter_value++;
-	out = counter_value;
+	out = (size_t)counter_value;
 
 	if (counter_value > DISCRETE_VALUES)
 		counter_value = 0;
@@ -157,7 +157,7 @@ void	zbx_new_cuid(char *cuid)
 	pad(pid_block, CUID_PID_BLOCK_SIZE);
 	zbx_snprintf(fingerprint, sizeof(fingerprint), "%s%s", host_block, pid_block);
 	gettimeofday(&current_time, NULL);
-	from_decimal(timestamp, CUID_BASE_36, current_time.tv_sec * 1000 + current_time.tv_usec / 1000);
+	from_decimal(timestamp, CUID_BASE_36, (size_t)(current_time.tv_sec * 1000 + current_time.tv_usec / 1000));
 	from_decimal(rand_block_1, CUID_BASE_36, (size_t)rand());
 	pad(rand_block_1, CUID_BLOCK_SIZE);
 	from_decimal(rand_block_2, CUID_BASE_36, (size_t)rand());

@@ -23,7 +23,6 @@
 #include "log.h"
 #include "dbcache.h"
 #include "zbxserver.h"
-#include "template.h"
 #include "../../libs/zbxaudit/audit.h"
 #include "../../libs/zbxalgo/vectorimpl.h"
 
