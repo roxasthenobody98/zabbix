@@ -26,6 +26,8 @@
 #include "operations.h"
 #include "zbxserver.h"
 
+#include "../../libs/zbxaudit/audit.h"
+
 typedef enum
 {
 	ZBX_DISCOVERY_UNSPEC = 0,

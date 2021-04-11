@@ -33,7 +33,8 @@ VALUECACHE_LIBS = \
 	$(top_srcdir)/tests/mocks/valuecache/libvaluecachemock.a \
 	$(top_srcdir)/src/libs/zbxvault/libzbxvault.a \
 	$(top_srcdir)/src/libs/zbxhttp/libzbxhttp.a \
-	$(top_srcdir)/tests/libzbxmockdata.a
+	$(top_srcdir)/tests/libzbxmockdata.a \
+	$(top_srcdir)/src/libs/zbxaudit/libzbxaudit.a
 
 CACHE_LIBS = \
 	$(top_srcdir)/tests/libzbxmocktest.a \
@@ -69,7 +70,8 @@ CACHE_LIBS = \
 	$(top_srcdir)/tests/libzbxmocktest.a \
 	$(top_srcdir)/src/libs/zbxvault/libzbxvault.a \
 	$(top_srcdir)/src/libs/zbxhttp/libzbxhttp.a \
-	$(top_srcdir)/tests/libzbxmockdata.a
+	$(top_srcdir)/tests/libzbxmockdata.a \
+	$(top_srcdir)/src/libs/zbxaudit/libzbxaudit.a
 
 COMMON_WRAP_FUNCS = \
 	-Wl,--wrap=zbx_mutex_create \
@@ -161,7 +163,7 @@ dc_expand_user_macros_in_expression_CFLAGS = \
 	-I@top_srcdir@/tests/mocks/configcache \
 	-I@top_srcdir@/src/libs/zbxdbcache
 dc_expand_user_macros_in_expression_SOURCES = \
-	dc_expand_user_macros_in_expression.c 
+	dc_expand_user_macros_in_expression.c
 dc_expand_user_macros_in_expression_LDADD = \
 	$(top_srcdir)/tests/mocks/configcache/libconfigcachemock.a \
 	$(CACHE_LIBS) @SERVER_LIBS@
@@ -172,10 +174,10 @@ dc_expand_user_macros_in_func_params_CFLAGS = \
 	-I@top_srcdir@/tests/mocks/configcache \
 	-I@top_srcdir@/src/libs/zbxdbcache
 dc_expand_user_macros_in_func_params_SOURCES = \
-	dc_expand_user_macros_in_func_params.c 
+	dc_expand_user_macros_in_func_params.c
 dc_expand_user_macros_in_func_params_LDADD = \
 	$(top_srcdir)/tests/mocks/configcache/libconfigcachemock.a \
-	$(CACHE_LIBS) @SERVER_LIBS@ 
+	$(CACHE_LIBS) @SERVER_LIBS@
 dc_expand_user_macros_in_func_params_LDFLAGS = @SERVER_LDFLAGS@ \
 	-Wl,--wrap=zbx_hashset_search
 dc_expand_user_macros_in_calcitem_CFLAGS = \
@@ -183,10 +185,10 @@ dc_expand_user_macros_in_calcitem_CFLAGS = \
 	-I@top_srcdir@/tests/mocks/configcache \
 	-I@top_srcdir@/src/libs/zbxdbcache
 dc_expand_user_macros_in_calcitem_SOURCES = \
-	dc_expand_user_macros_in_calcitem.c 
+	dc_expand_user_macros_in_calcitem.c
 dc_expand_user_macros_in_calcitem_LDADD = \
 	$(top_srcdir)/tests/mocks/configcache/libconfigcachemock.a \
-	$(CACHE_LIBS) @SERVER_LIBS@ 
+	$(CACHE_LIBS) @SERVER_LIBS@
 dc_expand_user_macros_in_calcitem_LDFLAGS = @SERVER_LDFLAGS@ \
 	-Wl,--wrap=zbx_hashset_search
 
