@@ -21,45 +21,40 @@ WEBSERVICE_GOLDFLAGS = ${GOLDFLAGS}
 WEBSERVICE_GOLDFLAGS += -X main.applicationName=zabbix_web_service
 
 dist_sysconf_DATA =
-TARGETS =
-INSTALL_TARGETS =
+BIN_TARGETS =
+CONFIGS =
 
 if AGENT2
-TARGETS += zabbix.com/cmd/zabbix_agent2
-INSTALL_TARGETS += install-zabbix.com/cmd/zabbix_agent2
-DBGTARGETS = zabbix.com/cmd/mock_server
+BIN_TARGETS +=  bin/zabbix_agent2$(EXEEXT)
 dist_sysconf_DATA += conf/zabbix_agent2.conf
 endif
 
 if WEBSERVICE
-TARGETS += zabbix.com/cmd/zabbix_web_service
-INSTALL_TARGETS += install-zabbix.com/cmd/zabbix_web_service
+BIN_TARGETS += bin/zabbix_web_service$(EXEEXT)
 dist_sysconf_DATA += conf/zabbix_web_service.conf
 endif
 
-all: build
+sbin_PROGRAMS = $(BIN_TARGETS)
+noinst_PROGRAMS = bin/mock_server$(EXEEXT)
 
-zabbix.com/cmd/zabbix_agent2:
-	CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" go build -ldflags="${AGENT_GOLDFLAGS}" -o bin zabbix.com/cmd/zabbix_agent2
+bin/zabbix_agent2$(EXEEXT): $(ZBX_GO_SOURCES)
+	CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" go build -ldflags="${AGENT_GOLDFLAGS}" \
+			-o bin zabbix.com/cmd/zabbix_agent2
 
-zabbix.com/cmd/zabbix_web_service:
+bin/zabbix_web_service$(EXEEXT): $(ZBX_GO_SOURCES)
 	go build -ldflags="${WEBSERVICE_GOLDFLAGS}" -o bin zabbix.com/cmd/zabbix_web_service
 
-build: ${TARGETS}
+bin/mock_server$(EXEEXT): $(ZBX_GO_SOURCES)
+	CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" go build -ldflags="${AGENT_GOLDFLAGS}" \
+			-o bin zabbix.com/cmd/mock_server
 
-clean:
+clean-local:
 	go clean ./...
-	rm -f bin/zabbix_agent2 bin/mock_server
-
-install-zabbix.com/cmd/zabbix_agent2:
-	CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" GOBIN=${GOBIN} \
-		go install -ldflags="${AGENT_GOLDFLAGS}" ${TARGETS}
-
-install-zabbix.com/cmd/zabbix_web_service:
-	GOBIN=${GOBIN} go install -ldflags="${WEBSERVICE_GOLDFLAGS}" zabbix.com/cmd/zabbix_web_service
-
-install-exec-local: ${INSTALL_TARGETS}
 
 check:
 	CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" go test ./...
+
+
+
+
 
