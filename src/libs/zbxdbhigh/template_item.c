@@ -1179,7 +1179,7 @@ static int	template_item_compare_func(const void *d1, const void *d2)
  *                                                                            *
  * Purpose: copy template item preprocessing options                          *
  *                                                                            *
-/ * Parameters: templateids - [IN] array of template IDs                       *
+ * Parameters: templateids - [IN] array of template IDs                       *
  *             items       - [IN] array of new/updated items                  *
  *                                                                            *
  ******************************************************************************/
@@ -1329,7 +1329,6 @@ static void	copy_template_item_script_params(const zbx_vector_uint64_t *template
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "ti.hostid", templateids->values, templateids->values_num);
 
 	result = DBselect("%s", sql);
-
 	while (NULL != (row = DBfetch(result)))
 	{
 		char bbb[100];

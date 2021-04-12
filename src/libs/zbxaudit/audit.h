@@ -29,10 +29,19 @@ void	zbx_items_audit_init(void);
 
 void	zbx_items_persist(const char *recsetid_cuid);
 
+void	zbx_items_audit_bulk_delete(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names, char *recsetid_cuid);
 int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, const char* resourcename,
 		const int resourcetype, const char *recsetid, const char *details);
-int	zbx_items_audit_create_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid, const int action);
+void	zbx_items_audit_create_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid, const int action);
 void	zbx_items_audit_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
 void	zbx_items_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
+
+void	zbx_audit_groups_add(zbx_uint64_t hostid, zbx_uint64_t hostgroupid, zbx_uint64_t groupid);
+void	zbx_audit_groups_delete(zbx_uint64_t hostid);
+void	zbx_audit_host_add(zbx_uint64_t hostid, char *recsetid_cuid);
+void	zbx_audit_host_del(zbx_uint64_t hostid);
+void	zbx_audit_host_status(zbx_uint64_t hostid, int status);
+void	zbx_audit_host_inventory(zbx_uint64_t hostid, int inventory_mode);
+
 
 #endif	/* ZABBIX_AUDIT_H */
