@@ -24,11 +24,8 @@
 #include "zbxalgo.h"
 #include "../zbxdbhigh/template.h"
 
-
 void	zbx_items_audit_init(void);
-
 void	zbx_items_persist(const char *recsetid_cuid);
-
 void	zbx_items_audit_bulk_delete(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names, char *recsetid_cuid);
 int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, const char* resourcename,
 		const int resourcetype, const char *recsetid, const char *details);

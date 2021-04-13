@@ -1303,9 +1303,7 @@ static void	get_items_names(zbx_vector_uint64_t *itemids, zbx_vector_str_t *item
 	result = DBselect("%s", sql);
 
 	while (NULL != (row = DBfetch(result)))
-	{
 		zbx_vector_str_append(items_names, zbx_strdup(NULL, row[0]));
-	}
 
 	DBfree_result(result);
 	zbx_free(sql);
@@ -1364,10 +1362,8 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
 	DBadd_to_housekeeper(itemids, "itemid", event_tables, ARRSIZE(event_tables));
 	DBadd_to_housekeeper(itemids, "lldruleid", event_tables, ARRSIZE(event_tables));
 
-	{
-		zbx_vector_str_create(&items_names);
-		get_items_names(itemids, &items_names);
-	}
+	zbx_vector_str_create(&items_names);
+	get_items_names(itemids, &items_names);
 
 	sql_offset = 0;
 	DBbegin_multiple_update(&sql, &sql_alloc, &sql_offset);
@@ -1389,8 +1385,6 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
 
 	DBend_multiple_update(&sql, &sql_alloc, &sql_offset);
 
-	zabbix_log(LOG_LEVEL_INFORMATION, "OMEGA STR1");
-
 	DBexecute("%s", sql);
 
 	zbx_vector_uint64_destroy(&profileids);
@@ -1398,7 +1392,6 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
 	zbx_free(sql);
 
 	zbx_items_audit_bulk_delete(itemids, &items_names, recsetid_cuid);
-
 	zbx_vector_str_clear_ext(&items_names, zbx_str_free);
 	zbx_vector_str_destroy(&items_names);
 out:
@@ -1421,9 +1414,9 @@ out:
 static void	DBdelete_httptests(zbx_vector_uint64_t *httptestids)
 {
 	char			*sql = NULL;
+	char			recsetid_cuid[CUID_LEN];
 	size_t			sql_alloc = 256, sql_offset = 0;
 	zbx_vector_uint64_t	itemids;
-	char			recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s() values_num:%d", __func__, httptestids->values_num);
 
@@ -1844,7 +1837,6 @@ static void	DBdelete_template_items(zbx_uint64_t hostid, const zbx_vector_uint64
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
 	zbx_new_cuid(recsetid_cuid);
-
 	zbx_vector_uint64_create(&itemids);
 
 	zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset,
@@ -2559,7 +2551,6 @@ static void	get_templates_by_hostid(zbx_uint64_t hostid, zbx_vector_uint64_t *te
 	DBfree_result(result);
 
 	zbx_vector_uint64_sort(templateids, ZBX_DEFAULT_UINT64_COMPARE_FUNC);
-
 }
 
 /******************************************************************************
@@ -2623,7 +2614,6 @@ int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_tem
 	/* related to them. Because of that discovered applications must be removed before  */
 	/* removing items.                                                                  */
 	DBdelete_template_discovered_applications(hostid, del_templateids);
-
 	DBdelete_template_items(hostid, del_templateids);
 
 	/* normal applications must be removed after items are removed to cleanup */
@@ -6157,7 +6147,6 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 	}
 
 	zbx_items_persist(recsetid_cuid);
-
 clean:
 	zbx_vector_uint64_destroy(&templateids);
 
@@ -6179,9 +6168,9 @@ void	DBdelete_hosts(zbx_vector_uint64_t *hostids)
 {
 	zbx_vector_uint64_t	itemids, httptestids, selementids;
 	char			*sql = NULL;
+	char			recsetid_cuid[CUID_LEN];
 	size_t			sql_alloc = 0, sql_offset;
 	int			i;
-	char			recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 

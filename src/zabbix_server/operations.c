@@ -240,7 +240,6 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char *recsetid_cu
 
 	if (EVENT_OBJECT_DHOST == event->object || EVENT_OBJECT_DSERVICE == event->object)
 	{
-		zabbix_log(LOG_LEVEL_INFORMATION, "BBBBBBBBBBBBBBBBBBBBBBBBb\n");
 		if (EVENT_OBJECT_DHOST == event->object)
 		{
 			result = DBselect(
@@ -438,10 +437,8 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char *recsetid_cu
 				zbx_db_insert_execute(&db_insert);
 				zbx_db_insert_clean(&db_insert);
 
-				{
-					zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
-					zbx_audit_host_add(hostid, recsetid_cuid);
-				}
+				zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
+				zbx_audit_host_add(hostid, recsetid_cuid);
 
 				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
 					DBadd_host_inventory(hostid, cfg.default_inventory_mode);
@@ -575,10 +572,8 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char *recsetid_cu
 				zbx_db_insert_execute(&db_insert);
 				zbx_db_insert_clean(&db_insert);
 
-				{
-					zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
-					zbx_audit_host_add(hostid, recsetid_cuid);
-				}
+				zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
+				zbx_audit_host_add(hostid, recsetid_cuid);
 
 				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
 					DBadd_host_inventory(hostid, cfg.default_inventory_mode);
@@ -586,7 +581,6 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char *recsetid_cu
 				DBadd_interface(hostid, INTERFACE_TYPE_AGENT, useip, row[2], row[3], port, flags);
 
 				add_discovered_host_groups(hostid, &groupids);
-
 			}
 			else
 			{
