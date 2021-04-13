@@ -54,20 +54,21 @@ void	zbx_items_audit_init(void)
 
 int	item_flag_to_resource_type(int flag)
 {
-	if ((ZBX_FLAG_DISCOVERY_NORMAL == flag) || 1 == (ZBX_FLAG_DISCOVERY_CREATED & flag))
+	if (ZBX_FLAG_DISCOVERY_NORMAL == flag || ZBX_FLAG_DISCOVERY_CREATED == flag)
 	{
 		return AUDIT_RESOURCE_ITEM;
 	}
-	else if (1 == (ZBX_FLAG_DISCOVERY_PROTOTYPE & flag))
+	else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flag)
 	{
 		return AUDIT_RESOURCE_ITEM_PROTOTYPE;
 	}
-	else if (1 == (ZBX_FLAG_DISCOVERY_RULE & flag))
+	else if (ZBX_FLAG_DISCOVERY_RULE == flag)
 	{
 		return AUDIT_RESOURCE_DISCOVERY_RULE;
 	}
 	else
 	{
+		zabbix_log(LOG_LEVEL_DEBUG, "unexpected audit detected: ->%d<-", flag);
 		THIS_SHOULD_NEVER_HAPPEN;
 		exit(EXIT_FAILURE);
 	}

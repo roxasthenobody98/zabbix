@@ -2753,7 +2753,7 @@ static void	DBcopy_template_item_application_prototypes(zbx_uint64_t hostid, con
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
 	zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset,
-			"select ap.application_prototypeid,i.itemid"
+			"select ap.application_prototypeid,i.itemid,ap.name"
 			" from items i_ap,item_application_prototype iap"
 			" left join application_prototype ap"
 				" on ap.templateid=iap.application_prototypeid"
@@ -2786,6 +2786,9 @@ static void	DBcopy_template_item_application_prototypes(zbx_uint64_t hostid, con
 
 		ZBX_STR2UINT64(application_prototypeid, row[0]);
 		ZBX_STR2UINT64(itemid, row[1]);
+
+		zbx_items_audit_update_json_uint64(itemid, "itemprototype.applicationPrototypes[]", application_prototypeid);
+		zbx_items_audit_update_json_uint64(itemid, "itemprototype.applicationPrototypes[]", row[2]);
 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), application_prototypeid, itemid);
 	}
