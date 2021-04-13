@@ -1282,7 +1282,8 @@ out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
-static void	get_items_names(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names)
+static void	get_items_names_and_flags(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names,
+		zbx_vector_uint64_t *items_flags)
 {
 	char		*sql = NULL;
 	size_t		sql_alloc = 512, sql_offset = 0;
@@ -1294,7 +1295,7 @@ static void	get_items_names(zbx_vector_uint64_t *itemids, zbx_vector_str_t *item
 	sql = (char *)zbx_malloc(sql, sql_alloc);
 
 	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset,
-			"select name from items"
+			"select name,flags from items"
 			" where");
 
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "itemid",
@@ -1303,7 +1304,12 @@ static void	get_items_names(zbx_vector_uint64_t *itemids, zbx_vector_str_t *item
 	result = DBselect("%s", sql);
 
 	while (NULL != (row = DBfetch(result)))
+	{
+		zbx_uint64_t    flags;
 		zbx_vector_str_append(items_names, zbx_strdup(NULL, row[0]));
+		ZBX_STR2UINT64(flags, row[1]);
+		zbx_vector_uint64_append(items_flags, flags);
+	}
 
 	DBfree_result(result);
 	zbx_free(sql);
@@ -1331,6 +1337,7 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
 	const char		*event_tables[] = {"events"};
 	const char		*profile_idx = "web.favorite.graphids";
 	zbx_vector_str_t        items_names;
+	zbx_vector_uint64_t	items_flags;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s() values_num:%d", __func__, itemids->values_num);
 
@@ -1363,7 +1370,8 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
 	DBadd_to_housekeeper(itemids, "lldruleid", event_tables, ARRSIZE(event_tables));
 
 	zbx_vector_str_create(&items_names);
-	get_items_names(itemids, &items_names);
+	zbx_vector_uint64_create(&items_flags);
+	get_items_names_and_flags(itemids, &items_names, &items_flags);
 
 	sql_offset = 0;
 	DBbegin_multiple_update(&sql, &sql_alloc, &sql_offset);
@@ -1391,7 +1399,7 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
 
 	zbx_free(sql);
 
-	zbx_items_audit_bulk_delete(itemids, &items_names, recsetid_cuid);
+	zbx_items_audit_bulk_delete(itemids, &items_names, &items_flags, recsetid_cuid);
 	zbx_vector_str_clear_ext(&items_names, zbx_str_free);
 	zbx_vector_str_destroy(&items_names);
 out:

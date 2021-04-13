@@ -11,6 +11,7 @@ typedef struct zbx_item_audit_entry
 	char		*name;
 	struct zbx_json	details_json;
 	int		audit_action;
+	int		audit_type;
 } zbx_item_audit_entry_t;
 
 static unsigned	zbx_items_audit_hash_func(const void *data)
@@ -51,6 +52,27 @@ void	zbx_items_audit_init(void)
 }
 
 
+int	item_flag_to_resource_type(int flag)
+{
+	if ((ZBX_FLAG_DISCOVERY_NORMAL == flag) || 1 == (ZBX_FLAG_DISCOVERY_CREATED & flag))
+	{
+		return AUDIT_RESOURCE_ITEM;
+	}
+	else if (1 == (ZBX_FLAG_DISCOVERY_PROTOTYPE & flag))
+	{
+		return AUDIT_RESOURCE_ITEM_PROTOTYPE;
+	}
+	else if (1 == (ZBX_FLAG_DISCOVERY_RULE & flag))
+	{
+		return AUDIT_RESOURCE_DISCOVERY_RULE;
+	}
+	else
+	{
+		THIS_SHOULD_NEVER_HAPPEN;
+		exit(EXIT_FAILURE);
+	}
+}
+
 void	zbx_items_persist(const char *recsetid_cuid)
 {
 	zbx_hashset_iter_t	iter;
@@ -69,9 +91,8 @@ void	zbx_items_persist(const char *recsetid_cuid)
 
 		zbx_db_insert_add_values(&db_insert_items_audit, item_audit_cuid, USER_TYPE_SUPER_ADMIN,
 				(int)time(NULL), (*item_audit_entry)->audit_action, "",  (*item_audit_entry)->itemid,
-				(*item_audit_entry)->name, AUDIT_RESOURCE_ITEM, recsetid_cuid,
-				(*item_audit_entry)->details_json.buffer);
-
+				(*item_audit_entry)->name, (*item_audit_entry)->audit_type,
+				recsetid_cuid, (*item_audit_entry)->details_json.buffer);
 	}
 
 	zbx_db_insert_execute(&db_insert_items_audit);
@@ -101,7 +122,8 @@ int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, cons
 
 }
 
-void	zbx_items_audit_bulk_delete(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names, char *recsetid_cuid)
+void	zbx_items_audit_bulk_delete(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names,
+		zbx_vector_uint64_t *items_flags, char *recsetid_cuid)
 {
 	size_t			i;
 	char			item_audit_cuid[CUID_LEN];
@@ -115,7 +137,8 @@ void	zbx_items_audit_bulk_delete(zbx_vector_uint64_t *itemids, zbx_vector_str_t 
 		zbx_new_cuid(item_audit_cuid);
 		zbx_db_insert_add_values(&db_insert_items_audit, item_audit_cuid, USER_TYPE_SUPER_ADMIN,
 				(int)time(NULL), AUDIT_ACTION_DELETE, "",  itemids->values[i],
-				items_names->values[i], AUDIT_RESOURCE_ITEM, recsetid_cuid,
+				items_names->values[i], item_flag_to_resource_type(items_flags->values[i]),
+				recsetid_cuid,
 				"");
 	}
 
@@ -130,78 +153,66 @@ void	zbx_items_audit_create_entry(const zbx_template_item_t *item, const zbx_uin
 	local_item_audit_entry->itemid = item->itemid;
 	local_item_audit_entry->name = zbx_strdup(NULL, item->name);
 	local_item_audit_entry->audit_action = audit_action;
+	local_item_audit_entry->audit_type = item_flag_to_resource_type(item->flags);
+	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT_CREATE_ENTRY: %d", local_item_audit_entry->audit_type);
 
+#define IT_OR_ITP(s) (AUDIT_RESOURCE_ITEM == local_item_audit_entry->audit_type) ? "item."#s : \
+	(AUDIT_RESOURCE_ITEM_PROTOTYPE == local_item_audit_entry->audit_type ? "itemprototype."#s : "discoveryrule."#s)
+#define ADD_JSON_S(x)	zbx_json_addstring(&local_item_audit_entry->details_json, IT_OR_ITP(x), item->x, \
+	ZBX_JSON_TYPE_STRING)
+#define ADD_JSON_UI(x)	zbx_json_adduint64(&local_item_audit_entry->details_json, IT_OR_ITP(x), item->x)
 	zbx_json_init(&(local_item_audit_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
-
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.itemid", item->itemid);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.name", item->name, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.key", item->key, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.hostid", hostid);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.type", item->type);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.value_type", item->value_type);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.delay", item->delay, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.history", item->history, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.trends", item->trends, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.status", item->status);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.trapper_hosts", item->trapper_hosts,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.units", item->units, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.formula", item->formula, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.logtimefmt", item->logtimefmt,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.valuemapid", item->valuemapid);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.params", item->params, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.ipmi_sensor", item->ipmi_sensor,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.snmp_oid",
-			item->snmp_oid, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.authtype", item->authtype);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.username", item->username,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.password", item->password,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.publickey", item->publickey,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.privatekey", item->privatekey,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.templateid", item->templateid);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.flags", item->flags);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.description", item->description,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.inventory_link", item->inventory_link);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.interfaceid", item->interfaceid);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.lifetime", item->lifetime,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.evaltype", item->evaltype);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.jmx_endpoint", item->jmx_endpoint,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.master_itemid", item->master_itemid);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.timeout", item->timeout, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.url", item->url, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.query_fields", item->query_fields,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.posts", item->posts, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.status_codes", item->status_codes,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.follow_redirects", item->follow_redirects);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.post_type", item->post_type);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.http_proxy", item->http_proxy,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.headers", item->headers, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.retrieve_mode", item->retrieve_mode);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.request_method", item->request_method);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.output_format", item->output_format);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.ssl_cert_file", item->ssl_cert_file,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.ssl_key_file", item->ssl_key_file,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_item_audit_entry->details_json, "item.ssl_key_password", item->ssl_key_password,
-			ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.verify_peer", item->verify_peer);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.verify_host", item->verify_host);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.allowed_traps", item->allow_traps);
-	zbx_json_adduint64(&local_item_audit_entry->details_json, "item.discover", item->discover);
-
+	ADD_JSON_UI(itemid);
+	ADD_JSON_S(name);
+	ADD_JSON_S(key);
+	zbx_json_adduint64(&local_item_audit_entry->details_json, IT_OR_ITP(hostid), hostid);
+	ADD_JSON_UI(type);
+	ADD_JSON_UI(value_type);
+	ADD_JSON_S(delay);
+	ADD_JSON_S(history);
+	ADD_JSON_S(trends);
+	ADD_JSON_UI(status);
+	ADD_JSON_S(trapper_hosts);
+	ADD_JSON_S(units);
+	ADD_JSON_S(formula);
+	ADD_JSON_S(logtimefmt);
+	ADD_JSON_UI(valuemapid);
+	ADD_JSON_S(params);
+	ADD_JSON_S(ipmi_sensor);
+	ADD_JSON_S(snmp_oid);
+	ADD_JSON_UI(authtype);
+	ADD_JSON_S(username);
+	ADD_JSON_S(password);
+	ADD_JSON_S(publickey);
+	ADD_JSON_S(privatekey);
+	ADD_JSON_UI(templateid);
+	ADD_JSON_UI(flags);
+	ADD_JSON_S(description);
+	ADD_JSON_UI(inventory_link);
+	ADD_JSON_UI(interfaceid);
+	ADD_JSON_S(lifetime);
+	ADD_JSON_UI(evaltype);
+	ADD_JSON_S(jmx_endpoint);
+	ADD_JSON_UI(master_itemid);
+	ADD_JSON_S(timeout);
+	ADD_JSON_S(url);
+	ADD_JSON_S(query_fields);
+	ADD_JSON_S(posts);
+	ADD_JSON_S(status_codes);
+	ADD_JSON_UI(follow_redirects);
+	ADD_JSON_UI(post_type);
+	ADD_JSON_S(http_proxy);
+	ADD_JSON_S(headers);
+	ADD_JSON_UI(retrieve_mode);
+	ADD_JSON_UI(request_method);
+	ADD_JSON_UI(output_format);
+	ADD_JSON_S(ssl_cert_file);
+	ADD_JSON_S(ssl_key_file);
+	ADD_JSON_S(ssl_key_password);
+	ADD_JSON_UI(verify_peer);
+	ADD_JSON_UI(verify_host);
+	ADD_JSON_UI(allow_traps);
+	ADD_JSON_UI(discover);
 	zbx_hashset_insert(&items_audit, &local_item_audit_entry, sizeof(local_item_audit_entry));
 }
 
@@ -434,9 +445,7 @@ void	zbx_audit_host_inventory(zbx_uint64_t hostid, int inventory_mode)
 	result = DBselect("name from hosts where hostid=" ZBX_FS_UI64, hostid);
 
 	if (NULL == result)
-	{
 		return;
-	}
 
 	while (NULL != (row = DBfetch(result)))
 	{
