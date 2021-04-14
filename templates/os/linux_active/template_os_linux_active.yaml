@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-03-02T19:42:21Z'
+  date: '2021-04-14T13:15:23Z'
   groups:
     -
       name: Templates/Modules
@@ -62,8 +62,8 @@ zabbix_export:
                 key: 'vfs.file.contents[/sys/block/{#DEVNAME}/stat]'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk read request avg waiting time (r_await)'
               type: CALCULATED
@@ -75,8 +75,8 @@ zabbix_export:
               description: 'This formula contains two boolean expressions that evaluates to 1 or 0 in order to set calculated metric to zero and to avoid division by zero exception.'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk read rate'
               type: DEPENDENT
@@ -99,8 +99,8 @@ zabbix_export:
                 key: 'vfs.file.contents[/sys/block/{#DEVNAME}/stat]'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk read time (rate)'
               type: DEPENDENT
@@ -126,8 +126,7 @@ zabbix_export:
                 key: 'vfs.file.contents[/sys/block/{#DEVNAME}/stat]'
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: '{#DEVNAME}: Disk utilization'
               type: DEPENDENT
@@ -154,8 +153,8 @@ zabbix_export:
                 key: 'vfs.file.contents[/sys/block/{#DEVNAME}/stat]'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk write request avg waiting time (w_await)'
               type: CALCULATED
@@ -167,8 +166,8 @@ zabbix_export:
               description: 'This formula contains two boolean expressions that evaluates to 1 or 0 in order to set calculated metric to zero and to avoid division by zero exception.'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk write rate'
               type: DEPENDENT
@@ -191,8 +190,8 @@ zabbix_export:
                 key: 'vfs.file.contents[/sys/block/{#DEVNAME}/stat]'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk write time (rate)'
               type: DEPENDENT
@@ -218,8 +217,7 @@ zabbix_export:
                 key: 'vfs.file.contents[/sys/block/{#DEVNAME}/stat]'
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: '{#DEVNAME}: Get stats'
               type: ZABBIX_ACTIVE
@@ -235,8 +233,7 @@ zabbix_export:
                     - 'return JSON.stringify(value.trim().split(/ +/));'
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
           trigger_prototypes:
             -
               expression: '{Linux block devices by Zabbix agent active:vfs.dev.read.await[{#DEVNAME}].min(15m)} > {$VFS.DEV.READ.AWAIT.WARN:"{#DEVNAME}"} or {Linux block devices by Zabbix agent active:vfs.dev.write.await[{#DEVNAME}].min(15m)} > {$VFS.DEV.WRITE.AWAIT.WARN:"{#DEVNAME}"}'
@@ -313,6 +310,223 @@ zabbix_export:
           macro: '{$VFS.DEV.WRITE.AWAIT.WARN}'
           value: '20'
           description: 'Disk write average response time (in ms) before the trigger would fire'
+      valuemaps:
+        -
+          name: 'IF-MIB::ifOperStatus'
+          mappings:
+            -
+              value: '1'
+              newvalue: up
+            -
+              value: '2'
+              newvalue: down
+            -
+              value: '4'
+              newvalue: unknown
+            -
+              value: '5'
+              newvalue: dormant
+            -
+              value: '6'
+              newvalue: notPresent
+            -
+              value: '7'
+              newvalue: lowerLayerDown
+        -
+          name: 'Linux::Interface protocol types'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'from KA9Q: NET/ROM pseudo'
+            -
+              value: '1'
+              newvalue: Ethernet
+            -
+              value: '2'
+              newvalue: 'Experimental Ethernet'
+            -
+              value: '3'
+              newvalue: 'AX.25 Level 2'
+            -
+              value: '4'
+              newvalue: 'PROnet token ring'
+            -
+              value: '5'
+              newvalue: Chaosnet
+            -
+              value: '6'
+              newvalue: 'IEEE 802.2 Ethernet/TR/TB'
+            -
+              value: '7'
+              newvalue: ARCnet
+            -
+              value: '8'
+              newvalue: APPLEtalk
+            -
+              value: '15'
+              newvalue: 'Frame Relay DLCI'
+            -
+              value: '19'
+              newvalue: ATM
+            -
+              value: '23'
+              newvalue: 'Metricom STRIP (new IANA id)'
+            -
+              value: '24'
+              newvalue: 'IEEE 1394 IPv4 - RFC 2734'
+            -
+              value: '27'
+              newvalue: EUI-64
+            -
+              value: '32'
+              newvalue: InfiniBand
+            -
+              value: '256'
+              newvalue: ARPHRD_SLIP
+            -
+              value: '257'
+              newvalue: ARPHRD_CSLIP
+            -
+              value: '258'
+              newvalue: ARPHRD_SLIP6
+            -
+              value: '259'
+              newvalue: ARPHRD_CSLIP6
+            -
+              value: '260'
+              newvalue: 'Notional KISS type'
+            -
+              value: '264'
+              newvalue: ARPHRD_ADAPT
+            -
+              value: '270'
+              newvalue: ARPHRD_ROSE
+            -
+              value: '271'
+              newvalue: 'CCITT X.25'
+            -
+              value: '272'
+              newvalue: 'Boards with X.25 in firmware'
+            -
+              value: '280'
+              newvalue: 'Controller Area Network'
+            -
+              value: '512'
+              newvalue: ARPHRD_PPP
+            -
+              value: '513'
+              newvalue: 'Cisco HDLC'
+            -
+              value: '516'
+              newvalue: LAPB
+            -
+              value: '517'
+              newvalue: 'Digital''s DDCMP protocol'
+            -
+              value: '518'
+              newvalue: 'Raw HDLC'
+            -
+              value: '519'
+              newvalue: 'Raw IP'
+            -
+              value: '768'
+              newvalue: 'IPIP tunnel'
+            -
+              value: '769'
+              newvalue: 'IP6IP6 tunnel'
+            -
+              value: '770'
+              newvalue: 'Frame Relay Access Device'
+            -
+              value: '771'
+              newvalue: 'SKIP vif'
+            -
+              value: '772'
+              newvalue: 'Loopback device'
+            -
+              value: '773'
+              newvalue: 'Localtalk device'
+            -
+              value: '774'
+              newvalue: 'Fiber Distributed Data Interface'
+            -
+              value: '775'
+              newvalue: 'AP1000 BIF'
+            -
+              value: '776'
+              newvalue: 'sit0 device - IPv6-in-IPv4'
+            -
+              value: '777'
+              newvalue: 'IP over DDP tunneller'
+            -
+              value: '778'
+              newvalue: 'GRE over IP'
+            -
+              value: '779'
+              newvalue: 'PIMSM register interface'
+            -
+              value: '780'
+              newvalue: 'High Performance Parallel Interface'
+            -
+              value: '781'
+              newvalue: 'Nexus 64Mbps Ash'
+            -
+              value: '782'
+              newvalue: 'Acorn Econet'
+            -
+              value: '783'
+              newvalue: Linux-IrDA
+            -
+              value: '784'
+              newvalue: 'Point to point fibrechannel'
+            -
+              value: '785'
+              newvalue: 'Fibrechannel arbitrated loop'
+            -
+              value: '786'
+              newvalue: 'Fibrechannel public loop'
+            -
+              value: '787'
+              newvalue: 'Fibrechannel fabric'
+            -
+              value: '800'
+              newvalue: 'Magic type ident for TR'
+            -
+              value: '801'
+              newvalue: 'IEEE 802.11'
+            -
+              value: '802'
+              newvalue: 'IEEE 802.11 + Prism2 header'
+            -
+              value: '803'
+              newvalue: 'IEEE 802.11 + radiotap header'
+            -
+              value: '804'
+              newvalue: ARPHRD_IEEE802154
+            -
+              value: '805'
+              newvalue: 'IEEE 802.15.4 network monitor'
+            -
+              value: '820'
+              newvalue: 'PhoNet media type'
+            -
+              value: '821'
+              newvalue: 'PhoNet pipe header'
+            -
+              value: '822'
+              newvalue: 'CAIF media type'
+            -
+              value: '823'
+              newvalue: 'GRE over IPv6'
+            -
+              value: '824'
+              newvalue: 'Netlink header'
+            -
+              value: '825'
+              newvalue: 'IPv6 over LoWPAN'
+            -
+              value: '826'
+              newvalue: 'Vsock monitor header'
     -
       template: 'Linux by Zabbix agent active'
       name: 'Linux by Zabbix agent active'
@@ -347,151 +561,442 @@ zabbix_export:
       dashboards:
         -
           name: 'System performance'
-          widgets:
+          pages:
             -
-              type: GRAPH_CLASSIC
-              width: '12'
-              height: '5'
-              fields:
+              widgets:
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'System load'
-                    host: 'Linux by Zabbix agent active'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              width: '12'
-              height: '5'
-              fields:
+                  type: GRAPH_CLASSIC
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'System load'
+                        host: 'Linux by Zabbix agent active'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'CPU usage'
-                    host: 'Linux by Zabbix agent active'
-            -
-              type: GRAPH_CLASSIC
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'CPU usage'
+                        host: 'Linux by Zabbix agent active'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Memory usage'
-                    host: 'Linux by Zabbix agent active'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
+                  type: GRAPH_CLASSIC
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Memory usage'
+                        host: 'Linux by Zabbix agent active'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Swap usage'
-                    host: 'Linux by Zabbix agent active'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '10'
-              width: '24'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Swap usage'
+                        host: 'Linux by Zabbix agent active'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#FSNAME}: Disk space usage'
-                    host: 'Linux by Zabbix agent active'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '22'
-              width: '24'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
-                -
-                  type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#DEVNAME}: Disk read/write rates'
-                    host: 'Linux by Zabbix agent active'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '34'
-              width: '24'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+                  'y': '10'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#FSNAME}: Disk space usage'
+                        host: 'Linux by Zabbix agent active'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#DEVNAME}: Disk average waiting time'
-                    host: 'Linux by Zabbix agent active'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '46'
-              width: '24'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
-                -
-                  type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#DEVNAME}: Disk utilization and queue'
-                    host: 'Linux by Zabbix agent active'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '58'
-              width: '24'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
+                  'y': '22'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#DEVNAME}: Disk read/write rates'
+                        host: 'Linux by Zabbix agent active'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'Interface {#IFNAME}: Network traffic'
-                    host: 'Linux by Zabbix agent active'
+                  'y': '34'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#DEVNAME}: Disk average waiting time'
+                        host: 'Linux by Zabbix agent active'
+                -
+                  type: GRAPH_PROTOTYPE
+                  'y': '46'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#DEVNAME}: Disk utilization and queue'
+                        host: 'Linux by Zabbix agent active'
+                -
+                  type: GRAPH_PROTOTYPE
+                  'y': '58'
+                  width: '24'
+                  height: '6'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'Interface {#IFNAME}: Network traffic'
+                        host: 'Linux by Zabbix agent active'
+      valuemaps:
+        -
+          name: 'IF-MIB::ifOperStatus'
+          mappings:
+            -
+              value: '1'
+              newvalue: up
+            -
+              value: '2'
+              newvalue: down
+            -
+              value: '4'
+              newvalue: unknown
+            -
+              value: '5'
+              newvalue: dormant
+            -
+              value: '6'
+              newvalue: notPresent
+            -
+              value: '7'
+              newvalue: lowerLayerDown
+        -
+          name: 'Linux::Interface protocol types'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'from KA9Q: NET/ROM pseudo'
+            -
+              value: '1'
+              newvalue: Ethernet
+            -
+              value: '2'
+              newvalue: 'Experimental Ethernet'
+            -
+              value: '3'
+              newvalue: 'AX.25 Level 2'
+            -
+              value: '4'
+              newvalue: 'PROnet token ring'
+            -
+              value: '5'
+              newvalue: Chaosnet
+            -
+              value: '6'
+              newvalue: 'IEEE 802.2 Ethernet/TR/TB'
+            -
+              value: '7'
+              newvalue: ARCnet
+            -
+              value: '8'
+              newvalue: APPLEtalk
+            -
+              value: '15'
+              newvalue: 'Frame Relay DLCI'
+            -
+              value: '19'
+              newvalue: ATM
+            -
+              value: '23'
+              newvalue: 'Metricom STRIP (new IANA id)'
+            -
+              value: '24'
+              newvalue: 'IEEE 1394 IPv4 - RFC 2734'
+            -
+              value: '27'
+              newvalue: EUI-64
+            -
+              value: '32'
+              newvalue: InfiniBand
+            -
+              value: '256'
+              newvalue: ARPHRD_SLIP
+            -
+              value: '257'
+              newvalue: ARPHRD_CSLIP
+            -
+              value: '258'
+              newvalue: ARPHRD_SLIP6
+            -
+              value: '259'
+              newvalue: ARPHRD_CSLIP6
+            -
+              value: '260'
+              newvalue: 'Notional KISS type'
+            -
+              value: '264'
+              newvalue: ARPHRD_ADAPT
+            -
+              value: '270'
+              newvalue: ARPHRD_ROSE
+            -
+              value: '271'
+              newvalue: 'CCITT X.25'
+            -
+              value: '272'
+              newvalue: 'Boards with X.25 in firmware'
+            -
+              value: '280'
+              newvalue: 'Controller Area Network'
+            -
+              value: '512'
+              newvalue: ARPHRD_PPP
+            -
+              value: '513'
+              newvalue: 'Cisco HDLC'
+            -
+              value: '516'
+              newvalue: LAPB
+            -
+              value: '517'
+              newvalue: 'Digital''s DDCMP protocol'
+            -
+              value: '518'
+              newvalue: 'Raw HDLC'
+            -
+              value: '519'
+              newvalue: 'Raw IP'
+            -
+              value: '768'
+              newvalue: 'IPIP tunnel'
+            -
+              value: '769'
+              newvalue: 'IP6IP6 tunnel'
+            -
+              value: '770'
+              newvalue: 'Frame Relay Access Device'
+            -
+              value: '771'
+              newvalue: 'SKIP vif'
+            -
+              value: '772'
+              newvalue: 'Loopback device'
+            -
+              value: '773'
+              newvalue: 'Localtalk device'
+            -
+              value: '774'
+              newvalue: 'Fiber Distributed Data Interface'
+            -
+              value: '775'
+              newvalue: 'AP1000 BIF'
+            -
+              value: '776'
+              newvalue: 'sit0 device - IPv6-in-IPv4'
+            -
+              value: '777'
+              newvalue: 'IP over DDP tunneller'
+            -
+              value: '778'
+              newvalue: 'GRE over IP'
+            -
+              value: '779'
+              newvalue: 'PIMSM register interface'
+            -
+              value: '780'
+              newvalue: 'High Performance Parallel Interface'
+            -
+              value: '781'
+              newvalue: 'Nexus 64Mbps Ash'
+            -
+              value: '782'
+              newvalue: 'Acorn Econet'
+            -
+              value: '783'
+              newvalue: Linux-IrDA
+            -
+              value: '784'
+              newvalue: 'Point to point fibrechannel'
+            -
+              value: '785'
+              newvalue: 'Fibrechannel arbitrated loop'
+            -
+              value: '786'
+              newvalue: 'Fibrechannel public loop'
+            -
+              value: '787'
+              newvalue: 'Fibrechannel fabric'
+            -
+              value: '800'
+              newvalue: 'Magic type ident for TR'
+            -
+              value: '801'
+              newvalue: 'IEEE 802.11'
+            -
+              value: '802'
+              newvalue: 'IEEE 802.11 + Prism2 header'
+            -
+              value: '803'
+              newvalue: 'IEEE 802.11 + radiotap header'
+            -
+              value: '804'
+              newvalue: ARPHRD_IEEE802154
+            -
+              value: '805'
+              newvalue: 'IEEE 802.15.4 network monitor'
+            -
+              value: '820'
+              newvalue: 'PhoNet media type'
+            -
+              value: '821'
+              newvalue: 'PhoNet pipe header'
+            -
+              value: '822'
+              newvalue: 'CAIF media type'
+            -
+              value: '823'
+              newvalue: 'GRE over IPv6'
+            -
+              value: '824'
+              newvalue: 'Netlink header'
+            -
+              value: '825'
+              newvalue: 'IPv6 over LoWPAN'
+            -
+              value: '826'
+              newvalue: 'Vsock monitor header'
     -
       template: 'Linux CPU by Zabbix agent active'
       name: 'Linux CPU by Zabbix agent active'
@@ -513,8 +1018,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'Load average (1m avg)'
           type: ZABBIX_ACTIVE
@@ -523,8 +1027,7 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'Load average (5m avg)'
           type: ZABBIX_ACTIVE
@@ -533,8 +1036,7 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'Load average (15m avg)'
           type: ZABBIX_ACTIVE
@@ -543,8 +1045,7 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'Number of CPUs'
           type: ZABBIX_ACTIVE
@@ -557,8 +1058,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'Context switches per second'
           type: ZABBIX_ACTIVE
@@ -572,8 +1072,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU utilization'
           type: DEPENDENT
@@ -594,8 +1093,7 @@ zabbix_export:
             key: 'system.cpu.util[,idle]'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
           triggers:
             -
               expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -620,8 +1118,7 @@ zabbix_export:
           description: 'Guest  time (time  spent  running  a  virtual  CPU  for  a  guest  operating  system)'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU guest nice time'
           type: ZABBIX_ACTIVE
@@ -632,8 +1129,7 @@ zabbix_export:
           description: 'Time spent running a niced guest (virtual CPU for guest operating systems under the control of the Linux kernel)'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU idle time'
           type: ZABBIX_ACTIVE
@@ -644,8 +1140,7 @@ zabbix_export:
           description: 'The time the CPU has spent doing nothing.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU interrupt time'
           type: ZABBIX_ACTIVE
@@ -656,8 +1151,7 @@ zabbix_export:
           description: 'The amount of time the CPU has been servicing hardware interrupts.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU iowait time'
           type: ZABBIX_ACTIVE
@@ -668,8 +1162,7 @@ zabbix_export:
           description: 'Amount of time the CPU has been waiting for I/O to complete.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU nice time'
           type: ZABBIX_ACTIVE
@@ -680,8 +1173,7 @@ zabbix_export:
           description: 'The time the CPU has spent running users'' processes that have been niced.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU softirq time'
           type: ZABBIX_ACTIVE
@@ -692,8 +1184,7 @@ zabbix_export:
           description: 'The amount of time the CPU has been servicing software interrupts.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU steal time'
           type: ZABBIX_ACTIVE
@@ -704,8 +1195,7 @@ zabbix_export:
           description: 'The amount of CPU ''stolen'' from this virtual machine by the hypervisor for other tasks (such as running another virtual machine).'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU system time'
           type: ZABBIX_ACTIVE
@@ -716,8 +1206,7 @@ zabbix_export:
           description: 'The time the CPU has spent running the kernel and its processes.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU user time'
           type: ZABBIX_ACTIVE
@@ -728,8 +1217,7 @@ zabbix_export:
           description: 'The time the CPU has spent running users'' processes that are not niced.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
       macros:
         -
           macro: '{$CPU.UTIL.CRIT}'
@@ -738,6 +1226,223 @@ zabbix_export:
           macro: '{$LOAD_AVG_PER_CPU.MAX.WARN}'
           value: '1.5'
           description: 'Load per CPU considered sustainable. Tune if needed.'
+      valuemaps:
+        -
+          name: 'IF-MIB::ifOperStatus'
+          mappings:
+            -
+              value: '1'
+              newvalue: up
+            -
+              value: '2'
+              newvalue: down
+            -
+              value: '4'
+              newvalue: unknown
+            -
+              value: '5'
+              newvalue: dormant
+            -
+              value: '6'
+              newvalue: notPresent
+            -
+              value: '7'
+              newvalue: lowerLayerDown
+        -
+          name: 'Linux::Interface protocol types'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'from KA9Q: NET/ROM pseudo'
+            -
+              value: '1'
+              newvalue: Ethernet
+            -
+              value: '2'
+              newvalue: 'Experimental Ethernet'
+            -
+              value: '3'
+              newvalue: 'AX.25 Level 2'
+            -
+              value: '4'
+              newvalue: 'PROnet token ring'
+            -
+              value: '5'
+              newvalue: Chaosnet
+            -
+              value: '6'
+              newvalue: 'IEEE 802.2 Ethernet/TR/TB'
+            -
+              value: '7'
+              newvalue: ARCnet
+            -
+              value: '8'
+              newvalue: APPLEtalk
+            -
+              value: '15'
+              newvalue: 'Frame Relay DLCI'
+            -
+              value: '19'
+              newvalue: ATM
+            -
+              value: '23'
+              newvalue: 'Metricom STRIP (new IANA id)'
+            -
+              value: '24'
+              newvalue: 'IEEE 1394 IPv4 - RFC 2734'
+            -
+              value: '27'
+              newvalue: EUI-64
+            -
+              value: '32'
+              newvalue: InfiniBand
+            -
+              value: '256'
+              newvalue: ARPHRD_SLIP
+            -
+              value: '257'
+              newvalue: ARPHRD_CSLIP
+            -
+              value: '258'
+              newvalue: ARPHRD_SLIP6
+            -
+              value: '259'
+              newvalue: ARPHRD_CSLIP6
+            -
+              value: '260'
+              newvalue: 'Notional KISS type'
+            -
+              value: '264'
+              newvalue: ARPHRD_ADAPT
+            -
+              value: '270'
+              newvalue: ARPHRD_ROSE
+            -
+              value: '271'
+              newvalue: 'CCITT X.25'
+            -
+              value: '272'
+              newvalue: 'Boards with X.25 in firmware'
+            -
+              value: '280'
+              newvalue: 'Controller Area Network'
+            -
+              value: '512'
+              newvalue: ARPHRD_PPP
+            -
+              value: '513'
+              newvalue: 'Cisco HDLC'
+            -
+              value: '516'
+              newvalue: LAPB
+            -
+              value: '517'
+              newvalue: 'Digital''s DDCMP protocol'
+            -
+              value: '518'
+              newvalue: 'Raw HDLC'
+            -
+              value: '519'
+              newvalue: 'Raw IP'
+            -
+              value: '768'
+              newvalue: 'IPIP tunnel'
+            -
+              value: '769'
+              newvalue: 'IP6IP6 tunnel'
+            -
+              value: '770'
+              newvalue: 'Frame Relay Access Device'
+            -
+              value: '771'
+              newvalue: 'SKIP vif'
+            -
+              value: '772'
+              newvalue: 'Loopback device'
+            -
+              value: '773'
+              newvalue: 'Localtalk device'
+            -
+              value: '774'
+              newvalue: 'Fiber Distributed Data Interface'
+            -
+              value: '775'
+              newvalue: 'AP1000 BIF'
+            -
+              value: '776'
+              newvalue: 'sit0 device - IPv6-in-IPv4'
+            -
+              value: '777'
+              newvalue: 'IP over DDP tunneller'
+            -
+              value: '778'
+              newvalue: 'GRE over IP'
+            -
+              value: '779'
+              newvalue: 'PIMSM register interface'
+            -
+              value: '780'
+              newvalue: 'High Performance Parallel Interface'
+            -
+              value: '781'
+              newvalue: 'Nexus 64Mbps Ash'
+            -
+              value: '782'
+              newvalue: 'Acorn Econet'
+            -
+              value: '783'
+              newvalue: Linux-IrDA
+            -
+              value: '784'
+              newvalue: 'Point to point fibrechannel'
+            -
+              value: '785'
+              newvalue: 'Fibrechannel arbitrated loop'
+            -
+              value: '786'
+              newvalue: 'Fibrechannel public loop'
+            -
+              value: '787'
+              newvalue: 'Fibrechannel fabric'
+            -
+              value: '800'
+              newvalue: 'Magic type ident for TR'
+            -
+              value: '801'
+              newvalue: 'IEEE 802.11'
+            -
+              value: '802'
+              newvalue: 'IEEE 802.11 + Prism2 header'
+            -
+              value: '803'
+              newvalue: 'IEEE 802.11 + radiotap header'
+            -
+              value: '804'
+              newvalue: ARPHRD_IEEE802154
+            -
+              value: '805'
+              newvalue: 'IEEE 802.15.4 network monitor'
+            -
+              value: '820'
+              newvalue: 'PhoNet media type'
+            -
+              value: '821'
+              newvalue: 'PhoNet pipe header'
+            -
+              value: '822'
+              newvalue: 'CAIF media type'
+            -
+              value: '823'
+              newvalue: 'GRE over IPv6'
+            -
+              value: '824'
+              newvalue: 'Netlink header'
+            -
+              value: '825'
+              newvalue: 'IPv6 over LoWPAN'
+            -
+              value: '826'
+              newvalue: 'Vsock monitor header'
     -
       template: 'Linux filesystems by Zabbix agent active'
       name: 'Linux filesystems by Zabbix agent active'
@@ -783,8 +1488,8 @@ zabbix_export:
               units: '%'
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}<{$VFS.FS.INODE.PFREE.MIN.CRIT:"{#FSNAME}"}'
@@ -816,8 +1521,8 @@ zabbix_export:
               description: 'Space utilization in % for {#FSNAME}'
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
             -
               name: '{#FSNAME}: Total space'
               type: ZABBIX_ACTIVE
@@ -827,8 +1532,8 @@ zabbix_export:
               description: 'Total space in Bytes'
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
             -
               name: '{#FSNAME}: Used space'
               type: ZABBIX_ACTIVE
@@ -838,8 +1543,8 @@ zabbix_export:
               description: 'Used storage in Bytes'
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
           trigger_prototypes:
             -
               expression: |
@@ -924,6 +1629,223 @@ zabbix_export:
         -
           macro: '{$VFS.FS.PUSED.MAX.WARN}'
           value: '80'
+      valuemaps:
+        -
+          name: 'IF-MIB::ifOperStatus'
+          mappings:
+            -
+              value: '1'
+              newvalue: up
+            -
+              value: '2'
+              newvalue: down
+            -
+              value: '4'
+              newvalue: unknown
+            -
+              value: '5'
+              newvalue: dormant
+            -
+              value: '6'
+              newvalue: notPresent
+            -
+              value: '7'
+              newvalue: lowerLayerDown
+        -
+          name: 'Linux::Interface protocol types'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'from KA9Q: NET/ROM pseudo'
+            -
+              value: '1'
+              newvalue: Ethernet
+            -
+              value: '2'
+              newvalue: 'Experimental Ethernet'
+            -
+              value: '3'
+              newvalue: 'AX.25 Level 2'
+            -
+              value: '4'
+              newvalue: 'PROnet token ring'
+            -
+              value: '5'
+              newvalue: Chaosnet
+            -
+              value: '6'
+              newvalue: 'IEEE 802.2 Ethernet/TR/TB'
+            -
+              value: '7'
+              newvalue: ARCnet
+            -
+              value: '8'
+              newvalue: APPLEtalk
+            -
+              value: '15'
+              newvalue: 'Frame Relay DLCI'
+            -
+              value: '19'
+              newvalue: ATM
+            -
+              value: '23'
+              newvalue: 'Metricom STRIP (new IANA id)'
+            -
+              value: '24'
+              newvalue: 'IEEE 1394 IPv4 - RFC 2734'
+            -
+              value: '27'
+              newvalue: EUI-64
+            -
+              value: '32'
+              newvalue: InfiniBand
+            -
+              value: '256'
+              newvalue: ARPHRD_SLIP
+            -
+              value: '257'
+              newvalue: ARPHRD_CSLIP
+            -
+              value: '258'
+              newvalue: ARPHRD_SLIP6
+            -
+              value: '259'
+              newvalue: ARPHRD_CSLIP6
+            -
+              value: '260'
+              newvalue: 'Notional KISS type'
+            -
+              value: '264'
+              newvalue: ARPHRD_ADAPT
+            -
+              value: '270'
+              newvalue: ARPHRD_ROSE
+            -
+              value: '271'
+              newvalue: 'CCITT X.25'
+            -
+              value: '272'
+              newvalue: 'Boards with X.25 in firmware'
+            -
+              value: '280'
+              newvalue: 'Controller Area Network'
+            -
+              value: '512'
+              newvalue: ARPHRD_PPP
+            -
+              value: '513'
+              newvalue: 'Cisco HDLC'
+            -
+              value: '516'
+              newvalue: LAPB
+            -
+              value: '517'
+              newvalue: 'Digital''s DDCMP protocol'
+            -
+              value: '518'
+              newvalue: 'Raw HDLC'
+            -
+              value: '519'
+              newvalue: 'Raw IP'
+            -
+              value: '768'
+              newvalue: 'IPIP tunnel'
+            -
+              value: '769'
+              newvalue: 'IP6IP6 tunnel'
+            -
+              value: '770'
+              newvalue: 'Frame Relay Access Device'
+            -
+              value: '771'
+              newvalue: 'SKIP vif'
+            -
+              value: '772'
+              newvalue: 'Loopback device'
+            -
+              value: '773'
+              newvalue: 'Localtalk device'
+            -
+              value: '774'
+              newvalue: 'Fiber Distributed Data Interface'
+            -
+              value: '775'
+              newvalue: 'AP1000 BIF'
+            -
+              value: '776'
+              newvalue: 'sit0 device - IPv6-in-IPv4'
+            -
+              value: '777'
+              newvalue: 'IP over DDP tunneller'
+            -
+              value: '778'
+              newvalue: 'GRE over IP'
+            -
+              value: '779'
+              newvalue: 'PIMSM register interface'
+            -
+              value: '780'
+              newvalue: 'High Performance Parallel Interface'
+            -
+              value: '781'
+              newvalue: 'Nexus 64Mbps Ash'
+            -
+              value: '782'
+              newvalue: 'Acorn Econet'
+            -
+              value: '783'
+              newvalue: Linux-IrDA
+            -
+              value: '784'
+              newvalue: 'Point to point fibrechannel'
+            -
+              value: '785'
+              newvalue: 'Fibrechannel arbitrated loop'
+            -
+              value: '786'
+              newvalue: 'Fibrechannel public loop'
+            -
+              value: '787'
+              newvalue: 'Fibrechannel fabric'
+            -
+              value: '800'
+              newvalue: 'Magic type ident for TR'
+            -
+              value: '801'
+              newvalue: 'IEEE 802.11'
+            -
+              value: '802'
+              newvalue: 'IEEE 802.11 + Prism2 header'
+            -
+              value: '803'
+              newvalue: 'IEEE 802.11 + radiotap header'
+            -
+              value: '804'
+              newvalue: ARPHRD_IEEE802154
+            -
+              value: '805'
+              newvalue: 'IEEE 802.15.4 network monitor'
+            -
+              value: '820'
+              newvalue: 'PhoNet media type'
+            -
+              value: '821'
+              newvalue: 'PhoNet pipe header'
+            -
+              value: '822'
+              newvalue: 'CAIF media type'
+            -
+              value: '823'
+              newvalue: 'GRE over IPv6'
+            -
+              value: '824'
+              newvalue: 'Netlink header'
+            -
+              value: '825'
+              newvalue: 'IPv6 over LoWPAN'
+            -
+              value: '826'
+              newvalue: 'Vsock monitor header'
     -
       template: 'Linux generic by Zabbix agent active'
       name: 'Linux generic by Zabbix agent active'
@@ -946,8 +1868,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
           triggers:
             -
               expression: '{last()}<{$KERNEL.MAXFILES.MIN}'
@@ -967,8 +1888,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
           triggers:
             -
               expression: '{last()}<{$KERNEL.MAXPROC.MIN}'
@@ -985,8 +1905,7 @@ zabbix_export:
           history: 7d
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'Number of running processes'
           type: ZABBIX_ACTIVE
@@ -994,8 +1913,7 @@ zabbix_export:
           history: 7d
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'System boot time'
           type: ZABBIX_ACTIVE
@@ -1010,8 +1928,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'System name'
           type: ZABBIX_ACTIVE
@@ -1029,8 +1946,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -1047,8 +1963,7 @@ zabbix_export:
           description: 'System local time of the host.'
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
           triggers:
             -
               expression: '{fuzzytime({$SYSTEM.FUZZYTIME.MAX})}=0'
@@ -1072,8 +1987,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
         -
           name: 'Operating system'
           type: ZABBIX_ACTIVE
@@ -1090,8 +2004,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -1118,8 +2031,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
         -
           name: 'System description'
           type: ZABBIX_ACTIVE
@@ -1136,8 +2048,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'System uptime'
           type: ZABBIX_ACTIVE
@@ -1149,8 +2060,7 @@ zabbix_export:
           description: 'System uptime in ''N days, hh:mm:ss'' format.'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{last()}<10m'
@@ -1166,8 +2076,7 @@ zabbix_export:
           description: 'Number of users who are currently logged in.'
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'Checksum of /etc/passwd'
           type: ZABBIX_ACTIVE
@@ -1183,8 +2092,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: Security
+              tag: Security
           triggers:
             -
               expression: '{diff()}>0'
@@ -1208,6 +2116,223 @@ zabbix_export:
         -
           macro: '{$SYSTEM.FUZZYTIME.MAX}'
           value: '60'
+      valuemaps:
+        -
+          name: 'IF-MIB::ifOperStatus'
+          mappings:
+            -
+              value: '1'
+              newvalue: up
+            -
+              value: '2'
+              newvalue: down
+            -
+              value: '4'
+              newvalue: unknown
+            -
+              value: '5'
+              newvalue: dormant
+            -
+              value: '6'
+              newvalue: notPresent
+            -
+              value: '7'
+              newvalue: lowerLayerDown
+        -
+          name: 'Linux::Interface protocol types'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'from KA9Q: NET/ROM pseudo'
+            -
+              value: '1'
+              newvalue: Ethernet
+            -
+              value: '2'
+              newvalue: 'Experimental Ethernet'
+            -
+              value: '3'
+              newvalue: 'AX.25 Level 2'
+            -
+              value: '4'
+              newvalue: 'PROnet token ring'
+            -
+              value: '5'
+              newvalue: Chaosnet
+            -
+              value: '6'
+              newvalue: 'IEEE 802.2 Ethernet/TR/TB'
+            -
+              value: '7'
+              newvalue: ARCnet
+            -
+              value: '8'
+              newvalue: APPLEtalk
+            -
+              value: '15'
+              newvalue: 'Frame Relay DLCI'
+            -
+              value: '19'
+              newvalue: ATM
+            -
+              value: '23'
+              newvalue: 'Metricom STRIP (new IANA id)'
+            -
+              value: '24'
+              newvalue: 'IEEE 1394 IPv4 - RFC 2734'
+            -
+              value: '27'
+              newvalue: EUI-64
+            -
+              value: '32'
+              newvalue: InfiniBand
+            -
+              value: '256'
+              newvalue: ARPHRD_SLIP
+            -
+              value: '257'
+              newvalue: ARPHRD_CSLIP
+            -
+              value: '258'
+              newvalue: ARPHRD_SLIP6
+            -
+              value: '259'
+              newvalue: ARPHRD_CSLIP6
+            -
+              value: '260'
+              newvalue: 'Notional KISS type'
+            -
+              value: '264'
+              newvalue: ARPHRD_ADAPT
+            -
+              value: '270'
+              newvalue: ARPHRD_ROSE
+            -
+              value: '271'
+              newvalue: 'CCITT X.25'
+            -
+              value: '272'
+              newvalue: 'Boards with X.25 in firmware'
+            -
+              value: '280'
+              newvalue: 'Controller Area Network'
+            -
+              value: '512'
+              newvalue: ARPHRD_PPP
+            -
+              value: '513'
+              newvalue: 'Cisco HDLC'
+            -
+              value: '516'
+              newvalue: LAPB
+            -
+              value: '517'
+              newvalue: 'Digital''s DDCMP protocol'
+            -
+              value: '518'
+              newvalue: 'Raw HDLC'
+            -
+              value: '519'
+              newvalue: 'Raw IP'
+            -
+              value: '768'
+              newvalue: 'IPIP tunnel'
+            -
+              value: '769'
+              newvalue: 'IP6IP6 tunnel'
+            -
+              value: '770'
+              newvalue: 'Frame Relay Access Device'
+            -
+              value: '771'
+              newvalue: 'SKIP vif'
+            -
+              value: '772'
+              newvalue: 'Loopback device'
+            -
+              value: '773'
+              newvalue: 'Localtalk device'
+            -
+              value: '774'
+              newvalue: 'Fiber Distributed Data Interface'
+            -
+              value: '775'
+              newvalue: 'AP1000 BIF'
+            -
+              value: '776'
+              newvalue: 'sit0 device - IPv6-in-IPv4'
+            -
+              value: '777'
+              newvalue: 'IP over DDP tunneller'
+            -
+              value: '778'
+              newvalue: 'GRE over IP'
+            -
+              value: '779'
+              newvalue: 'PIMSM register interface'
+            -
+              value: '780'
+              newvalue: 'High Performance Parallel Interface'
+            -
+              value: '781'
+              newvalue: 'Nexus 64Mbps Ash'
+            -
+              value: '782'
+              newvalue: 'Acorn Econet'
+            -
+              value: '783'
+              newvalue: Linux-IrDA
+            -
+              value: '784'
+              newvalue: 'Point to point fibrechannel'
+            -
+              value: '785'
+              newvalue: 'Fibrechannel arbitrated loop'
+            -
+              value: '786'
+              newvalue: 'Fibrechannel public loop'
+            -
+              value: '787'
+              newvalue: 'Fibrechannel fabric'
+            -
+              value: '800'
+              newvalue: 'Magic type ident for TR'
+            -
+              value: '801'
+              newvalue: 'IEEE 802.11'
+            -
+              value: '802'
+              newvalue: 'IEEE 802.11 + Prism2 header'
+            -
+              value: '803'
+              newvalue: 'IEEE 802.11 + radiotap header'
+            -
+              value: '804'
+              newvalue: ARPHRD_IEEE802154
+            -
+              value: '805'
+              newvalue: 'IEEE 802.15.4 network monitor'
+            -
+              value: '820'
+              newvalue: 'PhoNet media type'
+            -
+              value: '821'
+              newvalue: 'PhoNet pipe header'
+            -
+              value: '822'
+              newvalue: 'CAIF media type'
+            -
+              value: '823'
+              newvalue: 'GRE over IPv6'
+            -
+              value: '824'
+              newvalue: 'Netlink header'
+            -
+              value: '825'
+              newvalue: 'IPv6 over LoWPAN'
+            -
+              value: '826'
+              newvalue: 'Vsock monitor header'
     -
       template: 'Linux memory by Zabbix agent active'
       name: 'Linux memory by Zabbix agent active'
@@ -1225,8 +2350,7 @@ zabbix_export:
           description: 'The free space of swap volume/file in bytes.'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Free swap space in %'
           type: ZABBIX_ACTIVE
@@ -1237,8 +2361,7 @@ zabbix_export:
           description: 'The free space of swap volume/file in percent.'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Total swap space'
           type: ZABBIX_ACTIVE
@@ -1248,8 +2371,7 @@ zabbix_export:
           description: 'The total space of swap volume/file in bytes.'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Available memory'
           type: ZABBIX_ACTIVE
@@ -1259,8 +2381,7 @@ zabbix_export:
           description: 'Available memory, in Linux, available = free + buffers + cache. On other platforms calculation may vary. See also: https://www.zabbix.com/documentation/5.4/manual/appendix/items/vm.memory.size_params'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Available memory in %'
           type: ZABBIX_ACTIVE
@@ -1271,8 +2392,7 @@ zabbix_export:
           description: 'Available memory as percentage of total. See also: https://www.zabbix.com/documentation/5.4/manual/appendix/items/vm.memory.size_params'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Total memory'
           type: ZABBIX_ACTIVE
@@ -1282,8 +2402,7 @@ zabbix_export:
           description: 'Total memory in Bytes'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Memory utilization'
           type: DEPENDENT
@@ -1302,17 +2421,16 @@ zabbix_export:
             key: 'vm.memory.size[pavailable]'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
           triggers:
             -
               expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
-              name: 'High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+              name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
               priority: AVERAGE
               description: 'The system is running out of free memory.'
               dependencies:
                 -
-                  name: 'Lack of available memory (<{$MEMORY.AVAILABLE.MIN} of {ITEM.VALUE2})'
+                  name: 'Lack of available memory ( < {$MEMORY.AVAILABLE.MIN} of {ITEM.VALUE2})'
                   expression: '{Linux memory by Zabbix agent active:vm.memory.size[available].min(5m)}<{$MEMORY.AVAILABLE.MIN} and {Linux memory by Zabbix agent active:vm.memory.size[total].last()}>0'
       macros:
         -
@@ -1326,6 +2444,223 @@ zabbix_export:
         -
           macro: '{$SWAP.PFREE.MIN.WARN}'
           value: '50'
+      valuemaps:
+        -
+          name: 'IF-MIB::ifOperStatus'
+          mappings:
+            -
+              value: '1'
+              newvalue: up
+            -
+              value: '2'
+              newvalue: down
+            -
+              value: '4'
+              newvalue: unknown
+            -
+              value: '5'
+              newvalue: dormant
+            -
+              value: '6'
+              newvalue: notPresent
+            -
+              value: '7'
+              newvalue: lowerLayerDown
+        -
+          name: 'Linux::Interface protocol types'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'from KA9Q: NET/ROM pseudo'
+            -
+              value: '1'
+              newvalue: Ethernet
+            -
+              value: '2'
+              newvalue: 'Experimental Ethernet'
+            -
+              value: '3'
+              newvalue: 'AX.25 Level 2'
+            -
+              value: '4'
+              newvalue: 'PROnet token ring'
+            -
+              value: '5'
+              newvalue: Chaosnet
+            -
+              value: '6'
+              newvalue: 'IEEE 802.2 Ethernet/TR/TB'
+            -
+              value: '7'
+              newvalue: ARCnet
+            -
+              value: '8'
+              newvalue: APPLEtalk
+            -
+              value: '15'
+              newvalue: 'Frame Relay DLCI'
+            -
+              value: '19'
+              newvalue: ATM
+            -
+              value: '23'
+              newvalue: 'Metricom STRIP (new IANA id)'
+            -
+              value: '24'
+              newvalue: 'IEEE 1394 IPv4 - RFC 2734'
+            -
+              value: '27'
+              newvalue: EUI-64
+            -
+              value: '32'
+              newvalue: InfiniBand
+            -
+              value: '256'
+              newvalue: ARPHRD_SLIP
+            -
+              value: '257'
+              newvalue: ARPHRD_CSLIP
+            -
+              value: '258'
+              newvalue: ARPHRD_SLIP6
+            -
+              value: '259'
+              newvalue: ARPHRD_CSLIP6
+            -
+              value: '260'
+              newvalue: 'Notional KISS type'
+            -
+              value: '264'
+              newvalue: ARPHRD_ADAPT
+            -
+              value: '270'
+              newvalue: ARPHRD_ROSE
+            -
+              value: '271'
+              newvalue: 'CCITT X.25'
+            -
+              value: '272'
+              newvalue: 'Boards with X.25 in firmware'
+            -
+              value: '280'
+              newvalue: 'Controller Area Network'
+            -
+              value: '512'
+              newvalue: ARPHRD_PPP
+            -
+              value: '513'
+              newvalue: 'Cisco HDLC'
+            -
+              value: '516'
+              newvalue: LAPB
+            -
+              value: '517'
+              newvalue: 'Digital''s DDCMP protocol'
+            -
+              value: '518'
+              newvalue: 'Raw HDLC'
+            -
+              value: '519'
+              newvalue: 'Raw IP'
+            -
+              value: '768'
+              newvalue: 'IPIP tunnel'
+            -
+              value: '769'
+              newvalue: 'IP6IP6 tunnel'
+            -
+              value: '770'
+              newvalue: 'Frame Relay Access Device'
+            -
+              value: '771'
+              newvalue: 'SKIP vif'
+            -
+              value: '772'
+              newvalue: 'Loopback device'
+            -
+              value: '773'
+              newvalue: 'Localtalk device'
+            -
+              value: '774'
+              newvalue: 'Fiber Distributed Data Interface'
+            -
+              value: '775'
+              newvalue: 'AP1000 BIF'
+            -
+              value: '776'
+              newvalue: 'sit0 device - IPv6-in-IPv4'
+            -
+              value: '777'
+              newvalue: 'IP over DDP tunneller'
+            -
+              value: '778'
+              newvalue: 'GRE over IP'
+            -
+              value: '779'
+              newvalue: 'PIMSM register interface'
+            -
+              value: '780'
+              newvalue: 'High Performance Parallel Interface'
+            -
+              value: '781'
+              newvalue: 'Nexus 64Mbps Ash'
+            -
+              value: '782'
+              newvalue: 'Acorn Econet'
+            -
+              value: '783'
+              newvalue: Linux-IrDA
+            -
+              value: '784'
+              newvalue: 'Point to point fibrechannel'
+            -
+              value: '785'
+              newvalue: 'Fibrechannel arbitrated loop'
+            -
+              value: '786'
+              newvalue: 'Fibrechannel public loop'
+            -
+              value: '787'
+              newvalue: 'Fibrechannel fabric'
+            -
+              value: '800'
+              newvalue: 'Magic type ident for TR'
+            -
+              value: '801'
+              newvalue: 'IEEE 802.11'
+            -
+              value: '802'
+              newvalue: 'IEEE 802.11 + Prism2 header'
+            -
+              value: '803'
+              newvalue: 'IEEE 802.11 + radiotap header'
+            -
+              value: '804'
+              newvalue: ARPHRD_IEEE802154
+            -
+              value: '805'
+              newvalue: 'IEEE 802.15.4 network monitor'
+            -
+              value: '820'
+              newvalue: 'PhoNet media type'
+            -
+              value: '821'
+              newvalue: 'PhoNet pipe header'
+            -
+              value: '822'
+              newvalue: 'CAIF media type'
+            -
+              value: '823'
+              newvalue: 'GRE over IPv6'
+            -
+              value: '824'
+              newvalue: 'Netlink header'
+            -
+              value: '825'
+              newvalue: 'IPv6 over LoWPAN'
+            -
+              value: '826'
+              newvalue: 'Vsock monitor header'
     -
       template: 'Linux network interfaces by Zabbix agent active'
       name: 'Linux network interfaces by Zabbix agent active'
@@ -1371,8 +2706,8 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}'
+                  tag: Interface
+                  value: '{#IFNAME}'
             -
               name: 'Interface {#IFNAME}: Inbound packets with errors'
               type: ZABBIX_ACTIVE
@@ -1386,8 +2721,8 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}'
+                  tag: Interface
+                  value: '{#IFNAME}'
             -
               name: 'Interface {#IFNAME}: Bits received'
               type: ZABBIX_ACTIVE
@@ -1406,8 +2741,8 @@ zabbix_export:
                     - '8'
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}'
+                  tag: Interface
+                  value: '{#IFNAME}'
             -
               name: 'Interface {#IFNAME}: Outbound packets discarded'
               type: ZABBIX_ACTIVE
@@ -1421,8 +2756,8 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}'
+                  tag: Interface
+                  value: '{#IFNAME}'
             -
               name: 'Interface {#IFNAME}: Outbound packets with errors'
               type: ZABBIX_ACTIVE
@@ -1436,8 +2771,8 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}'
+                  tag: Interface
+                  value: '{#IFNAME}'
             -
               name: 'Interface {#IFNAME}: Bits sent'
               type: ZABBIX_ACTIVE
@@ -1456,8 +2791,8 @@ zabbix_export:
                     - '8'
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}'
+                  tag: Interface
+                  value: '{#IFNAME}'
             -
               name: 'Interface {#IFNAME}: Operational status'
               type: ZABBIX_ACTIVE
@@ -1501,8 +2836,8 @@ zabbix_export:
                       return newvalue;
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}'
+                  tag: Interface
+                  value: '{#IFNAME}'
               trigger_prototypes:
                 -
                   expression: '{$IFCONTROL:"{#IFNAME}"}=1 and ({last()}=2 and {diff()}=1)'
@@ -1539,8 +2874,8 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}'
+                  tag: Interface
+                  value: '{#IFNAME}'
           trigger_prototypes:
             -
               expression: |
@@ -1572,7 +2907,7 @@ zabbix_export:
               recovery_expression: |
                 {Linux network interfaces by Zabbix agent active:net.if.in["{#IFNAME}",errors].max(5m)}<{$IF.ERRORS.WARN:"{#IFNAME}"}*0.8
                 and {Linux network interfaces by Zabbix agent active:net.if.out["{#IFNAME}",errors].max(5m)}<{$IF.ERRORS.WARN:"{#IFNAME}"}*0.8
-              name: 'Interface {#IFNAME}: High error rate (>{$IF.ERRORS.WARN:"{#IFNAME}"} for 5m)'
+              name: 'Interface {#IFNAME}: High error rate ( > {$IF.ERRORS.WARN:"{#IFNAME}"} for 5m)'
               opdata: 'errors in: {ITEM.LASTVALUE1}, errors out: {ITEM.LASTVALUE2}'
               priority: WARNING
               description: 'Recovers when below 80% of {$IF.ERRORS.WARN:"{#IFNAME}"} threshold'
@@ -1644,26 +2979,32 @@ zabbix_export:
       dashboards:
         -
           name: 'Network interfaces'
-          widgets:
+          pages:
             -
-              type: GRAPH_PROTOTYPE
-              width: '24'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+              widgets:
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'Interface {#IFNAME}: Network traffic'
-                    host: 'Linux network interfaces by Zabbix agent active'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'Interface {#IFNAME}: Network traffic'
+                        host: 'Linux network interfaces by Zabbix agent active'
       valuemaps:
         -
           name: 'IF-MIB::ifOperStatus'
@@ -1889,20 +3230,20 @@ zabbix_export:
       priority: WARNING
     -
       expression: '{Linux memory by Zabbix agent active:system.swap.size[,pfree].min(5m)}<{$SWAP.PFREE.MIN.WARN} and {Linux memory by Zabbix agent active:system.swap.size[,total].last()}>0'
-      name: 'High swap space usage (less than {$SWAP.PFREE.MIN.WARN}% free)'
+      name: 'High swap space usage ( less than {$SWAP.PFREE.MIN.WARN}% free)'
       opdata: 'Free: {ITEM.LASTVALUE1}, total: {ITEM.LASTVALUE2}'
       priority: WARNING
       description: 'This trigger is ignored, if there is no swap configured'
       dependencies:
         -
-          name: 'High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+          name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
           expression: '{Linux memory by Zabbix agent active:vm.memory.utilization.min(5m)}>{$MEMORY.UTIL.MAX}'
         -
-          name: 'Lack of available memory (<{$MEMORY.AVAILABLE.MIN} of {ITEM.VALUE2})'
+          name: 'Lack of available memory ( < {$MEMORY.AVAILABLE.MIN} of {ITEM.VALUE2})'
           expression: '{Linux memory by Zabbix agent active:vm.memory.size[available].min(5m)}<{$MEMORY.AVAILABLE.MIN} and {Linux memory by Zabbix agent active:vm.memory.size[total].last()}>0'
     -
       expression: '{Linux memory by Zabbix agent active:vm.memory.size[available].min(5m)}<{$MEMORY.AVAILABLE.MIN} and {Linux memory by Zabbix agent active:vm.memory.size[total].last()}>0'
-      name: 'Lack of available memory (<{$MEMORY.AVAILABLE.MIN} of {ITEM.VALUE2})'
+      name: 'Lack of available memory ( < {$MEMORY.AVAILABLE.MIN} of {ITEM.VALUE2})'
       opdata: 'Available: {ITEM.LASTVALUE1}, total: {ITEM.LASTVALUE2}'
       priority: AVERAGE
     -

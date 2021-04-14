@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:56Z'
+  date: '2021-04-14T15:29:42Z'
   groups:
     -
       name: Templates/Databases
@@ -39,8 +39,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: Version
           type: JMX
@@ -58,8 +57,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -78,8 +76,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Commitlog: Pending tasks'
           type: JMX
@@ -91,8 +88,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Latency: Read median'
           type: JMX
@@ -111,8 +107,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Latency: Read 75 percentile'
           type: JMX
@@ -131,8 +126,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Latency: Read 95 percentile'
           type: JMX
@@ -151,8 +145,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Commitlog: Total size'
           type: JMX
@@ -165,8 +158,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Compaction: Total compactions completed'
           type: JMX
@@ -178,8 +170,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Latency: Write median'
           type: JMX
@@ -198,8 +189,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Latency: Write 75 percentile'
           type: JMX
@@ -218,8 +208,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Latency: Write 95 percentile'
           type: JMX
@@ -238,8 +227,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'KeyCache: Capacity'
           type: JMX
@@ -257,8 +245,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'KeyCache: Entries'
           type: JMX
@@ -270,8 +257,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'KeyCache: HitRate'
           type: JMX
@@ -290,8 +276,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'KeyCache: Hits per second'
           type: JMX
@@ -309,8 +294,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'KeyCache: requests per second'
           type: JMX
@@ -329,8 +313,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'KeyCache: Size'
           type: JMX
@@ -343,8 +326,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Client connections: Native'
           type: JMX
@@ -356,8 +338,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Client connections: Trifts'
           type: JMX
@@ -369,8 +350,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Latency: Client request read median'
           type: JMX
@@ -389,8 +369,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Latency: Client request read 75 percentile'
           type: JMX
@@ -409,8 +388,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Latency: Client request read 95 percentile'
           type: JMX
@@ -429,8 +407,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Client request: Read per second'
           type: JMX
@@ -449,8 +426,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Latency: Client request write median'
           type: JMX
@@ -469,8 +445,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Latency: Client request write 75 percentile'
           type: JMX
@@ -489,8 +464,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Latency: Client request write 95 percentile'
           type: JMX
@@ -509,8 +483,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Client request: Write per second'
           type: JMX
@@ -529,8 +502,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Client request: Write Timeouts'
           type: JMX
@@ -542,8 +514,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Compaction: Pending tasks'
           type: JMX
@@ -555,8 +526,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
           triggers:
             -
               expression: '{min(15m)}>{$CASSANDRA.PENDING_TASKS.MAX.WARN}'
@@ -581,8 +551,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Dropped messages: Read'
           type: JMX
@@ -594,8 +563,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Storage: Errors'
           type: JMX
@@ -607,8 +575,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
           triggers:
             -
               expression: '{min(5m)}>0'
@@ -626,8 +593,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
           triggers:
             -
               expression: '{nodata(15m)}=1'
@@ -645,8 +611,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool HintsDispatcher: Currently blocked task'
           type: JMX
@@ -656,12 +621,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that are currently blocked due to queue saturation but on retry will become unblocked.
-            HintsDispatcher:Performs hinted handoff.
+            HintsDispatcher:	Performs hinted handoff.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool HintsDispatcher: Pending tasks'
           type: JMX
@@ -671,12 +635,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of queued tasks queued up on this pool.
-            HintsDispatcher:Performs hinted handoff.
+            HintsDispatcher:	Performs hinted handoff.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool HintsDispatcher: Total blocked tasks'
           type: JMX
@@ -686,12 +649,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that were blocked due to queue saturation.
-            HintsDispatcher:Performs hinted handoff.
+            HintsDispatcher:	Performs hinted handoff.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MemtableFlushWriter: Currently blocked task'
           type: JMX
@@ -701,12 +663,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that are currently blocked due to queue saturation but on retry will become unblocked.
-            MemtableFlushWriter:Writes memtables to disk.
+            MemtableFlushWriter:	Writes memtables to disk.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MemtableFlushWriter: Pending tasks'
           type: JMX
@@ -716,12 +677,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of queued tasks queued up on this pool.
-            MemtableFlushWriter:Writes memtables to disk.
+            MemtableFlushWriter:	Writes memtables to disk.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MemtableFlushWriter: Total blocked tasks'
           type: JMX
@@ -731,12 +691,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that were blocked due to queue saturation.
-            MemtableFlushWriter:Writes memtables to disk.
+            MemtableFlushWriter:	Writes memtables to disk.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MemtablePostFlush: Currently blocked task'
           type: JMX
@@ -746,12 +705,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that are currently blocked due to queue saturation but on retry will become unblocked.
-            MemtablePostFlush:Cleans up commit log after memtable is written to disk.
+            MemtablePostFlush:	Cleans up commit log after memtable is written to disk.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MemtablePostFlush: Pending tasks'
           type: JMX
@@ -761,12 +719,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of queued tasks queued up on this pool.
-            MemtablePostFlush:Cleans up commit log after memtable is written to disk.
+            MemtablePostFlush:	Cleans up commit log after memtable is written to disk.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MemtablePostFlush: Total blocked tasks'
           type: JMX
@@ -776,12 +733,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that were blocked due to queue saturation.
-            MemtablePostFlush:Cleans up commit log after memtable is written to disk.
+            MemtablePostFlush:	Cleans up commit log after memtable is written to disk.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MigrationStage: Currently blocked task'
           type: JMX
@@ -791,12 +747,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that are currently blocked due to queue saturation but on retry will become unblocked.
-            MigrationStage:Runs schema migrations.
+            MigrationStage:	Runs schema migrations.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MigrationStage: Pending tasks'
           type: JMX
@@ -806,12 +761,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of queued tasks queued up on this pool.
-            MigrationStage:Runs schema migrations.
+            MigrationStage:	Runs schema migrations.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MigrationStage: Total blocked tasks'
           type: JMX
@@ -821,12 +775,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that were blocked due to queue saturation.
-            MigrationStage:Runs schema migrations.
+            MigrationStage:	Runs schema migrations.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MiscStage: Currently blocked task'
           type: JMX
@@ -836,12 +789,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that are currently blocked due to queue saturation but on retry will become unblocked.
-            MiscStage:Misceleneous tasks run here.
+            MiscStage:	Misceleneous tasks run here.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MiscStage: Pending tasks'
           type: JMX
@@ -851,12 +803,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of queued tasks queued up on this pool.
-            MiscStage:Misceleneous tasks run here.
+            MiscStage:	Misceleneous tasks run here.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MiscStage: Total blocked tasks'
           type: JMX
@@ -866,12 +817,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that were blocked due to queue saturation.
-            MiscStage:Misceleneous tasks run here.
+            MiscStage:	Misceleneous tasks run here.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool SecondaryIndexManagement: Currently blocked task'
           type: JMX
@@ -881,12 +831,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that are currently blocked due to queue saturation but on retry will become unblocked.
-            SecondaryIndexManagement:Performs updates to secondary indexes.
+            SecondaryIndexManagement:	Performs updates to secondary indexes.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool SecondaryIndexManagement: Pending tasks'
           type: JMX
@@ -896,12 +845,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of queued tasks queued up on this pool.
-            SecondaryIndexManagement:Performs updates to secondary indexes.
+            SecondaryIndexManagement:	Performs updates to secondary indexes.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool SecondaryIndexManagement: Total blocked tasks'
           type: JMX
@@ -911,12 +859,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that were blocked due to queue saturation.
-            SecondaryIndexManagement:Performs updates to secondary indexes.
+            SecondaryIndexManagement:	Performs updates to secondary indexes.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool CounterMutationStage: Currently blocked task'
           type: JMX
@@ -926,12 +873,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that are currently blocked due to queue saturation but on retry will become unblocked.
-            CounterMutationStage:Responsible for counter writes.
+            CounterMutationStage:	Responsible for counter writes.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool CounterMutationStage: Pending tasks'
           type: JMX
@@ -941,12 +887,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of queued tasks queued up on this pool.
-            CounterMutationStage:Responsible for counter writes.
+            CounterMutationStage:	Responsible for counter writes.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool CounterMutationStage: Total blocked tasks'
           type: JMX
@@ -956,12 +901,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that were blocked due to queue saturation.
-            CounterMutationStage:Responsible for counter writes.
+            CounterMutationStage:	Responsible for counter writes.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MutationStage: Currently blocked task'
           type: JMX
@@ -971,12 +915,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that are currently blocked due to queue saturation but on retry will become unblocked.
-            MutationStage:Responsible for writes (exclude materialized and counter writes).
+            MutationStage:	Responsible for writes (exclude materialized and counter writes).
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool.MutationStage: Pending tasks'
           type: JMX
@@ -986,12 +929,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of queued tasks queued up on this pool.
-            MutationStage:Responsible for writes (exclude materialized and counter writes).
+            MutationStage:	Responsible for writes (exclude materialized and counter writes).
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool MutationStage: Total blocked tasks'
           type: JMX
@@ -1001,12 +943,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that were blocked due to queue saturation.
-            MutationStage:Responsible for writes (exclude materialized and counter writes).
+            MutationStage:	Responsible for writes (exclude materialized and counter writes).
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool ReadStage: Currently blocked task'
           type: JMX
@@ -1016,12 +957,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that are currently blocked due to queue saturation but on retry will become unblocked.
-            ReadStage:Local reads run on this thread pool.
+            ReadStage:	Local reads run on this thread pool.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool ReadStage: Pending tasks'
           type: JMX
@@ -1031,12 +971,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of queued tasks queued up on this pool.
-            ReadStage:Local reads run on this thread pool.
+            ReadStage:	Local reads run on this thread pool.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool ReadStage: Total blocked tasks'
           type: JMX
@@ -1046,12 +985,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that were blocked due to queue saturation.
-            ReadStage:Local reads run on this thread pool.
+            ReadStage:	Local reads run on this thread pool.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool ViewMutationStage: Currently blocked task'
           type: JMX
@@ -1061,12 +999,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that are currently blocked due to queue saturation but on retry will become unblocked.
-            ViewMutationStage:Responsible for materialized view writes.
+            ViewMutationStage:	Responsible for materialized view writes.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool ViewMutationStage: Pending tasks'
           type: JMX
@@ -1076,12 +1013,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of queued tasks queued up on this pool.
-            ViewMutationStage:Responsible for materialized view writes.
+            ViewMutationStage:	Responsible for materialized view writes.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Thread pool ViewMutationStage: Total blocked tasks'
           type: JMX
@@ -1091,12 +1027,11 @@ zabbix_export:
           password: '{$CASSANDRA.PASSWORD}'
           description: |
             Number of tasks that were blocked due to queue saturation.
-            ViewMutationStage:Responsible for materialized view writes.
+            ViewMutationStage:	Responsible for materialized view writes.
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
         -
           name: 'Cluster: Nodes down'
           type: JMX
@@ -1112,8 +1047,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
           triggers:
             -
               expression: '{last()}>0'
@@ -1134,8 +1068,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Cassandra
+              tag: Cassandra
       discovery_rules:
         -
           name: Tables
@@ -1170,8 +1103,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Bytes flushed'
               type: JMX
@@ -1184,8 +1119,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Col update time delta75 percentile'
               type: JMX
@@ -1204,8 +1141,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Col update time delta 95 percentile'
               type: JMX
@@ -1224,8 +1163,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Compaction bytes written'
               type: JMX
@@ -1239,8 +1180,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Compression ratio'
               type: JMX
@@ -1253,8 +1196,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: KeyCache hit rate'
               type: JMX
@@ -1267,8 +1212,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Live disk space used'
               type: JMX
@@ -1281,8 +1228,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Live SS Table'
               type: JMX
@@ -1294,8 +1243,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Max sartition size'
               type: JMX
@@ -1308,8 +1259,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Mean partition size'
               type: JMX
@@ -1322,8 +1275,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Pending compactions'
               type: JMX
@@ -1335,8 +1290,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Pending flushes'
               type: JMX
@@ -1348,8 +1305,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Read latency 75 percentile'
               type: JMX
@@ -1368,8 +1327,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Read latency 95 percentile'
               type: JMX
@@ -1388,8 +1349,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Read per second'
               type: JMX
@@ -1408,8 +1371,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Row cache hits'
               type: JMX
@@ -1421,8 +1386,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Out of row cache hits'
               type: JMX
@@ -1434,8 +1401,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Row cache misses'
               type: JMX
@@ -1447,8 +1416,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Snapshots size'
               type: JMX
@@ -1461,8 +1432,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: SS Tables per read 75 percentile'
               type: JMX
@@ -1475,8 +1448,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: SS Tables per read 95 percentile'
               type: JMX
@@ -1489,8 +1464,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Tombstone scanned 75 percentile'
               type: JMX
@@ -1503,8 +1480,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Tombstone scanned 95 percentile'
               type: JMX
@@ -1517,8 +1496,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Disk space used'
               type: JMX
@@ -1531,8 +1512,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Waiting on free memtable space 75 percentile'
               type: JMX
@@ -1551,8 +1534,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Waiting on free memtable space95 percentile'
               type: JMX
@@ -1571,8 +1556,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Write latency 75 percentile'
               type: JMX
@@ -1591,8 +1578,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Write latency 95 percentile'
               type: JMX
@@ -1611,8 +1600,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Write per second'
               type: JMX
@@ -1631,8 +1622,10 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Cassandra table {#JMXKEYSPACE}.{#JMXSCOPE}'
+                  tag: Cassandra
+                -
+                  tag: Table
+                  value: '{#JMXKEYSPACE}.{#JMXSCOPE}'
           graph_prototypes:
             -
               name: '{#JMXKEYSPACE}.{#JMXSCOPE}: Read\Write latency'

@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:43Z'
+  date: '2021-04-14T13:14:55Z'
   groups:
     -
       name: Templates/Applications
@@ -37,8 +37,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Get ping page'
           type: HTTP_AGENT
@@ -50,8 +49,7 @@ zabbix_export:
           retrieve_mode: BOTH
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'PHP-FPM: Get status page'
           type: HTTP_AGENT
@@ -62,8 +60,7 @@ zabbix_export:
           url: '{$PHP_FPM.SCHEME}://{$PHP_FPM.HOST}:{$PHP_FPM.PORT}/{$PHP_FPM.STATUS.PAGE}?json'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'PHP-FPM: Listen queue'
           type: DEPENDENT
@@ -80,8 +77,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Listen queue, len'
           type: DEPENDENT
@@ -98,8 +94,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Listen queue, max'
           type: DEPENDENT
@@ -116,8 +111,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Queue usage'
           type: CALCULATED
@@ -129,8 +123,7 @@ zabbix_export:
           description: 'Queue utilization'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{min(15m)}  > {$PHP_FPM.QUEUE.WARN.MAX}'
@@ -157,8 +150,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Pool name'
           type: DEPENDENT
@@ -181,8 +173,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Ping'
           type: DEPENDENT
@@ -203,8 +194,7 @@ zabbix_export:
             key: php-fpm.get_ping
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{last()}=0 or {nodata(3m)}=1'
@@ -227,8 +217,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Processes, idle'
           type: DEPENDENT
@@ -245,8 +234,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Processes, max active'
           type: DEPENDENT
@@ -263,8 +251,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Processes, total'
           type: DEPENDENT
@@ -281,8 +268,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Process manager'
           type: DEPENDENT
@@ -305,8 +291,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{diff()}=1'
@@ -334,8 +319,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{min(#3)}>0'
@@ -359,8 +343,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Uptime'
           type: DEPENDENT
@@ -378,8 +361,7 @@ zabbix_export:
             key: php-fpm.get_status
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{nodata(30m)}=1'
@@ -421,8 +403,7 @@ zabbix_export:
             key: php-fpm.get_ping
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'

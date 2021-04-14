@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-03-14T13:31:56Z'
+  date: '2021-04-14T13:15:16Z'
   groups:
     -
       name: Templates/Databases
@@ -75,8 +75,7 @@ zabbix_export:
           description: 'The item gets server global status information.'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'MSSQL: Auto-param attempts per second'
           type: DEPENDENT
@@ -98,8 +97,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Average latch wait time'
           type: CALCULATED
@@ -115,8 +113,7 @@ zabbix_export:
           description: 'Average latch wait time (in milliseconds) for latch requests that had to wait.'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Average latch wait time base'
           type: DEPENDENT
@@ -133,8 +130,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'MSSQL: Average latch wait time raw'
           type: DEPENDENT
@@ -152,8 +148,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'MSSQL: Total average wait time'
           type: CALCULATED
@@ -169,8 +164,7 @@ zabbix_export:
           description: 'The average wait time, in milliseconds, for each lock request that had to wait.'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(5m)}>{$MSSQL.AVERAGE_WAIT_TIME.MAX}'
@@ -193,8 +187,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'MSSQL: Total average wait time raw'
           type: DEPENDENT
@@ -212,8 +205,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'MSSQL: Batch requests per second'
           type: DEPENDENT
@@ -236,8 +228,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Buffer cache hit ratio'
           type: DEPENDENT
@@ -256,8 +247,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{max(5m)}<{$MSSQL.BUFFER_CACHE_RATIO.MIN.CRIT}'
@@ -291,8 +281,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Cache objects in use'
           type: DEPENDENT
@@ -309,8 +298,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Cache object counts'
           type: DEPENDENT
@@ -327,8 +315,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Cache pages'
           type: DEPENDENT
@@ -345,8 +332,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Checkpoint pages per second'
           type: DEPENDENT
@@ -368,8 +354,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Database pages'
           type: DEPENDENT
@@ -386,8 +371,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Total data file size'
           type: DEPENDENT
@@ -409,8 +393,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Total errors per second'
           type: DEPENDENT
@@ -432,8 +415,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Failed auto-params per second'
           type: DEPENDENT
@@ -455,8 +437,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Forwarded records per second'
           type: DEPENDENT
@@ -478,8 +459,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Free list stalls per second'
           type: DEPENDENT
@@ -502,8 +482,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(5m)}>{$MSSQL.FREE_LIST_STALLS.MAX}'
@@ -531,8 +510,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Granted Workspace Memory'
           type: DEPENDENT
@@ -554,8 +532,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Index searches per second'
           type: DEPENDENT
@@ -577,8 +554,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Errors per second (Info errors)'
           type: DEPENDENT
@@ -600,8 +576,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Errors per second (Kill connection errors)'
           type: DEPENDENT
@@ -623,8 +598,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Latch waits per second'
           type: DEPENDENT
@@ -647,8 +621,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Lazy writes per second'
           type: DEPENDENT
@@ -670,8 +643,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(5m)}>{$MSSQL.LAZY_WRITES.MAX}'
@@ -700,8 +672,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(5m)}>{$MSSQL.LOCK_REQUESTS.MAX}'
@@ -730,8 +701,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(5m)}>{$MSSQL.LOCK_TIMEOUTS.MAX}'
@@ -760,8 +730,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(5m)}>0'
@@ -790,8 +759,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Logins per second'
           type: DEPENDENT
@@ -813,8 +781,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Logouts per second'
           type: DEPENDENT
@@ -836,8 +803,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Total log file size'
           type: DEPENDENT
@@ -859,8 +825,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Total log file used size'
           type: DEPENDENT
@@ -882,8 +847,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Maximum workspace memory'
           type: DEPENDENT
@@ -905,8 +869,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Memory grants outstanding'
           type: DEPENDENT
@@ -923,8 +886,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Memory grants pending'
           type: DEPENDENT
@@ -941,8 +903,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Total lock requests per second that have deadlocks'
           type: DEPENDENT
@@ -965,8 +926,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(5m)}>{$MSSQL.DEADLOCKS.MAX}'
@@ -994,8 +954,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Page life expectancy'
           type: DEPENDENT
@@ -1014,8 +973,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{max(15m)}<{$MSSQL.PAGE_LIFE_EXPECTANCY.MIN}'
@@ -1044,8 +1002,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Page reads per second'
           type: DEPENDENT
@@ -1067,8 +1024,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(5m)}>{$MSSQL.PAGE_READS.MAX}'
@@ -1096,8 +1052,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Page writes per second'
           type: DEPENDENT
@@ -1119,8 +1074,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(5m)}>{$MSSQL.PAGE_WRITES.MAX}'
@@ -1141,8 +1095,7 @@ zabbix_export:
           description: 'The ratio of SQL compilations per second to Batch requests per second in percent.'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(15m)} > {$MSSQL.PERCENT_COMPILATIONS.MAX}'
@@ -1163,8 +1116,7 @@ zabbix_export:
           description: 'The ratio of SQL re-compilations per second to SQL compilations per second in percent.'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(15m)} > {$MSSQL.PERCENT_RECOMPILATIONS.MAX}'
@@ -1187,8 +1139,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Read-ahead pages per second'
           type: DEPENDENT
@@ -1210,8 +1161,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Safe auto-params per second'
           type: DEPENDENT
@@ -1233,8 +1183,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Full scans to Index searches ratio'
           type: CALCULATED
@@ -1246,8 +1195,7 @@ zabbix_export:
           description: 'The ratio of Full scans per second to Index searches per second. The threshold recommendation is strictly for OLTP workloads.'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(15m)} > 0.001'
@@ -1275,8 +1223,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: SQL re-compilations per second'
           type: DEPENDENT
@@ -1298,8 +1245,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Table lock escalations per second'
           type: DEPENDENT
@@ -1321,8 +1267,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Target pages'
           type: DEPENDENT
@@ -1339,8 +1284,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Target server memory'
           type: DEPENDENT
@@ -1362,8 +1306,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Total latch wait Time'
           type: DEPENDENT
@@ -1386,8 +1329,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Total server memory'
           type: DEPENDENT
@@ -1409,8 +1351,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Total transactions number'
           type: DEPENDENT
@@ -1427,8 +1368,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Total transactions per second'
           type: DEPENDENT
@@ -1450,8 +1390,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Unsafe auto-params per second'
           type: DEPENDENT
@@ -1473,8 +1412,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Uptime'
           type: DEPENDENT
@@ -1493,8 +1431,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{nodata(30m)}=1'
@@ -1527,8 +1464,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Errors per second (User errors)'
           type: DEPENDENT
@@ -1550,8 +1486,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
         -
           name: 'MSSQL: Version'
           type: DEPENDENT
@@ -1574,8 +1509,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -1604,8 +1538,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(5m)}>{$MSSQL.WORK_FILES.MAX}'
@@ -1633,8 +1566,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{min(5m)}>{$MSSQL.WORK_TABLES.MAX}'
@@ -1659,8 +1591,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{max(5m)}<{$MSSQL.WORKTABLES_FROM_CACHE_RATIO.MIN.CRIT}'
@@ -1683,8 +1614,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: MSSQL
+              tag: MSSQL
           triggers:
             -
               expression: '{last()}=0'
@@ -1723,8 +1653,7 @@ zabbix_export:
               description: 'Getting replica states - name, primary and secondary health, synchronization health.'
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'': Primary replica recovery health'
               type: DEPENDENT
@@ -1751,8 +1680,8 @@ zabbix_export:
                 key: 'db.odbc.get[{#GROUP_NAME}_replica_states,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Availability Group \''{#GROUP_NAME}\'''
+                  tag: MSSQL
+                  value: Availability
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -1781,8 +1710,8 @@ zabbix_export:
                 key: 'db.odbc.get[{#GROUP_NAME}_replica_states,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Availability Group \''{#GROUP_NAME}\'''
+                  tag: MSSQL
+                  value: Availability
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'': Secondary replica recovery health'
               type: DEPENDENT
@@ -1809,8 +1738,8 @@ zabbix_export:
                 key: 'db.odbc.get[{#GROUP_NAME}_replica_states,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Availability Group \''{#GROUP_NAME}\'''
+                  tag: MSSQL
+                  value: Availability
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -1843,8 +1772,8 @@ zabbix_export:
                 key: 'db.odbc.get[{#GROUP_NAME}_replica_states,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Availability Group \''{#GROUP_NAME}\'''
+                  tag: MSSQL
+                  value: Availability
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -1901,8 +1830,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Data file size'
               type: DEPENDENT
@@ -1924,8 +1853,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log bytes flushed per second'
               type: DEPENDENT
@@ -1948,8 +1877,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log file size'
               type: DEPENDENT
@@ -1971,8 +1900,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log file used size'
               type: DEPENDENT
@@ -1994,8 +1923,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log flushes per second'
               type: DEPENDENT
@@ -2017,8 +1946,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log flush waits per second'
               type: DEPENDENT
@@ -2040,8 +1969,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MSSQL.LOG_FLUSH_WAITS.MAX:"{#DBNAME}"}'
@@ -2070,8 +1999,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MSSQL.LOG_FLUSH_WAIT_TIME.MAX:"{#DBNAME}"}'
@@ -2094,8 +2023,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log shrinks'
               type: DEPENDENT
@@ -2112,8 +2041,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log truncations'
               type: DEPENDENT
@@ -2130,8 +2059,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Percent log used'
               type: DEPENDENT
@@ -2150,8 +2079,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MSSQL.PERCENT_LOG_USED.MAX:"{#DBNAME}"}'
@@ -2189,8 +2118,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
               trigger_prototypes:
                 -
                   expression: '{last()}>1'
@@ -2218,8 +2147,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Database \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Database
           graph_prototypes:
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log size'
@@ -2308,8 +2237,7 @@ zabbix_export:
               description: 'Getting the states of the local availability database.'
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Local DB ''{#DBNAME}'': Suspended'
               type: DEPENDENT
@@ -2333,8 +2261,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#DBNAME}_local_db.states","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Available Group \''{#GROUP_NAME}\'' Local DB \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Available
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Local DB ''{#DBNAME}'': State'
               type: DEPENDENT
@@ -2364,8 +2292,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#DBNAME}_local_db.states","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Available Group \''{#GROUP_NAME}\'' Local DB \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Available
               trigger_prototypes:
                 -
                   expression: '{last()}>0'
@@ -2399,8 +2327,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#DBNAME}_local_db.states","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Available Group \''{#GROUP_NAME}\'' Local DB \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Available
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -2456,8 +2384,7 @@ zabbix_export:
               description: 'Getting mirrors state'
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'MSSQL Mirroring ''{#DBNAME}'': Role'
               type: DEPENDENT
@@ -2483,8 +2410,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#DBNAME}_mirroring_state","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Mirroring \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Mirroring
             -
               name: 'MSSQL Mirroring ''{#DBNAME}'': Role sequence'
               type: DEPENDENT
@@ -2505,8 +2432,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#DBNAME}_mirroring_state","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Mirroring \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Mirroring
             -
               name: 'MSSQL Mirroring ''{#DBNAME}'': Safety level'
               type: DEPENDENT
@@ -2533,8 +2460,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#DBNAME}_mirroring_state","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Mirroring \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Mirroring
             -
               name: 'MSSQL Mirroring ''{#DBNAME}'': State'
               type: DEPENDENT
@@ -2565,8 +2492,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#DBNAME}_mirroring_state","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Mirroring \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Mirroring
               trigger_prototypes:
                 -
                   expression: '{last()}=3'
@@ -2609,8 +2536,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#DBNAME}_mirroring_state","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Mirroring \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Mirroring
               trigger_prototypes:
                 -
                   expression: '{last()}=2'
@@ -2676,8 +2603,7 @@ zabbix_export:
               description: 'Getting the states of the non-local availability database.'
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Non-Local DB ''*{#REPLICA_NAME}*{#DBNAME}'': Log queue size'
               type: DEPENDENT
@@ -2703,8 +2629,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}*{#REPLICA_NAME}*{#DBNAME}_non-local_db.states","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Available Group \''{#GROUP_NAME}\'' Non-Local DB \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Available
               trigger_prototypes:
                 -
                   expression: '{last(#1)}>{last(#2)} and {last(#2)}>{last(#3)}'
@@ -2736,8 +2662,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}*{#REPLICA_NAME}*{#DBNAME}_non-local_db.states","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Available Group \''{#GROUP_NAME}\'' Non-Local DB \''{#DBNAME}\'''
+                  tag: MSSQL
+                  value: Available
               trigger_prototypes:
                 -
                   expression: '{last(#1)}>{last(#2)} and {last(#2)}>{last(#3)}'
@@ -2790,8 +2716,7 @@ zabbix_export:
               description: 'Getting the database replica states.'
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Replica ''{#REPLICA_NAME}'': Connected state'
               type: DEPENDENT
@@ -2819,8 +2744,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Available Group \''{#GROUP_NAME}\'' Replica \''{#REPLICA_NAME}\'''
+                  tag: MSSQL
+                  value: Available
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Replica ''{#REPLICA_NAME}'': Is local'
               type: DEPENDENT
@@ -2846,8 +2771,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Available Group \''{#GROUP_NAME}\'' Replica \''{#REPLICA_NAME}\'''
+                  tag: MSSQL
+                  value: Available
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Replica ''{#REPLICA_NAME}'': Join state'
               type: DEPENDENT
@@ -2873,8 +2798,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Available Group \''{#GROUP_NAME}\'' Replica \''{#REPLICA_NAME}\'''
+                  tag: MSSQL
+                  value: Available
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Replica ''{#REPLICA_NAME}'': Operational state'
               type: DEPENDENT
@@ -2905,8 +2830,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Available Group \''{#GROUP_NAME}\'' Replica \''{#REPLICA_NAME}\'''
+                  tag: MSSQL
+                  value: Available
               trigger_prototypes:
                 -
                   expression: '{last()}=0 or {last()}=1 or {last()}=3'
@@ -2949,8 +2874,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Available Group \''{#GROUP_NAME}\'' Replica \''{#REPLICA_NAME}\'''
+                  tag: MSSQL
+                  value: Available
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -2983,8 +2908,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Available Group \''{#GROUP_NAME}\'' Replica \''{#REPLICA_NAME}\'''
+                  tag: MSSQL
+                  value: Available
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Replica ''{#REPLICA_NAME}'': Sync health'
               type: DEPENDENT
@@ -3011,8 +2936,8 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'MSSQL Available Group \''{#GROUP_NAME}\'' Replica \''{#REPLICA_NAME}\'''
+                  tag: MSSQL
+                  value: Available
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -3225,6 +3150,15 @@ zabbix_export:
             -
               value: '2'
               newvalue: Secondary
+        -
+          name: 'MSSQL AG Suspend state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Resumed
+            -
+              value: '1'
+              newvalue: Suspended
         -
           name: 'MSSQL AG Synchronization health'
           mappings:

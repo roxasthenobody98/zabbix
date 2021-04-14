@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:43Z'
+  date: '2021-04-14T14:29:04Z'
   groups:
     -
       name: Templates/Applications
@@ -38,8 +38,7 @@ zabbix_export:
           url: '{$JENKINS.URL}/computer/api/json'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: 'Zabbix raw items'
         -
           name: 'Jenkins: File descriptor ratio'
           type: DEPENDENT
@@ -62,8 +61,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
           triggers:
             -
               expression: '{min(5m)}>{$JENKINS.FILE_DESCRIPTORS.MAX.WARN}'
@@ -95,8 +93,7 @@ zabbix_export:
             key: jenkins.healthcheck
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Disk space check message'
           type: DEPENDENT
@@ -120,8 +117,7 @@ zabbix_export:
             key: jenkins.healthcheck
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Executors count'
           type: DEPENDENT
@@ -142,8 +138,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Executors free'
           type: DEPENDENT
@@ -160,8 +155,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Executors in use'
           type: DEPENDENT
@@ -178,8 +172,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Get service metrics'
           type: HTTP_AGENT
@@ -196,8 +189,7 @@ zabbix_export:
           status_codes: ''
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: 'Zabbix raw items'
         -
           name: 'Jenkins: Get healthcheck'
           type: HTTP_AGENT
@@ -214,8 +206,7 @@ zabbix_export:
           status_codes: ''
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: 'Zabbix raw items'
         -
           name: 'Jenkins: HTTP active requests, rate'
           type: DEPENDENT
@@ -238,8 +229,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP response 400, rate'
           type: DEPENDENT
@@ -262,8 +252,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP response 201, rate'
           type: DEPENDENT
@@ -286,8 +275,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP response 403, rate'
           type: DEPENDENT
@@ -310,8 +298,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP response 404, rate'
           type: DEPENDENT
@@ -334,8 +321,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP response 304, rate'
           type: DEPENDENT
@@ -358,8 +344,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP response 204, rate'
           type: DEPENDENT
@@ -382,8 +367,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP response 200, rate'
           type: DEPENDENT
@@ -406,8 +390,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP response other, rate'
           type: DEPENDENT
@@ -430,8 +413,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP requests, rate'
           type: DEPENDENT
@@ -454,8 +436,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP requests, median'
           type: DEPENDENT
@@ -474,8 +455,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP requests, p95'
           type: DEPENDENT
@@ -494,8 +474,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP response 500, rate'
           type: DEPENDENT
@@ -518,8 +497,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: HTTP response 503, rate'
           type: DEPENDENT
@@ -542,8 +520,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job blocked duration, median'
           type: DEPENDENT
@@ -562,8 +539,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job blocked duration, p95'
           type: DEPENDENT
@@ -582,8 +558,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job blocked, m1 rate'
           type: DEPENDENT
@@ -601,8 +576,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job blocked, m5 rate'
           type: DEPENDENT
@@ -620,8 +594,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job buildable duration, median'
           type: DEPENDENT
@@ -630,7 +603,7 @@ zabbix_export:
           history: 7d
           value_type: FLOAT
           units: s
-          description: 'The amount of time which jobs spend in the buildable state.'
+          description: 'The amount of time which jobs spend inthe buildable state.'
           preprocessing:
             -
               type: JSONPATH
@@ -640,8 +613,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job buildable duration, p95'
           type: DEPENDENT
@@ -650,7 +622,7 @@ zabbix_export:
           history: 7d
           value_type: FLOAT
           units: s
-          description: 'The amount of time which jobs spend in the buildable state.'
+          description: 'The amount of time which jobs spend inthe buildable state.'
           preprocessing:
             -
               type: JSONPATH
@@ -660,8 +632,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job buildable, m1 rate'
           type: DEPENDENT
@@ -679,8 +650,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job buildable, m5 rate'
           type: DEPENDENT
@@ -698,8 +668,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job building duration, median'
           type: DEPENDENT
@@ -718,8 +687,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job building duration, p95'
           type: DEPENDENT
@@ -738,8 +706,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job building, m1 rate'
           type: DEPENDENT
@@ -757,8 +724,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job building, m5 rate'
           type: DEPENDENT
@@ -776,8 +742,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Jobs count'
           type: DEPENDENT
@@ -798,8 +763,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job queuing duration, median'
           type: DEPENDENT
@@ -818,8 +782,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job queuing duration, p95'
           type: DEPENDENT
@@ -838,8 +801,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job queuing, m1 rate'
           type: DEPENDENT
@@ -857,8 +819,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job queuing, m5 rate'
           type: DEPENDENT
@@ -876,8 +837,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job scheduled, m1 rate'
           type: DEPENDENT
@@ -895,8 +855,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Jobs scheduled, m5 rate'
           type: DEPENDENT
@@ -914,8 +873,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job total duration, median'
           type: DEPENDENT
@@ -934,8 +892,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job total duration, p95'
           type: DEPENDENT
@@ -954,8 +911,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job total, m1 rate'
           type: DEPENDENT
@@ -973,8 +929,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job total, m5 rate'
           type: DEPENDENT
@@ -992,8 +947,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job waiting duration, median'
           type: DEPENDENT
@@ -1012,8 +966,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job waiting duration, p95'
           type: DEPENDENT
@@ -1032,8 +985,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job waiting, m1 rate'
           type: DEPENDENT
@@ -1051,8 +1003,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Job waiting, m5 rate'
           type: DEPENDENT
@@ -1070,8 +1021,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Get jobs info'
           type: HTTP_AGENT
@@ -1095,8 +1045,7 @@ zabbix_export:
               value: 'jobs[name,description,url,healthReport[score],lastBuild[number,result,duration,timestamp],lastSuccessfulBuild[number,result,duration,timestamp],lastFailedBuild[number,result,duration,timestamp]]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: 'Zabbix raw items'
         -
           name: 'Jenkins: Nodes count'
           type: DEPENDENT
@@ -1117,8 +1066,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Nodes offline'
           type: DEPENDENT
@@ -1139,8 +1087,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Nodes online'
           type: DEPENDENT
@@ -1161,8 +1108,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
           triggers:
             -
               expression: '{last()}=0'
@@ -1197,8 +1143,7 @@ zabbix_export:
           status_codes: ''
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
           triggers:
             -
               expression: '{last()}=0'
@@ -1231,8 +1176,7 @@ zabbix_export:
             key: jenkins.healthcheck
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Plugins active'
           type: DEPENDENT
@@ -1253,8 +1197,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Plugins failed'
           type: DEPENDENT
@@ -1275,8 +1218,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Plugins inactive'
           type: DEPENDENT
@@ -1297,8 +1239,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Plugins check message'
           type: DEPENDENT
@@ -1322,8 +1263,7 @@ zabbix_export:
             key: jenkins.healthcheck
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Plugins with update'
           type: DEPENDENT
@@ -1344,8 +1284,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Projects count'
           type: DEPENDENT
@@ -1366,8 +1305,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Build queue, blocked'
           type: DEPENDENT
@@ -1384,8 +1322,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Build queue, buildable'
           type: DEPENDENT
@@ -1402,8 +1339,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Build queue, pending'
           type: DEPENDENT
@@ -1420,8 +1356,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Build queue, size'
           type: DEPENDENT
@@ -1438,8 +1373,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Build queue, stuck'
           type: DEPENDENT
@@ -1456,8 +1390,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: CPU Load'
           type: DEPENDENT
@@ -1475,8 +1408,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Uptime'
           type: DEPENDENT
@@ -1498,8 +1430,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
           triggers:
             -
               expression: '{last()}<10m'
@@ -1533,8 +1464,7 @@ zabbix_export:
             key: jenkins.healthcheck
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Temporary space check message'
           type: DEPENDENT
@@ -1558,8 +1488,7 @@ zabbix_export:
             key: jenkins.healthcheck
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Thread deadlock check'
           type: DEPENDENT
@@ -1586,8 +1515,7 @@ zabbix_export:
             key: jenkins.healthcheck
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Thread deadlock check message'
           type: DEPENDENT
@@ -1611,8 +1539,7 @@ zabbix_export:
             key: jenkins.healthcheck
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
         -
           name: 'Jenkins: Version'
           type: DEPENDENT
@@ -1635,8 +1562,7 @@ zabbix_export:
             key: jenkins.get_metrics
           tags:
             -
-              tag: Application
-              value: Jenkins
+              tag: Jenkins
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -1672,8 +1598,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Available swap space'
               type: DEPENDENT
@@ -1692,8 +1618,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Clock difference'
               type: DEPENDENT
@@ -1717,8 +1643,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Available disk space'
               type: DEPENDENT
@@ -1737,8 +1663,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Idle'
               type: DEPENDENT
@@ -1765,8 +1691,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Executors'
               type: DEPENDENT
@@ -1784,8 +1710,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Offline cause reason'
               type: DEPENDENT
@@ -1808,8 +1734,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Response time average'
               type: DEPENDENT
@@ -1832,8 +1758,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: State'
               type: DEPENDENT
@@ -1862,8 +1788,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Temporarily offline'
               type: DEPENDENT
@@ -1890,8 +1816,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Available temp space'
               type: DEPENDENT
@@ -1910,8 +1836,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Total physical memory'
               type: DEPENDENT
@@ -1930,8 +1856,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Total swap space'
               type: DEPENDENT
@@ -1950,8 +1876,8 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins: Computer [{#DISPLAY_NAME}]'
+                  tag: Jenkins
+                  value: 'Computer [{#DISPLAY_NAME}]'
           trigger_prototypes:
             -
               expression: '{Jenkins by HTTP:jenkins.computer.state[{#DISPLAY_NAME}].last()}=1 and {Jenkins by HTTP:jenkins.computer.offline.reason[{#DISPLAY_NAME}].strlen()}>0'
@@ -2050,8 +1976,8 @@ zabbix_export:
                 key: jenkins.job_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins job [{#NAME}]'
+                  tag: Jenkins
+                  value: 'job [{#NAME}]'
               trigger_prototypes:
                 -
                   expression: '{last()}<{$JENKINS.JOB.HEALTH.SCORE.MIN.WARN}'
@@ -2084,8 +2010,8 @@ zabbix_export:
                 key: jenkins.job_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins job [{#NAME}]'
+                  tag: Jenkins
+                  value: 'job [{#NAME}]'
             -
               name: 'Jenkins job [{#NAME}]: Last Build number'
               type: DEPENDENT
@@ -2107,8 +2033,8 @@ zabbix_export:
                 key: jenkins.job_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins job [{#NAME}]'
+                  tag: Jenkins
+                  value: 'job [{#NAME}]'
             -
               name: 'Jenkins job [{#NAME}]: Last Build result'
               type: DEPENDENT
@@ -2131,8 +2057,8 @@ zabbix_export:
                 key: jenkins.job_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins job [{#NAME}]'
+                  tag: Jenkins
+                  value: 'job [{#NAME}]'
             -
               name: 'Jenkins job [{#NAME}]: Last Build timestamp'
               type: DEPENDENT
@@ -2158,8 +2084,8 @@ zabbix_export:
                 key: jenkins.job_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins job [{#NAME}]'
+                  tag: Jenkins
+                  value: 'job [{#NAME}]'
             -
               name: 'Jenkins job [{#NAME}]: Last Failed Build duration'
               type: DEPENDENT
@@ -2186,8 +2112,8 @@ zabbix_export:
                 key: jenkins.job_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins job [{#NAME}]'
+                  tag: Jenkins
+                  value: 'job [{#NAME}]'
             -
               name: 'Jenkins job [{#NAME}]: Last Failed Build number'
               type: DEPENDENT
@@ -2209,8 +2135,8 @@ zabbix_export:
                 key: jenkins.job_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins job [{#NAME}]'
+                  tag: Jenkins
+                  value: 'job [{#NAME}]'
             -
               name: 'Jenkins job [{#NAME}]: Last Failed Build timestamp'
               type: DEPENDENT
@@ -2236,8 +2162,8 @@ zabbix_export:
                 key: jenkins.job_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins job [{#NAME}]'
+                  tag: Jenkins
+                  value: 'job [{#NAME}]'
             -
               name: 'Jenkins job [{#NAME}]: Last Successful Build duration'
               type: DEPENDENT
@@ -2264,8 +2190,8 @@ zabbix_export:
                 key: jenkins.job_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins job [{#NAME}]'
+                  tag: Jenkins
+                  value: 'job [{#NAME}]'
             -
               name: 'Jenkins job [{#NAME}]: Last Successful Build number'
               type: DEPENDENT
@@ -2287,8 +2213,8 @@ zabbix_export:
                 key: jenkins.job_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins job [{#NAME}]'
+                  tag: Jenkins
+                  value: 'job [{#NAME}]'
             -
               name: 'Jenkins job [{#NAME}]: Last Successful Build timestamp'
               type: DEPENDENT
@@ -2314,8 +2240,8 @@ zabbix_export:
                 key: jenkins.job_info
               tags:
                 -
-                  tag: Application
-                  value: 'Jenkins job [{#NAME}]'
+                  tag: Jenkins
+                  value: 'job [{#NAME}]'
           url: '{$JENKINS.URL}/api/json'
           query_fields:
             -

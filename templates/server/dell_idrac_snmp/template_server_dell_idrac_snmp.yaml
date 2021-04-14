@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:53Z'
+  date: '2021-04-14T13:15:10Z'
   groups:
     -
       name: 'Templates/Server hardware'
@@ -897,7 +897,7 @@ zabbix_export:
                 1: The current state could not be determined.
                 2: The virtual disk is operating normally or optimally.
                 3: The virtual disk has encountered a failure. The data on disk is lost or is about to be lost.
-                4: The virtual disk encountered a failure with one or all of the constituent redundant physical disks.
+                4: The virtual disk encounterd a failure with one or all of the constituent redundant physical disks.
                 The data on the virtual disk might no longer be fault tolerant.
               valuemap:
                 name: 'IDRAC-MIB-SMIv2::virtualDiskState'

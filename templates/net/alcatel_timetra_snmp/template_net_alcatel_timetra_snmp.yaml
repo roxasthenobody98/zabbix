@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:34Z'
+  date: '2021-04-14T13:14:43Z'
   groups:
     -
       name: 'Templates/Network devices'
@@ -41,8 +41,7 @@ zabbix_export:
             The value of sgiCpuUsage indicates the current CPU utilization for the system.
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
           triggers:
             -
               expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -73,8 +72,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
         -
           name: 'Operating system'
           type: SNMP_AGENT
@@ -98,8 +96,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -124,8 +121,7 @@ zabbix_export:
                 - '1024'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Total memory'
           type: CALCULATED
@@ -136,8 +132,7 @@ zabbix_export:
           description: 'Total memory in Bytes'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Used memory'
           type: SNMP_AGENT
@@ -155,8 +150,7 @@ zabbix_export:
                 - '1024'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Memory utilization'
           type: CALCULATED
@@ -168,12 +162,11 @@ zabbix_export:
           description: 'Memory utilization in %'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
           triggers:
             -
               expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
-              name: 'High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+              name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
               priority: AVERAGE
               description: 'The system is running out of free memory.'
       discovery_rules:
@@ -208,8 +201,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -245,8 +237,7 @@ zabbix_export:
                 name: 'TIMETRA-CHASSIS-MIB::TmnxDeviceState'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS},eq)}=1'
@@ -280,8 +271,7 @@ zabbix_export:
                 name: 'TIMETRA-CHASSIS-MIB::TmnxDeviceState'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: Power_supply
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS},eq)}=1'
@@ -308,8 +298,7 @@ zabbix_export:
                 name: 'TIMETRA-CHASSIS-MIB::TmnxDeviceState'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: Power_supply
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS},eq)}=1'
@@ -343,8 +332,7 @@ zabbix_export:
                 The current temperature reading in degrees celsius from this hardware component's temperature sensor.  If this component does not contain a temperature sensor, then the value -1 is returned.
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:""}'

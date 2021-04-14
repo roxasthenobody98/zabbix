@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:35Z'
+  date: '2021-04-14T13:14:44Z'
   groups:
     -
       name: Templates/Modules
@@ -32,8 +32,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
           triggers:
             -
               expression: '{last()}=0'
@@ -51,8 +50,7 @@ zabbix_export:
           description: 'The percentage use of the CPU'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: File descriptor count - current used'
           type: SNMP_AGENT
@@ -63,8 +61,7 @@ zabbix_export:
           description: 'Number of file descriptors in use'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: File descriptor count - current maximum'
           type: SNMP_AGENT
@@ -75,8 +72,7 @@ zabbix_export:
           description: 'Highest number of file descriptors in use'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Objects LRU expiration age'
           type: SNMP_AGENT
@@ -93,8 +89,7 @@ zabbix_export:
                 - '0.01'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: File descriptor count - current reserved'
           type: SNMP_AGENT
@@ -105,8 +100,7 @@ zabbix_export:
           description: 'Reserved number of file descriptors'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Cache swap current size'
           type: SNMP_AGENT
@@ -123,8 +117,7 @@ zabbix_export:
                 - '1048576'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Objects unlinkd requests'
           type: SNMP_AGENT
@@ -135,8 +128,7 @@ zabbix_export:
           description: 'Requests given to unlinkd'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: File descriptor count - current available'
           type: SNMP_AGENT
@@ -147,8 +139,7 @@ zabbix_export:
           description: 'Available number of file descriptors'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
           triggers:
             -
               expression: '{last()}<{$SQUID.FILE.DESC.WARN.MIN}'
@@ -169,8 +160,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: DNS server requests per second'
           type: SNMP_AGENT
@@ -186,8 +176,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: DNS service time per 5 minutes'
           type: SNMP_AGENT
@@ -204,8 +193,7 @@ zabbix_export:
                 - '0.001'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: DNS service time per hour'
           type: SNMP_AGENT
@@ -222,8 +210,7 @@ zabbix_export:
                 - '0.001'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: FQDN cache hits per second'
           type: SNMP_AGENT
@@ -239,8 +226,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: FQDN cache misses per second'
           type: SNMP_AGENT
@@ -256,8 +242,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: FQDN cache requests per second'
           type: SNMP_AGENT
@@ -273,8 +258,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: HTTP all service time per 5 minutes'
           type: SNMP_AGENT
@@ -291,8 +275,7 @@ zabbix_export:
                 - '0.001'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: HTTP all service time per hour'
           type: SNMP_AGENT
@@ -309,8 +292,7 @@ zabbix_export:
                 - '0.001'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: HTTP Errors sent per second'
           type: SNMP_AGENT
@@ -326,8 +308,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: HTTP miss service time per 5 minutes'
           type: SNMP_AGENT
@@ -344,8 +325,7 @@ zabbix_export:
                 - '0.001'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: HTTP hit service time per hour'
           type: SNMP_AGENT
@@ -362,8 +342,7 @@ zabbix_export:
                 - '0.001'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: HTTP Hits sent from cache per second'
           type: SNMP_AGENT
@@ -379,8 +358,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: HTTP traffic received per second'
           type: SNMP_AGENT
@@ -401,8 +379,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: HTTP miss service time per 5 minutes'
           type: SNMP_AGENT
@@ -419,8 +396,7 @@ zabbix_export:
                 - '0.001'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: HTTP miss service time per hour'
           type: SNMP_AGENT
@@ -437,8 +413,7 @@ zabbix_export:
                 - '0.001'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: HTTP traffic sent per second'
           type: SNMP_AGENT
@@ -459,8 +434,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: ICP traffic received per second'
           type: SNMP_AGENT
@@ -481,8 +455,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: ICP traffic transmitted per second'
           type: SNMP_AGENT
@@ -503,8 +476,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: ICP messages received per second'
           type: SNMP_AGENT
@@ -520,8 +492,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: ICP messages sent per second'
           type: SNMP_AGENT
@@ -537,8 +508,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: ICP query service time per 5 minutes'
           type: SNMP_AGENT
@@ -555,8 +525,7 @@ zabbix_export:
                 - '0.001'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: ICP query service time per hour'
           type: SNMP_AGENT
@@ -573,8 +542,7 @@ zabbix_export:
                 - '0.001'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: ICP reply service time per 5 minutes'
           type: SNMP_AGENT
@@ -591,8 +559,7 @@ zabbix_export:
                 - '0.001'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: ICP reply service time per hour'
           type: SNMP_AGENT
@@ -609,8 +576,7 @@ zabbix_export:
                 - '0.001'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: IP cache hits per second'
           type: SNMP_AGENT
@@ -626,8 +592,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: IP cache misses per second'
           type: SNMP_AGENT
@@ -643,8 +608,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: IP cache requests per second'
           type: SNMP_AGENT
@@ -660,8 +624,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Memory maximum resident size'
           type: SNMP_AGENT
@@ -678,8 +641,7 @@ zabbix_export:
                 - '1024'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Memory maximum cache size'
           type: SNMP_AGENT
@@ -696,8 +658,7 @@ zabbix_export:
                 - '1048576'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Memory cache usage'
           type: SNMP_AGENT
@@ -714,8 +675,7 @@ zabbix_export:
                 - '1024'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Objects count'
           type: SNMP_AGENT
@@ -726,8 +686,7 @@ zabbix_export:
           description: 'Number of objects stored by the cache'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: HTTP requests received per second'
           type: SNMP_AGENT
@@ -743,8 +702,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Byte hit ratio per 1 minute'
           type: SNMP_AGENT
@@ -755,8 +713,7 @@ zabbix_export:
           description: 'Byte Hit Ratios'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Byte hit ratio per 5 minutes'
           type: SNMP_AGENT
@@ -767,8 +724,7 @@ zabbix_export:
           description: 'Byte Hit Ratios'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Byte hit ratio per 1 hour'
           type: SNMP_AGENT
@@ -779,8 +735,7 @@ zabbix_export:
           description: 'Byte Hit Ratios'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Request hit ratio per 1 minute'
           type: SNMP_AGENT
@@ -791,8 +746,7 @@ zabbix_export:
           description: 'Byte Hit Ratios'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Request hit ratio per 5 minutes'
           type: SNMP_AGENT
@@ -803,8 +757,7 @@ zabbix_export:
           description: 'Byte Hit Ratios'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Request hit ratio per 1 hour'
           type: SNMP_AGENT
@@ -815,8 +768,7 @@ zabbix_export:
           description: 'Byte Hit Ratios'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Cache swap high water mark'
           type: SNMP_AGENT
@@ -828,8 +780,7 @@ zabbix_export:
           description: 'Cache Swap High Water Mark'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Cache swap low water mark'
           type: SNMP_AGENT
@@ -841,8 +792,7 @@ zabbix_export:
           description: 'Cache Swap Low Water Mark'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Cache swap directory size'
           type: SNMP_AGENT
@@ -859,8 +809,7 @@ zabbix_export:
                 - '1048576'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Sys page faults per second'
           type: SNMP_AGENT
@@ -876,8 +825,7 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
         -
           name: 'Squid: Uptime'
           type: SNMP_AGENT
@@ -894,8 +842,7 @@ zabbix_export:
                 - '0.01'
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
           triggers:
             -
               expression: '{last()}<10m'
@@ -919,8 +866,7 @@ zabbix_export:
                 - 6h
           tags:
             -
-              tag: Application
-              value: Squid
+              tag: Squid
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'

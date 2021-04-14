@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:26Z'
+  date: '2021-04-14T13:14:32Z'
   groups:
     -
       name: 'Templates/Network devices'
@@ -45,8 +45,7 @@ zabbix_export:
             Reference: http://h20564.www2.hpe.com/hpsc/doc/public/display?docId=emr_na-c02597344&sp4ts.oid=51079
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
           triggers:
             -
               expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -77,8 +76,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -105,8 +103,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -145,8 +142,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
             -
               name: '{#ENT_NAME}: Hardware version(revision)'
               type: SNMP_AGENT
@@ -164,8 +160,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
         -
           name: 'FAN Discovery'
           type: SNMP_AGENT
@@ -200,8 +195,7 @@ zabbix_export:
                 name: 'HP-ICF-CHASSIS::hpicfSensorStatus'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS:"bad"},eq)}=1'
@@ -239,8 +233,7 @@ zabbix_export:
                 The number of available (unallocated) bytes.
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
             -
               name: '#{#SNMPVALUE}: Total memory'
               type: SNMP_AGENT
@@ -253,8 +246,7 @@ zabbix_export:
                 The number of currently installed bytes.
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
             -
               name: '#{#SNMPVALUE}: Used memory'
               type: SNMP_AGENT
@@ -267,8 +259,7 @@ zabbix_export:
                 The number of currently allocated bytes.
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
             -
               name: '#{#SNMPVALUE}: Memory utilization'
               type: CALCULATED
@@ -280,12 +271,11 @@ zabbix_export:
               description: 'Memory utilization in %'
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
-                  name: '#{#SNMPVALUE}: High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+                  name: '#{#SNMPVALUE}: High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
                   priority: AVERAGE
                   description: 'The system is running out of free memory.'
           graph_prototypes:
@@ -351,8 +341,7 @@ zabbix_export:
                 name: 'HP-ICF-CHASSIS::hpicfSensorStatus'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: Power_supply
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS:"bad"},eq)}=1'
@@ -404,8 +393,7 @@ zabbix_export:
                 entPhySensorScale, and entPhySensorPrecision objects must also be examined.
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:""}'
@@ -469,8 +457,7 @@ zabbix_export:
                 name: 'HP-ICF-CHASSIS::hpicfSensorStatus'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
       macros:
         -
           macro: '{$CPU.UTIL.CRIT}'

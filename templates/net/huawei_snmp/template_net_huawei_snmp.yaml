@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:27Z'
+  date: '2021-04-14T13:14:32Z'
   groups:
     -
       name: 'Templates/Network devices'
@@ -47,8 +47,7 @@ zabbix_export:
                 name: 'HUAWEI-ENTITY-EXTENT-MIB::hwEntityFanState'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS},eq)}=1'
@@ -86,8 +85,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
         -
           name: 'MPU Discovery'
           type: SNMP_AGENT
@@ -115,8 +113,7 @@ zabbix_export:
                 The temperature for the {#SNMPVALUE}.
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:""}'
@@ -160,8 +157,7 @@ zabbix_export:
                 Reference: http://support.huawei.com/enterprise/KnowledgebaseReadAction.action?contentId=KB1000090234
               tags:
                 -
-                  tag: Application
-                  value: CPU
+                  tag: CPU
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -186,8 +182,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -212,8 +207,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
             -
               name: '{#ENT_NAME}: Operating system'
               type: SNMP_AGENT
@@ -231,8 +225,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -254,12 +247,11 @@ zabbix_export:
                 Reference: http://support.huawei.com/enterprise/KnowledgebaseReadAction.action?contentId=KB1000090234
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
-                  name: '{#ENT_NAME}: High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+                  name: '{#ENT_NAME}: High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
                   priority: AVERAGE
                   description: 'The system is running out of free memory.'
           graph_prototypes:

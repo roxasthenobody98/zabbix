@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:31Z'
+  date: '2021-04-14T13:14:36Z'
   groups:
     -
       name: 'Templates/Network devices'
@@ -46,8 +46,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -79,8 +78,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
       discovery_rules:
         -
           name: 'FAN Discovery'
@@ -105,8 +103,7 @@ zabbix_export:
                 name: 'ICS-CHASSIS-MIB::icsChassisFanOperStatus'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS},eq)}=1'
@@ -145,8 +142,7 @@ zabbix_export:
                 name: 'ICS-CHASSIS-MIB::icsChassisPowerSupplyOperStatus'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: Power_supply
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS},eq)}=1'
@@ -194,8 +190,7 @@ zabbix_export:
                 name: 'ICS-CHASSIS-MIB::icsChassisSensorSlotOperStatus'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
             -
               name: '{#SENSOR_INFO}: Temperature'
               type: SNMP_AGENT
@@ -209,8 +204,7 @@ zabbix_export:
                 The current value read from the sensor.
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}<{$TEMP_CRIT_LOW:""}'
@@ -224,7 +218,7 @@ zabbix_export:
               expression: |
                 {Intel_Qlogic Infiniband SNMP:sensor.temp.value[icsChassisSensorSlotValue.{#SNMPINDEX}].avg(5m)}>{$TEMP_CRIT:""}
                 or
-                {Intel_Qlogic Infiniband SNMP:sensor.temp.status[icsChassisSensorSlotOperStatus.{#SNMPINDEX}].last(0)}={$TEMP_CRIT_STATUS}
+                {Intel_Qlogic Infiniband SNMP:sensor.temp.status[icsChassisSensorSlotOperStatus.{#SNMPINDEX}].last()}={$TEMP_CRIT_STATUS}
               recovery_mode: RECOVERY_EXPRESSION
               recovery_expression: '{Intel_Qlogic Infiniband SNMP:sensor.temp.value[icsChassisSensorSlotValue.{#SNMPINDEX}].max(5m)}<{$TEMP_CRIT:""}-3'
               name: '{#SENSOR_INFO}: Temperature is above critical threshold: >{$TEMP_CRIT:""}'
@@ -235,7 +229,7 @@ zabbix_export:
               expression: |
                 {Intel_Qlogic Infiniband SNMP:sensor.temp.value[icsChassisSensorSlotValue.{#SNMPINDEX}].avg(5m)}>{$TEMP_WARN:""}
                 or
-                {Intel_Qlogic Infiniband SNMP:sensor.temp.status[icsChassisSensorSlotOperStatus.{#SNMPINDEX}].last(0)}={$TEMP_WARN_STATUS}
+                {Intel_Qlogic Infiniband SNMP:sensor.temp.status[icsChassisSensorSlotOperStatus.{#SNMPINDEX}].last()}={$TEMP_WARN_STATUS}
               recovery_mode: RECOVERY_EXPRESSION
               recovery_expression: '{Intel_Qlogic Infiniband SNMP:sensor.temp.value[icsChassisSensorSlotValue.{#SNMPINDEX}].max(5m)}<{$TEMP_WARN:""}-3'
               name: '{#SENSOR_INFO}: Temperature is above warning threshold: >{$TEMP_WARN:""}'
@@ -248,7 +242,7 @@ zabbix_export:
                   expression: |
                     {Intel_Qlogic Infiniband SNMP:sensor.temp.value[icsChassisSensorSlotValue.{#SNMPINDEX}].avg(5m)}>{$TEMP_CRIT:""}
                     or
-                    {Intel_Qlogic Infiniband SNMP:sensor.temp.status[icsChassisSensorSlotOperStatus.{#SNMPINDEX}].last(0)}={$TEMP_CRIT_STATUS}
+                    {Intel_Qlogic Infiniband SNMP:sensor.temp.status[icsChassisSensorSlotOperStatus.{#SNMPINDEX}].last()}={$TEMP_CRIT_STATUS}
                   recovery_expression: '{Intel_Qlogic Infiniband SNMP:sensor.temp.value[icsChassisSensorSlotValue.{#SNMPINDEX}].max(5m)}<{$TEMP_CRIT:""}-3'
         -
           name: 'Unit Discovery'
@@ -282,8 +276,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -377,3 +370,27 @@ zabbix_export:
             -
               value: '5'
               newvalue: disabled
+        -
+          name: 'ICS-CHASSIS-MIB::icsChassisTemperatureStatus'
+          mappings:
+            -
+              value: '1'
+              newvalue: normal
+            -
+              value: '2'
+              newvalue: high
+            -
+              value: '3'
+              newvalue: excessivelyHigh
+            -
+              value: '4'
+              newvalue: low
+            -
+              value: '5'
+              newvalue: excessivelyLow
+            -
+              value: '6'
+              newvalue: noSensor
+            -
+              value: '7'
+              newvalue: unknown

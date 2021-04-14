@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:33Z'
+  date: '2021-04-14T13:14:42Z'
   groups:
     -
       name: Templates/Modules
@@ -42,8 +42,7 @@ zabbix_export:
                 name: 'CISCO-ENVMON-MIB::CiscoEnvMonState'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS:"critical"},eq)}=1 or {count(#1,{$FAN_CRIT_STATUS:"shutdown"},eq)}=1'
@@ -82,8 +81,7 @@ zabbix_export:
                 name: 'CISCO-ENVMON-MIB::CiscoEnvMonState'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: Power_supply
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS:"critical"},eq)}=1 or {count(#1,{$PSU_CRIT_STATUS:"shutdown"},eq)}=1'
@@ -126,8 +124,7 @@ zabbix_export:
                 name: 'CISCO-ENVMON-MIB::CiscoEnvMonState'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
             -
               name: '{#SNMPVALUE}: Temperature'
               type: SNMP_AGENT
@@ -141,8 +138,7 @@ zabbix_export:
                 The current measurement of the test point being instrumented.
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}<{$TEMP_CRIT_LOW:"{#SNMPVALUE}"}'
@@ -294,8 +290,7 @@ zabbix_export:
                 Reference: http://www.cisco.com/c/en/us/support/docs/ip/simple-network-management-protocol-snmp/15216-contiguous-memory.html
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
             -
               name: '{#SNMPVALUE}: Used memory'
               type: SNMP_AGENT
@@ -309,8 +304,7 @@ zabbix_export:
                 Reference: http://www.cisco.com/c/en/us/support/docs/ip/simple-network-management-protocol-snmp/15216-contiguous-memory.html
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
             -
               name: '{#SNMPVALUE}: Memory utilization'
               type: CALCULATED
@@ -322,12 +316,11 @@ zabbix_export:
               description: 'Memory utilization in %'
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
-                  name: '{#SNMPVALUE}: High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+                  name: '{#SNMPVALUE}: High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
                   priority: AVERAGE
                   description: 'The system is running out of free memory.'
           graph_prototypes:
@@ -346,6 +339,28 @@ zabbix_export:
         -
           macro: '{$MEMORY.UTIL.MAX}'
           value: '90'
+      valuemaps:
+        -
+          name: 'CISCO-ENVMON-MIB::CiscoEnvMonState'
+          mappings:
+            -
+              value: '1'
+              newvalue: normal
+            -
+              value: '2'
+              newvalue: warning
+            -
+              value: '3'
+              newvalue: critical
+            -
+              value: '4'
+              newvalue: shutdown
+            -
+              value: '5'
+              newvalue: notPresent
+            -
+              value: '6'
+              newvalue: notFunctioning
     -
       template: 'Cisco CISCO-PROCESS-MIB IOS versions 12.0_3_T-12.2_3.5 SNMP'
       name: 'Cisco CISCO-PROCESS-MIB IOS versions 12.0_3_T-12.2_3.5 SNMP'
@@ -392,8 +407,7 @@ zabbix_export:
                 Reference: http://www.cisco.com/c/en/us/support/docs/ip/simple-network-management-protocol-snmp/15215-collect-cpu-util-snmp.html
               tags:
                 -
-                  tag: Application
-                  value: CPU
+                  tag: CPU
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -417,6 +431,28 @@ zabbix_export:
         -
           macro: '{$CPU.UTIL.CRIT}'
           value: '90'
+      valuemaps:
+        -
+          name: 'CISCO-ENVMON-MIB::CiscoEnvMonState'
+          mappings:
+            -
+              value: '1'
+              newvalue: normal
+            -
+              value: '2'
+              newvalue: warning
+            -
+              value: '3'
+              newvalue: critical
+            -
+              value: '4'
+              newvalue: shutdown
+            -
+              value: '5'
+              newvalue: notPresent
+            -
+              value: '6'
+              newvalue: notFunctioning
     -
       template: 'Cisco CISCO-PROCESS-MIB SNMP'
       name: 'Cisco CISCO-PROCESS-MIB SNMP'
@@ -459,8 +495,7 @@ zabbix_export:
                 Reference: http://www.cisco.com/c/en/us/support/docs/ip/simple-network-management-protocol-snmp/15215-collect-cpu-util-snmp.html
               tags:
                 -
-                  tag: Application
-                  value: CPU
+                  tag: CPU
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -484,6 +519,28 @@ zabbix_export:
         -
           macro: '{$CPU.UTIL.CRIT}'
           value: '90'
+      valuemaps:
+        -
+          name: 'CISCO-ENVMON-MIB::CiscoEnvMonState'
+          mappings:
+            -
+              value: '1'
+              newvalue: normal
+            -
+              value: '2'
+              newvalue: warning
+            -
+              value: '3'
+              newvalue: critical
+            -
+              value: '4'
+              newvalue: shutdown
+            -
+              value: '5'
+              newvalue: notPresent
+            -
+              value: '6'
+              newvalue: notFunctioning
     -
       template: 'Cisco Inventory SNMP'
       name: 'Cisco Inventory SNMP'
@@ -517,8 +574,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
         -
           name: 'Hardware serial number'
           type: SNMP_AGENT
@@ -537,8 +593,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -569,8 +624,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -614,8 +668,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -623,6 +676,28 @@ zabbix_export:
                   priority: INFO
                   description: 'Device serial number has changed. Ack to close'
                   manual_close: 'YES'
+      valuemaps:
+        -
+          name: 'CISCO-ENVMON-MIB::CiscoEnvMonState'
+          mappings:
+            -
+              value: '1'
+              newvalue: normal
+            -
+              value: '2'
+              newvalue: warning
+            -
+              value: '3'
+              newvalue: critical
+            -
+              value: '4'
+              newvalue: shutdown
+            -
+              value: '5'
+              newvalue: notPresent
+            -
+              value: '6'
+              newvalue: notFunctioning
     -
       template: 'Cisco IOS prior to 12.0_3_T SNMP'
       name: 'Cisco IOS prior to 12.0_3_T SNMP'
@@ -644,6 +719,28 @@ zabbix_export:
       groups:
         -
           name: 'Templates/Network devices'
+      valuemaps:
+        -
+          name: 'CISCO-ENVMON-MIB::CiscoEnvMonState'
+          mappings:
+            -
+              value: '1'
+              newvalue: normal
+            -
+              value: '2'
+              newvalue: warning
+            -
+              value: '3'
+              newvalue: critical
+            -
+              value: '4'
+              newvalue: shutdown
+            -
+              value: '5'
+              newvalue: notPresent
+            -
+              value: '6'
+              newvalue: notFunctioning
     -
       template: 'Cisco IOS SNMP'
       name: 'Cisco IOS SNMP'
@@ -675,6 +772,28 @@ zabbix_export:
       groups:
         -
           name: 'Templates/Network devices'
+      valuemaps:
+        -
+          name: 'CISCO-ENVMON-MIB::CiscoEnvMonState'
+          mappings:
+            -
+              value: '1'
+              newvalue: normal
+            -
+              value: '2'
+              newvalue: warning
+            -
+              value: '3'
+              newvalue: critical
+            -
+              value: '4'
+              newvalue: shutdown
+            -
+              value: '5'
+              newvalue: notPresent
+            -
+              value: '6'
+              newvalue: notFunctioning
     -
       template: 'Cisco IOS versions 12.0_3_T-12.2_3.5 SNMP'
       name: 'Cisco IOS versions 12.0_3_T-12.2_3.5 SNMP'
@@ -698,6 +817,28 @@ zabbix_export:
       groups:
         -
           name: 'Templates/Network devices'
+      valuemaps:
+        -
+          name: 'CISCO-ENVMON-MIB::CiscoEnvMonState'
+          mappings:
+            -
+              value: '1'
+              newvalue: normal
+            -
+              value: '2'
+              newvalue: warning
+            -
+              value: '3'
+              newvalue: critical
+            -
+              value: '4'
+              newvalue: shutdown
+            -
+              value: '5'
+              newvalue: notPresent
+            -
+              value: '6'
+              newvalue: notFunctioning
     -
       template: 'Cisco OLD-CISCO-CPU-MIB SNMP'
       name: 'Cisco OLD-CISCO-CPU-MIB SNMP'
@@ -727,8 +868,7 @@ zabbix_export:
             Reference: http://www.cisco.com/c/en/us/support/docs/ip/simple-network-management-protocol-snmp/15215-collect-cpu-util-snmp.html
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
           triggers:
             -
               expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -740,6 +880,28 @@ zabbix_export:
         -
           macro: '{$CPU.UTIL.CRIT}'
           value: '90'
+      valuemaps:
+        -
+          name: 'CISCO-ENVMON-MIB::CiscoEnvMonState'
+          mappings:
+            -
+              value: '1'
+              newvalue: normal
+            -
+              value: '2'
+              newvalue: warning
+            -
+              value: '3'
+              newvalue: critical
+            -
+              value: '4'
+              newvalue: shutdown
+            -
+              value: '5'
+              newvalue: notPresent
+            -
+              value: '6'
+              newvalue: notFunctioning
   graphs:
     -
       name: 'CPU utilization'

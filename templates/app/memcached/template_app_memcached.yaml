@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:05:32Z'
+  date: '2021-04-14T13:14:08Z'
   groups:
     -
       name: Templates/Applications
@@ -39,8 +39,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Commands: GET per second'
           type: DEPENDENT
@@ -62,8 +61,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Commands: SET per second'
           type: DEPENDENT
@@ -85,8 +83,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Maximum number of bytes'
           type: DEPENDENT
@@ -108,8 +105,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Open connections'
           type: DEPENDENT
@@ -126,8 +122,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Max connections'
           type: DEPENDENT
@@ -148,8 +143,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Queued connections per second'
           type: DEPENDENT
@@ -171,8 +165,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
           triggers:
             -
               expression: '{min(5m)}>{$MEMCACHED.CONN.QUEUED.MAX.WARN}'
@@ -200,8 +193,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Connection structures'
           type: DEPENDENT
@@ -218,8 +210,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Throttled connections'
           type: DEPENDENT
@@ -241,8 +232,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
           triggers:
             -
               expression: '{min(5m)}>{$MEMCACHED.CONN.THROTTLED.MAX.WARN}'
@@ -269,8 +259,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
           triggers:
             -
               expression: '{nodata(30m)}=1'
@@ -300,8 +289,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Ping'
           key: 'memcached.ping["{$MEMCACHED.CONN.URI}"]'
@@ -315,8 +303,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
           triggers:
             -
               expression: '{last()}=0'
@@ -343,8 +330,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Bytes used'
           type: DEPENDENT
@@ -363,8 +349,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Read bytes per second'
           type: DEPENDENT
@@ -387,8 +372,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Written bytes per second'
           type: DEPENDENT
@@ -411,8 +395,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Current number of items stored'
           type: DEPENDENT
@@ -429,8 +412,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Evictions per second'
           type: DEPENDENT
@@ -454,8 +436,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Hits per second'
           type: DEPENDENT
@@ -476,8 +457,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Misses per second'
           type: DEPENDENT
@@ -498,8 +478,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Threads'
           type: DEPENDENT
@@ -516,8 +495,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: New items per second'
           type: DEPENDENT
@@ -538,8 +516,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
         -
           name: 'Memcached: Get status'
           key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
@@ -548,8 +525,7 @@ zabbix_export:
           value_type: TEXT
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Memcached: Uptime'
           type: DEPENDENT
@@ -567,8 +543,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
           triggers:
             -
               expression: '{last()}<10m'
@@ -598,8 +573,7 @@ zabbix_export:
             key: 'memcached.stats["{$MEMCACHED.CONN.URI}"]'
           tags:
             -
-              tag: Application
-              value: Memcached
+              tag: Memcached
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'

@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-03-02T19:42:21Z'
+  date: '2021-04-14T13:14:52Z'
   groups:
     -
       name: Templates/Applications
@@ -50,8 +50,7 @@ zabbix_export:
             key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: HAProxy
+              tag: HAProxy
           triggers:
             -
               expression: '{last()}<10m'
@@ -82,8 +81,7 @@ zabbix_export:
             key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: HAProxy
+              tag: HAProxy
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -99,8 +97,7 @@ zabbix_export:
           units: s
           tags:
             -
-              tag: Application
-              value: HAProxy
+              tag: HAProxy
           triggers:
             -
               expression: '{min(5m)}>{$HAPROXY.RESPONSE_TIME.MAX.WARN}'
@@ -124,8 +121,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: HAProxy
+              tag: HAProxy
           triggers:
             -
               expression: '{last()}=0'
@@ -141,8 +137,7 @@ zabbix_export:
           description: 'HAProxy Statistics Report HTML'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'HAProxy: Get stats'
           key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
@@ -164,8 +159,7 @@ zabbix_export:
                 - '1'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
       discovery_rules:
         -
           name: 'BACKEND discovery'
@@ -205,8 +199,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy backend {#PXNAME}'
+                  tag: HAProxy
+                  value: backend
             -
               name: 'HAProxy Backend {#PXNAME}: Errors connection per second'
               type: DEPENDENT
@@ -227,8 +221,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy backend {#PXNAME}'
+                  tag: HAProxy
+                  value: backend
             -
               name: 'HAProxy Backend {#PXNAME}: Response errors per second'
               type: DEPENDENT
@@ -249,8 +243,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy backend {#PXNAME}'
+                  tag: HAProxy
+                  value: backend
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.BACK_ERESP.MAX.WARN}'
@@ -273,8 +267,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy backend {#PXNAME}'
+                  tag: HAProxy
+                  value: backend
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.BACK_QCUR.MAX.WARN}'
@@ -303,8 +297,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy backend {#PXNAME}'
+                  tag: HAProxy
+                  value: backend
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.BACK_QTIME.MAX.WARN}'
@@ -333,8 +327,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy backend {#PXNAME}'
+                  tag: HAProxy
+                  value: backend
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.BACK_RTIME.MAX.WARN}'
@@ -366,8 +360,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy backend {#PXNAME}'
+                  tag: HAProxy
+                  value: backend
               trigger_prototypes:
                 -
                   expression: '{max(#5)}=0'
@@ -394,8 +388,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy backend {#PXNAME}'
+                  tag: HAProxy
+                  value: backend
             -
               name: 'HAProxy Backend {#PXNAME}: Retried connections per second'
               type: DEPENDENT
@@ -416,8 +410,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy backend {#PXNAME}'
+                  tag: HAProxy
+                  value: backend
           graph_prototypes:
             -
               name: 'HAProxy: Backend {#PXNAME} Redispatched requests and retried connections per second'
@@ -483,8 +477,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Backend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
             -
               name: 'HAProxy TCP Backend {#PXNAME}: Errors connection per second'
               type: DEPENDENT
@@ -505,8 +499,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Backend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
             -
               name: 'HAProxy TCP Backend {#PXNAME}: Response errors per second'
               type: DEPENDENT
@@ -527,8 +521,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Backend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.BACK_ERESP.MAX.WARN}'
@@ -551,8 +545,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Backend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.BACK_QCUR.MAX.WARN}'
@@ -581,8 +575,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Backend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.BACK_QTIME.MAX.WARN}'
@@ -611,8 +605,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Backend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.BACK_RTIME.MAX.WARN}'
@@ -644,8 +638,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Backend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{max(#5)}=0'
@@ -672,8 +666,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Backend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
             -
               name: 'HAProxy TCP Backend {#PXNAME}: Retried connections per second'
               type: DEPENDENT
@@ -694,8 +688,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Backend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
           graph_prototypes:
             -
               name: 'HAProxy: TCP Backend {#PXNAME} Redispatched requests and retried connections per second'
@@ -767,8 +761,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
             -
               name: 'HAProxy Frontend {#PXNAME}: Outgoing traffic'
               type: DEPENDENT
@@ -794,8 +788,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
             -
               name: 'HAProxy Frontend {#PXNAME}: Denied requests per second'
               type: DEPENDENT
@@ -816,8 +810,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.FRONT_DREQ.MAX.WARN}'
@@ -844,8 +838,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.FRONT_EREQ.MAX.WARN}'
@@ -872,8 +866,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
             -
               name: 'HAProxy Frontend {#PXNAME}: Number of responses with codes 2xx per second'
               type: DEPENDENT
@@ -894,8 +888,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
             -
               name: 'HAProxy Frontend {#PXNAME}: Number of responses with codes 3xx per second'
               type: DEPENDENT
@@ -916,8 +910,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
             -
               name: 'HAProxy Frontend {#PXNAME}: Number of responses with codes 4xx per second'
               type: DEPENDENT
@@ -938,8 +932,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
             -
               name: 'HAProxy Frontend {#PXNAME}: Number of responses with codes 5xx per second'
               type: DEPENDENT
@@ -960,8 +954,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
             -
               name: 'HAProxy Frontend {#PXNAME}: Sessions rate'
               type: DEPENDENT
@@ -978,8 +972,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
             -
               name: 'HAProxy Frontend {#PXNAME}: Requests rate'
               type: DEPENDENT
@@ -996,8 +990,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
             -
               name: 'HAProxy Frontend {#PXNAME}: Established sessions'
               type: DEPENDENT
@@ -1014,8 +1008,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
             -
               name: 'HAProxy Frontend {#PXNAME}: Session limits'
               type: DEPENDENT
@@ -1036,8 +1030,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
             -
               name: 'HAProxy Frontend {#PXNAME}: Session utilization'
               type: CALCULATED
@@ -1049,8 +1043,8 @@ zabbix_export:
               description: 'Percentage of sessions used (scur / slim * 100).'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: frontend
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.FRONT_SUTIL.MAX.WARN}'
@@ -1191,8 +1185,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
             -
               name: 'HAProxy TCP Frontend {#PXNAME}: Outgoing traffic'
               type: DEPENDENT
@@ -1218,8 +1212,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
             -
               name: 'HAProxy TCP Frontend {#PXNAME}: Denied requests per second'
               type: DEPENDENT
@@ -1240,8 +1234,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.FRONT_DREQ.MAX.WARN}'
@@ -1268,8 +1262,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.FRONT_EREQ.MAX.WARN}'
@@ -1292,8 +1286,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
             -
               name: 'HAProxy TCP Frontend {#PXNAME}: Requests rate'
               type: DEPENDENT
@@ -1310,8 +1304,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
             -
               name: 'HAProxy TCP Frontend {#PXNAME}: Established sessions'
               type: DEPENDENT
@@ -1328,8 +1322,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
             -
               name: 'HAProxy TCP Frontend {#PXNAME}: Session limits'
               type: DEPENDENT
@@ -1350,8 +1344,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
             -
               name: 'HAProxy TCP Frontend {#PXNAME}: Session utilization'
               type: CALCULATED
@@ -1363,8 +1357,8 @@ zabbix_export:
               description: 'Percentage of sessions used (scur / slim * 100).'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP Frontend {#PXNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.FRONT_SUTIL.MAX.WARN}'
@@ -1467,8 +1461,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: '{#PXNAME}'
             -
               name: 'HAProxy {#PXNAME} {#SVNAME}: Errors connection per second'
               type: DEPENDENT
@@ -1489,8 +1483,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: '{#PXNAME}'
             -
               name: 'HAProxy {#PXNAME} {#SVNAME}: Response errors per second'
               type: DEPENDENT
@@ -1511,8 +1505,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: '{#PXNAME}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.SERVER_ERESP.MAX.WARN}'
@@ -1539,8 +1533,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: '{#PXNAME}'
             -
               name: 'HAProxy {#PXNAME} {#SVNAME}: Number of responses with codes 5xx per second'
               type: DEPENDENT
@@ -1561,8 +1555,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: '{#PXNAME}'
             -
               name: 'HAProxy {#PXNAME} {#SVNAME}: Unassigned requests'
               type: DEPENDENT
@@ -1579,8 +1573,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: '{#PXNAME}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.SERVER_QCUR.MAX.WARN}'
@@ -1609,8 +1603,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: '{#PXNAME}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.SERVER_QTIME.MAX.WARN}'
@@ -1639,8 +1633,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: '{#PXNAME}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.SERVER_RTIME.MAX.WARN}'
@@ -1672,8 +1666,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: '{#PXNAME}'
               trigger_prototypes:
                 -
                   expression: '{max(#5)}=0'
@@ -1700,8 +1694,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: '{#PXNAME}'
             -
               name: 'HAProxy {#PXNAME} {#SVNAME}: Retried connections per second'
               type: DEPENDENT
@@ -1722,8 +1716,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: '{#PXNAME}'
           graph_prototypes:
             -
               name: 'HAProxy: {#PXNAME} {#SVNAME} Response time and time in queue'
@@ -1790,8 +1784,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: TCP
             -
               name: 'HAProxy TCP {#PXNAME} {#SVNAME}: Errors connection per second'
               type: DEPENDENT
@@ -1812,8 +1806,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: TCP
             -
               name: 'HAProxy TCP {#PXNAME} {#SVNAME}: Response errors per second'
               type: DEPENDENT
@@ -1834,8 +1828,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.SERVER_ERESP.MAX.WARN}'
@@ -1858,8 +1852,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.SERVER_QCUR.MAX.WARN}'
@@ -1888,8 +1882,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.SERVER_QTIME.MAX.WARN}'
@@ -1918,8 +1912,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$HAPROXY.SERVER_RTIME.MAX.WARN}'
@@ -1951,8 +1945,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: TCP
               trigger_prototypes:
                 -
                   expression: '{max(#5)}=0'
@@ -1979,8 +1973,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: TCP
             -
               name: 'HAProxy TCP {#PXNAME} {#SVNAME}: Retried connections per second'
               type: DEPENDENT
@@ -2001,8 +1995,8 @@ zabbix_export:
                 key: 'web.page.get["{$HAPROXY.STATS.SCHEME}://{HOST.CONN}:{$HAPROXY.STATS.PORT}/{$HAPROXY.STATS.PATH};csv"]'
               tags:
                 -
-                  tag: Application
-                  value: 'HAProxy TCP {#PXNAME} {#SVNAME}'
+                  tag: HAProxy
+                  value: TCP
           graph_prototypes:
             -
               name: 'HAProxy: TCP {#PXNAME} {#SVNAME} Response time and time in queue'
@@ -2094,131 +2088,161 @@ zabbix_export:
       dashboards:
         -
           name: 'HAProxy Backend performance'
-          widgets:
+          pages:
             -
-              type: GRAPH_PROTOTYPE
-              width: '24'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+              widgets:
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'HAProxy: Backend {#PXNAME} Redispatched requests and retried connections per second'
-                    host: 'HAProxy by Zabbix agent'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'HAProxy: Backend {#PXNAME} Redispatched requests and retried connections per second'
+                        host: 'HAProxy by Zabbix agent'
         -
           name: 'HAProxy Frontend performance'
-          widgets:
+          pages:
             -
-              type: GRAPH_PROTOTYPE
-              width: '12'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+              widgets:
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'HAProxy: Frontend {#PXNAME} Requests and sessions per second'
-                    host: 'HAProxy by Zabbix agent'
-            -
-              type: GRAPH_PROTOTYPE
-              x: '12'
-              width: '12'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
-                -
-                  type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'HAProxy: Frontend {#PXNAME} Errors and denials per second'
-                    host: 'HAProxy by Zabbix agent'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '12'
-              width: '12'
-              height: '13'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+                  width: '12'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'HAProxy: Frontend {#PXNAME} Requests and sessions per second'
+                        host: 'HAProxy by Zabbix agent'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'HAProxy: Frontend {#PXNAME} Responses by HTTP code'
-                    host: 'HAProxy by Zabbix agent'
-            -
-              type: GRAPH_PROTOTYPE
-              x: '12'
-              'y': '12'
-              width: '12'
-              height: '13'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+                  x: '12'
+                  width: '12'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'HAProxy: Frontend {#PXNAME} Errors and denials per second'
+                        host: 'HAProxy by Zabbix agent'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'HAProxy: Frontend {#PXNAME} In/Out traffic'
-                    host: 'HAProxy by Zabbix agent'
+                  'y': '12'
+                  width: '12'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'HAProxy: Frontend {#PXNAME} Responses by HTTP code'
+                        host: 'HAProxy by Zabbix agent'
+                -
+                  type: GRAPH_PROTOTYPE
+                  x: '12'
+                  'y': '12'
+                  width: '12'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'HAProxy: Frontend {#PXNAME} In/Out traffic'
+                        host: 'HAProxy by Zabbix agent'
         -
           name: 'HAProxy Server performance'
-          widgets:
+          pages:
             -
-              type: GRAPH_PROTOTYPE
-              width: '24'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+              widgets:
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'HAProxy: {#PXNAME} {#SVNAME} Response time and time in queue'
-                    host: 'HAProxy by Zabbix agent'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'HAProxy: {#PXNAME} {#SVNAME} Response time and time in queue'
+                        host: 'HAProxy by Zabbix agent'
       valuemaps:
         -
           name: 'Service state'

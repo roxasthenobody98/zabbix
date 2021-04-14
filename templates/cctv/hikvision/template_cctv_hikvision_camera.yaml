@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:44Z'
+  date: '2021-04-14T13:14:57Z'
   groups:
     -
       name: 'Templates/Video surveillance'

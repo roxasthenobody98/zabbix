@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:37Z'
+  date: '2021-04-14T14:25:24Z'
   groups:
     -
       name: Templates/Applications
@@ -44,8 +44,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Cache: Operations rate, total'
           type: DEPENDENT
@@ -67,8 +66,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Database: Connection pool, busy'
           type: DEPENDENT
@@ -85,8 +83,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Database: Connection pool, current'
           type: DEPENDENT
@@ -103,8 +100,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Database: Connection pool, dead'
           type: DEPENDENT
@@ -121,8 +117,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Database: Connection pool, idle'
           type: DEPENDENT
@@ -139,8 +134,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Database: Connection pool, size'
           type: DEPENDENT
@@ -157,8 +151,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Database: Connection pool, waiting'
           type: DEPENDENT
@@ -175,8 +168,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Version'
           type: DEPENDENT
@@ -199,8 +191,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -225,8 +216,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Get instance metrics'
           type: HTTP_AGENT
@@ -246,8 +236,7 @@ zabbix_export:
           url: '{$GITLAB.URL}:{$GITLAB.PORT}/-/metrics'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: 'Zabbix raw items'
         -
           name: 'GitLab: HTTP requests rate, 4xx'
           type: DEPENDENT
@@ -271,8 +260,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: HTTP requests rate, 5xx'
           type: DEPENDENT
@@ -296,8 +284,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
           triggers:
             -
               expression: '{min(5m)}>{$GITLAB.HTTP.FAIL.MAX.WARN}'
@@ -326,8 +313,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Application server status'
           type: HTTP_AGENT
@@ -361,8 +347,7 @@ zabbix_export:
           status_codes: ''
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
           triggers:
             -
               expression: '{last()}=0'
@@ -386,8 +371,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Pipelines: Auto DevOps pipelines, failed'
           type: DEPENDENT
@@ -405,8 +389,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Pipelines: Created, total'
           type: DEPENDENT
@@ -424,8 +407,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Pipelines: CI/CD creation duration'
           type: DEPENDENT
@@ -444,8 +426,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Pipelines: Pipelines: CI/CD creation count'
           type: DEPENDENT
@@ -463,8 +444,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Pipelines: Processing events, total'
           type: DEPENDENT
@@ -482,8 +462,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Instance readiness check'
           type: HTTP_AGENT
@@ -516,8 +495,7 @@ zabbix_export:
           url: '{$GITLAB.URL}:{$GITLAB.PORT}/-/readiness'
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
           triggers:
             -
               expression: '{last()}=0'
@@ -549,8 +527,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
           triggers:
             -
               expression: '{min(5m)}>{$GITLAB.REDIS.FAIL.MAX.WARN}'
@@ -579,8 +556,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
           triggers:
             -
               expression: '{min(5m)}>{$GITLAB.REDIS.FAIL.MAX.WARN}'
@@ -609,8 +585,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
           triggers:
             -
               expression: '{min(5m)}>{$GITLAB.REDIS.FAIL.MAX.WARN}'
@@ -640,8 +615,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Redis: Client requests rate, queues'
           type: DEPENDENT
@@ -665,8 +639,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Redis: Client requests rate, shared_state'
           type: DEPENDENT
@@ -690,8 +663,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Ruby: File descriptors opened, avg'
           type: DEPENDENT
@@ -709,8 +681,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Ruby: File descriptors opened, max'
           type: DEPENDENT
@@ -728,8 +699,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Ruby: File descriptors opened, min'
           type: DEPENDENT
@@ -747,8 +717,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Ruby: CPU  usage per second'
           type: DEPENDENT
@@ -772,8 +741,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Ruby: File descriptors, max'
           type: DEPENDENT
@@ -791,8 +759,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Ruby: RSS memory, avg'
           type: DEPENDENT
@@ -811,8 +778,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Ruby: RSS memory, max'
           type: DEPENDENT
@@ -831,8 +797,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Ruby: RSS memory, min'
           type: DEPENDENT
@@ -851,8 +816,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Ruby: First process start time'
           type: DEPENDENT
@@ -874,8 +838,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Ruby: Last process start time'
           type: DEPENDENT
@@ -897,8 +860,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Ruby: Running_threads'
           type: DEPENDENT
@@ -915,8 +877,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
           triggers:
             -
               expression: '{nodata(30m)}=1'
@@ -945,8 +906,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Transactions per second'
           type: DEPENDENT
@@ -970,8 +930,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: Upload file does not exist'
           type: DEPENDENT
@@ -989,8 +948,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
         -
           name: 'GitLab: User logins, total'
           type: DEPENDENT
@@ -1008,8 +966,7 @@ zabbix_export:
             key: gitlab.get_metrics
           tags:
             -
-              tag: Application
-              value: GitLab
+              tag: GitLab
       discovery_rules:
         -
           name: 'Puma metrics discovery'
@@ -1034,8 +991,8 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Puma stats'
+                  tag: GitLab
+                  value: 'Puma stats'
             -
               name: 'GitLab: Idle threads'
               type: DEPENDENT
@@ -1052,8 +1009,8 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Puma stats'
+                  tag: GitLab
+                  value: 'Puma stats'
             -
               name: 'GitLab: Killer terminations, total'
               type: DEPENDENT
@@ -1071,8 +1028,8 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Puma stats'
+                  tag: GitLab
+                  value: 'Puma stats'
             -
               name: 'GitLab: Max threads'
               type: DEPENDENT
@@ -1089,8 +1046,8 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Puma stats'
+                  tag: GitLab
+                  value: 'Puma stats'
             -
               name: 'GitLab: Pool capacity'
               type: DEPENDENT
@@ -1107,8 +1064,8 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Puma stats'
+                  tag: GitLab
+                  value: 'Puma stats'
             -
               name: 'GitLab: Queued connections'
               type: DEPENDENT
@@ -1125,8 +1082,8 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Puma stats'
+                  tag: GitLab
+                  value: 'Puma stats'
               trigger_prototypes:
                 -
                   expression: '{min(15m)}>{$GITLAB.PUMA.QUEUE.MAX.WARN}'
@@ -1148,8 +1105,8 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Puma stats'
+                  tag: GitLab
+                  value: 'Puma stats'
             -
               name: 'GitLab: Running workers'
               type: DEPENDENT
@@ -1166,8 +1123,8 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Puma stats'
+                  tag: GitLab
+                  value: 'Puma stats'
             -
               name: 'GitLab: Stale workers'
               type: DEPENDENT
@@ -1184,8 +1141,8 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Puma stats'
+                  tag: GitLab
+                  value: 'Puma stats'
             -
               name: 'GitLab: Workers'
               type: DEPENDENT
@@ -1202,12 +1159,12 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Puma stats'
+                  tag: GitLab
+                  value: 'Puma stats'
           trigger_prototypes:
             -
               expression: '{GitLab by HTTP:gitlab.puma.active_connections[{#SINGLETON}].min(5m)}/{GitLab by HTTP:gitlab.puma.max_threads[{#SINGLETON}].last()}*100>{$GITLAB.PUMA.UTILIZATION.MAX.WARN}'
-              name: 'GitLab: Puma instance thread utilization is too high (over {$GITLAB.PUMA.UTILIZATION.MAX.WARN}% for 5m)'
+              name: 'GitLab: Puma instance thread utilization is too hight (over {$GITLAB.PUMA.UTILIZATION.MAX.WARN}% for 5m)'
               priority: WARNING
           url: '{$GITLAB.URL}:{$GITLAB.PORT}/-/metrics'
           preprocessing:
@@ -1242,8 +1199,8 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Unicorn stats'
+                  tag: GitLab
+                  value: 'Unicorn stats'
             -
               name: 'GitLab: Unicorn: Queued connections'
               type: DEPENDENT
@@ -1260,8 +1217,8 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Unicorn stats'
+                  tag: GitLab
+                  value: 'Unicorn stats'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$GITLAB.UNICORN.QUEUE.MAX.WARN}'
@@ -1283,8 +1240,8 @@ zabbix_export:
                 key: gitlab.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'GitLab: Unicorn stats'
+                  tag: GitLab
+                  value: 'Unicorn stats'
           trigger_prototypes:
             -
               expression: '{GitLab by HTTP:gitlab.unicorn.active_connections[{#SINGLETON}].min(5m)}/{GitLab by HTTP:gitlab.unicorn.unicorn_workers[{#SINGLETON}].last()}*100>{$GITLAB.UNICORN.UTILIZATION.MAX.WARN}'

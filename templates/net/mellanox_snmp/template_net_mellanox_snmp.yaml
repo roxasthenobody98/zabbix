@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-03-16T09:53:43Z'
+  date: '2021-04-14T13:14:36Z'
   groups:
     -
       name: 'Templates/Network devices'
@@ -33,8 +33,7 @@ zabbix_export:
             name: 'Service state'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{max(#3)}=0'
@@ -50,8 +49,7 @@ zabbix_export:
           units: '%'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{min(5m)}>{$ICMP.LOSS.WARN} and {min(5m)}<100'
@@ -71,8 +69,7 @@ zabbix_export:
           units: s
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{avg(5m)}>{$ICMP.RESPONSE_TIME.WARN}'
@@ -97,8 +94,7 @@ zabbix_export:
           logtimefmt: 'hh:mm:sszyyyy/MM/dd'
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'System contact details'
           type: SNMP_AGENT
@@ -119,8 +115,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'CPU utilization'
           type: SNMP_AGENT
@@ -140,8 +135,7 @@ zabbix_export:
                 - '$..[''{#CPU.UTIL}''].avg()'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
           triggers:
             -
               expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -170,14 +164,13 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'System location'
           type: SNMP_AGENT
           snmp_oid: 1.3.6.1.2.1.1.6.0
           key: 'system.location[sysLocation.0]'
-          delay: 15m
+          delay: 1h
           history: 2w
           trends: '0'
           value_type: CHAR
@@ -192,14 +185,13 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'System name'
           type: SNMP_AGENT
           snmp_oid: 1.3.6.1.2.1.1.5.0
           key: system.name
-          delay: 15m
+          delay: 1h
           history: 2w
           trends: '0'
           value_type: CHAR
@@ -214,8 +206,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -242,8 +233,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: Uptime
           type: SNMP_AGENT
@@ -263,8 +253,7 @@ zabbix_export:
                 - '0.01'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{last()}<10m'
@@ -285,8 +274,7 @@ zabbix_export:
             name: zabbix.host.available
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{max({$SNMP.TIMEOUT})}=0'
@@ -329,8 +317,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
             -
               name: '{#ENT_NAME}: Hardware serial number'
               type: SNMP_AGENT
@@ -348,8 +335,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -390,8 +376,7 @@ zabbix_export:
                 entPhySensorScale, and entPhySensorPrecision objects must also be examined.
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
             -
               name: '{#SENSOR_INFO}: Fan status'
               type: SNMP_AGENT
@@ -407,8 +392,7 @@ zabbix_export:
                 name: 'ENTITY-SENSORS-MIB::EntitySensorStatus'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN.STATUS.CRIT},eq)}=1'
@@ -516,8 +500,8 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Inbound packets with errors'
               type: SNMP_AGENT
@@ -535,8 +519,8 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Bits received'
               type: SNMP_AGENT
@@ -559,8 +543,8 @@ zabbix_export:
                     - '8'
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Outbound packets discarded'
               type: SNMP_AGENT
@@ -582,8 +566,8 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Outbound packets with errors'
               type: SNMP_AGENT
@@ -601,8 +585,8 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Bits sent'
               type: SNMP_AGENT
@@ -625,8 +609,8 @@ zabbix_export:
                     - '8'
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Speed'
               type: SNMP_AGENT
@@ -650,8 +634,8 @@ zabbix_export:
                     - 1h
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Operational status'
               type: SNMP_AGENT
@@ -672,8 +656,8 @@ zabbix_export:
                 name: 'IF-MIB::ifOperStatus'
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
               trigger_prototypes:
                 -
                   expression: '{$IFCONTROL:"{#IFNAME}"}=1 and ({last()}=2 and {diff()}=1)'
@@ -712,8 +696,8 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
           trigger_prototypes:
             -
               expression: |
@@ -855,8 +839,7 @@ zabbix_export:
                 name: 'ENTITY-STATE-MIB::EntityOperState'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: Power_supply
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU.STATUS.CRIT},eq)}=1'
@@ -906,8 +889,7 @@ zabbix_export:
                 name: 'ENTITY-SENSORS-MIB::EntitySensorStatus'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
             -
               name: '{#SENSOR_INFO}: Temperature'
               type: SNMP_AGENT
@@ -928,8 +910,7 @@ zabbix_export:
                     - '0.1'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP.MAX.CRIT:"{#SENSOR_INFO}"}'
@@ -1017,8 +998,8 @@ zabbix_export:
               description: 'Space utilization in % for {#FSNAME}'
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
             -
               name: '{#FSNAME}: Total space'
               type: SNMP_AGENT
@@ -1038,8 +1019,8 @@ zabbix_export:
                     - '{#ALLOC_UNITS}'
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
             -
               name: '{#FSNAME}: Used space'
               type: SNMP_AGENT
@@ -1057,8 +1038,8 @@ zabbix_export:
                     - '{#ALLOC_UNITS}'
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
           trigger_prototypes:
             -
               expression: |
@@ -1167,8 +1148,7 @@ zabbix_export:
                     - '{#ALLOC_UNITS}'
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
             -
               name: '{#MEMNAME}: Used memory'
               type: SNMP_AGENT
@@ -1186,8 +1166,7 @@ zabbix_export:
                     - '{#ALLOC_UNITS}'
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
             -
               name: '{#MEMNAME}: Memory utilization'
               type: CALCULATED
@@ -1199,8 +1178,7 @@ zabbix_export:
               description: 'Memory utilization in %'
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
@@ -1332,6 +1310,15 @@ zabbix_export:
           value: '3'
           description: 'The critical value of the TEMP sensor for trigger expression.'
         -
+          macro: '{$TEMP_CRIT}'
+          value: '60'
+        -
+          macro: '{$TEMP_CRIT_LOW}'
+          value: '5'
+        -
+          macro: '{$TEMP_WARN}'
+          value: '50'
+        -
           macro: '{$VFS.FS.FSNAME.MATCHES}'
           value: .+
           description: 'This macro is used in filesystems discovery. Can be overridden on the host level.'
@@ -1356,96 +1343,108 @@ zabbix_export:
       dashboards:
         -
           name: 'Network interfaces'
-          widgets:
+          pages:
             -
-              type: GRAPH_PROTOTYPE
-              width: '24'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '2'
+              widgets:
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'Interface {#IFNAME}({#IFALIAS}): Network traffic'
-                    host: 'Mellanox SNMP'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'Interface {#IFNAME}({#IFALIAS}): Network traffic'
+                        host: 'Mellanox SNMP'
         -
           name: 'System performance'
-          widgets:
+          pages:
             -
-              type: GRAPH_CLASSIC
-              width: '24'
-              height: '5'
-              fields:
+              widgets:
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'CPU utilization'
-                    host: 'Mellanox SNMP'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '5'
-              width: '24'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '2'
+                  type: GRAPH_CLASSIC
+                  width: '24'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'CPU utilization'
+                        host: 'Mellanox SNMP'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#MEMNAME}: Memory utilization'
-                    host: 'Mellanox SNMP'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '10'
-              width: '24'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '2'
+                  'y': '5'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#MEMNAME}: Memory utilization'
+                        host: 'Mellanox SNMP'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#FSNAME}: Disk space usage'
-                    host: 'Mellanox SNMP'
+                  'y': '17'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#FSNAME}: Disk space usage'
+                        host: 'Mellanox SNMP'
       valuemaps:
         -
           name: 'ENTITY-SENSORS-MIB::EntitySensorStatus'
@@ -1483,6 +1482,9 @@ zabbix_export:
             -
               value: '2'
               newvalue: down
+            -
+              value: '3'
+              newvalue: testing
             -
               value: '4'
               newvalue: unknown

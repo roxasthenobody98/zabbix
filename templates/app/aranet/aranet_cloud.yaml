@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:39Z'
+  date: '2021-04-14T14:19:54Z'
   groups:
     -
       name: Templates/Applications
@@ -299,8 +299,7 @@ zabbix_export:
               value: '{$ARANET.API.USERNAME}'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: 'Zabbix raw items'
         -
           name: 'Aranet: Sensors discovery'
           type: DEPENDENT
@@ -342,8 +341,7 @@ zabbix_export:
             key: aranet.get_data
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: 'Zabbix raw items'
       discovery_rules:
         -
           name: 'Battery voltage discovery'
@@ -402,8 +400,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
               trigger_prototypes:
                 -
                   expression: '{max(5m)} < {$ARANET.BATT.VOLTAGE.MIN.CRIT:"{#SENSOR_NAME}"}'
@@ -476,8 +473,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)} > {$ARANET.CO2.MAX.CRIT:"{#SENSOR_NAME}"}'
@@ -550,8 +546,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -611,8 +606,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -672,8 +666,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -733,8 +726,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)} > {$ARANET.HUMIDITY.MAX.WARN:"{#SENSOR_NAME}"}'
@@ -807,8 +799,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -871,8 +862,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
               trigger_prototypes:
                 -
                   expression: '{last()} > {$ARANET.LAST_UPDATE.MAX.WARN:"{#SENSOR_NAME}"}'
@@ -936,8 +926,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -997,8 +986,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -1058,8 +1046,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -1119,8 +1106,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -1180,8 +1166,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -1241,8 +1226,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -1302,8 +1286,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -1363,8 +1346,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -1424,8 +1406,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -1485,8 +1466,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -1546,8 +1526,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -1607,8 +1586,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
         -
@@ -1668,8 +1646,7 @@ zabbix_export:
                 key: aranet.get_data
               tags:
                 -
-                  tag: Application
-                  value: '{#METRIC}'
+                  tag: '{#METRIC}'
           master_item:
             key: aranet.sensor.discovery
       macros:

@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-03-02T19:42:24Z'
+  date: '2021-04-14T13:15:18Z'
   groups:
     -
       name: Templates/Databases
@@ -32,8 +32,7 @@ zabbix_export:
             key: 'pgsql.archive["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Archive: Count of files in archive_status need to archive'
           type: DEPENDENT
@@ -50,8 +49,7 @@ zabbix_export:
             key: 'pgsql.archive["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Archive: Count of attempts to archive files'
           type: DEPENDENT
@@ -71,8 +69,7 @@ zabbix_export:
             key: 'pgsql.archive["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Archive: Count of files need to archive'
           type: DEPENDENT
@@ -90,8 +87,7 @@ zabbix_export:
             key: 'pgsql.archive["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'PostgreSQL: Get archive'
           key: 'pgsql.archive["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -101,8 +97,7 @@ zabbix_export:
           description: 'Collect archive status metrics'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Autovacuum: Count of autovacuum workers'
           key: 'pgsql.autovacuum.count["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -111,8 +106,7 @@ zabbix_export:
           description: 'Number of autovacuum workers.'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Bgwriter: Buffers allocated'
           type: DEPENDENT
@@ -134,8 +128,7 @@ zabbix_export:
             key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Bgwriter: Buffers written directly by a backend'
           type: DEPENDENT
@@ -157,8 +150,7 @@ zabbix_export:
             key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Bgwriter: Times a backend execute its own fsync'
           type: DEPENDENT
@@ -180,8 +172,7 @@ zabbix_export:
             key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Checkpoint: Buffers checkpoints written'
           type: DEPENDENT
@@ -203,8 +194,7 @@ zabbix_export:
             key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Checkpoint: Buffers background written'
           type: DEPENDENT
@@ -226,8 +216,7 @@ zabbix_export:
             key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Checkpoint: Requested'
           type: DEPENDENT
@@ -249,8 +238,7 @@ zabbix_export:
             key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Checkpoint: By timeout'
           type: DEPENDENT
@@ -272,36 +260,7 @@ zabbix_export:
             key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
-        -
-          name: 'Checkpoint: Checkpoint sync time'
-          type: DEPENDENT
-          key: pgsql.bgwriter.checkpoint_sync_time.rate
-          delay: '0'
-          history: 7d
-          value_type: FLOAT
-          units: s
-          description: 'Total amount of time that has been spent in the portion of checkpoint processing where files are synchronized to disk'
-          preprocessing:
-            -
-              type: JSONPATH
-              parameters:
-                - $.checkpoint_sync_time
-            -
-              type: MULTIPLIER
-              parameters:
-                - '0.001'
-            -
-              type: CHANGE_PER_SECOND
-              parameters:
-                - ''
-          master_item:
-            key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
-          tags:
-            -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Checkpoint: Checkpoint write time'
           type: DEPENDENT
@@ -328,8 +287,7 @@ zabbix_export:
             key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Bgwriter: Number of bgwriter stopped'
           type: DEPENDENT
@@ -351,8 +309,34 @@ zabbix_export:
             key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
+        -
+          name: 'Checkpoint: Checkpoint sync time'
+          type: DEPENDENT
+          key: pgsql.bgwriter.sync_time.rate
+          delay: '0'
+          history: 7d
+          value_type: FLOAT
+          units: s
+          description: 'Total amount of time that has been spent in the portion of checkpoint processing where files are synchronized to disk'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.sync_time
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.001'
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+          master_item:
+            key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
+          tags:
+            -
+              tag: PostgreSQL
         -
           name: 'PostgreSQL: Get bgwriter'
           key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -362,18 +346,16 @@ zabbix_export:
           description: 'https://www.postgresql.org/docs/12/monitoring-stats.html#PG-STAT-BGWRITER-VIEW'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'PostgreSQL: Cache hit'
-          key: 'pgsql.cache.hit["{$PG.URI}"]'
+          key: 'pgsql.cache.hit["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           history: 7d
           value_type: FLOAT
           units: '%'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Connections sum: Active'
           type: DEPENDENT
@@ -390,8 +372,7 @@ zabbix_export:
             key: 'pgsql.connections["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Connections sum: Disabled'
           type: DEPENDENT
@@ -408,8 +389,7 @@ zabbix_export:
             key: 'pgsql.connections["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Connections sum: Fastpath function call'
           type: DEPENDENT
@@ -426,8 +406,7 @@ zabbix_export:
             key: 'pgsql.connections["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Connections sum: Idle'
           type: DEPENDENT
@@ -444,8 +423,7 @@ zabbix_export:
             key: 'pgsql.connections["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Connections sum: Idle in transaction'
           type: DEPENDENT
@@ -462,8 +440,7 @@ zabbix_export:
             key: 'pgsql.connections["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Connections sum: Idle in transaction (aborted)'
           type: DEPENDENT
@@ -480,8 +457,7 @@ zabbix_export:
             key: 'pgsql.connections["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Connections sum: Prepared'
           type: DEPENDENT
@@ -500,8 +476,7 @@ zabbix_export:
             key: 'pgsql.connections["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Connections sum: Total'
           type: DEPENDENT
@@ -518,8 +493,7 @@ zabbix_export:
             key: 'pgsql.connections["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Connections sum: Total %'
           type: DEPENDENT
@@ -537,8 +511,7 @@ zabbix_export:
             key: 'pgsql.connections["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
           triggers:
             -
               expression: '{min(5m)} > {$PG.CONN_TOTAL_PCT.MAX.WARN}'
@@ -562,8 +535,7 @@ zabbix_export:
             key: 'pgsql.connections["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'PostgreSQL: Get connections'
           key: 'pgsql.connections["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -575,20 +547,7 @@ zabbix_export:
             https://www.postgresql.org/docs/current/monitoring-stats.html#PG-STAT-ACTIVITY-VIEW
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
-        -
-          name: 'PostgreSQL: Custom queries'
-          key: 'pgsql.custom.query["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}","{$PG.DATABASE}",""]'
-          history: 1h
-          trends: '0'
-          status: DISABLED
-          value_type: TEXT
-          description: 'Execute custom queries from file *.sql'
-          tags:
-            -
-              tag: Application
-              value: PostgreSQL
+              tag: Zabbix_raw_items
         -
           name: 'Dbstat: Hit blocks read'
           type: DEPENDENT
@@ -610,8 +569,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Disk blocks read'
           type: DEPENDENT
@@ -633,8 +591,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Blocks read time'
           type: DEPENDENT
@@ -657,8 +614,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Blocks write time'
           type: DEPENDENT
@@ -681,8 +637,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Checksum failures'
           type: DEPENDENT
@@ -705,13 +660,12 @@ zabbix_export:
               parameters:
                 - ''
               error_handler: CUSTOM_VALUE
-              error_handler_params: '-1'
+              error_handler_params: 'ZBX_NOTSUPPORTED: Checksum failures metric is supported only in PostgreSQL 12 or higher.'
           master_item:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Conflicts'
           type: DEPENDENT
@@ -733,8 +687,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Deadlocks'
           type: DEPENDENT
@@ -756,8 +709,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Backends connected'
           type: DEPENDENT
@@ -794,8 +746,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Number temp bytes'
           type: DEPENDENT
@@ -817,8 +768,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Rows deleted'
           type: DEPENDENT
@@ -840,8 +790,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Rows fetched'
           type: DEPENDENT
@@ -863,8 +812,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Rows inserted'
           type: DEPENDENT
@@ -886,8 +834,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Rows returned'
           type: DEPENDENT
@@ -909,8 +856,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Rows updated'
           type: DEPENDENT
@@ -932,8 +878,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Committed transactions'
           type: DEPENDENT
@@ -955,8 +900,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Dbstat: Roll backed transactions'
           type: DEPENDENT
@@ -978,8 +922,7 @@ zabbix_export:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'PostgreSQL: Get dbstat sum'
           key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -991,8 +934,7 @@ zabbix_export:
             https://www.postgresql.org/docs/current/monitoring-stats.html#PG-STAT-DATABASE-VIEW
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'PostgreSQL: Get dbstat'
           key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -1004,8 +946,7 @@ zabbix_export:
             https://www.postgresql.org/docs/current/monitoring-stats.html#PG-STAT-DATABASE-VIEW
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'PostgreSQL: Get locks'
           key: 'pgsql.locks["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -1017,18 +958,16 @@ zabbix_export:
             https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-TABLES
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'PostgreSQL: Age of oldest xid'
-          key: 'pgsql.oldest.xid["{$PG.URI}","{$PG.USER}"]'
+          key: 'pgsql.oldest.xid["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           history: 7d
           value_type: FLOAT
           description: 'Age of oldest xid.'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
           triggers:
             -
               expression: '{last()} > 18000000'
@@ -1045,8 +984,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
           triggers:
             -
               expression: '{last()}=0'
@@ -1059,8 +997,7 @@ zabbix_export:
           description: 'Number of standby servers'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Replication: Lag in bytes'
           key: 'pgsql.replication.lag.b["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -1069,8 +1006,7 @@ zabbix_export:
           description: 'Replication lag with Master in byte.'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Replication: Lag in seconds'
           key: 'pgsql.replication.lag.sec["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -1079,19 +1015,7 @@ zabbix_export:
           description: 'Replication lag with Master in seconds.'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
-        -
-          name: 'PostgreSQL: Get replication'
-          key: 'pgsql.replication.process["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
-          history: '0'
-          trends: '0'
-          value_type: TEXT
-          description: 'Collect metrics from the pg_stat_replication, which contains information about the WAL sender process, showing statistics about replication to that sender''s connected standby server.'
-          tags:
-            -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: PostgreSQL
         -
           name: 'Replication: Recovery role'
           key: 'pgsql.replication.recovery_role["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -1101,8 +1025,7 @@ zabbix_export:
             name: 'PostgreSQL recovery role'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'Replication: Status'
           key: 'pgsql.replication.status["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -1112,8 +1035,7 @@ zabbix_export:
             name: 'PostgreSQL replication status'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'PostgreSQL: Uptime'
           key: 'pgsql.uptime["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -1122,8 +1044,7 @@ zabbix_export:
           units: s
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
           triggers:
             -
               expression: '{last()} < 600'
@@ -1145,8 +1066,7 @@ zabbix_export:
             key: 'pgsql.wal.stat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
         -
           name: 'PostgreSQL: Get WAL'
           key: 'pgsql.wal.stat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -1157,8 +1077,7 @@ zabbix_export:
           description: 'Collect WAL metrics'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'WAL: Bytes written'
           type: DEPENDENT
@@ -1180,8 +1099,7 @@ zabbix_export:
             key: 'pgsql.wal.stat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
             -
-              tag: Application
-              value: PostgreSQL
+              tag: PostgreSQL
       discovery_rules:
         -
           name: 'Database discovery'
@@ -1198,13 +1116,15 @@ zabbix_export:
             -
               name: 'DB {#DBNAME}: Database age'
               key: 'pgsql.db.age["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}","{#DBNAME}"]'
-              delay: 10m
+              delay: 15m
               history: 7d
               description: 'Database age'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Get bloating tables'
               key: 'pgsql.db.bloating_tables["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}","{#DBNAME}"]'
@@ -1212,8 +1132,10 @@ zabbix_export:
               description: 'Number of bloating tables'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Database size'
               key: 'pgsql.db.size["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}","{#DBNAME}"]'
@@ -1223,8 +1145,10 @@ zabbix_export:
               description: 'Database size'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Blocks hit per second'
               type: DEPENDENT
@@ -1246,8 +1170,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Disk blocks read per second'
               type: DEPENDENT
@@ -1269,8 +1195,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Disk blocks read per second'
               type: DEPENDENT
@@ -1297,8 +1225,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Disk blocks read per second'
               type: DEPENDENT
@@ -1325,8 +1255,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Checksum failures'
               type: DEPENDENT
@@ -1341,15 +1273,23 @@ zabbix_export:
                   parameters:
                     - '$[''{#DBNAME}''].checksum_failures'
                 -
+                  type: MATCHES_REGEX
+                  parameters:
+                    - '^\d*$'
+                -
                   type: CHANGE_PER_SECOND
                   parameters:
                     - ''
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: 'ZBX_NOTSUPPORTED: Checksum failures metric is supported only in PostgreSQL 12 or higher.'
               master_item:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Detected conflicts per second'
               type: DEPENDENT
@@ -1371,8 +1311,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
               trigger_prototypes:
                 -
                   expression: '{min(5m)} > {$PG.CONFLICTS.MAX.WARN:"{#DBNAME}"}'
@@ -1402,8 +1344,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
               trigger_prototypes:
                 -
                   expression: '{min(5m)} > {$PG.DEADLOCKS.MAX.WARN:"{#DBNAME}"}'
@@ -1425,8 +1369,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Temp_bytes written per second'
               type: DEPENDENT
@@ -1448,8 +1394,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Temp_files created per second'
               type: DEPENDENT
@@ -1470,8 +1418,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Tuples deleted per second'
               type: DEPENDENT
@@ -1493,8 +1443,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Tuples fetched per second'
               type: DEPENDENT
@@ -1516,8 +1468,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Tuples inserted per second'
               type: DEPENDENT
@@ -1539,8 +1493,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Tuples returned per second'
               type: DEPENDENT
@@ -1562,8 +1518,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Tuples updated per second'
               type: DEPENDENT
@@ -1585,8 +1543,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Commits per second'
               type: DEPENDENT
@@ -1608,8 +1568,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Rollbacks per second'
               type: DEPENDENT
@@ -1631,8 +1593,10 @@ zabbix_export:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Num of accessexclusive locks'
               type: DEPENDENT
@@ -1649,8 +1613,10 @@ zabbix_export:
                 key: 'pgsql.locks["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Num of accessshare locks'
               type: DEPENDENT
@@ -1667,8 +1633,10 @@ zabbix_export:
                 key: 'pgsql.locks["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Num of exclusive locks'
               type: DEPENDENT
@@ -1685,8 +1653,10 @@ zabbix_export:
                 key: 'pgsql.locks["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Num of rowexclusive locks'
               type: DEPENDENT
@@ -1703,8 +1673,10 @@ zabbix_export:
                 key: 'pgsql.locks["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Num of rowshare locks'
               type: DEPENDENT
@@ -1721,8 +1693,10 @@ zabbix_export:
                 key: 'pgsql.locks["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Num of sharerowexclusive locks'
               type: DEPENDENT
@@ -1739,8 +1713,10 @@ zabbix_export:
                 key: 'pgsql.locks["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Num of shareupdateexclusive locks'
               type: DEPENDENT
@@ -1757,8 +1733,10 @@ zabbix_export:
                 key: 'pgsql.locks["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Num of share locks'
               type: DEPENDENT
@@ -1775,8 +1753,10 @@ zabbix_export:
                 key: 'pgsql.locks["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
             -
               name: 'DB {#DBNAME}: Num of total locks'
               type: DEPENDENT
@@ -1793,8 +1773,10 @@ zabbix_export:
                 key: 'pgsql.locks["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'PostgreSQL: DB {#DBNAME}'
+                  tag: DB
+                  value: '{#DBNAME}'
+                -
+                  tag: PostgreSQL
           graph_prototypes:
             -
               name: 'DB {#DBNAME}: Locks'
@@ -1957,96 +1939,6 @@ zabbix_export:
                   item:
                     host: 'PostgreSQL Agent 2'
                     key: 'pgsql.db.size["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}","{#DBNAME}"]'
-        -
-          name: 'Replication Discovery'
-          key: 'pgsql.replication.process.discovery["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
-          delay: 15m
-          filter:
-            evaltype: AND
-            conditions:
-              -
-                macro: '{#APPLICATION}'
-                value: '{$PG.LLD.FILTER.APPLICATION}'
-                formulaid: A
-          item_prototypes:
-            -
-              name: 'Application {#APPLICATION}: Replication flush lag'
-              type: DEPENDENT
-              key: 'pgsql.replication.process.flush_lag["{#APPLICATION}"]'
-              delay: '0'
-              history: 7d
-              value_type: FLOAT
-              units: s
-              preprocessing:
-                -
-                  type: JSONPATH
-                  parameters:
-                    - '$[''{#APPLICATION}''].flush_lag'
-              master_item:
-                key: 'pgsql.replication.process["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
-              tags:
-                -
-                  tag: Application
-                  value: 'PostgreSQL: Application {#APPLICATION}'
-            -
-              name: 'Application {#APPLICATION}: Replication replay lag'
-              type: DEPENDENT
-              key: 'pgsql.replication.process.replay_lag["{#APPLICATION}"]'
-              delay: '0'
-              history: 7d
-              value_type: FLOAT
-              units: s
-              preprocessing:
-                -
-                  type: JSONPATH
-                  parameters:
-                    - '$[''{#APPLICATION}''].replay_lag'
-              master_item:
-                key: 'pgsql.replication.process["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
-              tags:
-                -
-                  tag: Application
-                  value: 'PostgreSQL: Application {#APPLICATION}'
-            -
-              name: 'Application {#APPLICATION}: Replication write lag'
-              type: DEPENDENT
-              key: 'pgsql.replication.process.write_lag["{#APPLICATION}"]'
-              delay: '0'
-              history: 7d
-              value_type: FLOAT
-              units: s
-              preprocessing:
-                -
-                  type: JSONPATH
-                  parameters:
-                    - '$[''{#APPLICATION}''].write_lag'
-              master_item:
-                key: 'pgsql.replication.process["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
-              tags:
-                -
-                  tag: Application
-                  value: 'PostgreSQL: Application {#APPLICATION}'
-          graph_prototypes:
-            -
-              name: 'Application {#APPLICATION}: Replication lag'
-              graph_items:
-                -
-                  color: 1A7C11
-                  item:
-                    host: 'PostgreSQL Agent 2'
-                    key: 'pgsql.replication.process.flush_lag["{#APPLICATION}"]'
-                -
-                  sortorder: '1'
-                  color: 2774A4
-                  item:
-                    host: 'PostgreSQL Agent 2'
-                    key: 'pgsql.replication.process.replay_lag["{#APPLICATION}"]'
-                -
-                  sortorder: '2'
-                  color: F63100
-                  item:
-                    host: 'PostgreSQL Agent 2'
-                    key: 'pgsql.replication.process.write_lag["{#APPLICATION}"]'
       macros:
         -
           macro: '{$PG.CONFLICTS.MAX.WARN}'
@@ -2055,14 +1947,8 @@ zabbix_export:
           macro: '{$PG.CONN_TOTAL_PCT.MAX.WARN}'
           value: '90'
         -
-          macro: '{$PG.DATABASE}'
-          value: postgres
-        -
           macro: '{$PG.DEADLOCKS.MAX.WARN}'
           value: '0'
-        -
-          macro: '{$PG.LLD.FILTER.APPLICATION}'
-          value: (.+)
         -
           macro: '{$PG.LLD.FILTER.DBNAME}'
           value: (.+)
@@ -2078,87 +1964,105 @@ zabbix_export:
       dashboards:
         -
           name: 'PostgreSQL databases'
-          widgets:
+          pages:
             -
-              type: GRAPH_PROTOTYPE
-              width: '12'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+              widgets:
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'DB {#DBNAME}: pg_stat_database metrics'
-                    host: 'PostgreSQL Agent 2'
-            -
-              type: GRAPH_PROTOTYPE
-              x: '12'
-              width: '12'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
-                -
-                  type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'DB {#DBNAME}: Locks'
-                    host: 'PostgreSQL Agent 2'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '12'
-              width: '12'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+                  width: '12'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'DB {#DBNAME}: pg_stat_database metrics'
+                        host: 'PostgreSQL Agent 2'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'DB {#DBNAME}: Size'
-                    host: 'PostgreSQL Agent 2'
-            -
-              type: GRAPH_PROTOTYPE
-              x: '12'
-              'y': '12'
-              width: '12'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+                  x: '12'
+                  width: '12'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'DB {#DBNAME}: Locks'
+                        host: 'PostgreSQL Agent 2'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'DB {#DBNAME}: Number of bloating tables'
-                    host: 'PostgreSQL Agent 2'
+                  'y': '12'
+                  width: '12'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'DB {#DBNAME}: Size'
+                        host: 'PostgreSQL Agent 2'
+                -
+                  type: GRAPH_PROTOTYPE
+                  x: '12'
+                  'y': '12'
+                  width: '12'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'DB {#DBNAME}: Number of bloating tables'
+                        host: 'PostgreSQL Agent 2'
       valuemaps:
         -
           name: 'PostgreSQL recovery role'

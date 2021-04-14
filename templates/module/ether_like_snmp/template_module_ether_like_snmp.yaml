@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:51Z'
+  date: '2021-04-14T13:15:08Z'
   groups:
     -
       name: Templates/Modules
@@ -74,8 +74,8 @@ zabbix_export:
                 name: 'EtherLike-MIB::dot3StatsDuplexStatus'
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
               trigger_prototypes:
                 -
                   expression: '{last()}=2'

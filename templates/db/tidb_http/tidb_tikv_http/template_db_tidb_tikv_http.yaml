@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-08T09:02:42Z'
+  date: '2021-04-14T13:15:15Z'
   groups:
     -
       name: Templates/Databases
@@ -21,11 +21,6 @@ zabbix_export:
       groups:
         -
           name: Templates/Databases
-      applications:
-        -
-          name: 'TiKV node'
-        -
-          name: 'Zabbix raw items'
       items:
         -
           name: 'TiKV: Scheduler: High priority commands total, rate'
@@ -35,9 +30,6 @@ zabbix_export:
           history: 7d
           value_type: FLOAT
           description: 'Total count of high priority commands per second.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -49,6 +41,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Scheduler: Low priority commands total, rate'
           type: DEPENDENT
@@ -57,9 +52,6 @@ zabbix_export:
           history: 7d
           value_type: FLOAT
           description: 'Total count of low priority commands per second.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -71,6 +63,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Scheduler: Normal priority commands total, rate'
           type: DEPENDENT
@@ -79,9 +74,6 @@ zabbix_export:
           history: 7d
           value_type: FLOAT
           description: 'Total count of normal priority commands per second.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -93,6 +85,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Coprocessor: Requests, rate'
           type: DEPENDENT
@@ -102,9 +97,6 @@ zabbix_export:
           value_type: FLOAT
           units: Ops
           description: 'Total number of coprocessor requests per second.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -116,6 +108,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Coprocessor: Errors, rate'
           type: DEPENDENT
@@ -125,9 +120,6 @@ zabbix_export:
           value_type: FLOAT
           units: Ops
           description: 'Total number of push down request error per second.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -140,6 +132,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
           triggers:
             -
               expression: '{min(5m)}>{$TIKV.COPOCESSOR.ERRORS.MAX.WARN}'
@@ -154,9 +149,6 @@ zabbix_export:
           value_type: FLOAT
           units: Ops
           description: 'Total number of RocksDB internal operations from PerfContext per second.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -168,6 +160,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Coprocessor: Response size, rate'
           type: DEPENDENT
@@ -177,9 +172,6 @@ zabbix_export:
           value_type: FLOAT
           units: Bps
           description: 'The total size of coprocessor response per second.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -191,6 +183,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: CPU util'
           type: DEPENDENT
@@ -200,9 +195,6 @@ zabbix_export:
           value_type: FLOAT
           units: '%'
           description: 'The CPU usage ratio on TiKV instance.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -218,6 +210,9 @@ zabbix_export:
                 - '100'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Bytes read'
           type: DEPENDENT
@@ -227,9 +222,6 @@ zabbix_export:
           value_type: FLOAT
           units: Bps
           description: 'The total bytes of read in TiKV instance.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -237,6 +229,9 @@ zabbix_export:
                 - '$[?(@.name == "tikv_engine_flow_bytes" && @.labels.db == "kv" && @.labels.type =~ "bytes_read|iter_bytes_read")].value.sum()'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Bytes write'
           type: DEPENDENT
@@ -246,9 +241,6 @@ zabbix_export:
           value_type: FLOAT
           units: Bps
           description: 'The total bytes of write in TiKV instance.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -256,6 +248,9 @@ zabbix_export:
                 - '$[?(@.name == "tikv_engine_flow_bytes" && @.labels.db == "kv" && @.labels.type == "wal_file_bytes")].value.first()'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Store size'
           type: DEPENDENT
@@ -265,9 +260,6 @@ zabbix_export:
           value_type: FLOAT
           units: B
           description: 'The storage size of TiKV instance.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -275,6 +267,9 @@ zabbix_export:
                 - '$[?(@.name == "tikv_engine_size_bytes")].value.sum()'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Get instance metrics'
           type: HTTP_AGENT
@@ -283,9 +278,6 @@ zabbix_export:
           trends: '0'
           value_type: TEXT
           description: 'Get TiKV instance metrics.'
-          applications:
-            -
-              name: 'Zabbix raw items'
           preprocessing:
             -
               type: CHECK_NOT_SUPPORTED
@@ -296,6 +288,9 @@ zabbix_export:
               parameters:
                 - ''
           url: '{$TIKV.URL}:{$TIKV.PORT}/metrics'
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'TiKV: Total query, rate'
           type: DEPENDENT
@@ -305,9 +300,6 @@ zabbix_export:
           value_type: FLOAT
           units: Ops
           description: 'The total QPS in TiKV instance.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -319,6 +311,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Total query errors, rate'
           type: DEPENDENT
@@ -328,9 +323,6 @@ zabbix_export:
           value_type: FLOAT
           units: Ops
           description: 'The total number of gRPC message handling failure per second.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -343,6 +335,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Server: failure messages total, rate'
           type: DEPENDENT
@@ -351,9 +346,6 @@ zabbix_export:
           history: 7d
           value_type: FLOAT
           description: 'Total number of reporting failure messages per second.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -366,6 +358,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Regions, count'
           type: DEPENDENT
@@ -373,9 +368,6 @@ zabbix_export:
           delay: '0'
           history: 7d
           description: 'The number of regions collected in TiKV instance.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -383,6 +375,9 @@ zabbix_export:
                 - '$[?(@.name == "tikv_raftstore_region_count" && @.labels.type == "region" )].value.first()'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Regions, leader'
           type: DEPENDENT
@@ -390,9 +385,6 @@ zabbix_export:
           delay: '0'
           history: 7d
           description: 'The number of leaders in TiKV instance.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -400,6 +392,9 @@ zabbix_export:
                 - '$[?(@.name == "tikv_raftstore_region_count" && @.labels.type == "leader" )].value.first()'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: RSS memory usage'
           type: DEPENDENT
@@ -409,9 +404,6 @@ zabbix_export:
           value_type: FLOAT
           units: B
           description: 'Resident memory size in bytes.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -419,6 +411,9 @@ zabbix_export:
                 - '$[?(@.name == "process_resident_memory_bytes")].value.first()'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Scheduler: Commands total, rate'
           type: DEPENDENT
@@ -427,9 +422,6 @@ zabbix_export:
           history: 7d
           value_type: FLOAT
           description: 'Total number of commands per second.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -443,6 +435,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Snapshot: Pending tasks'
           type: DEPENDENT
@@ -450,9 +445,6 @@ zabbix_export:
           delay: '0'
           history: 7d
           description: 'The number of tasks currently running by the worker or pending.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -460,6 +452,9 @@ zabbix_export:
                 - '$[?(@.name == "tikv_worker_pending_task_total")].value.first()'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
           triggers:
             -
               expression: '{min(5m)}>{$TIKV.PENDING_COMMANDS.MAX.WARN}'
@@ -477,9 +472,6 @@ zabbix_export:
           history: 7d
           value_type: FLOAT
           description: 'The total count of too busy schedulers per second.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -492,6 +484,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Snapshot: Applying'
           type: DEPENDENT
@@ -499,9 +494,6 @@ zabbix_export:
           delay: '0'
           history: 7d
           description: 'The total amount of raftstore snapshot traffic.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -509,6 +501,9 @@ zabbix_export:
                 - '$[?(@.name == "tikv_raftstore_snapshot_traffic_total" && @.labels.type == "applying")].value.first()'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Snapshot: Receiving'
           type: DEPENDENT
@@ -516,9 +511,6 @@ zabbix_export:
           delay: '0'
           history: 7d
           description: 'The total amount of raftstore snapshot traffic.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -526,6 +518,9 @@ zabbix_export:
                 - '$[?(@.name == "tikv_raftstore_snapshot_traffic_total" && @.labels.type == "receiving")].value.first()'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Snapshot: Sending'
           type: DEPENDENT
@@ -533,9 +528,6 @@ zabbix_export:
           delay: '0'
           history: 7d
           description: 'The total amount of raftstore snapshot traffic.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -543,6 +535,9 @@ zabbix_export:
                 - '$[?(@.name == "tikv_raftstore_snapshot_traffic_total" && @.labels.type == "sending")].value.first()'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Storage: commands total, rate'
           type: DEPENDENT
@@ -551,9 +546,6 @@ zabbix_export:
           history: 7d
           value_type: FLOAT
           description: 'Total number of commands received per second.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -565,6 +557,9 @@ zabbix_export:
                 - ''
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Available size'
           type: DEPENDENT
@@ -574,9 +569,6 @@ zabbix_export:
           value_type: FLOAT
           units: B
           description: 'The available capacity of TiKV instance.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -584,6 +576,9 @@ zabbix_export:
                 - '$[?(@.name == "tikv_store_size_bytes" && @.labels.type == "available")].value.first()'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Capacity size'
           type: DEPENDENT
@@ -593,9 +588,6 @@ zabbix_export:
           value_type: FLOAT
           units: B
           description: 'The capacity size of TiKV instance.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -603,6 +595,9 @@ zabbix_export:
                 - '$[?(@.name == "tikv_store_size_bytes" && @.labels.type == "capacity")].value.first()'
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
         -
           name: 'TiKV: Uptime'
           type: DEPENDENT
@@ -612,9 +607,6 @@ zabbix_export:
           value_type: FLOAT
           units: uptime
           description: 'The runtime of each TiKV instance.'
-          applications:
-            -
-              name: 'TiKV node'
           preprocessing:
             -
               type: JSONPATH
@@ -628,6 +620,9 @@ zabbix_export:
                   return (Math.floor(Date.now()/1000)-Number(value));
           master_item:
             key: tikv.get_metrics
+          tags:
+            -
+              tag: TiKVnode
           triggers:
             -
               expression: '{last()}<10m'
@@ -652,9 +647,6 @@ zabbix_export:
               value_type: FLOAT
               units: Ops
               description: 'Total number of coprocessor requests per second.'
-              applications:
-                -
-                  name: 'TiKV node'
               preprocessing:
                 -
                   type: JSONPATH
@@ -666,6 +658,9 @@ zabbix_export:
                     - ''
               master_item:
                 key: tikv.get_metrics
+              tags:
+                -
+                  tag: TiKVnode
             -
               name: 'TiKV: Coprocessor: {#REQ_TYPE} errors, rate'
               type: DEPENDENT
@@ -675,9 +670,6 @@ zabbix_export:
               value_type: FLOAT
               units: Ops
               description: 'Total number of push down request error per second.'
-              applications:
-                -
-                  name: 'TiKV node'
               preprocessing:
                 -
                   type: JSONPATH
@@ -690,6 +682,9 @@ zabbix_export:
                     - ''
               master_item:
                 key: tikv.get_metrics
+              tags:
+                -
+                  tag: TiKVnode
             -
               name: 'TiKV: Coprocessor: {#REQ_TYPE} RocksDB ops, rate'
               type: DEPENDENT
@@ -699,9 +694,6 @@ zabbix_export:
               value_type: FLOAT
               units: Ops
               description: 'Total number of RocksDB internal operations from PerfContext per second.'
-              applications:
-                -
-                  name: 'TiKV node'
               preprocessing:
                 -
                   type: JSONPATH
@@ -713,6 +705,9 @@ zabbix_export:
                     - ''
               master_item:
                 key: tikv.get_metrics
+              tags:
+                -
+                  tag: TiKVnode
             -
               name: 'TiKV: Coprocessor: {#REQ_TYPE} scan keys, rate'
               type: DEPENDENT
@@ -722,9 +717,6 @@ zabbix_export:
               value_type: FLOAT
               units: Ops
               description: 'Total number of scan keys observed per request per second.'
-              applications:
-                -
-                  name: 'TiKV node'
               preprocessing:
                 -
                   type: JSONPATH
@@ -736,6 +728,9 @@ zabbix_export:
                     - ''
               master_item:
                 key: tikv.get_metrics
+              tags:
+                -
+                  tag: TiKVnode
           master_item:
             key: tikv.get_metrics
           preprocessing:
@@ -748,10 +743,10 @@ zabbix_export:
               parameters:
                 - |
                   output = JSON.parse(value).map(function(item){
-                  return {
-                  "{#REQ_TYPE}": item.labels.req,
-                  }})
-                  return JSON.stringify({"data": output})
+                       return {
+                           "{#REQ_TYPE}": item.labels.req,
+                       }})
+                   return JSON.stringify({"data": output})
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:
@@ -772,9 +767,6 @@ zabbix_export:
               value_type: FLOAT
               units: Ops
               description: 'The QPS per command in TiKV instance.'
-              applications:
-                -
-                  name: 'TiKV node'
               preprocessing:
                 -
                   type: JSONPATH
@@ -783,6 +775,9 @@ zabbix_export:
                   error_handler: CUSTOM_VALUE
               master_item:
                 key: tikv.get_metrics
+              tags:
+                -
+                  tag: TiKVnode
           master_item:
             key: tikv.get_metrics
           preprocessing:
@@ -795,10 +790,10 @@ zabbix_export:
               parameters:
                 - |
                   output = JSON.parse(value).map(function(item){
-                  return {
-                  "{#TYPE}": item.labels.type,
-                  }})
-                  return JSON.stringify({"data": output})
+                       return {
+                           "{#TYPE}": item.labels.type,
+                       }})
+                   return JSON.stringify({"data": output})
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:
@@ -818,9 +813,6 @@ zabbix_export:
               history: 7d
               value_type: FLOAT
               description: 'Total number of commands on each stage per second.'
-              applications:
-                -
-                  name: 'TiKV node'
               preprocessing:
                 -
                   type: JSONPATH
@@ -834,6 +826,9 @@ zabbix_export:
                     - ''
               master_item:
                 key: tikv.get_metrics
+              tags:
+                -
+                  tag: TiKVnode
           master_item:
             key: tikv.get_metrics
           preprocessing:
@@ -846,14 +841,14 @@ zabbix_export:
               parameters:
                 - |
                   var lookup = {},
-                  result = [];
+                      result = [];
                   
                   JSON.parse(value).forEach(function (item) {
-                  var stage = item.labels.stage;
-                  if (!(lookup[stage])) {
-                  lookup[stage] = 1;
-                  result.push({ "{#STAGE}": stage });
-                  }
+                      var stage = item.labels.stage;
+                      if (!(lookup[stage])) {
+                          lookup[stage] = 1;
+                          result.push({ "{#STAGE}": stage });
+                      }
                   })
                   
                   return JSON.stringify(result);
@@ -876,9 +871,6 @@ zabbix_export:
               history: 7d
               value_type: FLOAT
               description: 'Total number of reporting failure messages. The metric has two labels: type and store_id. type represents the failure type, and store_id represents the destination peer store id.'
-              applications:
-                -
-                  name: 'TiKV node'
               preprocessing:
                 -
                   type: JSONPATH
@@ -890,11 +882,13 @@ zabbix_export:
                     - ''
               master_item:
                 key: tikv.get_metrics
+              tags:
+                -
+                  tag: TiKVnode
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$TIKV.STORE.ERRORS.MAX.WARN}'
                   name: 'TiKV: Store_id {#STORE_ID}: Too many failure messages "{#TYPE}" (over {$TIKV.STORE.ERRORS.MAX.WARN} in 5m)'
-                  discover: NO_DISCOVER
                   priority: WARNING
                   description: 'Indicates that the remote TiKV cannot be connected.'
           master_item:
@@ -910,12 +904,12 @@ zabbix_export:
               parameters:
                 - |
                   output = JSON.parse(value).map(function(item){
-                  return {
-                  "{#STORE_ID}": item.labels.store_id,
-                  "{#TYPE}": item.labels.type,
+                       return {
+                           "{#STORE_ID}": item.labels.store_id,
+                           "{#TYPE}": item.labels.type,
                   
-                  }})
-                  return JSON.stringify({"data": output})
+                       }})
+                   return JSON.stringify({"data": output})
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:
@@ -962,6 +956,16 @@ zabbix_export:
           macro: '{$TIKV.URL}'
           value: localhost
           description: 'TiKV server URL'
+      valuemaps:
+        -
+          name: 'Service state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Down
+            -
+              value: '1'
+              newvalue: Up
   graphs:
     -
       name: 'TiKV: Scheduler priority commands rate'

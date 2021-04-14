@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:54Z'
+  date: '2021-04-14T13:15:12Z'
   groups:
     -
       name: Templates/Databases
@@ -37,8 +37,7 @@ zabbix_export:
           description: 'The item gets server global status information.'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'MySQL: Status'
           type: ODBC
@@ -56,8 +55,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
           triggers:
             -
               expression: '{last()}=0'
@@ -81,8 +79,7 @@ zabbix_export:
                 - 6h
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -111,8 +108,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Aborted connections per second'
           type: DEPENDENT
@@ -134,8 +130,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
           triggers:
             -
               expression: '{min(5m)}>{$MYSQL.ABORTED_CONN.MAX.WARN}'
@@ -167,8 +162,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Buffer pool efficiency'
           type: CALCULATED
@@ -184,8 +178,7 @@ zabbix_export:
           description: 'The item shows how effectively the buffer pool is serving reads.'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Buffer pool utilization'
           type: CALCULATED
@@ -202,8 +195,7 @@ zabbix_export:
           description: 'Ratio of used to total pages in the buffer pool.'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
           triggers:
             -
               expression: '{max(5m)}<{$MYSQL.BUFF_UTIL.MIN.WARN}'
@@ -232,8 +224,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Bytes sent'
           type: DEPENDENT
@@ -256,8 +247,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Command Delete per second'
           type: DEPENDENT
@@ -279,8 +269,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Command Insert per second'
           type: DEPENDENT
@@ -302,8 +291,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Command Select per second'
           type: DEPENDENT
@@ -325,8 +313,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Command Update per second'
           type: DEPENDENT
@@ -348,8 +335,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Connections per second'
           type: DEPENDENT
@@ -371,8 +357,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Connection errors accept per second'
           type: DEPENDENT
@@ -394,8 +379,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Connection errors internal per second'
           type: DEPENDENT
@@ -417,8 +401,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Connection errors max connections per second'
           type: DEPENDENT
@@ -440,8 +423,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
           triggers:
             -
               expression: '{last()}>0'
@@ -469,8 +451,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Connection errors select per second'
           type: DEPENDENT
@@ -492,8 +473,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Connection errors tcpwrap per second'
           type: DEPENDENT
@@ -515,8 +495,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Created tmp tables on disk per second'
           type: DEPENDENT
@@ -538,8 +517,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
           triggers:
             -
               expression: '{min(5m)}>{$MYSQL.CREATED_TMP_DISK_TABLES.MAX.WARN}'
@@ -567,8 +545,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
           triggers:
             -
               expression: '{min(5m)}>{$MYSQL.CREATED_TMP_FILES.MAX.WARN}'
@@ -596,8 +573,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
           triggers:
             -
               expression: '{min(5m)}>{$MYSQL.CREATED_TMP_TABLES.MAX.WARN}'
@@ -620,8 +596,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: InnoDB buffer pool pages total'
           type: DEPENDENT
@@ -642,8 +617,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: InnoDB buffer pool reads'
           type: DEPENDENT
@@ -660,8 +634,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'MySQL: InnoDB buffer pool reads per second'
           type: DEPENDENT
@@ -683,8 +656,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: InnoDB buffer pool read requests'
           type: DEPENDENT
@@ -701,8 +673,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'MySQL: InnoDB buffer pool read requests per second'
           type: DEPENDENT
@@ -724,8 +695,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Innodb buffer pool wait free'
           type: DEPENDENT
@@ -747,8 +717,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Calculated value of innodb_log_file_size'
           type: CALCULATED
@@ -764,8 +733,7 @@ zabbix_export:
                 - 6h
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Innodb number open files'
           type: DEPENDENT
@@ -787,8 +755,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Innodb log written'
           type: DEPENDENT
@@ -811,8 +778,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: InnoDB row lock time'
           type: DEPENDENT
@@ -839,8 +805,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: InnoDB row lock time max'
           type: DEPENDENT
@@ -867,8 +832,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: InnoDB row lock waits'
           type: DEPENDENT
@@ -885,8 +849,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Max used connections'
           type: DEPENDENT
@@ -907,8 +870,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Open tables'
           type: DEPENDENT
@@ -930,8 +892,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Open table definitions'
           type: DEPENDENT
@@ -953,8 +914,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Queries per second'
           type: DEPENDENT
@@ -976,8 +936,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Questions per second'
           type: DEPENDENT
@@ -999,8 +958,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Slow queries per second'
           type: DEPENDENT
@@ -1022,8 +980,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
           triggers:
             -
               expression: '{min(5m)}>{$MYSQL.SLOW_QUERIES.MAX.WARN}'
@@ -1046,8 +1003,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Threads connected'
           type: DEPENDENT
@@ -1064,8 +1020,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Threads created per second'
           type: DEPENDENT
@@ -1087,8 +1042,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Threads running'
           type: DEPENDENT
@@ -1105,8 +1059,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
         -
           name: 'MySQL: Uptime'
           type: DEPENDENT
@@ -1124,8 +1077,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
           tags:
             -
-              tag: Application
-              value: MySQL
+              tag: MySQL
           triggers:
             -
               expression: '{nodata(30m)}=1'
@@ -1176,8 +1128,7 @@ zabbix_export:
                     - 1h
               tags:
                 -
-                  tag: Application
-                  value: MySQL
+                  tag: MySQL
           preprocessing:
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
@@ -1206,8 +1157,7 @@ zabbix_export:
               description: 'The item gets status information on essential parameters of the slave threads.'
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'MySQL: Replication Seconds Behind Master {#MASTER_HOST}'
               type: DEPENDENT
@@ -1238,8 +1188,7 @@ zabbix_export:
                 key: 'db.odbc.get["{#MASTER_HOST}","{$MYSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: MySQL
+                  tag: MySQL
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MYSQL.REPL_LAG.MAX.WARN}'
@@ -1270,8 +1219,7 @@ zabbix_export:
                 key: 'db.odbc.get["{#MASTER_HOST}","{$MYSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: MySQL
+                  tag: MySQL
               trigger_prototypes:
                 -
                   expression: '{count(#1,"Yes",ne)}=1'
@@ -1310,8 +1258,7 @@ zabbix_export:
                 key: 'db.odbc.get["{#MASTER_HOST}","{$MYSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: MySQL
+                  tag: MySQL
               trigger_prototypes:
                 -
                   expression: '{count(#1,"No",eq)}=1'
@@ -1344,8 +1291,7 @@ zabbix_export:
                 key: 'db.odbc.get["{#MASTER_HOST}","{$MYSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: MySQL
+                  tag: MySQL
           preprocessing:
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
@@ -1375,8 +1321,7 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: MySQL
+                  tag: MySQL
             -
               name: 'MySQL: Binlog group commits'
               type: DEPENDENT
@@ -1394,8 +1339,7 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: MySQL
+                  tag: MySQL
             -
               name: 'MySQL: Master GTID wait count'
               type: DEPENDENT
@@ -1417,8 +1361,7 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: MySQL
+                  tag: MySQL
             -
               name: 'MySQL: Master GTID wait timeouts'
               type: DEPENDENT
@@ -1440,8 +1383,7 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: MySQL
+                  tag: MySQL
             -
               name: 'MySQL: Master GTID wait time'
               type: DEPENDENT
@@ -1463,8 +1405,7 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MYSQL.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: MySQL
+                  tag: MySQL
           master_item:
             key: 'db.odbc.select[version,"{$MYSQL.DSN}"]'
           preprocessing:
@@ -1520,104 +1461,154 @@ zabbix_export:
       dashboards:
         -
           name: 'MySQL performance'
-          widgets:
+          pages:
             -
-              type: GRAPH_CLASSIC
-              width: '12'
-              height: '5'
-              fields:
+              widgets:
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
+                  type: GRAPH_CLASSIC
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'MySQL: Operations'
+                        host: 'MySQL by ODBC'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'MySQL: Operations'
-                    host: 'MySQL by ODBC'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              width: '12'
-              height: '5'
-              fields:
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'MySQL: Queries'
+                        host: 'MySQL by ODBC'
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
+                  type: GRAPH_CLASSIC
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'MySQL: Connections'
+                        host: 'MySQL by ODBC'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'MySQL: Queries'
-                    host: 'MySQL by ODBC'
-            -
-              type: GRAPH_CLASSIC
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'MySQL: Bandwidth'
+                        host: 'MySQL by ODBC'
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
+                  type: GRAPH_CLASSIC
+                  'y': '10'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'MySQL: InnoDB buffer pool'
+                        host: 'MySQL by ODBC'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'MySQL: Connections'
-                    host: 'MySQL by ODBC'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'MySQL: Bandwidth'
-                    host: 'MySQL by ODBC'
-            -
-              type: GRAPH_CLASSIC
-              'y': '10'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'MySQL: InnoDB buffer pool'
-                    host: 'MySQL by ODBC'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              'y': '10'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'MySQL: Threads'
-                    host: 'MySQL by ODBC'
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  'y': '10'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'MySQL: Threads'
+                        host: 'MySQL by ODBC'
       valuemaps:
         -
           name: 'Service state'

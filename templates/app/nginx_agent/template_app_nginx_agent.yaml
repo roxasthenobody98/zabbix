@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:42Z'
+  date: '2021-04-14T13:14:53Z'
   groups:
     -
       name: Templates/Applications
@@ -28,8 +28,7 @@ zabbix_export:
           units: s
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
           triggers:
             -
               expression: '{min(5m)}>{$NGINX.RESPONSE_TIME.MAX.WARN}'
@@ -56,8 +55,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
           triggers:
             -
               expression: '{last()}=0'
@@ -90,8 +88,7 @@ zabbix_export:
             key: 'web.page.get["{$NGINX.STUB_STATUS.HOST}","{$NGINX.STUB_STATUS.PATH}","{$NGINX.STUB_STATUS.PORT}"]'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
         -
           name: 'Nginx: Connections active'
           type: DEPENDENT
@@ -109,8 +106,7 @@ zabbix_export:
             key: 'web.page.get["{$NGINX.STUB_STATUS.HOST}","{$NGINX.STUB_STATUS.PATH}","{$NGINX.STUB_STATUS.PORT}"]'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
         -
           name: 'Nginx: Connections dropped per second'
           type: DEPENDENT
@@ -136,8 +132,7 @@ zabbix_export:
             key: 'web.page.get["{$NGINX.STUB_STATUS.HOST}","{$NGINX.STUB_STATUS.PATH}","{$NGINX.STUB_STATUS.PORT}"]'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
           triggers:
             -
               expression: '{min(5m)} > {$NGINX.DROP_RATE.MAX.WARN}'
@@ -174,8 +169,7 @@ zabbix_export:
             key: 'web.page.get["{$NGINX.STUB_STATUS.HOST}","{$NGINX.STUB_STATUS.PATH}","{$NGINX.STUB_STATUS.PORT}"]'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
         -
           name: 'Nginx: Connections reading'
           type: DEPENDENT
@@ -193,8 +187,7 @@ zabbix_export:
             key: 'web.page.get["{$NGINX.STUB_STATUS.HOST}","{$NGINX.STUB_STATUS.PATH}","{$NGINX.STUB_STATUS.PORT}"]'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
         -
           name: 'Nginx: Connections waiting'
           type: DEPENDENT
@@ -212,8 +205,7 @@ zabbix_export:
             key: 'web.page.get["{$NGINX.STUB_STATUS.HOST}","{$NGINX.STUB_STATUS.PATH}","{$NGINX.STUB_STATUS.PORT}"]'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
         -
           name: 'Nginx: Connections writing'
           type: DEPENDENT
@@ -231,8 +223,7 @@ zabbix_export:
             key: 'web.page.get["{$NGINX.STUB_STATUS.HOST}","{$NGINX.STUB_STATUS.PATH}","{$NGINX.STUB_STATUS.PORT}"]'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
         -
           name: 'Nginx: Requests total'
           type: DEPENDENT
@@ -250,8 +241,7 @@ zabbix_export:
             key: 'web.page.get["{$NGINX.STUB_STATUS.HOST}","{$NGINX.STUB_STATUS.PATH}","{$NGINX.STUB_STATUS.PORT}"]'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
         -
           name: 'Nginx: Requests per second'
           type: DEPENDENT
@@ -274,8 +264,7 @@ zabbix_export:
             key: 'web.page.get["{$NGINX.STUB_STATUS.HOST}","{$NGINX.STUB_STATUS.PATH}","{$NGINX.STUB_STATUS.PORT}"]'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
         -
           name: 'Nginx: Version'
           type: DEPENDENT
@@ -298,8 +287,7 @@ zabbix_export:
             key: 'web.page.get["{$NGINX.STUB_STATUS.HOST}","{$NGINX.STUB_STATUS.PATH}","{$NGINX.STUB_STATUS.PORT}"]'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -316,8 +304,7 @@ zabbix_export:
           description: 'Process CPU utilization percentage.'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
         -
           name: 'Nginx: Memory usage (rss)'
           key: 'proc.mem[nginx,,,,rss]'
@@ -326,8 +313,7 @@ zabbix_export:
           description: 'Resident set size memory used by process in bytes.'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
         -
           name: 'Nginx: Memory usage (vsize)'
           key: 'proc.mem[nginx,,,,vsize]'
@@ -336,8 +322,7 @@ zabbix_export:
           description: 'Virtual memory size used by process in bytes.'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
         -
           name: 'Nginx: Number of processes running'
           key: 'proc.num[nginx]'
@@ -345,8 +330,7 @@ zabbix_export:
           description: 'Number of the Nginx processes running.'
           tags:
             -
-              tag: Application
-              value: Nginx
+              tag: Nginx
           triggers:
             -
               expression: '{last()}=0'
@@ -370,8 +354,7 @@ zabbix_export:
             https://nginx.org/en/docs/http/ngx_http_stub_status_module.html
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
           triggers:
             -
               expression: |
@@ -412,54 +395,80 @@ zabbix_export:
       dashboards:
         -
           name: 'Nginx performance'
-          widgets:
+          pages:
             -
-              type: GRAPH_CLASSIC
-              width: '12'
-              height: '5'
-              fields:
+              widgets:
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
+                  type: GRAPH_CLASSIC
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Nginx: Connections by state'
+                        host: 'Nginx by Zabbix agent'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Nginx: Connections by state'
-                    host: 'Nginx by Zabbix agent'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              width: '12'
-              height: '5'
-              fields:
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Nginx: Requests per second'
+                        host: 'Nginx by Zabbix agent'
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Nginx: Requests per second'
-                    host: 'Nginx by Zabbix agent'
-            -
-              type: GRAPH_CLASSIC
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Nginx: Connections per second'
-                    host: 'Nginx by Zabbix agent'
+                  type: GRAPH_CLASSIC
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Nginx: Connections per second'
+                        host: 'Nginx by Zabbix agent'
       valuemaps:
         -
           name: 'Service state'

@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:39Z'
+  date: '2021-04-14T13:14:49Z'
   groups:
     -
       name: Templates/Applications
@@ -33,8 +33,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
           triggers:
             -
               expression: '{last()}=0'
@@ -53,8 +52,7 @@ zabbix_export:
           description: 'The number of requests from users over an anonymous connection per second. Average per minute.'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Bytes Received per second'
           key: 'perf_counter_en["\Web Service(_Total)\Bytes Received/sec", 60]'
@@ -64,8 +62,7 @@ zabbix_export:
           description: 'The average rate per minute at which data bytes are received by the service at the Application Layer. Does not include protocol headers or control bytes.'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Bytes Sent per second'
           key: 'perf_counter_en["\Web Service(_Total)\Bytes Sent/sec", 60]'
@@ -75,8 +72,7 @@ zabbix_export:
           description: 'The average rate per minute at which data bytes are sent by the service.'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Bytes Total per second'
           key: 'perf_counter_en["\Web Service(_Total)\Bytes Total/Sec", 60]'
@@ -86,8 +82,7 @@ zabbix_export:
           description: 'The average rate per minute of total bytes/sec transferred by the Web service (sum of bytes sent/sec and bytes received/sec).'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method CGI requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\CGI Requests/Sec", 60]'
@@ -101,8 +96,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Connection attempts per second'
           key: 'perf_counter_en["\Web Service(_Total)\Connection Attempts/Sec", 60]'
@@ -116,8 +110,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method COPY requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Copy Requests/Sec", 60]'
@@ -131,8 +124,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Current connections'
           key: 'perf_counter_en["\Web Service(_Total)\Current Connections"]'
@@ -141,8 +133,7 @@ zabbix_export:
           description: 'The number of active connections.'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method DELETE requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Delete Requests/Sec", 60]'
@@ -156,8 +147,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method Method GET requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Get Requests/Sec", 60]'
@@ -171,8 +161,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method HEAD requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Head Requests/Sec", 60]'
@@ -186,8 +175,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method ISAPI requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\ISAPI Extension Requests/Sec", 60]'
@@ -201,8 +189,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Locked errors per second'
           key: 'perf_counter_en["\Web Service(_Total)\Locked Errors/Sec", 60]'
@@ -216,8 +203,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method LOCK requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Lock Requests/Sec", 60]'
@@ -231,8 +217,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method MKCOL requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Mkcol Requests/Sec", 60]'
@@ -246,8 +231,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method MOVE requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Move Requests/Sec", 60]'
@@ -261,8 +245,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: NonAnonymous users per second'
           key: 'perf_counter_en["\Web Service(_Total)\NonAnonymous Users/sec", 60]'
@@ -271,8 +254,7 @@ zabbix_export:
           description: 'The number of requests from users over a non-anonymous connection per second. Average per minute.'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Not Found errors per second'
           key: 'perf_counter_en["\Web Service(_Total)\Not Found Errors/Sec", 60]'
@@ -286,8 +268,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method OPTIONS requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Options Requests/Sec", 60]'
@@ -301,8 +282,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method Total Other requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Other Request Methods/Sec", 60]'
@@ -316,8 +296,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method POST requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Post Requests/Sec", 60]'
@@ -331,8 +310,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method PROPFIND requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Propfind Requests/Sec", 60]'
@@ -346,8 +324,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method PROPPATCH requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Proppatch Requests/Sec", 60]'
@@ -361,8 +338,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method PUT requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Put Requests/Sec", 60]'
@@ -376,8 +352,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method MS-SEARCH requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Search Requests/Sec", 60]'
@@ -391,8 +366,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Uptime'
           key: 'perf_counter_en["\Web Service(_Total)\Service Uptime"]'
@@ -402,8 +376,7 @@ zabbix_export:
           description: 'Service uptime in seconds.'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
           triggers:
             -
               expression: '{last()}<10m'
@@ -424,8 +397,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method Total requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Total Method Requests/Sec", 60]'
@@ -439,8 +411,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method TRACE requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Trace Requests/Sec", 60]'
@@ -454,8 +425,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method TRACE requests per second'
           key: 'perf_counter_en["\Web Service(_Total)\Unlock Requests/Sec", 60]'
@@ -469,8 +439,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Files cache hits percentage'
           key: 'perf_counter_en["\Web Service Cache\File Cache Hits %"]'
@@ -484,8 +453,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: File cache misses'
           key: 'perf_counter_en["\Web Service Cache\File Cache Misses"]'
@@ -499,8 +467,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: URIs cache hits percentage'
           key: 'perf_counter_en["\Web Service Cache\URI Cache Hits %"]'
@@ -514,8 +481,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: URI cache misses'
           key: 'perf_counter_en["\Web Service Cache\URI Cache Misses"]'
@@ -529,8 +495,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: World Wide Web Publishing Service (W3SVC) state'
           key: 'service_state[W3SVC]'
@@ -545,8 +510,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
           triggers:
             -
               expression: '{last()}<>0'
@@ -571,8 +535,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
           triggers:
             -
               expression: '{last()}<>0'
@@ -611,8 +574,7 @@ zabbix_export:
                     - 10m
               tags:
                 -
-                  tag: Application
-                  value: '{#APPPOOL}'
+                  tag: '{#APPPOOL}'
               trigger_prototypes:
                 -
                   expression: '{last()}<>3 and {$IIS.APPPOOL.MONITORED:"{#APPPOOL}"}=1'
@@ -627,8 +589,7 @@ zabbix_export:
               description: 'The web application uptime period since the last restart.'
               tags:
                 -
-                  tag: Application
-                  value: '{#APPPOOL}'
+                  tag: '{#APPPOOL}'
               trigger_prototypes:
                 -
                   expression: '{last()}<10m'
@@ -648,8 +609,7 @@ zabbix_export:
                     - 10m
               tags:
                 -
-                  tag: Application
-                  value: '{#APPPOOL}'
+                  tag: '{#APPPOOL}'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {$IIS.APPPOOL.MONITORED:"{#APPPOOL}"}=1'
@@ -668,8 +628,7 @@ zabbix_export:
                     - 10m
               tags:
                 -
-                  tag: Application
-                  value: '{#APPPOOL}'
+                  tag: '{#APPPOOL}'
               trigger_prototypes:
                 -
                   expression: '{min({$IIS.QUEUE.MAX.TIME})}>{$IIS.QUEUE.MAX.WARN}'

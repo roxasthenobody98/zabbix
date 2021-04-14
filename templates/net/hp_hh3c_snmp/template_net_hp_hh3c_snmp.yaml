@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:31Z'
+  date: '2021-04-14T13:14:37Z'
   groups:
     -
       name: 'Templates/Network devices'
@@ -63,8 +63,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -90,8 +89,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
             -
               name: '{#ENT_NAME}: Hardware serial number'
               type: SNMP_AGENT
@@ -109,8 +107,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -135,8 +132,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
             -
               name: '{#ENT_NAME}: Operating system'
               type: SNMP_AGENT
@@ -154,8 +150,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -193,8 +188,7 @@ zabbix_export:
                 name: 'HH3C-ENTITY-EXT-MIB::hh3cEntityExtErrorStatus'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS:"fanError"},eq)}=1 or {count(#1,{$FAN_CRIT_STATUS:"hardwareFaulty"},eq)}=1'
@@ -236,8 +230,7 @@ zabbix_export:
                 is not sensible with the number of CPU on the entity
               tags:
                 -
-                  tag: Application
-                  value: CPU
+                  tag: CPU
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -259,12 +252,11 @@ zabbix_export:
                 percent of memory are used.
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
-                  name: '{#MODULE_NAME}: High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+                  name: '{#MODULE_NAME}: High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
                   priority: AVERAGE
                   description: 'The system is running out of free memory.'
           graph_prototypes:
@@ -321,8 +313,7 @@ zabbix_export:
                 name: 'HH3C-ENTITY-EXT-MIB::hh3cEntityExtErrorStatus'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: Power_supply
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS:"psuError"},eq)}=1 or {count(#1,{$PSU_CRIT_STATUS:"rpsError"},eq)}=1 or {count(#1,{$PSU_CRIT_STATUS:"hardwareFaulty"},eq)}=1'
@@ -366,8 +357,7 @@ zabbix_export:
                 The temperature for the {#SNMPVALUE}.
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:""}'

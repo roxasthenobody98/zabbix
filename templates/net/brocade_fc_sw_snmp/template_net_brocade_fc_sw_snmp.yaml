@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:26Z'
+  date: '2021-04-14T13:14:32Z'
   groups:
     -
       name: 'Templates/Network devices'
@@ -43,8 +43,7 @@ zabbix_export:
             System's CPU usage.
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
           triggers:
             -
               expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -69,8 +68,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -97,8 +95,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -125,8 +122,7 @@ zabbix_export:
             name: 'SW-MIB::swOperStatus'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{count(#1,{$HEALTH_CRIT_STATUS},eq)}=1'
@@ -157,12 +153,11 @@ zabbix_export:
             Memory utilization in %
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
           triggers:
             -
               expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
-              name: 'High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+              name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
               priority: AVERAGE
               description: 'The system is running out of free memory.'
       discovery_rules:
@@ -192,8 +187,7 @@ zabbix_export:
                 The fan value will be in RPM(revolution per minute)
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
             -
               name: '{#SENSOR_INFO}: Fan status'
               type: SNMP_AGENT
@@ -207,8 +201,7 @@ zabbix_export:
                 name: 'SW-MIB::swSensorStatus'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS},eq)}=1'
@@ -252,8 +245,7 @@ zabbix_export:
                 name: 'SW-MIB::swSensorStatus'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: Power_supply
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS},eq)}=1'
@@ -299,8 +291,7 @@ zabbix_export:
                 name: 'SW-MIB::swSensorStatus'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
             -
               name: '{#SENSOR_INFO}: Temperature'
               type: SNMP_AGENT
@@ -314,8 +305,7 @@ zabbix_export:
                 Temperature readings of testpoint: {#SENSOR_INFO}
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:""}'
@@ -337,7 +327,7 @@ zabbix_export:
               expression: |
                 {Brocade FC SNMP:sensor.temp.value[swSensorValue.{#SNMPINDEX}].avg(5m)}>{$TEMP_WARN:""}
                 or
-                {Brocade FC SNMP:sensor.temp.status[swSensorStatus.{#SNMPINDEX}].last(0)}={$TEMP_WARN_STATUS}
+                {Brocade FC SNMP:sensor.temp.status[swSensorStatus.{#SNMPINDEX}].last()}={$TEMP_WARN_STATUS}
               recovery_mode: RECOVERY_EXPRESSION
               recovery_expression: '{Brocade FC SNMP:sensor.temp.value[swSensorValue.{#SNMPINDEX}].max(5m)}<{$TEMP_WARN:""}-3'
               name: '{#SENSOR_INFO}: Temperature is above warning threshold: >{$TEMP_WARN:""}'

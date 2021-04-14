@@ -1,9 +1,9 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:58Z'
+  date: '2021-04-14T13:15:21Z'
   groups:
     -
-      name: Templates/SAN
+      name: Templates/Modules
   templates:
     -
       template: 'NetApp FAS3220 SNMP'
@@ -12,7 +12,7 @@ zabbix_export:
         The template to monitor SAN NetApp FAS3220 cluster by Zabbix SNMP agent.
         
         MIBs used:
-        NETAPP-MIB
+        IF-MIB
         
         You can discuss this template or leave feedback on our forum https://www.zabbix.com/forum/zabbix-suggestions-and-feedback/416694-discussion-thread-for-official-zabbix-template-netapp-fas3220
         
@@ -22,7 +22,7 @@ zabbix_export:
           name: 'Generic SNMP'
       groups:
         -
-          name: Templates/SAN
+          name: Templates/Modules
       items:
         -
           name: 'NetApp FAS3220: Failed disks count'
@@ -38,8 +38,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: 'NetApp FAS3220'
+              tag: FAS3220
         -
           name: 'NetApp FAS3220: Failed disks message'
           type: SNMP_AGENT
@@ -56,8 +55,7 @@ zabbix_export:
                 - 6h
           tags:
             -
-              tag: Application
-              value: 'NetApp FAS3220'
+              tag: FAS3220
         -
           name: 'NetApp FAS3220: Product firmware version'
           type: SNMP_AGENT
@@ -74,8 +72,7 @@ zabbix_export:
                 - 6h
           tags:
             -
-              tag: Application
-              value: 'NetApp FAS3220'
+              tag: FAS3220
         -
           name: 'NetApp FAS3220: Product version'
           type: SNMP_AGENT
@@ -92,8 +89,7 @@ zabbix_export:
                 - 6h
           tags:
             -
-              tag: Application
-              value: 'NetApp FAS3220'
+              tag: FAS3220
       discovery_rules:
         -
           name: 'Cluster metrics discovery'
@@ -117,8 +113,8 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} Health'
+                  tag: Node
+                  value: '{#NODE.NAME}'
             -
               name: 'Node {#NODE.NAME}: Failed FAN messgae'
               type: SNMP_AGENT
@@ -135,8 +131,8 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} Health'
+                  tag: Node
+                  value: '{#NODE.NAME}'
             -
               name: 'Node {#NODE.NAME}: Degraded power supplies count'
               type: SNMP_AGENT
@@ -151,8 +147,8 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} Health'
+                  tag: Node
+                  value: '{#NODE.NAME}'
             -
               name: 'Node {#NODE.NAME}: Degraded power supplies message'
               type: SNMP_AGENT
@@ -169,8 +165,8 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} Health'
+                  tag: Node
+                  value: '{#NODE.NAME}'
             -
               name: 'Node {#NODE.NAME}: Over-temperature'
               type: SNMP_AGENT
@@ -185,8 +181,8 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} Health'
+                  tag: Node
+                  value: '{#NODE.NAME}'
               trigger_prototypes:
                 -
                   expression: '{last()}=2'
@@ -209,8 +205,8 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} Health'
+                  tag: Node
+                  value: '{#NODE.NAME}'
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -233,8 +229,8 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} Inventory'
+                  tag: Node
+                  value: '{#NODE.NAME}'
             -
               name: 'Node {#NODE.NAME}: Model'
               type: SNMP_AGENT
@@ -251,8 +247,8 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} Inventory'
+                  tag: Node
+                  value: '{#NODE.NAME}'
             -
               name: 'Node {#NODE.NAME}: NVRAM battery status'
               type: SNMP_AGENT
@@ -281,8 +277,8 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} Health'
+                  tag: Node
+                  value: '{#NODE.NAME}'
               trigger_prototypes:
                 -
                   expression: '{last()}<>1'
@@ -305,8 +301,8 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} Inventory'
+                  tag: Node
+                  value: '{#NODE.NAME}'
             -
               name: 'Node {#NODE.NAME}: Uptime'
               type: SNMP_AGENT
@@ -322,8 +318,8 @@ zabbix_export:
                     - '0.01'
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} Health'
+                  tag: Node
+                  value: '{#NODE.NAME}'
               trigger_prototypes:
                 -
                   expression: '{last()}<10m'
@@ -361,8 +357,8 @@ zabbix_export:
               description: 'The average, over the last minute, of the percentage of time that this processor was not idle.'
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} CPU'
+                  tag: Node
+                  value: '{#NODE.NAME}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -426,8 +422,7 @@ zabbix_export:
                     - '1024'
               tags:
                 -
-                  tag: Application
-                  value: '{#VSERVER}{#FSNAME}'
+                  tag: '{#VSERVER}{#FSNAME}'
               trigger_prototypes:
                 -
                   expression: '{min({$FAS3220.FS.TIME:"{#FSNAME}"})}<{$FAS3220.FS.AVAIL.MIN.CRIT:"{#FSNAME}"} and {$FAS3220.FS.USE.PCT:"{#FSNAME}"}=0'
@@ -448,8 +443,7 @@ zabbix_export:
                     - '1024'
               tags:
                 -
-                  tag: Application
-                  value: '{#VSERVER}{#FSNAME}'
+                  tag: '{#VSERVER}{#FSNAME}'
             -
               name: '{#VSERVER}{#FSNAME}: Total space used'
               type: SNMP_AGENT
@@ -465,8 +459,7 @@ zabbix_export:
                     - '1024'
               tags:
                 -
-                  tag: Application
-                  value: '{#VSERVER}{#FSNAME}'
+                  tag: '{#VSERVER}{#FSNAME}'
             -
               name: '{#VSERVER}{#FSNAME}: Saved by compression percents'
               type: SNMP_AGENT
@@ -478,8 +471,7 @@ zabbix_export:
               description: 'Provides the percentage of compression savings in a volume, which is ((compr_saved/used)) * 10(compr_saved + 0). This is only returned for volumes.'
               tags:
                 -
-                  tag: Application
-                  value: '{#VSERVER}{#FSNAME}'
+                  tag: '{#VSERVER}{#FSNAME}'
             -
               name: '{#VSERVER}{#FSNAME}: Saved by deduplication percents'
               type: SNMP_AGENT
@@ -491,8 +483,7 @@ zabbix_export:
               description: 'Provides the percentage of deduplication savings in a volume, which is ((dedup_saved/(dedup_saved + used)) * 100). This is only returned for volumes.'
               tags:
                 -
-                  tag: Application
-                  value: '{#VSERVER}{#FSNAME}'
+                  tag: '{#VSERVER}{#FSNAME}'
             -
               name: '{#VSERVER}{#FSNAME}: Used space percents'
               type: SNMP_AGENT
@@ -503,8 +494,7 @@ zabbix_export:
               description: 'The percentage of disk space currently in use on {#FSNAME}.'
               tags:
                 -
-                  tag: Application
-                  value: '{#VSERVER}{#FSNAME}'
+                  tag: '{#VSERVER}{#FSNAME}'
               trigger_prototypes:
                 -
                   expression: '{max({$FAS3220.FS.TIME:"{#FSNAME}"})}>{$FAS3220.FS.PUSED.MAX.CRIT:"{#FSNAME}"} and {$FAS3220.FS.USE.PCT:"{#FSNAME}"}=1'
@@ -590,8 +580,8 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} HA'
+                  tag: Node
+                  value: '{#NODE.NAME}'
               trigger_prototypes:
                 -
                   expression: '{last()}<>1'
@@ -633,8 +623,8 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Node {#NODE.NAME} HA'
+                  tag: Node
+                  value: '{#NODE.NAME}'
               trigger_prototypes:
                 -
                   expression: '{last()}=1'
@@ -691,7 +681,9 @@ zabbix_export:
               key: 'fas3220.net.if[if64InDiscards, "{#NODE}", "{#IFNAME}"]'
               delay: 3m
               history: 7d
-              description: 'The number of inbound packets that were chosen to be discarded even though no errors had been detected to prevent their being deliverable to a higher-layer protocol. One possible reason for discarding such a packet could be to free up buffer space.'
+              description: |
+                MIB: IF-MIB
+                The number of inbound packets that were chosen to be discarded even though no errors had been detected to prevent their being deliverable to a higher-layer protocol. One possible reason for discarding such a packet could be to free up buffer space.
               preprocessing:
                 -
                   type: CHANGE_PER_SECOND
@@ -699,8 +691,7 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: '{#IFDESCR}'
+                  tag: '{#IFDESCR}'
             -
               name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): Inbound packets with errors'
               type: SNMP_AGENT
@@ -708,7 +699,9 @@ zabbix_export:
               key: 'fas3220.net.if[if64InErrors, "{#NODE}", "{#IFNAME}"]'
               delay: 3m
               history: 7d
-              description: 'The number of inbound packets that contained errors preventing them from being deliverable to a higher-layer protocol.'
+              description: |
+                MIB: IF-MIB
+                The number of inbound packets that contained errors preventing them from being deliverable to a higher-layer protocol.
               preprocessing:
                 -
                   type: CHANGE_PER_SECOND
@@ -716,8 +709,7 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: '{#IFDESCR}'
+                  tag: '{#IFDESCR}'
             -
               name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): Bits received'
               type: SNMP_AGENT
@@ -737,8 +729,7 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: '{#IFDESCR}'
+                  tag: '{#IFDESCR}'
             -
               name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): Outbound packets discarded'
               type: SNMP_AGENT
@@ -746,7 +737,9 @@ zabbix_export:
               key: 'fas3220.net.if[if64OutDiscards, "{#NODE}", "{#IFNAME}"]'
               delay: 3m
               history: 7d
-              description: 'The number of outbound packets that were chosen to be discarded even though no errors had been detected to prevent their being transmitted. One possible reason for discarding such a packet could be to free up buffer space.'
+              description: |
+                MIB: IF-MIB
+                The number of outbound packets that were chosen to be discarded even though no errors had been detected to prevent their being transmitted. One possible reason for discarding such a packet could be to free up buffer space.
               preprocessing:
                 -
                   type: CHANGE_PER_SECOND
@@ -754,8 +747,7 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: '{#IFDESCR}'
+                  tag: '{#IFDESCR}'
             -
               name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): Outbound packets with errors'
               type: SNMP_AGENT
@@ -763,7 +755,9 @@ zabbix_export:
               key: 'fas3220.net.if[if64OutErrors, "{#NODE}", "{#IFNAME}"]'
               delay: 3m
               history: 7d
-              description: 'The number of outbound packets that could not be transmitted because of errors.'
+              description: |
+                MIB: IF-MIB
+                The number of outbound packets that could not be transmitted because of errors.
               preprocessing:
                 -
                   type: CHANGE_PER_SECOND
@@ -771,8 +765,7 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: '{#IFDESCR}'
+                  tag: '{#IFDESCR}'
             -
               name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): Bits sent'
               type: SNMP_AGENT
@@ -792,8 +785,7 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: '{#IFDESCR}'
+                  tag: '{#IFDESCR}'
             -
               name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): Health degraded reason'
               type: SNMP_AGENT
@@ -810,8 +802,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: '{#IFDESCR}'
+                  tag: '{#IFDESCR}'
             -
               name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): Health'
               type: SNMP_AGENT
@@ -829,8 +820,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: '{#IFDESCR}'
+                  tag: '{#IFDESCR}'
             -
               name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): State'
               type: SNMP_AGENT
@@ -847,8 +837,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: '{#IFDESCR}'
+                  tag: '{#IFDESCR}'
             -
               name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): Role'
               type: SNMP_AGENT
@@ -865,15 +854,14 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: '{#IFDESCR}'
+                  tag: '{#IFDESCR}'
             -
               name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): Speed'
               type: SNMP_AGENT
               snmp_oid: '1.3.6.1.4.1.789.1.22.2.1.11.{#SNMPINDEX}'
               key: 'fas3220.net.port[netportSpeedOper, "{#NODE}", "{#IFNAME}"]'
               history: 7d
-              description: 'The speed that appears on the port. It can be either undef(0), auto(1), ten Mb/s(2), hundred Mb/s(3), one Gb/s(4), or ten Gb/s(5).'
+              description: 'The speed appears on the port. It can be either undef(0), auto(1), ten Mb/s(2), hundred Mb/s(3), one Gb/s(4), or ten Gb/s(5).'
               valuemap:
                 name: 'FAS3220 Port speed'
               preprocessing:
@@ -883,8 +871,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: '{#IFDESCR}'
+                  tag: '{#IFDESCR}'
             -
               name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): Up by an administrator'
               type: SNMP_AGENT
@@ -901,8 +888,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: '{#IFDESCR}'
+                  tag: '{#IFDESCR}'
           trigger_prototypes:
             -
               expression: |
@@ -912,7 +898,7 @@ zabbix_export:
               recovery_expression: |
                 {NetApp FAS3220 SNMP:fas3220.net.if[if64InErrors, "{#NODE}", "{#IFNAME}"].max(5m)}<{$IF.ERRORS.WARN:"{#IFNAME}"}*0.8
                 and {NetApp FAS3220 SNMP:fas3220.net.if[if64OutErrors, "{#NODE}", "{#IFNAME}"].max(5m)}<{$IF.ERRORS.WARN:"{#IFNAME}"}*0.8
-              name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): High error rate (> {$IF.ERRORS.WARN:"{#IFNAME}"} for 5m)'
+              name: 'Node {#NODE}: port {#IFNAME} ({#TYPE}): High error rate ( > {$IF.ERRORS.WARN:"{#IFNAME}"} for 5m)'
               opdata: 'errors in: {ITEM.LASTVALUE1}, errors out: {ITEM.LASTVALUE2}'
               priority: WARNING
               description: 'Recovers when below 80% of {$IF.ERRORS.WARN:"{#IFNAME}"} threshold'
@@ -1233,6 +1219,15 @@ zabbix_export:
               value: '9'
               newvalue: 'Fully charged'
         -
+          name: 'FAS3220 Over-temperature'
+          mappings:
+            -
+              value: '1'
+              newvalue: 'No'
+            -
+              value: '2'
+              newvalue: 'Yes'
+        -
           name: 'FAS3220 Port health'
           mappings:
             -
@@ -1299,6 +1294,21 @@ zabbix_export:
               value: '5'
               newvalue: '100 Gb/s'
         -
+          name: 'FAS3220 Port type'
+          mappings:
+            -
+              value: '0'
+              newvalue: Physical
+            -
+              value: '1'
+              newvalue: IF-group
+            -
+              value: '2'
+              newvalue: VLAN
+            -
+              value: '3'
+              newvalue: Undef
+        -
           name: 'FAS3220 Port UP by administrator'
           mappings:
             -
@@ -1325,4 +1335,3 @@ zabbix_export:
       opdata: 'Current value: {ITEM.LASTVALUE1}'
       priority: WARNING
       description: '{{ITEM.LASTVALUE2}.regsub("(.*)", \1)}'
-      type: MULTIPLE

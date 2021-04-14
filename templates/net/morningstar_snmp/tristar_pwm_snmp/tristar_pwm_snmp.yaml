@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:29Z'
+  date: '2021-04-14T13:14:34Z'
   groups:
     -
       name: Templates/Modules
@@ -40,8 +40,7 @@ zabbix_export:
                 - '0.002950042725'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Status: Control Mode'
           type: SNMP_AGENT
@@ -62,8 +61,7 @@ zabbix_export:
             name: 'TriStar PWM control mode'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
         -
           name: 'Counter: Amp-hours'
           type: SNMP_AGENT
@@ -86,8 +84,7 @@ zabbix_export:
                 - '0.1'
           tags:
             -
-              tag: Application
-              value: Counter
+              tag: Counter
         -
           name: 'Counter: KW-hours'
           type: SNMP_AGENT
@@ -115,8 +112,7 @@ zabbix_export:
                 - \1\2
           tags:
             -
-              tag: Application
-              value: Counter
+              tag: Counter
         -
           name: 'Status: Alarms'
           type: SNMP_AGENT
@@ -171,8 +167,7 @@ zabbix_export:
                   return result.length ? result.join('\n') : 'No alarms';
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{count(#3,"batterySense","like")}=2'
@@ -310,8 +305,7 @@ zabbix_export:
                   return result.length ? result.join('\n') : 'No faults';
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{count(#3,"customSettingsEdit","like")}=2'
@@ -388,8 +382,7 @@ zabbix_export:
                 - '0.01'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{last()}<10m'
@@ -420,8 +413,7 @@ zabbix_export:
             Modbus address:0x000F
           tags:
             -
-              tag: Application
-              value: Temperature
+              tag: Temperature
           triggers:
             -
               expression: '{min(5m)}>{$BATTERY.TEMP.MAX.CRIT}'
@@ -468,8 +460,7 @@ zabbix_export:
             Modbus address:0x000E
           tags:
             -
-              tag: Application
-              value: Temperature
+              tag: Temperature
       discovery_rules:
         -
           name: 'Battery voltage discovery'
@@ -505,8 +496,7 @@ zabbix_export:
                     - \1\2
               tags:
                 -
-                  tag: Application
-                  value: Battery
+                  tag: Battery
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{#VOLTAGE.MAX.CRIT}'
@@ -609,8 +599,7 @@ zabbix_export:
                     - \1\2
               tags:
                 -
-                  tag: Application
-                  value: Array
+                  tag: Array
             -
               name: 'Battery: Charge Current{#SINGLETON}'
               type: SNMP_AGENT
@@ -638,8 +627,7 @@ zabbix_export:
                     - \1\2
               tags:
                 -
-                  tag: Application
-                  value: Battery
+                  tag: Battery
           graph_prototypes:
             -
               name: 'Array: Voltage{#SINGLETON}'
@@ -694,8 +682,7 @@ zabbix_export:
                     - 1h
               tags:
                 -
-                  tag: Application
-                  value: Battery
+                  tag: Battery
               trigger_prototypes:
                 -
                   expression: '{last()}={$CHARGE.STATE.CRIT}'
@@ -738,8 +725,7 @@ zabbix_export:
                     - \1\2
               tags:
                 -
-                  tag: Application
-                  value: Battery
+                  tag: Battery
           master_item:
             key: 'control.mode[controlMode.0]'
           preprocessing:
@@ -783,8 +769,7 @@ zabbix_export:
                     - \1\2
               tags:
                 -
-                  tag: Application
-                  value: Load
+                  tag: Load
           master_item:
             key: 'control.mode[controlMode.0]'
           preprocessing:
@@ -830,8 +815,7 @@ zabbix_export:
                     - 1h
               tags:
                 -
-                  tag: Application
-                  value: Load
+                  tag: Load
               trigger_prototypes:
                 -
                   expression: '{last()}={$LOAD.STATE.CRIT:"lvd"} or {last()}={$LOAD.STATE.CRIT:"fault"}'
@@ -889,8 +873,7 @@ zabbix_export:
                     - \1\2
               tags:
                 -
-                  tag: Application
-                  value: Load
+                  tag: Load
             -
               name: 'Load: Voltage{#SINGLETON}'
               type: SNMP_AGENT
@@ -918,8 +901,7 @@ zabbix_export:
                     - \1\2
               tags:
                 -
-                  tag: Application
-                  value: Load
+                  tag: Load
           graph_prototypes:
             -
               name: 'Load: Current{#SINGLETON}'

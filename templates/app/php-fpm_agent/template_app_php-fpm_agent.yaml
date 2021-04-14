@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:44Z'
+  date: '2021-04-14T13:14:56Z'
   groups:
     -
       name: Templates/Applications
@@ -37,8 +37,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Listen queue'
           type: DEPENDENT
@@ -55,8 +54,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Listen queue, len'
           type: DEPENDENT
@@ -73,8 +71,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Listen queue, max'
           type: DEPENDENT
@@ -91,8 +88,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Queue usage'
           type: CALCULATED
@@ -104,8 +100,7 @@ zabbix_export:
           description: 'Queue utilization'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{min(15m)}  > {$PHP_FPM.QUEUE.WARN.MAX}'
@@ -132,8 +127,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Pool name'
           type: DEPENDENT
@@ -156,8 +150,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Ping'
           type: DEPENDENT
@@ -178,8 +171,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.PING.PAGE}","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{last()}=0 or {nodata(3m)}=1'
@@ -206,8 +198,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Processes, idle'
           type: DEPENDENT
@@ -224,8 +215,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Processes, max active'
           type: DEPENDENT
@@ -242,8 +232,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Processes, total'
           type: DEPENDENT
@@ -260,8 +249,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Process manager'
           type: DEPENDENT
@@ -284,8 +272,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{diff()}=1'
@@ -313,8 +300,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{min(#3)}>0'
@@ -338,8 +324,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Uptime'
           type: DEPENDENT
@@ -357,8 +342,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{nodata(30m)}=1'
@@ -400,8 +384,7 @@ zabbix_export:
             key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.PING.PAGE}","{$PHP_FPM.PORT}"]'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -418,8 +401,7 @@ zabbix_export:
           description: 'Process CPU utilization percentage.'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Memory usage, %'
           key: 'proc.mem["{$PHP_FPM.PROCESS_NAME}",,,,pmem]'
@@ -429,8 +411,7 @@ zabbix_export:
           description: 'Memory used percentage relative to total memory available.'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Memory usage (rss)'
           key: 'proc.mem["{$PHP_FPM.PROCESS_NAME}",,,,rss]'
@@ -439,16 +420,14 @@ zabbix_export:
           description: 'Resident set size memory used by process in bytes.'
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
         -
           name: 'PHP-FPM: Number of processes running'
           key: 'proc.num["{$PHP_FPM.PROCESS_NAME}"]'
           history: 7d
           tags:
             -
-              tag: Application
-              value: PHP-FPM
+              tag: PHP-FPM
           triggers:
             -
               expression: '{last()}=0'
@@ -462,8 +441,7 @@ zabbix_export:
           value_type: TEXT
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'PHP-FPM: Get status page'
           key: 'web.page.get["{$PHP_FPM.HOST}","{$PHP_FPM.STATUS.PAGE}?json","{$PHP_FPM.PORT}"]'
@@ -478,8 +456,7 @@ zabbix_export:
                 - \1
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
       macros:
         -
           macro: '{$PHP_FPM.HOST}'

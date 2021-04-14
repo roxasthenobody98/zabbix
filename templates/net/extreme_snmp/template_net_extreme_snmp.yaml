@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:26Z'
+  date: '2021-04-14T13:14:31Z'
   groups:
     -
       name: 'Templates/Network devices'
@@ -43,8 +43,7 @@ zabbix_export:
             name: 'EXTREME-SYSTEM-MIB::extremeOverTemperatureAlarm'
           tags:
             -
-              tag: Application
-              value: Temperature
+              tag: Temperature
         -
           name: 'Device: Temperature'
           type: SNMP_AGENT
@@ -59,8 +58,7 @@ zabbix_export:
             Reference: https://gtacknowledge.extremenetworks.com/articles/Q_A/Does-EXOS-support-temperature-polling-via-SNMP-on-all-nodes-in-a-stack
           tags:
             -
-              tag: Application
-              value: Temperature
+              tag: Temperature
           triggers:
             -
               expression: '{avg(5m)}>{$TEMP_WARN:""}'
@@ -98,8 +96,7 @@ zabbix_export:
             Total CPU utlization (percentage) as of last sampling.
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
           triggers:
             -
               expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -124,8 +121,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -152,8 +148,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
         -
           name: 'Hardware serial number'
           type: SNMP_AGENT
@@ -172,8 +167,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -198,8 +192,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
         -
           name: 'Operating system'
           type: SNMP_AGENT
@@ -222,8 +215,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -250,8 +242,7 @@ zabbix_export:
                 The speed (RPM) of a cooling fan in the fantray {#SNMPVALUE}
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
             -
               name: 'Fan {#SNMPVALUE}: Fan status'
               type: SNMP_AGENT
@@ -267,8 +258,7 @@ zabbix_export:
                 name: 'EXTREME-SYSTEM-MIB::extremeFanOperational'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS},eq)}=1'
@@ -300,8 +290,7 @@ zabbix_export:
                     - '1024'
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
             -
               name: '#{#SNMPVALUE}: Total memory'
               type: SNMP_AGENT
@@ -319,8 +308,7 @@ zabbix_export:
                     - '1024'
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
             -
               name: '#{#SNMPVALUE}: Memory utilization'
               type: CALCULATED
@@ -332,12 +320,11 @@ zabbix_export:
               description: 'Memory utilization in %'
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
-                  name: '#{#SNMPVALUE}: High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+                  name: '#{#SNMPVALUE}: High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
                   priority: AVERAGE
                   description: 'The system is running out of free memory.'
           graph_prototypes:
@@ -392,8 +379,7 @@ zabbix_export:
                 name: 'EXTREME-SYSTEM-MIB::extremePowerSupplyStatus'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: Power_supply
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS},eq)}=1'
@@ -460,6 +446,15 @@ zabbix_export:
             -
               value: '4'
               newvalue: presentPowerOff
+        -
+          name: TruthValue
+          mappings:
+            -
+              value: '1'
+              newvalue: 'true'
+            -
+              value: '2'
+              newvalue: 'false'
   triggers:
     -
       expression: |

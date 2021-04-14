@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:42Z'
+  date: '2021-04-14T13:14:54Z'
   groups:
     -
       name: Templates/Applications
@@ -9,7 +9,7 @@ zabbix_export:
       template: 'Microsoft Exchange Server 2016 by Zabbix agent active'
       name: 'Microsoft Exchange Server 2016 by Zabbix agent active'
       description: |
-        The template to monitor Microsoft Exchange Server 2016 by Zabbix that works without any external scripts.
+        The template to monitor Microsoft Exchange Server 2016 by Zabbix that work without any external scripts.
         The metrics are collected by Zabbix agent active.
         Recommended to use it with "OS Windows by Zabbix agent active" template.
         
@@ -35,8 +35,7 @@ zabbix_export:
                 - 3h
           tags:
             -
-              tag: Application
-              value: 'MS Exchange'
+              tag: Exchange
         -
           name: 'MS Exchange [Client Access Server]: ActiveSync: ping command pending'
           type: ZABBIX_ACTIVE
@@ -47,8 +46,7 @@ zabbix_export:
           description: 'Shows the number of ping commands currently pending in the queue.'
           tags:
             -
-              tag: Application
-              value: 'MS Exchange'
+              tag: Exchange
         -
           name: 'MS Exchange [Client Access Server]: ActiveSync: requests per second'
           type: ZABBIX_ACTIVE
@@ -59,8 +57,7 @@ zabbix_export:
           description: 'Shows the number of HTTP requests received from the client via ASP.NET per second. Determines the current Exchange ActiveSync request rate. Used only to determine current user load.'
           tags:
             -
-              tag: Application
-              value: 'MS Exchange'
+              tag: Exchange
         -
           name: 'MS Exchange [Client Access Server]: ActiveSync: sync commands per second'
           type: ZABBIX_ACTIVE
@@ -71,8 +68,7 @@ zabbix_export:
           description: 'Shows the number of sync commands processed per second. Clients use this command to synchronize items within a folder.'
           tags:
             -
-              tag: Application
-              value: 'MS Exchange'
+              tag: Exchange
         -
           name: 'MS Exchange [Client Access Server]: Autodiscover: requests per second'
           type: ZABBIX_ACTIVE
@@ -83,8 +79,7 @@ zabbix_export:
           description: 'Shows the number of Autodiscover service requests processed each second. Determines current user load.'
           tags:
             -
-              tag: Application
-              value: 'MS Exchange'
+              tag: Exchange
         -
           name: 'MS Exchange [Client Access Server]: Availability Service: availability requests per second'
           type: ZABBIX_ACTIVE
@@ -95,8 +90,7 @@ zabbix_export:
           description: 'Shows the number of requests serviced per second. The request can be only for free/ busy information or include suggestions. One request may contain multiple mailboxes. Determines the rate at which Availability service requests are occurring.'
           tags:
             -
-              tag: Application
-              value: 'MS Exchange'
+              tag: Exchange
         -
           name: 'MS Exchange [Client Access Server]: Outlook Web App: current unique users'
           type: ZABBIX_ACTIVE
@@ -107,8 +101,7 @@ zabbix_export:
           description: 'Shows the number of unique users currently logged on to Outlook Web App. This value monitors the number of unique active user sessions, so that users are only removed from this counter after they log off or their session times out. Determines current user load.'
           tags:
             -
-              tag: Application
-              value: 'MS Exchange'
+              tag: Exchange
         -
           name: 'MS Exchange [Client Access Server]: Outlook Web App: requests per second'
           type: ZABBIX_ACTIVE
@@ -119,8 +112,7 @@ zabbix_export:
           description: 'Shows the number of requests handled by Outlook Web App per second. Determines current user load.'
           tags:
             -
-              tag: Application
-              value: 'MS Exchange'
+              tag: Exchange
         -
           name: 'MS Exchange [Client Access Server]: MSExchangeWS: requests per second'
           type: ZABBIX_ACTIVE
@@ -131,8 +123,7 @@ zabbix_export:
           description: 'Shows the number of requests processed each second. Determines current user load.'
           tags:
             -
-              tag: Application
-              value: 'MS Exchange'
+              tag: Exchange
       discovery_rules:
         -
           name: 'Databases discovery'
@@ -158,8 +149,8 @@ zabbix_export:
                     - 3h
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
             -
               name: 'Information Store [{#INSTANCE}]: Page faults per second'
               type: ZABBIX_ACTIVE
@@ -170,8 +161,8 @@ zabbix_export:
               description: 'Indicates the rate of page faults that can''t be serviced because there are no pages available for allocation from the database cache. If this counter is above 0, it''s an indication that the MSExchange Database\I/O Database Writes (Attached) Average Latency is too high.'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
               trigger_prototypes:
                 -
                   expression: '{min({$MS.EXCHANGE.DB.FAULTS.TIME})}>{$MS.EXCHANGE.DB.FAULTS.WARN}'
@@ -188,8 +179,8 @@ zabbix_export:
               description: 'Indicates the number of log records that can''t be added to the log buffers per second because the log buffers are full. The average value should be below 10 per second. Spikes (maximum values) shouldn''t be higher than 100 per second.'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
               trigger_prototypes:
                 -
                   expression: '{avg({$MS.EXCHANGE.LOG.STALLS.TIME})}>{$MS.EXCHANGE.LOG.STALLS.WARN}'
@@ -206,8 +197,8 @@ zabbix_export:
               description: 'Indicates the number of threads waiting to complete an update of the database by writing their data to the log.'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
             -
               name: 'Database Counters [{#INSTANCE}]: Active database read operations per second'
               type: ZABBIX_ACTIVE
@@ -218,8 +209,8 @@ zabbix_export:
               description: 'Shows the number of database read operations.'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
             -
               name: 'Database Counters [{#INSTANCE}]: Active database read operations latency'
               type: ZABBIX_ACTIVE
@@ -236,8 +227,8 @@ zabbix_export:
                     - '0.001'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
               trigger_prototypes:
                 -
                   expression: '{min({$MS.EXCHANGE.DB.ACTIVE.READ.TIME})}>{$MS.EXCHANGE.DB.ACTIVE.READ.WARN}'
@@ -260,8 +251,8 @@ zabbix_export:
                     - '0.001'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
               trigger_prototypes:
                 -
                   expression: '{min({$MS.EXCHANGE.DB.PASSIVE.READ.TIME})}>{$MS.EXCHANGE.DB.PASSIVE.READ.WARN}'
@@ -278,8 +269,8 @@ zabbix_export:
               description: 'Shows the number of database write operations per second for each attached database instance.'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
             -
               name: 'Database Counters [{#INSTANCE}]: Active database write operations latency'
               type: ZABBIX_ACTIVE
@@ -296,8 +287,8 @@ zabbix_export:
                     - '0.001'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
               trigger_prototypes:
                 -
                   expression: '{min({$MS.EXCHANGE.DB.ACTIVE.WRITE.TIME})}>{$MS.EXCHANGE.DB.ACTIVE.WRITE.WARN}'
@@ -320,8 +311,8 @@ zabbix_export:
                     - '0.001'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
             -
               name: 'Information Store [{#INSTANCE}]: Active mailboxes count'
               type: ZABBIX_ACTIVE
@@ -332,8 +323,8 @@ zabbix_export:
               description: 'Number of active mailboxes in this database.'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
             -
               name: 'Information Store [{#INSTANCE}]: Database state'
               type: ZABBIX_ACTIVE
@@ -355,8 +346,8 @@ zabbix_export:
                     - 3m
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
             -
               name: 'Information Store [{#INSTANCE}]: RPC requests latency'
               type: ZABBIX_ACTIVE
@@ -373,12 +364,12 @@ zabbix_export:
                     - '0.001'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
               trigger_prototypes:
                 -
                   expression: '{min({$MS.EXCHANGE.RPC.TIME})}>{$MS.EXCHANGE.RPC.WARN}'
-                  name: 'Information Store [{#INSTANCE}]: RPC Requests latency is too high (>{$MS.EXCHANGE.RPC.WARN}s for {$MS.EXCHANGE.RPC.TIME})'
+                  name: 'Information Store [{#INSTANCE}]: RPC Requests latancy is too high (>{$MS.EXCHANGE.RPC.WARN}s for {$MS.EXCHANGE.RPC.TIME})'
                   priority: WARNING
                   description: 'Should be less than 50ms at all times, with spikes less than 100ms.'
             -
@@ -391,8 +382,8 @@ zabbix_export:
               description: 'Shows the number of RPC operations per second for each database instance.'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
             -
               name: 'Information Store [{#INSTANCE}]: RPC requests total'
               type: ZABBIX_ACTIVE
@@ -403,8 +394,8 @@ zabbix_export:
               description: 'Indicates the overall RPC requests currently executing within the information store process. Should be below 70 at all times.'
               tags:
                 -
-                  tag: Application
-                  value: 'Database {#INSTANCE}'
+                  tag: Database
+                  value: '{#INSTANCE}'
               trigger_prototypes:
                 -
                   expression: '{min({$MS.EXCHANGE.RPC.COUNT.TIME})}>{$MS.EXCHANGE.RPC.COUNT.WARN}'
@@ -498,8 +489,7 @@ zabbix_export:
                     - '0.001'
               tags:
                 -
-                  tag: Application
-                  value: 'MS Exchange'
+                  tag: Exchange
               trigger_prototypes:
                 -
                   expression: '{min({$MS.EXCHANGE.LDAP.TIME})}>{$MS.EXCHANGE.LDAP.WARN}'
@@ -522,8 +512,7 @@ zabbix_export:
                     - '0.001'
               tags:
                 -
-                  tag: Application
-                  value: 'MS Exchange'
+                  tag: Exchange
               trigger_prototypes:
                 -
                   expression: '{min({$MS.EXCHANGE.LDAP.TIME})}>{$MS.EXCHANGE.LDAP.WARN}'
@@ -562,8 +551,7 @@ zabbix_export:
               description: 'Shows the current number of connections established to the each Web Service.'
               tags:
                 -
-                  tag: Application
-                  value: 'MS Exchange'
+                  tag: Exchange
       macros:
         -
           macro: '{$MS.EXCHANGE.DB.ACTIVE.READ.TIME}'
@@ -659,6 +647,45 @@ zabbix_export:
             -
               value: '2'
               newvalue: Healthy
+        -
+          name: 'Service state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Down
+            -
+              value: '1'
+              newvalue: Up
+        -
+          name: 'Windows service state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Running
+            -
+              value: '1'
+              newvalue: Paused
+            -
+              value: '2'
+              newvalue: 'Start pending'
+            -
+              value: '3'
+              newvalue: 'Pause pending'
+            -
+              value: '4'
+              newvalue: 'Continue pending'
+            -
+              value: '5'
+              newvalue: 'Stop pending'
+            -
+              value: '6'
+              newvalue: Stopped
+            -
+              value: '7'
+              newvalue: Unknown
+            -
+              value: '255'
+              newvalue: 'No such service'
   graphs:
     -
       name: 'MS Exchange [Client Access Server]: Request rate'

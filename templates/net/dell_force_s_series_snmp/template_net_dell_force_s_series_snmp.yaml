@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:32Z'
+  date: '2021-04-14T13:14:41Z'
   groups:
     -
       name: 'Templates/Network devices'
@@ -48,8 +48,7 @@ zabbix_export:
                 name: 'F10-S-SERIES-CHASSIS-MIB::chSysFanTrayOperStatus'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS},eq)}=1'
@@ -87,8 +86,7 @@ zabbix_export:
                 CPU utilization in percentage for last 1 minute.
               tags:
                 -
-                  tag: Application
-                  value: CPU
+                  tag: CPU
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -109,12 +107,11 @@ zabbix_export:
                 Total memory usage in percentage.
               tags:
                 -
-                  tag: Application
-                  value: Memory
+                  tag: Memory
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
-                  name: '#{#SNMPINDEX}: High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+                  name: '#{#SNMPINDEX}: High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
                   priority: AVERAGE
                   description: 'The system is running out of free memory.'
           graph_prototypes:
@@ -163,8 +160,7 @@ zabbix_export:
                 name: 'F10-S-SERIES-CHASSIS-MIB::chSysPowerSupplyOperStatus'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: Power_supply
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS},eq)}=1'
@@ -202,8 +198,7 @@ zabbix_export:
                 The temperature of the unit.
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:""}'
@@ -252,8 +247,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
             -
               name: '#{#SNMPVALUE}: Hardware serial number'
               type: SNMP_AGENT
@@ -273,8 +267,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -301,8 +294,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
             -
               name: '#{#SNMPVALUE}: Operating system'
               type: SNMP_AGENT
@@ -322,8 +314,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -384,3 +375,12 @@ zabbix_export:
             -
               value: '3'
               newvalue: absent
+        -
+          name: 'F10-S-SERIES-CHASSIS-MIB::extremeFanOperational'
+          mappings:
+            -
+              value: '1'
+              newvalue: 'true - on'
+            -
+              value: '2'
+              newvalue: 'false - off'

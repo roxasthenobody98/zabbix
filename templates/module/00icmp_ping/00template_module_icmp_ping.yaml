@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:51Z'
+  date: '2021-04-14T13:15:07Z'
   groups:
     -
       name: Templates/Modules
@@ -25,8 +25,7 @@ zabbix_export:
             name: 'Service state'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{max(#3)}=0'
@@ -42,8 +41,7 @@ zabbix_export:
           units: '%'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{min(5m)}>{$ICMP_LOSS_WARN} and {min(5m)}<100'
@@ -63,8 +61,7 @@ zabbix_export:
           units: s
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{avg(5m)}>{$ICMP_RESPONSE_TIME_WARN}'

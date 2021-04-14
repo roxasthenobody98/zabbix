@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:29Z'
+  date: '2021-04-14T13:14:35Z'
   groups:
     -
       name: Templates/Modules
@@ -34,8 +34,7 @@ zabbix_export:
             Modbus address:0x0013
           tags:
             -
-              tag: Application
-              value: Array
+              tag: Array
         -
           name: 'Battery: Battery Voltage discovery'
           type: SNMP_AGENT
@@ -48,8 +47,7 @@ zabbix_export:
           description: 'MIB: PROSTAR-PWM'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Battery: Charge Current'
           type: SNMP_AGENT
@@ -67,8 +65,7 @@ zabbix_export:
             Modbus address:0x0011
           tags:
             -
-              tag: Application
-              value: Battery
+              tag: Battery
         -
           name: 'Battery: Charge State'
           type: SNMP_AGENT
@@ -99,8 +96,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: Battery
+              tag: Battery
           triggers:
             -
               expression: '{last()}={$CHARGE.STATE.CRIT}'
@@ -138,8 +134,7 @@ zabbix_export:
                 - '0.1'
           tags:
             -
-              tag: Application
-              value: Counter
+              tag: Counter
         -
           name: 'Counter: Charge KW-hours'
           type: SNMP_AGENT
@@ -157,8 +152,7 @@ zabbix_export:
             Modbus address:0x002A
           tags:
             -
-              tag: Application
-              value: Counter
+              tag: Counter
         -
           name: 'Counter: Load Amp-hours'
           type: SNMP_AGENT
@@ -181,8 +175,7 @@ zabbix_export:
                 - '0.1'
           tags:
             -
-              tag: Application
-              value: Counter
+              tag: Counter
         -
           name: 'Load: Current'
           type: SNMP_AGENT
@@ -200,8 +193,7 @@ zabbix_export:
             Modbus address:0x0016
           tags:
             -
-              tag: Application
-              value: Load
+              tag: Load
         -
           name: 'Load: State'
           type: SNMP_AGENT
@@ -232,8 +224,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: Load
+              tag: Load
           triggers:
             -
               expression: '{last()}={$LOAD.STATE.CRIT:"lvd"} or {last()}={$LOAD.STATE.CRIT:"fault"}'
@@ -266,8 +257,7 @@ zabbix_export:
             Modbus address:0x0014
           tags:
             -
-              tag: Application
-              value: Load
+              tag: Load
         -
           name: 'Status: Alarms'
           type: SNMP_AGENT
@@ -327,8 +317,7 @@ zabbix_export:
                   return result.length ? result.join('\n') : 'No alarms';
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{count(#3,"arrayCurrentOffset","like")}=2'
@@ -489,8 +478,7 @@ zabbix_export:
                   return result.length ? result.join('\n') : 'No faults';
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{count(#3,"arrayHvd","like")}=2'
@@ -602,8 +590,7 @@ zabbix_export:
                   return result.length ? result.join('\n') : 'No faults';
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{count(#3,"customSettingsEdit","like")}=2'
@@ -665,8 +652,7 @@ zabbix_export:
                 - '0.01'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{last()}<10m'
@@ -702,8 +688,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: Battery
+              tag: Battery
         -
           name: 'Temperature: Ambient'
           type: SNMP_AGENT
@@ -721,8 +706,7 @@ zabbix_export:
             Modbus address:0x001C
           tags:
             -
-              tag: Application
-              value: Temperature
+              tag: Temperature
         -
           name: 'Temperature: Battery'
           type: SNMP_AGENT
@@ -740,8 +724,7 @@ zabbix_export:
             Modbus address:0x001B
           tags:
             -
-              tag: Application
-              value: Temperature
+              tag: Temperature
           triggers:
             -
               expression: '{min(5m)}>{$BATTERY.TEMP.MAX.CRIT}'
@@ -788,8 +771,7 @@ zabbix_export:
             Modbus address:0x001A
           tags:
             -
-              tag: Application
-              value: Temperature
+              tag: Temperature
       discovery_rules:
         -
           name: 'Battery voltage discovery'
@@ -812,8 +794,7 @@ zabbix_export:
                 Modbus address:0x0021
               tags:
                 -
-                  tag: Application
-                  value: Battery
+                  tag: Battery
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{#VOLTAGE.MAX.CRIT}'
@@ -942,6 +923,15 @@ zabbix_export:
         -
           macro: '{$VOLTAGE.MIN.WARN}'
       valuemaps:
+        -
+          name: 'Morningstar flags'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'Not set'
+            -
+              value: '1'
+              newvalue: Set
         -
           name: 'ProStar PWM charge state'
           mappings:

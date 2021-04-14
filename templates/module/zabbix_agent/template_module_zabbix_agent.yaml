@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:50Z'
+  date: '2021-04-14T13:15:06Z'
   groups:
     -
       name: Templates/Modules
@@ -30,8 +30,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: 'Monitoring agent'
+              tag: Monitoring_agent
         -
           name: 'Zabbix agent ping'
           key: agent.ping
@@ -41,8 +40,7 @@ zabbix_export:
             name: 'Zabbix agent ping status'
           tags:
             -
-              tag: Application
-              value: 'Monitoring agent'
+              tag: Monitoring_agent
         -
           name: 'Version of Zabbix agent running'
           key: agent.version
@@ -57,8 +55,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: 'Monitoring agent'
+              tag: Monitoring_agent
         -
           name: 'Zabbix agent availability'
           type: INTERNAL
@@ -69,8 +66,7 @@ zabbix_export:
             name: zabbix.host.available
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{max({$AGENT.TIMEOUT})}=0'
@@ -128,8 +124,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: 'Monitoring agent'
+              tag: Monitoring_agent
         -
           name: 'Zabbix agent ping'
           type: ZABBIX_ACTIVE
@@ -140,8 +135,7 @@ zabbix_export:
             name: 'Zabbix agent ping status'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{nodata({$AGENT.NODATA_TIMEOUT})}=1'
@@ -164,14 +158,25 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: 'Monitoring agent'
+              tag: Monitoring_agent
       macros:
         -
           macro: '{$AGENT.NODATA_TIMEOUT}'
           value: 30m
           description: 'No data timeout for active agents. Consider to keep it relatively high.'
       valuemaps:
+        -
+          name: zabbix.host.available
+          mappings:
+            -
+              value: '0'
+              newvalue: 'not available'
+            -
+              value: '1'
+              newvalue: available
+            -
+              value: '2'
+              newvalue: unknown
         -
           name: 'Zabbix agent ping status'
           mappings:

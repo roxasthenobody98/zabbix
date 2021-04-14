@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:35Z'
+  date: '2021-04-14T13:14:44Z'
   groups:
     -
       name: Templates/Applications
@@ -33,8 +33,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Unclean leader election per second'
           type: JMX
@@ -52,8 +51,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
           triggers:
             -
               expression: '{last()}>0'
@@ -78,8 +76,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Offline partitions count'
           type: JMX
@@ -91,8 +88,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
           triggers:
             -
               expression: '{last()} > 0'
@@ -110,8 +106,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Pending replica deletes'
           type: JMX
@@ -123,8 +118,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Ineligible pending topic deletes'
           type: JMX
@@ -136,8 +130,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Pending topic deletes'
           type: JMX
@@ -149,8 +142,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Offline log directory count'
           type: JMX
@@ -162,8 +154,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
           triggers:
             -
               expression: '{last()} > 0'
@@ -183,8 +174,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Fetch-Consumer response send time, p99'
           type: JMX
@@ -198,8 +188,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Fetch-Consumer response send time, mean'
           type: JMX
@@ -213,8 +202,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Fetch-Follower response send time, p95'
           type: JMX
@@ -228,8 +216,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Fetch-Follower response send time, p99'
           type: JMX
@@ -243,8 +230,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Fetch-Follower response send time, mean'
           type: JMX
@@ -258,8 +244,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Produce response send time, p95'
           type: JMX
@@ -273,8 +258,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Produce response send time, p99'
           type: JMX
@@ -288,8 +272,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Produce response send time, mean'
           type: JMX
@@ -303,8 +286,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Temporary memory size in bytes (Fetch), max'
           type: JMX
@@ -317,8 +299,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Temporary memory size in bytes (Fetch), min'
           type: JMX
@@ -331,8 +312,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Temporary memory size in bytes (Produce), max'
           type: JMX
@@ -345,8 +325,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Temporary memory size in bytes (Produce), avg'
           type: JMX
@@ -359,8 +338,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Temporary memory size in bytes (Produce), min'
           type: JMX
@@ -373,8 +351,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Fetch-Consumer request total time, p95'
           type: JMX
@@ -388,8 +365,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Fetch-Consumer request total time, p99'
           type: JMX
@@ -403,8 +379,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Fetch-Consumer request total time, mean'
           type: JMX
@@ -418,8 +393,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Fetch-Follower request total time, p95'
           type: JMX
@@ -433,8 +407,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Fetch-Follower request total time, p99'
           type: JMX
@@ -448,8 +421,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Fetch-Follower request total time, mean'
           type: JMX
@@ -463,8 +435,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Produce request total time, p95'
           type: JMX
@@ -478,8 +449,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Produce request total time, p99'
           type: JMX
@@ -493,8 +463,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Produce request total time, mean'
           type: JMX
@@ -508,8 +477,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: UpdateMetadata request total time, p95'
           type: JMX
@@ -523,8 +491,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: UpdateMetadata request total time, p99'
           type: JMX
@@ -538,8 +505,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Fetch-Consumer request total time, mean'
           type: JMX
@@ -553,8 +519,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Network processor average idle percent'
           type: JMX
@@ -573,8 +538,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
           triggers:
             -
               expression: '{nodata(15m)}=1'
@@ -603,8 +567,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
           triggers:
             -
               expression: '{last()}<10m'
@@ -630,8 +593,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -657,8 +619,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Bytes out per second'
           type: JMX
@@ -677,8 +638,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Bytes rejected per second'
           type: JMX
@@ -696,8 +656,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Client fetch request failed per second'
           type: JMX
@@ -715,8 +674,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Produce requests failed per second'
           type: JMX
@@ -734,8 +692,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Messages in per second'
           type: JMX
@@ -753,8 +710,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Requests in producer purgatory'
           type: JMX
@@ -766,8 +722,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Requests in fetch purgatory'
           type: JMX
@@ -779,8 +734,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Request handler average idle percent'
           type: JMX
@@ -799,8 +753,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
           triggers:
             -
               expression: '{max(15m)}<{$KAFKA.REQUEST_HANDLER_AVG_IDLE.MIN.WARN}'
@@ -819,8 +772,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: ISR expands per second'
           type: JMX
@@ -838,8 +790,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: ISR shrink per second'
           type: JMX
@@ -857,8 +808,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Leader count'
           type: JMX
@@ -870,8 +820,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Partition count'
           type: JMX
@@ -883,8 +832,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Number of reassigning partitions'
           type: JMX
@@ -896,8 +844,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: Under minimum ISR partition count'
           type: JMX
@@ -909,8 +856,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
           triggers:
             -
               expression: '{last()}>0'
@@ -928,8 +874,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
           triggers:
             -
               expression: '{last()}>0'
@@ -947,8 +892,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: ZooKeeper connection status'
           type: JMX
@@ -967,8 +911,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
           triggers:
             -
               expression: '{regexp("CONNECTED")}=0'
@@ -992,8 +935,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: ZooKeeper session expiration rate'
           type: JMX
@@ -1012,8 +954,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: ZooKeeper readonly rate'
           type: JMX
@@ -1032,8 +973,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: ZooKeeper sync rate'
           type: JMX
@@ -1052,8 +992,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
         -
           name: 'Kafka: ZooKeeper client request latency'
           type: JMX
@@ -1066,8 +1005,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: Kafka
+              tag: Kafka
       discovery_rules:
         -
           name: 'Topic Metrics  (read)'
@@ -1107,8 +1045,8 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Kafka topic [{#JMXTOPIC}]'
+                  tag: Kafka
+                  value: topic
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
         -
           name: 'Topic Metrics (errors)'
@@ -1147,8 +1085,8 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Kafka topic [{#JMXTOPIC}]'
+                  tag: Kafka
+                  value: topic
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
         -
           name: 'Topic Metrics (write)'
@@ -1188,8 +1126,8 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Kafka topic [{#JMXTOPIC}]'
+                  tag: Kafka
+                  value: topic
             -
               name: 'Kafka {#JMXTOPIC}: Messages in per second'
               type: JMX
@@ -1207,8 +1145,8 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Application
-                  value: 'Kafka topic [{#JMXTOPIC}]'
+                  tag: Kafka
+                  value: topic
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
       macros:
         -

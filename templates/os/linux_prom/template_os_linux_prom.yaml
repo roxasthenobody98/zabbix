@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-03-02T19:42:20Z'
+  date: '2021-04-14T13:15:22Z'
   groups:
     -
       name: 'Templates/Operating systems'
@@ -49,8 +49,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: 'Monitoring agent'
+              tag: Monitoring_agent
         -
           name: 'Number of open file descriptors'
           type: DEPENDENT
@@ -68,8 +67,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'Maximum number of open file descriptors'
           type: DEPENDENT
@@ -92,8 +90,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
           triggers:
             -
               expression: '{last()}<{$KERNEL.MAXFILES.MIN}'
@@ -113,8 +110,7 @@ zabbix_export:
           url: 'http://{HOST.CONN}:{$NODE_EXPORTER_PORT}/metrics'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
           triggers:
             -
               expression: '{nodata(30m)}=1'
@@ -140,8 +136,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'CPU guest time'
           type: DEPENDENT
@@ -177,8 +172,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU guest nice time'
           type: DEPENDENT
@@ -214,8 +208,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU idle time'
           type: DEPENDENT
@@ -251,8 +244,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU interrupt time'
           type: DEPENDENT
@@ -288,8 +280,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'Interrupts per second'
           type: DEPENDENT
@@ -311,8 +302,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU iowait time'
           type: DEPENDENT
@@ -348,8 +338,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'Load average (1m avg)'
           type: DEPENDENT
@@ -367,8 +356,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'Load average (5m avg)'
           type: DEPENDENT
@@ -386,8 +374,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'Load average (15m avg)'
           type: DEPENDENT
@@ -405,8 +392,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU nice time'
           type: DEPENDENT
@@ -442,8 +428,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'Number of CPUs'
           type: DEPENDENT
@@ -465,8 +450,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU softirq time'
           type: DEPENDENT
@@ -502,8 +486,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU steal time'
           type: DEPENDENT
@@ -539,8 +522,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'Context switches per second'
           type: DEPENDENT
@@ -562,8 +544,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU system time'
           type: DEPENDENT
@@ -599,8 +580,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU user time'
           type: DEPENDENT
@@ -636,8 +616,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU utilization'
           type: DEPENDENT
@@ -658,8 +637,7 @@ zabbix_export:
             key: 'system.cpu.idle[node_exporter]'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
           triggers:
             -
               expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -702,8 +680,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'System local time'
           type: DEPENDENT
@@ -723,8 +700,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
           triggers:
             -
               expression: '{fuzzytime({$SYSTEM.FUZZYTIME.MAX})}=0'
@@ -756,8 +732,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -788,8 +763,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
         -
           name: 'Operating system'
           type: DEPENDENT
@@ -808,8 +782,7 @@ zabbix_export:
             key: 'system.descr[node_exporter]'
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -840,8 +813,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Free swap space in %'
           type: CALCULATED
@@ -853,8 +825,7 @@ zabbix_export:
           description: 'The free space of swap volume/file in percent.'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Total swap space'
           type: DEPENDENT
@@ -874,8 +845,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'System uptime'
           type: DEPENDENT
@@ -901,8 +871,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{last()}<10m'
@@ -929,8 +898,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Total memory'
           type: DEPENDENT
@@ -950,8 +918,7 @@ zabbix_export:
             key: node_exporter.get
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Memory utilization'
           type: CALCULATED
@@ -963,17 +930,16 @@ zabbix_export:
           description: 'Memory used percentage is calculated as (total-available)/total*100'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
           triggers:
             -
               expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
-              name: 'High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+              name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
               priority: AVERAGE
               description: 'The system is running out of free memory.'
               dependencies:
                 -
-                  name: 'Lack of available memory (<{$MEMORY.AVAILABLE.MIN} of {ITEM.VALUE2})'
+                  name: 'Lack of available memory ( < {$MEMORY.AVAILABLE.MIN} of {ITEM.VALUE2})'
                   expression: '{Linux by Prom:vm.memory.available[node_exporter].min(5m)}<{$MEMORY.AVAILABLE.MIN} and {Linux by Prom:vm.memory.total[node_exporter].last()}>0'
       discovery_rules:
         -
@@ -1034,8 +1000,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Inbound packets with errors'
               type: DEPENDENT
@@ -1057,8 +1023,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Bits received'
               type: DEPENDENT
@@ -1085,8 +1051,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Outbound packets discarded'
               type: DEPENDENT
@@ -1108,8 +1074,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Outbound packets with errors'
               type: DEPENDENT
@@ -1131,8 +1097,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Bits sent'
               type: DEPENDENT
@@ -1159,8 +1125,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Speed'
               type: DEPENDENT
@@ -1186,8 +1152,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Operational status'
               type: DEPENDENT
@@ -1239,8 +1205,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
               trigger_prototypes:
                 -
                   expression: '{$IFCONTROL:"{#IFNAME}"}=1 and ({last()}=2 and {diff()}=1)'
@@ -1277,8 +1243,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
           trigger_prototypes:
             -
               expression: |
@@ -1338,7 +1304,7 @@ zabbix_export:
               recovery_expression: |
                 {Linux by Prom:net.if.in[node_exporter,"{#IFNAME}"].avg(15m)}<(({$IF.UTIL.MAX:"{#IFNAME}"}-3)/100)*{Linux by Prom:net.if.speed[node_exporter,"{#IFNAME}"].last()} and
                 {Linux by Prom:net.if.out[node_exporter,"{#IFNAME}"].avg(15m)}<(({$IF.UTIL.MAX:"{#IFNAME}"}-3)/100)*{Linux by Prom:net.if.speed[node_exporter,"{#IFNAME}"].last()}
-              name: 'Interface {#IFNAME}({#IFALIAS}): High bandwidth usage (>{$IF.UTIL.MAX:"{#IFNAME}"}% )'
+              name: 'Interface {#IFNAME}({#IFALIAS}): High bandwidth usage ( > {$IF.UTIL.MAX:"{#IFNAME}"}% )'
               opdata: 'In: {ITEM.LASTVALUE1}, out: {ITEM.LASTVALUE3}, speed: {ITEM.LASTVALUE2}'
               priority: WARNING
               description: 'The network interface utilization is close to its estimated maximum bandwidth.'
@@ -1356,7 +1322,7 @@ zabbix_export:
               recovery_expression: |
                 {Linux by Prom:net.if.in.errors[node_exporter,"{#IFNAME}"].max(5m)}<{$IF.ERRORS.WARN:"{#IFNAME}"}*0.8
                 and {Linux by Prom:net.if.out.errors[node_exporter"{#IFNAME}"].max(5m)}<{$IF.ERRORS.WARN:"{#IFNAME}"}*0.8
-              name: 'Interface {#IFNAME}({#IFALIAS}): High error rate (>{$IF.ERRORS.WARN:"{#IFNAME}"} for 5m)'
+              name: 'Interface {#IFNAME}({#IFALIAS}): High error rate ( > {$IF.ERRORS.WARN:"{#IFNAME}"} for 5m)'
               opdata: 'errors in: {ITEM.LASTVALUE1}, errors out: {ITEM.LASTVALUE2}'
               priority: WARNING
               description: 'Recovers when below 80% of {$IF.ERRORS.WARN:"{#IFNAME}"} threshold'
@@ -1471,8 +1437,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk read request avg waiting time (r_await)'
               type: CALCULATED
@@ -1484,8 +1450,8 @@ zabbix_export:
               description: 'This formula contains two boolean expressions that evaluates to 1 or 0 in order to set calculated metric to zero and to avoid division by zero exception.'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk read rate'
               type: DEPENDENT
@@ -1509,8 +1475,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk read time (rate)'
               type: DEPENDENT
@@ -1533,8 +1499,7 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: '{#DEVNAME}: Disk utilization'
               type: DEPENDENT
@@ -1562,8 +1527,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk write request avg waiting time (w_await)'
               type: CALCULATED
@@ -1575,8 +1540,8 @@ zabbix_export:
               description: 'This formula contains two boolean expressions that evaluates to 1 or 0 in order to set calculated metric to zero and to avoid division by zero exception.'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk write rate'
               type: DEPENDENT
@@ -1600,8 +1565,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk write time (rate)'
               type: DEPENDENT
@@ -1624,8 +1589,7 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
           trigger_prototypes:
             -
               expression: '{Linux by Prom:vfs.dev.read.await[node_exporter,"{#DEVNAME}"].min(15m)} > {$VFS.DEV.READ.AWAIT.WARN:"{#DEVNAME}"} or {Linux by Prom:vfs.dev.write.await[node_exporter,"{#DEVNAME}"].min(15m)} > {$VFS.DEV.WRITE.AWAIT.WARN:"{#DEVNAME}"}'
@@ -1749,8 +1713,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
             -
               name: '{#FSNAME}: Free inodes in %'
               type: DEPENDENT
@@ -1783,8 +1747,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}<{$VFS.FS.INODE.PFREE.MIN.CRIT:"{#FSNAME}"}'
@@ -1817,8 +1781,8 @@ zabbix_export:
               description: 'Space utilization in % for {#FSNAME}'
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
             -
               name: '{#FSNAME}: Total space'
               type: DEPENDENT
@@ -1838,8 +1802,8 @@ zabbix_export:
                 key: node_exporter.get
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
             -
               name: '{#FSNAME}: Used space'
               type: CALCULATED
@@ -1851,8 +1815,8 @@ zabbix_export:
               description: 'Used storage in Bytes'
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
           trigger_prototypes:
             -
               expression: |
@@ -2039,173 +2003,253 @@ zabbix_export:
       dashboards:
         -
           name: 'Network interfaces'
-          widgets:
+          pages:
             -
-              type: GRAPH_PROTOTYPE
-              width: '24'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+              widgets:
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'Interface {#IFNAME}({#IFALIAS}): Network traffic'
-                    host: 'Linux by Prom'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'Interface {#IFNAME}({#IFALIAS}): Network traffic'
+                        host: 'Linux by Prom'
         -
           name: 'System performance'
-          widgets:
+          pages:
             -
-              type: GRAPH_CLASSIC
-              width: '12'
-              height: '5'
-              fields:
+              widgets:
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'System load'
-                    host: 'Linux by Prom'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              width: '12'
-              height: '5'
-              fields:
+                  type: GRAPH_CLASSIC
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'System load'
+                        host: 'Linux by Prom'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'CPU usage'
-                    host: 'Linux by Prom'
-            -
-              type: GRAPH_CLASSIC
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'CPU usage'
+                        host: 'Linux by Prom'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Memory usage'
-                    host: 'Linux by Prom'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
+                  type: GRAPH_CLASSIC
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Memory usage'
+                        host: 'Linux by Prom'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Swap usage'
-                    host: 'Linux by Prom'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '10'
-              width: '24'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Swap usage'
+                        host: 'Linux by Prom'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#FSNAME}: Disk space usage'
-                    host: 'Linux by Prom'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '22'
-              width: '24'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
-                -
-                  type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#DEVNAME}: Disk read/write rates'
-                    host: 'Linux by Prom'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '34'
-              width: '24'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
+                  'y': '10'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#FSNAME}: Disk space usage'
+                        host: 'Linux by Prom'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#DEVNAME}: Disk average waiting time'
-                    host: 'Linux by Prom'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '46'
-              width: '24'
-              height: '12'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '3'
-                -
-                  type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#DEVNAME}: Disk utilization and queue'
-                    host: 'Linux by Prom'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '58'
-              width: '24'
-              height: '6'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
+                  'y': '22'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#DEVNAME}: Disk read/write rates'
+                        host: 'Linux by Prom'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'Interface {#IFNAME}({#IFALIAS}): Network traffic'
-                    host: 'Linux by Prom'
+                  'y': '34'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#DEVNAME}: Disk average waiting time'
+                        host: 'Linux by Prom'
+                -
+                  type: GRAPH_PROTOTYPE
+                  'y': '46'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#DEVNAME}: Disk utilization and queue'
+                        host: 'Linux by Prom'
+                -
+                  type: GRAPH_PROTOTYPE
+                  'y': '58'
+                  width: '24'
+                  height: '6'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'Interface {#IFNAME}({#IFALIAS}): Network traffic'
+                        host: 'Linux by Prom'
       valuemaps:
         -
           name: 'IF-MIB::ifOperStatus'
@@ -2426,20 +2470,20 @@ zabbix_export:
   triggers:
     -
       expression: '{Linux by Prom:system.swap.pfree[node_exporter].min(5m)}<{$SWAP.PFREE.MIN.WARN} and {Linux by Prom:system.swap.total[node_exporter].last()}>0'
-      name: 'High swap space usage (less than {$SWAP.PFREE.MIN.WARN}% free)'
+      name: 'High swap space usage ( less than {$SWAP.PFREE.MIN.WARN}% free)'
       opdata: 'Free: {ITEM.LASTVALUE1}, total: {ITEM.LASTVALUE2}'
       priority: WARNING
       description: 'This trigger is ignored, if there is no swap configured'
       dependencies:
         -
-          name: 'High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+          name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
           expression: '{Linux by Prom:vm.memory.util[node_exporter].min(5m)}>{$MEMORY.UTIL.MAX}'
         -
-          name: 'Lack of available memory (<{$MEMORY.AVAILABLE.MIN} of {ITEM.VALUE2})'
+          name: 'Lack of available memory ( < {$MEMORY.AVAILABLE.MIN} of {ITEM.VALUE2})'
           expression: '{Linux by Prom:vm.memory.available[node_exporter].min(5m)}<{$MEMORY.AVAILABLE.MIN} and {Linux by Prom:vm.memory.total[node_exporter].last()}>0'
     -
       expression: '{Linux by Prom:vm.memory.available[node_exporter].min(5m)}<{$MEMORY.AVAILABLE.MIN} and {Linux by Prom:vm.memory.total[node_exporter].last()}>0'
-      name: 'Lack of available memory (<{$MEMORY.AVAILABLE.MIN} of {ITEM.VALUE2})'
+      name: 'Lack of available memory ( < {$MEMORY.AVAILABLE.MIN} of {ITEM.VALUE2})'
       opdata: 'Available: {ITEM.LASTVALUE1}, total: {ITEM.LASTVALUE2}'
       priority: AVERAGE
     -

@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-03-24T06:36:43Z'
+  date: '2021-04-14T13:14:47Z'
   groups:
     -
       name: Templates/Applications
@@ -40,8 +40,7 @@ zabbix_export:
             key: es.cluster.get_health
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
         -
           name: 'ES: Get cluster health'
           type: HTTP_AGENT
@@ -58,8 +57,7 @@ zabbix_export:
           status_codes: ''
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'ES: Get cluster stats'
           type: HTTP_AGENT
@@ -75,8 +73,7 @@ zabbix_export:
           url: '{$ELASTICSEARCH.SCHEME}://{HOST.CONN}:{$ELASTICSEARCH.PORT}/_cluster/stats'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'ES: Inactive shards percentage'
           type: DEPENDENT
@@ -99,8 +96,7 @@ zabbix_export:
             key: es.cluster.get_health
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
         -
           name: 'ES: Number of initializing shards'
           type: DEPENDENT
@@ -117,8 +113,7 @@ zabbix_export:
             key: es.cluster.get_health
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
           triggers:
             -
               expression: '{min(10m)}>0'
@@ -145,8 +140,7 @@ zabbix_export:
             key: es.cluster.get_health
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
         -
           name: 'ES: Number of nodes'
           type: DEPENDENT
@@ -167,8 +161,7 @@ zabbix_export:
             key: es.cluster.get_health
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
           triggers:
             -
               expression: '{change()}<0'
@@ -196,8 +189,7 @@ zabbix_export:
             key: es.cluster.get_health
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
         -
           name: 'ES: Number of relocating shards'
           type: DEPENDENT
@@ -214,8 +206,7 @@ zabbix_export:
             key: es.cluster.get_health
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
         -
           name: 'ES: Cluster health status'
           type: DEPENDENT
@@ -252,8 +243,7 @@ zabbix_export:
             key: es.cluster.get_health
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
           triggers:
             -
               expression: '{last()}=2'
@@ -296,8 +286,7 @@ zabbix_export:
             key: es.cluster.get_health
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
         -
           name: 'ES: Number of unassigned shards'
           type: DEPENDENT
@@ -314,8 +303,7 @@ zabbix_export:
             key: es.cluster.get_health
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
           triggers:
             -
               expression: '{min(10m)}>0'
@@ -342,8 +330,7 @@ zabbix_export:
             key: es.cluster.get_stats
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
         -
           name: 'ES: Number of non-deleted documents'
           type: DEPENDENT
@@ -366,8 +353,7 @@ zabbix_export:
             key: es.cluster.get_stats
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
         -
           name: 'ES: Nodes with the data role'
           type: DEPENDENT
@@ -388,8 +374,7 @@ zabbix_export:
             key: es.cluster.get_stats
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
         -
           name: 'ES: Nodes with the ingest role'
           type: DEPENDENT
@@ -410,8 +395,7 @@ zabbix_export:
             key: es.cluster.get_stats
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
         -
           name: 'ES: Nodes with the master role'
           type: DEPENDENT
@@ -432,8 +416,7 @@ zabbix_export:
             key: es.cluster.get_stats
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
           triggers:
             -
               expression: '{last()}=2'
@@ -464,8 +447,7 @@ zabbix_export:
             key: es.cluster.get_stats
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
         -
           name: 'ES: Total size of all file stores'
           type: DEPENDENT
@@ -487,8 +469,7 @@ zabbix_export:
             key: es.cluster.get_stats
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
         -
           name: 'ES: Get nodes stats'
           type: HTTP_AGENT
@@ -504,8 +485,7 @@ zabbix_export:
           url: '{$ELASTICSEARCH.SCHEME}://{HOST.CONN}:{$ELASTICSEARCH.PORT}/_nodes/stats'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'ES: Cluster uptime'
           type: DEPENDENT
@@ -528,8 +508,7 @@ zabbix_export:
             key: es.cluster.get_stats
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
           triggers:
             -
               expression: '{last()}<10m'
@@ -547,8 +526,7 @@ zabbix_export:
           description: 'Checks performance of the TCP service.'
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
           triggers:
             -
               expression: '{min(5m)}>{$ELASTICSEARCH.RESPONSE_TIME.MAX.WARN}'
@@ -575,8 +553,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: 'ES cluster'
+              tag: ES_cluster
           triggers:
             -
               expression: '{last()}=0'
@@ -619,8 +596,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Total size'
               type: DEPENDENT
@@ -642,8 +619,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Number of open HTTP connections'
               type: DEPENDENT
@@ -664,8 +641,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Rate of HTTP connections opened'
               type: DEPENDENT
@@ -688,8 +665,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Flush latency'
               type: CALCULATED
@@ -701,8 +678,8 @@ zabbix_export:
               description: 'The average flush latency calculated from the available flush.total and flush.total_time_in_millis metrics.'
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ELASTICSEARCH.FLUSH_LATENCY.MAX.WARN}'
@@ -731,8 +708,7 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'ES {#ES.NODE}: Total time spent on flushing indices to disk'
               type: DEPENDENT
@@ -754,8 +730,7 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'ES {#ES.NODE}: Current indexing operations'
               type: DEPENDENT
@@ -776,8 +751,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Indexing latency'
               type: CALCULATED
@@ -789,8 +764,8 @@ zabbix_export:
               description: 'The average indexing latency calculated from the available index_total and index_time_in_millis metrics.'
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ELASTICSEARCH.INDEXING_LATENCY.MAX.WARN}'
@@ -820,8 +795,7 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'ES {#ES.NODE}: Total number of indexing'
               type: DEPENDENT
@@ -842,8 +816,7 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'ES {#ES.NODE}: Time spent throttling operations'
               type: DEPENDENT
@@ -870,8 +843,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Time spent throttling merge operations'
               type: DEPENDENT
@@ -898,8 +871,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Time spent throttling recovery operations'
               type: DEPENDENT
@@ -926,8 +899,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Rate of index refreshes'
               type: DEPENDENT
@@ -950,8 +923,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Time spent performing refresh'
               type: DEPENDENT
@@ -978,8 +951,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Rate of fetch'
               type: DEPENDENT
@@ -1002,8 +975,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Current fetch operations'
               type: DEPENDENT
@@ -1020,8 +993,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Fetch latency'
               type: CALCULATED
@@ -1033,8 +1006,8 @@ zabbix_export:
               description: 'The average fetch latency calculated by sampling the total number of fetches and the total elapsed time at regular intervals.'
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ELASTICSEARCH.FETCH_LATENCY.MAX.WARN}'
@@ -1070,8 +1043,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Total time spent performing fetch'
               type: DEPENDENT
@@ -1093,8 +1066,7 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'ES {#ES.NODE}: Total number of fetch'
               type: DEPENDENT
@@ -1115,8 +1087,7 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'ES {#ES.NODE}: Rate of queries'
               type: DEPENDENT
@@ -1139,8 +1110,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Current query operations'
               type: DEPENDENT
@@ -1157,8 +1128,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Query latency'
               type: CALCULATED
@@ -1172,8 +1143,8 @@ zabbix_export:
               description: 'The average query latency calculated by sampling the total number of queries and the total elapsed time at regular intervals.'
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ELASTICSEARCH.QUERY_LATENCY.MAX.WARN}'
@@ -1206,8 +1177,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Total time spent performing query'
               type: DEPENDENT
@@ -1229,8 +1200,7 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'ES {#ES.NODE}: Total number of query'
               type: DEPENDENT
@@ -1251,8 +1221,7 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zabbix raw items'
+                  tag: Zabbix_raw_items
             -
               name: 'ES {#ES.NODE}: Amount of JVM heap committed'
               type: DEPENDENT
@@ -1274,8 +1243,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Maximum JVM memory available for use'
               type: DEPENDENT
@@ -1297,8 +1266,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Amount of JVM heap currently in use'
               type: DEPENDENT
@@ -1320,8 +1289,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Percent of JVM heap currently in use'
               type: DEPENDENT
@@ -1344,8 +1313,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
               trigger_prototypes:
                 -
                   expression: '{min(1h)}>{$ELASTICSEARCH.HEAP_USED.MAX.CRIT}'
@@ -1389,8 +1358,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
               trigger_prototypes:
                 -
                   expression: '{last()}<10m'
@@ -1414,8 +1383,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Refresh thread pool executor tasks completed'
               type: DEPENDENT
@@ -1438,8 +1407,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Refresh thread pool tasks in queue'
               type: DEPENDENT
@@ -1456,8 +1425,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Refresh thread pool executor tasks rejected'
               type: DEPENDENT
@@ -1480,8 +1449,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>0'
@@ -1504,8 +1473,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Search thread pool executor tasks completed'
               type: DEPENDENT
@@ -1528,8 +1497,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Search thread pool tasks in queue'
               type: DEPENDENT
@@ -1546,8 +1515,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Search thread pool executor tasks rejected'
               type: DEPENDENT
@@ -1570,8 +1539,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>0'
@@ -1594,8 +1563,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Write thread pool executor tasks completed'
               type: DEPENDENT
@@ -1618,8 +1587,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Write thread pool tasks in queue'
               type: DEPENDENT
@@ -1636,8 +1605,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
             -
               name: 'ES {#ES.NODE}: Write thread pool executor tasks rejected'
               type: DEPENDENT
@@ -1660,8 +1629,8 @@ zabbix_export:
                 key: es.nodes.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'ES {#ES.NODE}'
+                  tag: ES
+                  value: '{#ES.NODE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>0'

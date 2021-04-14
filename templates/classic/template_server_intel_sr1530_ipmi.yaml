@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:49Z'
+  date: '2021-04-14T13:15:04Z'
   groups:
     -
       name: 'Templates/Server hardware'

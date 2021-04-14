@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:42Z'
+  date: '2021-04-14T13:14:54Z'
   groups:
     -
       name: Templates/Applications
@@ -41,8 +41,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Bytes per second'
           type: DEPENDENT
@@ -71,8 +70,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Total requests'
           type: DEPENDENT
@@ -89,8 +87,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Requests per second'
           type: DEPENDENT
@@ -114,8 +111,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Uptime'
           type: DEPENDENT
@@ -133,8 +129,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
           triggers:
             -
               expression: '{last()}<10m'
@@ -164,8 +159,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -189,8 +183,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Workers closing connection'
           type: DEPENDENT
@@ -207,8 +200,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Workers DNS lookup'
           type: DEPENDENT
@@ -225,8 +217,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Workers finishing'
           type: DEPENDENT
@@ -243,8 +234,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Workers keepalive (read)'
           type: DEPENDENT
@@ -261,8 +251,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Workers logging'
           type: DEPENDENT
@@ -279,8 +268,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Workers reading request'
           type: DEPENDENT
@@ -297,8 +285,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Workers sending reply'
           type: DEPENDENT
@@ -315,8 +302,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Workers slot with no current process'
           type: DEPENDENT
@@ -333,8 +319,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Workers starting up'
           type: DEPENDENT
@@ -351,8 +336,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Workers waiting for connection'
           type: DEPENDENT
@@ -369,8 +353,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Total workers busy'
           type: DEPENDENT
@@ -387,8 +370,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Total workers idle'
           type: DEPENDENT
@@ -405,8 +387,7 @@ zabbix_export:
             key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Service response time'
           key: 'net.tcp.service.perf[http,"{$APACHE.STATUS.HOST}","{$APACHE.STATUS.PORT}"]'
@@ -415,8 +396,7 @@ zabbix_export:
           units: s
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
           triggers:
             -
               expression: '{min(5m)}>{$APACHE.RESPONSE_TIME.MAX.WARN}'
@@ -443,8 +423,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
           triggers:
             -
               expression: '{last()}=0'
@@ -464,8 +443,7 @@ zabbix_export:
           description: 'Process CPU utilization percentage.'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Memory usage (rss)'
           key: 'proc.mem["{$APACHE.PROCESS_NAME}",,,,rss]'
@@ -474,8 +452,7 @@ zabbix_export:
           description: 'Resident set size memory used by process in bytes.'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Memory usage (vsize)'
           key: 'proc.mem["{$APACHE.PROCESS_NAME}",,,,vsize]'
@@ -484,16 +461,14 @@ zabbix_export:
           description: 'Virtual memory size used by process in bytes.'
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
         -
           name: 'Apache: Number of processes running'
           key: 'proc.num["{$APACHE.PROCESS_NAME}"]'
           history: 7d
           tags:
             -
-              tag: Application
-              value: Apache
+              tag: Apache
           triggers:
             -
               expression: '{last()}=0'
@@ -556,8 +531,7 @@ zabbix_export:
                   return JSON.stringify(output);
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
           triggers:
             -
               expression: '{nodata(30m)}=1'
@@ -600,8 +574,7 @@ zabbix_export:
                 key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
               tags:
                 -
-                  tag: Application
-                  value: Apache
+                  tag: Apache
             -
               name: 'Apache: Connections async closing'
               type: DEPENDENT
@@ -618,8 +591,7 @@ zabbix_export:
                 key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
               tags:
                 -
-                  tag: Application
-                  value: Apache
+                  tag: Apache
             -
               name: 'Apache: Connections async keep alive'
               type: DEPENDENT
@@ -636,8 +608,7 @@ zabbix_export:
                 key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
               tags:
                 -
-                  tag: Application
-                  value: Apache
+                  tag: Apache
             -
               name: 'Apache: Connections async writing'
               type: DEPENDENT
@@ -654,8 +625,7 @@ zabbix_export:
                 key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
               tags:
                 -
-                  tag: Application
-                  value: Apache
+                  tag: Apache
             -
               name: 'Apache: Connections total'
               type: DEPENDENT
@@ -672,8 +642,7 @@ zabbix_export:
                 key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
               tags:
                 -
-                  tag: Application
-                  value: Apache
+                  tag: Apache
             -
               name: 'Apache: Number of async processes'
               type: DEPENDENT
@@ -690,8 +659,7 @@ zabbix_export:
                 key: 'web.page.get["{$APACHE.STATUS.SCHEME}://{$APACHE.STATUS.HOST}:{$APACHE.STATUS.PORT}/{$APACHE.STATUS.PATH}"]'
               tags:
                 -
-                  tag: Application
-                  value: Apache
+                  tag: Apache
           graph_prototypes:
             -
               name: 'Apache: Current async connections{#SINGLETON}'
@@ -768,103 +736,129 @@ zabbix_export:
       dashboards:
         -
           name: 'Apache performance'
-          widgets:
+          pages:
             -
-              type: GRAPH_CLASSIC
-              width: '12'
-              height: '5'
-              fields:
+              widgets:
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
+                  type: GRAPH_CLASSIC
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Apache: Requests per second'
+                        host: 'Apache by Zabbix agent'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Apache: Requests per second'
-                    host: 'Apache by Zabbix agent'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Apache: Workers total'
-                    host: 'Apache by Zabbix agent'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '2'
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Apache: Workers total'
+                        host: 'Apache by Zabbix agent'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'Apache: Current async connections{#SINGLETON}'
-                    host: 'Apache by Zabbix agent'
-            -
-              type: GRAPH_PROTOTYPE
-              x: '12'
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '2'
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'Apache: Current async connections{#SINGLETON}'
+                        host: 'Apache by Zabbix agent'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'Apache: Current async processes{#SINGLETON}'
-                    host: 'Apache by Zabbix agent'
-            -
-              type: GRAPH_CLASSIC
-              'y': '10'
-              width: '12'
-              height: '5'
-              fields:
+                  x: '12'
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'Apache: Current async processes{#SINGLETON}'
+                        host: 'Apache by Zabbix agent'
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Apache: Worker states'
-                    host: 'Apache by Zabbix agent'
+                  type: GRAPH_CLASSIC
+                  'y': '10'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Apache: Worker states'
+                        host: 'Apache by Zabbix agent'
       valuemaps:
         -
           name: 'Service state'

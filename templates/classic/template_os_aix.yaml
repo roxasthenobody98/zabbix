@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:05:35Z'
+  date: '2021-04-14T15:18:26Z'
   groups:
     -
       name: 'Templates/Operating systems'
@@ -22,8 +22,7 @@ zabbix_export:
           description: 'Number of processes in running state.'
           tags:
             -
-              tag: Application
-              value: Processes
+              tag: Processes
           triggers:
             -
               expression: '{avg(5m)}>30'
@@ -36,8 +35,7 @@ zabbix_export:
           description: 'Total number of processes in any state.'
           tags:
             -
-              tag: Application
-              value: Processes
+              tag: Processes
           triggers:
             -
               expression: '{avg(5m)}>300'
@@ -55,11 +53,9 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'Processor load (1 min average per core)'
           key: 'system.cpu.load[percpu,avg1]'
@@ -68,11 +64,9 @@ zabbix_export:
           description: 'The processor load is calculated as system CPU load divided by number of CPU cores.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
           triggers:
             -
               expression: '{avg(5m)}>5'
@@ -86,11 +80,9 @@ zabbix_export:
           description: 'The processor load is calculated as system CPU load divided by number of CPU cores.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'Processor load (15 min average per core)'
           key: 'system.cpu.load[percpu,avg15]'
@@ -99,11 +91,9 @@ zabbix_export:
           description: 'The processor load is calculated as system CPU load divided by number of CPU cores.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'Context switches per second'
           key: system.cpu.switches
@@ -116,11 +106,9 @@ zabbix_export:
                 - ''
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'Host name'
           key: system.hostname
@@ -132,11 +120,9 @@ zabbix_export:
           inventory_link: NAME
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
             -
-              tag: Application
-              value: OS
+              tag: OS
           triggers:
             -
               expression: '{diff(0)}>0'
@@ -149,11 +135,9 @@ zabbix_export:
           units: unixtime
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
             -
-              tag: Application
-              value: OS
+              tag: OS
         -
           name: 'CPU available physical processors in the shared pool'
           key: 'system.stat[cpu,app]'
@@ -162,14 +146,11 @@ zabbix_export:
           units: '%'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: 'Logical partitions'
+              tag: 'Logical partitions'
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'CPU entitled capacity consumed'
           key: 'system.stat[cpu,ec]'
@@ -177,14 +158,11 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: 'Logical partitions'
+              tag: 'Logical partitions'
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'CPU idle time'
           key: 'system.stat[cpu,id]'
@@ -193,11 +171,9 @@ zabbix_export:
           units: '%'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'CPU logical processor utilization'
           key: 'system.stat[cpu,lbusy]'
@@ -206,14 +182,11 @@ zabbix_export:
           units: '%'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: 'Logical partitions'
+              tag: 'Logical partitions'
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'CPU number of physical processors consumed'
           key: 'system.stat[cpu,pc]'
@@ -221,14 +194,11 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: 'Logical partitions'
+              tag: 'Logical partitions'
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'CPU system time'
           key: 'system.stat[cpu,sy]'
@@ -237,11 +207,9 @@ zabbix_export:
           units: '%'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'CPU user time'
           key: 'system.stat[cpu,us]'
@@ -250,11 +218,9 @@ zabbix_export:
           units: '%'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'CPU iowait time'
           key: 'system.stat[cpu,wa]'
@@ -263,11 +229,9 @@ zabbix_export:
           units: '%'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
           triggers:
             -
               expression: '{avg(5m)}>20'
@@ -282,11 +246,9 @@ zabbix_export:
           units: B
           tags:
             -
-              tag: Application
-              value: Filesystems
+              tag: Filesystems
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'Number of transfers'
           key: 'system.stat[disk,tps]'
@@ -294,11 +256,9 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: Filesystems
+              tag: Filesystems
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'Processor units is entitled to receive'
           key: 'system.stat[ent]'
@@ -307,11 +267,9 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: 'Logical partitions'
+              tag: Performance
         -
           name: 'Kernel thread context switches'
           key: 'system.stat[faults,cs]'
@@ -319,11 +277,9 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'Device interrupts'
           key: 'system.stat[faults,in]'
@@ -331,11 +287,9 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'System calls'
           key: 'system.stat[faults,sy]'
@@ -343,11 +297,9 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'Length of the swap queue'
           key: 'system.stat[kthr,b]'
@@ -355,11 +307,9 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'Length of the run queue'
           key: 'system.stat[kthr,r]'
@@ -367,27 +317,23 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'Active virtual pages'
           key: 'system.stat[memory,avm]'
           history: 1w
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Free real memory'
           key: 'system.stat[memory,fre]'
           history: 1w
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'File page-ins per second'
           key: 'system.stat[page,fi]'
@@ -395,8 +341,7 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'File page-outs per second'
           key: 'system.stat[page,fo]'
@@ -404,8 +349,7 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Pages freed (page replacement)'
           key: 'system.stat[page,fr]'
@@ -413,8 +357,7 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Pages paged in from paging space'
           key: 'system.stat[page,pi]'
@@ -422,8 +365,7 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Pages paged out to paging space'
           key: 'system.stat[page,po]'
@@ -431,8 +373,7 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Pages scanned by page-replacement algorithm'
           key: 'system.stat[page,sr]'
@@ -440,8 +381,7 @@ zabbix_export:
           value_type: FLOAT
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'System information'
           key: system.uname
@@ -453,11 +393,9 @@ zabbix_export:
           inventory_link: OS
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
             -
-              tag: Application
-              value: OS
+              tag: OS
           triggers:
             -
               expression: '{diff(0)}>0'
@@ -471,11 +409,9 @@ zabbix_export:
           units: uptime
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
             -
-              tag: Application
-              value: OS
+              tag: OS
           triggers:
             -
               expression: '{change(0)}<0'
@@ -488,11 +424,9 @@ zabbix_export:
           description: 'Number of users who are currently logged in.'
           tags:
             -
-              tag: Application
-              value: OS
+              tag: OS
             -
-              tag: Application
-              value: Security
+              tag: Security
         -
           name: 'Checksum of /etc/passwd'
           key: 'vfs.file.cksum[/etc/passwd]'
@@ -500,8 +434,7 @@ zabbix_export:
           history: 1w
           tags:
             -
-              tag: Application
-              value: Security
+              tag: Security
           triggers:
             -
               expression: '{diff(0)}>0'
@@ -515,8 +448,7 @@ zabbix_export:
           description: 'Available memory is defined as free+cached+buffers memory.'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
           triggers:
             -
               expression: '{last()}<20M'
@@ -530,8 +462,7 @@ zabbix_export:
           units: B
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
       discovery_rules:
         -
           name: 'Network interface discovery'
@@ -694,71 +625,73 @@ zabbix_export:
       dashboards:
         -
           name: 'System performance'
-          widgets:
+          pages:
             -
-              type: GRAPH_CLASSIC
-              width: '12'
-              height: '5'
-              fields:
+              widgets:
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
+                  type: GRAPH_CLASSIC
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'CPU load'
+                        host: AIX
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'CPU load'
-                    host: AIX
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              width: '12'
-              height: '5'
-              fields:
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'CPU jumps'
+                        host: AIX
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
+                  type: GRAPH_CLASSIC
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'CPU utilization'
+                        host: AIX
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'CPU jumps'
-                    host: AIX
-            -
-              type: GRAPH_CLASSIC
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'CPU utilization'
-                    host: AIX
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Memory usage'
-                    host: AIX
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Memory usage'
+                        host: AIX
   graphs:
     -
       name: 'CPU jumps'

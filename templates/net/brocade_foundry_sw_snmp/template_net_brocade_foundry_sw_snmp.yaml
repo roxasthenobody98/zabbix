@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:30Z'
+  date: '2021-04-14T13:14:36Z'
   groups:
     -
       name: Templates/Modules
@@ -47,8 +47,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -75,8 +74,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -106,8 +104,7 @@ zabbix_export:
                 name: 'FOUNDRY-SN-AGENT-MIB::snChasFanOperStatus'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS},eq)}=1'
@@ -146,8 +143,7 @@ zabbix_export:
                 name: 'FOUNDRY-SN-AGENT-MIB::snChasPwrSupplyOperStatus'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: Power_supply
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS},eq)}=1'
@@ -193,8 +189,7 @@ zabbix_export:
                     - '0.5'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:"Chassis"}'
@@ -250,8 +245,7 @@ zabbix_export:
                     - '0.5'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:""}'
@@ -355,8 +349,7 @@ zabbix_export:
             The statistics collection of 1 minute CPU utilization.
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
           triggers:
             -
               expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -379,12 +372,11 @@ zabbix_export:
             For NI platforms, refer to snAgentBrdMemoryUtil100thPercent
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
           triggers:
             -
               expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
-              name: 'High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+              name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
               priority: AVERAGE
               description: 'The system is running out of free memory.'
       macros:
@@ -394,6 +386,31 @@ zabbix_export:
         -
           macro: '{$MEMORY.UTIL.MAX}'
           value: '90'
+      valuemaps:
+        -
+          name: 'FOUNDRY-SN-AGENT-MIB::snChasFanOperStatus'
+          mappings:
+            -
+              value: '1'
+              newvalue: other
+            -
+              value: '2'
+              newvalue: normal
+            -
+              value: '3'
+              newvalue: failure
+        -
+          name: 'FOUNDRY-SN-AGENT-MIB::snChasPwrSupplyOperStatus'
+          mappings:
+            -
+              value: '1'
+              newvalue: other
+            -
+              value: '2'
+              newvalue: normal
+            -
+              value: '3'
+              newvalue: failure
     -
       template: 'Brocade_Foundry Stackable SNMP'
       name: 'Brocade_Foundry Stackable SNMP'
@@ -441,8 +458,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -479,8 +495,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -509,8 +524,7 @@ zabbix_export:
                 name: 'FOUNDRY-SN-AGENT-MIB::snChasFanOperStatus'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS},eq)}=1'
@@ -549,8 +563,7 @@ zabbix_export:
                 name: 'FOUNDRY-SN-AGENT-MIB::snChasPwrSupplyOperStatus'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: Power_supply
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS},eq)}=1'
@@ -595,8 +608,7 @@ zabbix_export:
                     - 1d
               tags:
                 -
-                  tag: Application
-                  value: Inventory
+                  tag: Inventory
         -
           name: 'Temperature Discovery'
           type: SNMP_AGENT
@@ -623,8 +635,7 @@ zabbix_export:
                     - '0.5'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:""}'

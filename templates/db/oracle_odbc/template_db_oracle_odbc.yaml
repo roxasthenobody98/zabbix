@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:55Z'
+  date: '2021-04-14T13:15:16Z'
   groups:
     -
       name: Templates/Databases
@@ -44,8 +44,7 @@ zabbix_export:
           password: '{$ORACLE.PASSWORD}'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Oracle: Get ASM stats'
           type: ODBC
@@ -65,8 +64,7 @@ zabbix_export:
           description: 'Get ASM disk groups stats.'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Oracle: Get CDB and No-CDB info'
           type: ODBC
@@ -86,8 +84,7 @@ zabbix_export:
           description: 'Get info about CDB and  No-CDB databases on instansce.'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Oracle: Get instance state'
           type: ODBC
@@ -110,8 +107,7 @@ zabbix_export:
           description: 'The item gets state of the current instance.'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Oracle: Get PDB info'
           type: ODBC
@@ -129,8 +125,7 @@ zabbix_export:
           description: 'Get info about PDB databases on instansce.'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Oracle: Get system metrics'
           type: ODBC
@@ -202,8 +197,7 @@ zabbix_export:
           description: 'The item gets system metric values.'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Oracle: Get tablespaces stats'
           type: ODBC
@@ -280,8 +274,7 @@ zabbix_export:
           description: 'Get tablespaces stats.'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Oracle: Service''s TCP port state'
           key: 'net.tcp.service[tcp,{HOST.CONN},{$ORACLE.PORT}]'
@@ -297,8 +290,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Active parallel sessions'
           type: DEPENDENT
@@ -316,8 +308,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Active serial sessions'
           type: DEPENDENT
@@ -335,8 +326,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Average active sessions'
           type: DEPENDENT
@@ -354,8 +344,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Archiver state'
           type: DEPENDENT
@@ -374,8 +363,7 @@ zabbix_export:
             key: 'db.odbc.get[get_instance_state,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Buffer cache hit ratio'
           type: DEPENDENT
@@ -394,8 +382,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Global cache blocks corrupted'
           type: DEPENDENT
@@ -412,8 +399,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Global cache blocks lost'
           type: DEPENDENT
@@ -430,8 +416,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Cursor cache hit ratio'
           type: DEPENDENT
@@ -450,8 +435,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Database CPU time ratio'
           type: DEPENDENT
@@ -470,8 +454,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Database wait time ratio'
           type: DEPENDENT
@@ -490,8 +473,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Datafiles count'
           type: DEPENDENT
@@ -508,8 +490,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Datafiles limit'
           type: DEPENDENT
@@ -526,8 +507,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Disk sort per second'
           type: DEPENDENT
@@ -546,8 +526,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Enqueue timeouts per second'
           type: DEPENDENT
@@ -566,8 +545,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: FRA, Number of files'
           type: DEPENDENT
@@ -586,8 +564,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: FRA, Number of restore points'
           type: DEPENDENT
@@ -604,8 +581,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: FRA, Space limit'
           type: DEPENDENT
@@ -625,8 +601,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: FRA, Space reclaimable'
           type: DEPENDENT
@@ -646,8 +621,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: FRA, Used space'
           type: DEPENDENT
@@ -667,8 +641,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: FRA, Usable space in %'
           type: DEPENDENT
@@ -688,8 +661,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: GC CR block received per second'
           type: DEPENDENT
@@ -708,8 +680,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Instance role'
           type: DEPENDENT
@@ -728,8 +699,7 @@ zabbix_export:
             key: 'db.odbc.get[get_instance_state,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Instance hostname'
           type: DEPENDENT
@@ -748,8 +718,7 @@ zabbix_export:
             key: 'db.odbc.get[get_instance_state,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -775,8 +744,7 @@ zabbix_export:
             key: 'db.odbc.get[get_instance_state,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -802,8 +770,7 @@ zabbix_export:
             key: 'db.odbc.get[get_instance_state,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Library cache hit ratio'
           type: DEPENDENT
@@ -822,8 +789,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Logons per second'
           type: DEPENDENT
@@ -842,8 +808,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Long table scans per second'
           type: DEPENDENT
@@ -862,8 +827,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Memory sorts ratio'
           type: DEPENDENT
@@ -882,8 +846,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: PGA, Global memory bound'
           type: DEPENDENT
@@ -901,8 +864,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: PGA, Aggregate target parameter'
           type: DEPENDENT
@@ -920,8 +882,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Physical reads per second'
           type: DEPENDENT
@@ -940,8 +901,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Physical reads bytes per second'
           type: DEPENDENT
@@ -960,8 +920,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Physical writes per second'
           type: DEPENDENT
@@ -980,8 +939,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Physical writes bytes per second'
           type: DEPENDENT
@@ -1000,8 +958,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Number of processes'
           type: DEPENDENT
@@ -1017,8 +974,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Processes limit'
           type: DEPENDENT
@@ -1035,8 +991,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Redo logs available to switch'
           type: DEPENDENT
@@ -1053,8 +1008,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
           triggers:
             -
               expression: '{max(5m)} < {$ORACLE.REDO.MIN.WARN}'
@@ -1078,8 +1032,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: SQL service response time'
           type: DEPENDENT
@@ -1102,8 +1055,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Active background sessions'
           type: DEPENDENT
@@ -1123,8 +1075,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Active user sessions'
           type: DEPENDENT
@@ -1144,8 +1095,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Sessions concurrency'
           type: DEPENDENT
@@ -1164,8 +1114,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
           triggers:
             -
               expression: '{min(5m)} > {$ORACLE.CONCURRENCY.MAX.WARN}'
@@ -1189,8 +1138,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Inactive user sessions'
           type: DEPENDENT
@@ -1210,8 +1158,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Sessions limit'
           type: DEPENDENT
@@ -1228,8 +1175,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Sessions lock rate'
           type: DEPENDENT
@@ -1248,8 +1194,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
           triggers:
             -
               expression: '{min(5m)} > {$ORACLE.SESSIONS.LOCK.MAX.WARN}'
@@ -1273,8 +1218,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
           triggers:
             -
               expression: '{min(5m)} > {$ORACLE.SESSION.LONG.LOCK.MAX.WARN}'
@@ -1300,8 +1244,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: SGA, fixed'
           type: DEPENDENT
@@ -1321,8 +1264,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: SGA, java pool'
           type: DEPENDENT
@@ -1342,8 +1284,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: SGA, large pool'
           type: DEPENDENT
@@ -1363,8 +1304,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: SGA, log buffer'
           type: DEPENDENT
@@ -1384,8 +1324,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: SGA, shared pool'
           type: DEPENDENT
@@ -1405,8 +1344,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Shared pool free %'
           type: DEPENDENT
@@ -1425,8 +1363,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
           triggers:
             -
               expression: '{max(5m)}<{$ORACLE.SHARED.FREE.MIN.WARN}'
@@ -1450,8 +1387,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Temp space used'
           type: DEPENDENT
@@ -1470,8 +1406,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: PGA, Total allocated'
           type: DEPENDENT
@@ -1489,8 +1424,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: PGA, Total freeable'
           type: DEPENDENT
@@ -1508,8 +1442,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: PGA, Total inuse'
           type: DEPENDENT
@@ -1527,8 +1460,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Uptime'
           type: DEPENDENT
@@ -1547,8 +1479,7 @@ zabbix_export:
             key: 'db.odbc.get[get_instance_state,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
           triggers:
             -
               expression: '{nodata(5m)}=1'
@@ -1583,8 +1514,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
           triggers:
             -
               expression: '{last()}  < {$ORACLE.EXPIRE.PASSWORD.MIN.WARN}'
@@ -1609,8 +1539,7 @@ zabbix_export:
             key: 'db.odbc.get[get_system_metrics,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
         -
           name: 'Oracle: Version'
           type: DEPENDENT
@@ -1633,8 +1562,7 @@ zabbix_export:
             key: 'db.odbc.get[get_instance_state,"{$ORACLE.DSN}"]'
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -1655,8 +1583,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: Oracle
+              tag: Oracle
           triggers:
             -
               expression: '{max(#3)}=0'
@@ -1697,8 +1624,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_archivelog_stat,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle Archivelog'
+                  tag: Oracle
+                  value: Archivelog
             -
               name: 'Archivelog ''{#DEST_NAME}'': Last sequence'
               type: DEPENDENT
@@ -1715,8 +1642,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_archivelog_stat,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle Archivelog'
+                  tag: Oracle
+                  value: Archivelog
             -
               name: 'Archivelog ''{#DEST_NAME}'': Status'
               type: DEPENDENT
@@ -1739,8 +1666,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_archivelog_stat,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle Archivelog'
+                  tag: Oracle
+                  value: Archivelog
               trigger_prototypes:
                 -
                   expression: '{last()}<2'
@@ -1774,8 +1701,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_asm_stat,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle ASM'
+                  tag: Oracle
+                  value: ASM
             -
               name: 'ASM ''{#DG_NAME}'': Total size'
               type: DEPENDENT
@@ -1793,8 +1720,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_asm_stat,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle ASM'
+                  tag: Oracle
+                  value: ASM
             -
               name: 'ASM ''{#DG_NAME}'': Free size'
               type: DEPENDENT
@@ -1813,8 +1740,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_asm_stat,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle ASM'
+                  tag: Oracle
+                  value: ASM
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ORACLE.ASM.USED.PCT.MAX.HIGH}'
@@ -1889,8 +1816,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_cdb_info,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle {#TYPE}'
+                  tag: Oracle
+                  value: '{#TYPE}'
             -
               name: 'Oracle Database ''{#DBNAME}'': Log mode'
               type: DEPENDENT
@@ -1913,8 +1840,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_cdb_info,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle {#TYPE}'
+                  tag: Oracle
+                  value: '{#TYPE}'
             -
               name: 'Oracle Database ''{#DBNAME}'': Open status'
               type: DEPENDENT
@@ -1937,8 +1864,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_cdb_info,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle {#TYPE}'
+                  tag: Oracle
+                  value: '{#TYPE}'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1'
@@ -1977,8 +1904,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_cdb_info,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle {#TYPE}'
+                  tag: Oracle
+                  value: '{#TYPE}'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1'
@@ -2036,8 +1963,8 @@ zabbix_export:
                 key: 'db.odbc.get[get_pdb_info,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle PDB'
+                  tag: Oracle
+                  value: PDB
               trigger_prototypes:
                 -
                   expression: '{diff()}=1'
@@ -2092,8 +2019,8 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle {#CONTENTS} Tablespaces. {#TABLESPACE}'
+                  tag: Oracle
+                  value: '{#CONTENTS}'
             -
               name: 'Oracle TBS ''{#TABLESPACE}'': Tablespace free, bytes'
               type: DEPENDENT
@@ -2111,8 +2038,8 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle {#CONTENTS} Tablespaces. {#TABLESPACE}'
+                  tag: Oracle
+                  value: '{#CONTENTS}'
             -
               name: 'Oracle TBS ''{#TABLESPACE}'': Tablespace MAX size, bytes'
               type: DEPENDENT
@@ -2130,8 +2057,8 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle {#CONTENTS} Tablespaces. {#TABLESPACE}'
+                  tag: Oracle
+                  value: '{#CONTENTS}'
             -
               name: 'Oracle TBS ''{#TABLESPACE}'': Open status'
               type: DEPENDENT
@@ -2150,8 +2077,8 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle {#CONTENTS} Tablespaces. {#TABLESPACE}'
+                  tag: Oracle
+                  value: '{#CONTENTS}'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1'
@@ -2185,8 +2112,8 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle {#CONTENTS} Tablespaces. {#TABLESPACE}'
+                  tag: Oracle
+                  value: '{#CONTENTS}'
             -
               name: 'Oracle TBS ''{#TABLESPACE}'': Tablespace usage, percent'
               type: DEPENDENT
@@ -2205,8 +2132,8 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle {#CONTENTS} Tablespaces. {#TABLESPACE}'
+                  tag: Oracle
+                  value: '{#CONTENTS}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ORACLE.TBS.USED.PCT.MAX.HIGH}'
@@ -2238,8 +2165,8 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Oracle {#CONTENTS} Tablespaces. {#TABLESPACE}'
+                  tag: Oracle
+                  value: '{#CONTENTS}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ORACLE.TBS.USED.PCT.MAX.WARN}'

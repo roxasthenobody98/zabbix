@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-03-02T19:42:26Z'
+  date: '2021-04-14T13:15:22Z'
   groups:
     -
       name: Templates/Modules
@@ -40,167 +40,385 @@ zabbix_export:
       dashboards:
         -
           name: 'System performance'
-          widgets:
+          pages:
             -
-              type: GRAPH_CLASSIC
-              width: '12'
-              height: '5'
-              fields:
+              widgets:
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
+                  type: GRAPH_CLASSIC
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'CPU usage'
+                        host: 'Windows by Zabbix agent'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'CPU usage'
-                    host: 'Windows by Zabbix agent'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              width: '12'
-              height: '5'
-              fields:
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: ITEM
+                      name: itemid
+                      value:
+                        key: 'perf_counter_en["\System\Processor Queue Length"]'
+                        host: 'Windows by Zabbix agent'
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '1'
+                  type: GRAPH_CLASSIC
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Memory utilization'
+                        host: 'Windows by Zabbix agent'
                 -
-                  type: ITEM
-                  name: itemid
-                  value:
-                    key: 'perf_counter_en["\System\Processor Queue Length"]'
-                    host: 'Windows by Zabbix agent'
-            -
-              type: GRAPH_CLASSIC
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Memory utilization'
-                    host: 'Windows by Zabbix agent'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              'y': '5'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Swap usage'
-                    host: 'Windows by Zabbix agent'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '10'
-              width: '24'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '2'
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  'y': '5'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '1'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Swap usage'
+                        host: 'Windows by Zabbix agent'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#FSNAME}: Disk space usage'
-                    host: 'Windows by Zabbix agent'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '15'
-              width: '24'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '2'
-                -
-                  type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#DEVNAME}: Disk read/write rates'
-                    host: 'Windows by Zabbix agent'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '20'
-              width: '24'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '2'
+                  'y': '10'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#FSNAME}: Disk space usage'
+                        host: 'Windows by Zabbix agent'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: '{#DEVNAME}: Disk utilization and queue'
-                    host: 'Windows by Zabbix agent'
-            -
-              type: GRAPH_PROTOTYPE
-              'y': '25'
-              width: '24'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '2'
+                  'y': '22'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#DEVNAME}: Disk read/write rates'
+                        host: 'Windows by Zabbix agent'
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'Interface {#IFNAME}({#IFALIAS}): Network traffic'
-                    host: 'Windows by Zabbix agent'
+                  'y': '34'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: '{#DEVNAME}: Disk utilization and queue'
+                        host: 'Windows by Zabbix agent'
+                -
+                  type: GRAPH_PROTOTYPE
+                  'y': '46'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'Interface {#IFNAME}({#IFALIAS}): Network traffic'
+                        host: 'Windows by Zabbix agent'
+      valuemaps:
+        -
+          name: 'CIM_LogicalDevice::Availability'
+          mappings:
+            -
+              value: '1'
+              newvalue: Other
+            -
+              value: '2'
+              newvalue: Unknown
+            -
+              value: '3'
+              newvalue: 'Running/Full Power'
+            -
+              value: '4'
+              newvalue: Warning
+            -
+              value: '5'
+              newvalue: 'In Test'
+            -
+              value: '6'
+              newvalue: 'Not Applicable'
+            -
+              value: '7'
+              newvalue: 'Power Off'
+            -
+              value: '8'
+              newvalue: 'Off Line'
+            -
+              value: '9'
+              newvalue: 'Off Duty'
+            -
+              value: '10'
+              newvalue: Degraded
+            -
+              value: '11'
+              newvalue: 'Not Installed'
+            -
+              value: '12'
+              newvalue: 'Install Error'
+            -
+              value: '13'
+              newvalue: 'Power Save - Unknown'
+            -
+              value: '14'
+              newvalue: 'Power Save - Low Power Mode'
+            -
+              value: '15'
+              newvalue: 'Power Save - Standby'
+            -
+              value: '16'
+              newvalue: 'Power Cycle'
+            -
+              value: '17'
+              newvalue: 'Power Save - Warning'
+            -
+              value: '18'
+              newvalue: Paused
+            -
+              value: '19'
+              newvalue: 'Not Ready'
+            -
+              value: '20'
+              newvalue: 'Not Configured'
+            -
+              value: '21'
+              newvalue: Quiesced
+        -
+          name: 'Win32_NetworkAdapter::AdapterTypeId'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'Ethernet 802.3'
+            -
+              value: '1'
+              newvalue: 'Token Ring 802.5'
+            -
+              value: '2'
+              newvalue: 'Fiber Distributed Data Interface (FDDI)'
+            -
+              value: '3'
+              newvalue: 'Wide Area Network (WAN)'
+            -
+              value: '4'
+              newvalue: LocalTalk
+            -
+              value: '5'
+              newvalue: 'Ethernet using DIX header format'
+            -
+              value: '6'
+              newvalue: ARCNET
+            -
+              value: '7'
+              newvalue: 'ARCNET (878.2)'
+            -
+              value: '8'
+              newvalue: ATM
+            -
+              value: '9'
+              newvalue: Wireless
+            -
+              value: '10'
+              newvalue: 'Infrared Wireless'
+            -
+              value: '11'
+              newvalue: Bpc
+            -
+              value: '12'
+              newvalue: CoWan
+            -
+              value: '13'
+              newvalue: '1394'
+        -
+          name: 'Win32_NetworkAdapter::NetConnectionStatus'
+          mappings:
+            -
+              value: '0'
+              newvalue: Disconnected
+            -
+              value: '1'
+              newvalue: Connecting
+            -
+              value: '2'
+              newvalue: Connected
+            -
+              value: '3'
+              newvalue: Disconnecting
+            -
+              value: '4'
+              newvalue: 'Hardware Not Present'
+            -
+              value: '5'
+              newvalue: 'Hardware Disabled'
+            -
+              value: '6'
+              newvalue: 'Hardware Malfunction'
+            -
+              value: '7'
+              newvalue: 'Media Disconnected'
+            -
+              value: '8'
+              newvalue: Authenticating
+            -
+              value: '9'
+              newvalue: 'Authentication Succeeded'
+            -
+              value: '10'
+              newvalue: 'Authentication Failed'
+            -
+              value: '11'
+              newvalue: 'Invalid Address'
+            -
+              value: '12'
+              newvalue: 'Credentials Required'
+        -
+          name: 'Windows service state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Running
+            -
+              value: '1'
+              newvalue: Paused
+            -
+              value: '2'
+              newvalue: 'Start pending'
+            -
+              value: '3'
+              newvalue: 'Pause pending'
+            -
+              value: '4'
+              newvalue: 'Continue pending'
+            -
+              value: '5'
+              newvalue: 'Stop pending'
+            -
+              value: '6'
+              newvalue: Stopped
+            -
+              value: '7'
+              newvalue: Unknown
+            -
+              value: '255'
+              newvalue: 'No such service'
     -
       template: 'Windows CPU by Zabbix agent'
       name: 'Windows CPU by Zabbix agent'
@@ -223,8 +441,7 @@ zabbix_export:
             significantly diminish overall system performance.
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU interrupt time'
           key: 'perf_counter_en["\Processor Information(_total)\% Interrupt Time"]'
@@ -239,8 +456,7 @@ zabbix_export:
             hardware failure. This should never be higher than 20%.
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
           triggers:
             -
               expression: '{min(5m)}>{$CPU.INTERRUPT.CRIT.MAX}'
@@ -270,8 +486,7 @@ zabbix_export:
             functions of the Windows® Operating System.
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
           triggers:
             -
               expression: '{min(5m)}>{$CPU.PRIV.CRIT.MAX}'
@@ -296,8 +511,7 @@ zabbix_export:
             in User mode.
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'Context switches per second'
           key: 'perf_counter_en["\System\Context Switches/sec"]'
@@ -310,8 +524,7 @@ zabbix_export:
             There are context switch counters on the System and Thread objects. This counter displays the difference between the values observed in the last two samples, divided by the duration of the sample interval.
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU queue length'
           key: 'perf_counter_en["\System\Processor Queue Length"]'
@@ -322,8 +535,7 @@ zabbix_export:
             and are waiting to be executed.
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
         -
           name: 'CPU utilization'
           key: system.cpu.util
@@ -333,8 +545,7 @@ zabbix_export:
           description: 'CPU utilization in %'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
           triggers:
             -
               expression: '{min(5m)}>{$CPU.UTIL.CRIT}'
@@ -349,8 +560,7 @@ zabbix_export:
           description: 'The number of logical processors available on the computer.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
       macros:
         -
           macro: '{$CPU.INTERRUPT.CRIT.MAX}'
@@ -368,6 +578,190 @@ zabbix_export:
           macro: '{$CPU.UTIL.CRIT}'
           value: '90'
           description: 'The critical threshold of the CPU utilization in %.'
+      valuemaps:
+        -
+          name: 'CIM_LogicalDevice::Availability'
+          mappings:
+            -
+              value: '1'
+              newvalue: Other
+            -
+              value: '2'
+              newvalue: Unknown
+            -
+              value: '3'
+              newvalue: 'Running/Full Power'
+            -
+              value: '4'
+              newvalue: Warning
+            -
+              value: '5'
+              newvalue: 'In Test'
+            -
+              value: '6'
+              newvalue: 'Not Applicable'
+            -
+              value: '7'
+              newvalue: 'Power Off'
+            -
+              value: '8'
+              newvalue: 'Off Line'
+            -
+              value: '9'
+              newvalue: 'Off Duty'
+            -
+              value: '10'
+              newvalue: Degraded
+            -
+              value: '11'
+              newvalue: 'Not Installed'
+            -
+              value: '12'
+              newvalue: 'Install Error'
+            -
+              value: '13'
+              newvalue: 'Power Save - Unknown'
+            -
+              value: '14'
+              newvalue: 'Power Save - Low Power Mode'
+            -
+              value: '15'
+              newvalue: 'Power Save - Standby'
+            -
+              value: '16'
+              newvalue: 'Power Cycle'
+            -
+              value: '17'
+              newvalue: 'Power Save - Warning'
+            -
+              value: '18'
+              newvalue: Paused
+            -
+              value: '19'
+              newvalue: 'Not Ready'
+            -
+              value: '20'
+              newvalue: 'Not Configured'
+            -
+              value: '21'
+              newvalue: Quiesced
+        -
+          name: 'Win32_NetworkAdapter::AdapterTypeId'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'Ethernet 802.3'
+            -
+              value: '1'
+              newvalue: 'Token Ring 802.5'
+            -
+              value: '2'
+              newvalue: 'Fiber Distributed Data Interface (FDDI)'
+            -
+              value: '3'
+              newvalue: 'Wide Area Network (WAN)'
+            -
+              value: '4'
+              newvalue: LocalTalk
+            -
+              value: '5'
+              newvalue: 'Ethernet using DIX header format'
+            -
+              value: '6'
+              newvalue: ARCNET
+            -
+              value: '7'
+              newvalue: 'ARCNET (878.2)'
+            -
+              value: '8'
+              newvalue: ATM
+            -
+              value: '9'
+              newvalue: Wireless
+            -
+              value: '10'
+              newvalue: 'Infrared Wireless'
+            -
+              value: '11'
+              newvalue: Bpc
+            -
+              value: '12'
+              newvalue: CoWan
+            -
+              value: '13'
+              newvalue: '1394'
+        -
+          name: 'Win32_NetworkAdapter::NetConnectionStatus'
+          mappings:
+            -
+              value: '0'
+              newvalue: Disconnected
+            -
+              value: '1'
+              newvalue: Connecting
+            -
+              value: '2'
+              newvalue: Connected
+            -
+              value: '3'
+              newvalue: Disconnecting
+            -
+              value: '4'
+              newvalue: 'Hardware Not Present'
+            -
+              value: '5'
+              newvalue: 'Hardware Disabled'
+            -
+              value: '6'
+              newvalue: 'Hardware Malfunction'
+            -
+              value: '7'
+              newvalue: 'Media Disconnected'
+            -
+              value: '8'
+              newvalue: Authenticating
+            -
+              value: '9'
+              newvalue: 'Authentication Succeeded'
+            -
+              value: '10'
+              newvalue: 'Authentication Failed'
+            -
+              value: '11'
+              newvalue: 'Invalid Address'
+            -
+              value: '12'
+              newvalue: 'Credentials Required'
+        -
+          name: 'Windows service state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Running
+            -
+              value: '1'
+              newvalue: Paused
+            -
+              value: '2'
+              newvalue: 'Start pending'
+            -
+              value: '3'
+              newvalue: 'Pause pending'
+            -
+              value: '4'
+              newvalue: 'Continue pending'
+            -
+              value: '5'
+              newvalue: 'Stop pending'
+            -
+              value: '6'
+              newvalue: Stopped
+            -
+              value: '7'
+              newvalue: Unknown
+            -
+              value: '255'
+              newvalue: 'No such service'
     -
       template: 'Windows filesystems by Zabbix agent'
       name: 'Windows filesystems by Zabbix agent'
@@ -421,8 +815,8 @@ zabbix_export:
               description: 'Space utilization in % for {#FSNAME}'
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
             -
               name: '{#FSNAME}: Total space'
               key: 'vfs.fs.size[{#FSNAME},total]'
@@ -431,8 +825,8 @@ zabbix_export:
               description: 'Total space in Bytes'
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
             -
               name: '{#FSNAME}: Used space'
               key: 'vfs.fs.size[{#FSNAME},used]'
@@ -441,8 +835,8 @@ zabbix_export:
               description: 'Used storage in Bytes'
               tags:
                 -
-                  tag: Application
-                  value: 'Filesystem {#FSNAME}'
+                  tag: Filesystem
+                  value: '{#FSNAME}'
           trigger_prototypes:
             -
               expression: |
@@ -531,6 +925,190 @@ zabbix_export:
           macro: '{$VFS.FS.PUSED.MAX.WARN}'
           value: '80'
           description: 'The warning threshold of the filesystem utilization in percent.'
+      valuemaps:
+        -
+          name: 'CIM_LogicalDevice::Availability'
+          mappings:
+            -
+              value: '1'
+              newvalue: Other
+            -
+              value: '2'
+              newvalue: Unknown
+            -
+              value: '3'
+              newvalue: 'Running/Full Power'
+            -
+              value: '4'
+              newvalue: Warning
+            -
+              value: '5'
+              newvalue: 'In Test'
+            -
+              value: '6'
+              newvalue: 'Not Applicable'
+            -
+              value: '7'
+              newvalue: 'Power Off'
+            -
+              value: '8'
+              newvalue: 'Off Line'
+            -
+              value: '9'
+              newvalue: 'Off Duty'
+            -
+              value: '10'
+              newvalue: Degraded
+            -
+              value: '11'
+              newvalue: 'Not Installed'
+            -
+              value: '12'
+              newvalue: 'Install Error'
+            -
+              value: '13'
+              newvalue: 'Power Save - Unknown'
+            -
+              value: '14'
+              newvalue: 'Power Save - Low Power Mode'
+            -
+              value: '15'
+              newvalue: 'Power Save - Standby'
+            -
+              value: '16'
+              newvalue: 'Power Cycle'
+            -
+              value: '17'
+              newvalue: 'Power Save - Warning'
+            -
+              value: '18'
+              newvalue: Paused
+            -
+              value: '19'
+              newvalue: 'Not Ready'
+            -
+              value: '20'
+              newvalue: 'Not Configured'
+            -
+              value: '21'
+              newvalue: Quiesced
+        -
+          name: 'Win32_NetworkAdapter::AdapterTypeId'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'Ethernet 802.3'
+            -
+              value: '1'
+              newvalue: 'Token Ring 802.5'
+            -
+              value: '2'
+              newvalue: 'Fiber Distributed Data Interface (FDDI)'
+            -
+              value: '3'
+              newvalue: 'Wide Area Network (WAN)'
+            -
+              value: '4'
+              newvalue: LocalTalk
+            -
+              value: '5'
+              newvalue: 'Ethernet using DIX header format'
+            -
+              value: '6'
+              newvalue: ARCNET
+            -
+              value: '7'
+              newvalue: 'ARCNET (878.2)'
+            -
+              value: '8'
+              newvalue: ATM
+            -
+              value: '9'
+              newvalue: Wireless
+            -
+              value: '10'
+              newvalue: 'Infrared Wireless'
+            -
+              value: '11'
+              newvalue: Bpc
+            -
+              value: '12'
+              newvalue: CoWan
+            -
+              value: '13'
+              newvalue: '1394'
+        -
+          name: 'Win32_NetworkAdapter::NetConnectionStatus'
+          mappings:
+            -
+              value: '0'
+              newvalue: Disconnected
+            -
+              value: '1'
+              newvalue: Connecting
+            -
+              value: '2'
+              newvalue: Connected
+            -
+              value: '3'
+              newvalue: Disconnecting
+            -
+              value: '4'
+              newvalue: 'Hardware Not Present'
+            -
+              value: '5'
+              newvalue: 'Hardware Disabled'
+            -
+              value: '6'
+              newvalue: 'Hardware Malfunction'
+            -
+              value: '7'
+              newvalue: 'Media Disconnected'
+            -
+              value: '8'
+              newvalue: Authenticating
+            -
+              value: '9'
+              newvalue: 'Authentication Succeeded'
+            -
+              value: '10'
+              newvalue: 'Authentication Failed'
+            -
+              value: '11'
+              newvalue: 'Invalid Address'
+            -
+              value: '12'
+              newvalue: 'Credentials Required'
+        -
+          name: 'Windows service state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Running
+            -
+              value: '1'
+              newvalue: Paused
+            -
+              value: '2'
+              newvalue: 'Start pending'
+            -
+              value: '3'
+              newvalue: 'Pause pending'
+            -
+              value: '4'
+              newvalue: 'Continue pending'
+            -
+              value: '5'
+              newvalue: 'Stop pending'
+            -
+              value: '6'
+              newvalue: Stopped
+            -
+              value: '7'
+              newvalue: Unknown
+            -
+              value: '255'
+              newvalue: 'No such service'
     -
       template: 'Windows generic by Zabbix agent'
       name: 'Windows generic by Zabbix agent'
@@ -546,8 +1124,7 @@ zabbix_export:
           description: 'The number of threads used by all running processes.'
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'Number of processes'
           key: 'proc.num[]'
@@ -555,8 +1132,7 @@ zabbix_export:
           description: 'The number of processes.'
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'System name'
           key: system.hostname
@@ -573,8 +1149,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -590,8 +1165,7 @@ zabbix_export:
           description: 'System local time of the host.'
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
           triggers:
             -
               expression: '{fuzzytime({$SYSTEM.FUZZYTIME.MAX})}=0'
@@ -614,8 +1188,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
         -
           name: 'System description'
           key: system.uname
@@ -631,8 +1204,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: Uptime
           key: system.uptime
@@ -643,8 +1215,7 @@ zabbix_export:
           description: 'System uptime in ''N days, hh:mm:ss'' format.'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{last()}<10m'
@@ -657,6 +1228,190 @@ zabbix_export:
           macro: '{$SYSTEM.FUZZYTIME.MAX}'
           value: '60'
           description: 'The threshold for difference of system time in seconds.'
+      valuemaps:
+        -
+          name: 'CIM_LogicalDevice::Availability'
+          mappings:
+            -
+              value: '1'
+              newvalue: Other
+            -
+              value: '2'
+              newvalue: Unknown
+            -
+              value: '3'
+              newvalue: 'Running/Full Power'
+            -
+              value: '4'
+              newvalue: Warning
+            -
+              value: '5'
+              newvalue: 'In Test'
+            -
+              value: '6'
+              newvalue: 'Not Applicable'
+            -
+              value: '7'
+              newvalue: 'Power Off'
+            -
+              value: '8'
+              newvalue: 'Off Line'
+            -
+              value: '9'
+              newvalue: 'Off Duty'
+            -
+              value: '10'
+              newvalue: Degraded
+            -
+              value: '11'
+              newvalue: 'Not Installed'
+            -
+              value: '12'
+              newvalue: 'Install Error'
+            -
+              value: '13'
+              newvalue: 'Power Save - Unknown'
+            -
+              value: '14'
+              newvalue: 'Power Save - Low Power Mode'
+            -
+              value: '15'
+              newvalue: 'Power Save - Standby'
+            -
+              value: '16'
+              newvalue: 'Power Cycle'
+            -
+              value: '17'
+              newvalue: 'Power Save - Warning'
+            -
+              value: '18'
+              newvalue: Paused
+            -
+              value: '19'
+              newvalue: 'Not Ready'
+            -
+              value: '20'
+              newvalue: 'Not Configured'
+            -
+              value: '21'
+              newvalue: Quiesced
+        -
+          name: 'Win32_NetworkAdapter::AdapterTypeId'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'Ethernet 802.3'
+            -
+              value: '1'
+              newvalue: 'Token Ring 802.5'
+            -
+              value: '2'
+              newvalue: 'Fiber Distributed Data Interface (FDDI)'
+            -
+              value: '3'
+              newvalue: 'Wide Area Network (WAN)'
+            -
+              value: '4'
+              newvalue: LocalTalk
+            -
+              value: '5'
+              newvalue: 'Ethernet using DIX header format'
+            -
+              value: '6'
+              newvalue: ARCNET
+            -
+              value: '7'
+              newvalue: 'ARCNET (878.2)'
+            -
+              value: '8'
+              newvalue: ATM
+            -
+              value: '9'
+              newvalue: Wireless
+            -
+              value: '10'
+              newvalue: 'Infrared Wireless'
+            -
+              value: '11'
+              newvalue: Bpc
+            -
+              value: '12'
+              newvalue: CoWan
+            -
+              value: '13'
+              newvalue: '1394'
+        -
+          name: 'Win32_NetworkAdapter::NetConnectionStatus'
+          mappings:
+            -
+              value: '0'
+              newvalue: Disconnected
+            -
+              value: '1'
+              newvalue: Connecting
+            -
+              value: '2'
+              newvalue: Connected
+            -
+              value: '3'
+              newvalue: Disconnecting
+            -
+              value: '4'
+              newvalue: 'Hardware Not Present'
+            -
+              value: '5'
+              newvalue: 'Hardware Disabled'
+            -
+              value: '6'
+              newvalue: 'Hardware Malfunction'
+            -
+              value: '7'
+              newvalue: 'Media Disconnected'
+            -
+              value: '8'
+              newvalue: Authenticating
+            -
+              value: '9'
+              newvalue: 'Authentication Succeeded'
+            -
+              value: '10'
+              newvalue: 'Authentication Failed'
+            -
+              value: '11'
+              newvalue: 'Invalid Address'
+            -
+              value: '12'
+              newvalue: 'Credentials Required'
+        -
+          name: 'Windows service state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Running
+            -
+              value: '1'
+              newvalue: Paused
+            -
+              value: '2'
+              newvalue: 'Start pending'
+            -
+              value: '3'
+              newvalue: 'Pause pending'
+            -
+              value: '4'
+              newvalue: 'Continue pending'
+            -
+              value: '5'
+              newvalue: 'Stop pending'
+            -
+              value: '6'
+              newvalue: Stopped
+            -
+              value: '7'
+              newvalue: Unknown
+            -
+              value: '255'
+              newvalue: 'No such service'
     -
       template: 'Windows memory by Zabbix agent'
       name: 'Windows memory by Zabbix agent'
@@ -676,8 +1431,7 @@ zabbix_export:
             the last observed value only; it is not an average.
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Free system page table entries'
           key: 'perf_counter_en["\Memory\Free System Page Table Entries"]'
@@ -687,8 +1441,7 @@ zabbix_export:
             than 5,000, there may well be a memory leak or you running out of memory.
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
           triggers:
             -
               expression: '{max(5m)}<{$MEM.PAGE_TABLE_CRIT.MIN}'
@@ -697,7 +1450,7 @@ zabbix_export:
               description: 'The Memory Free System Page Table Entries is less than {$MEM.PAGE_TABLE_CRIT.MIN} for 5 minutes. If the number is less than 5,000, there may well be a memory leak.'
               dependencies:
                 -
-                  name: 'High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+                  name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
                   expression: '{Windows memory by Zabbix agent:vm.memory.util.min(5m)}>{$MEMORY.UTIL.MAX}'
         -
           name: 'Memory page faults per second'
@@ -713,8 +1466,7 @@ zabbix_export:
             which require disk access, can cause significant delays.
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Memory pages per second'
           key: 'perf_counter_en["\Memory\Pages/sec"]'
@@ -725,8 +1477,7 @@ zabbix_export:
             If the value is greater than 1,000, as a result of excessive paging, there may be a memory leak.
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
           triggers:
             -
               expression: '{min(5m)}>{$MEM.PAGE_SEC.CRIT.MAX}'
@@ -735,7 +1486,7 @@ zabbix_export:
               description: 'The Memory Pages/sec in the last 5 minutes exceeds {$MEM.PAGE_SEC.CRIT.MAX}. If the value is greater than 1,000, as a result of excessive paging, there may be a memory leak.'
               dependencies:
                 -
-                  name: 'High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+                  name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
                   expression: '{Windows memory by Zabbix agent:vm.memory.util.min(5m)}>{$MEMORY.UTIL.MAX}'
         -
           name: 'Memory pool non-paged'
@@ -749,8 +1500,7 @@ zabbix_export:
             A typical Event ID 2019 is recorded in the system event log.
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Used swap space in %'
           key: 'perf_counter_en["\Paging file(_Total)\% Usage"]'
@@ -760,8 +1510,7 @@ zabbix_export:
           description: 'The used space of swap volume/file in percent.'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Free swap space'
           type: CALCULATED
@@ -772,8 +1521,7 @@ zabbix_export:
           description: 'The free space of swap volume/file in bytes.'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Free swap space in %'
           type: DEPENDENT
@@ -792,8 +1540,7 @@ zabbix_export:
             key: 'perf_counter_en["\Paging file(_Total)\% Usage"]'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Total swap space'
           key: 'system.swap.size[,total]'
@@ -802,8 +1549,7 @@ zabbix_export:
           description: 'The total space of swap volume/file in bytes.'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Total memory'
           key: 'vm.memory.size[total]'
@@ -812,8 +1558,7 @@ zabbix_export:
           description: 'Total memory in Bytes'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Used memory'
           key: 'vm.memory.size[used]'
@@ -822,8 +1567,7 @@ zabbix_export:
           description: 'Used memory in Bytes'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
         -
           name: 'Memory utilization'
           type: CALCULATED
@@ -835,12 +1579,11 @@ zabbix_export:
           description: 'Memory utilization in %'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
           triggers:
             -
               expression: '{min(5m)}>{$MEMORY.UTIL.MAX}'
-              name: 'High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+              name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
               priority: AVERAGE
               description: 'The system is running out of free memory.'
       macros:
@@ -860,6 +1603,190 @@ zabbix_export:
           macro: '{$SWAP.PFREE.MIN.WARN}'
           value: '20'
           description: 'The warning threshold of the minimum free swap.'
+      valuemaps:
+        -
+          name: 'CIM_LogicalDevice::Availability'
+          mappings:
+            -
+              value: '1'
+              newvalue: Other
+            -
+              value: '2'
+              newvalue: Unknown
+            -
+              value: '3'
+              newvalue: 'Running/Full Power'
+            -
+              value: '4'
+              newvalue: Warning
+            -
+              value: '5'
+              newvalue: 'In Test'
+            -
+              value: '6'
+              newvalue: 'Not Applicable'
+            -
+              value: '7'
+              newvalue: 'Power Off'
+            -
+              value: '8'
+              newvalue: 'Off Line'
+            -
+              value: '9'
+              newvalue: 'Off Duty'
+            -
+              value: '10'
+              newvalue: Degraded
+            -
+              value: '11'
+              newvalue: 'Not Installed'
+            -
+              value: '12'
+              newvalue: 'Install Error'
+            -
+              value: '13'
+              newvalue: 'Power Save - Unknown'
+            -
+              value: '14'
+              newvalue: 'Power Save - Low Power Mode'
+            -
+              value: '15'
+              newvalue: 'Power Save - Standby'
+            -
+              value: '16'
+              newvalue: 'Power Cycle'
+            -
+              value: '17'
+              newvalue: 'Power Save - Warning'
+            -
+              value: '18'
+              newvalue: Paused
+            -
+              value: '19'
+              newvalue: 'Not Ready'
+            -
+              value: '20'
+              newvalue: 'Not Configured'
+            -
+              value: '21'
+              newvalue: Quiesced
+        -
+          name: 'Win32_NetworkAdapter::AdapterTypeId'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'Ethernet 802.3'
+            -
+              value: '1'
+              newvalue: 'Token Ring 802.5'
+            -
+              value: '2'
+              newvalue: 'Fiber Distributed Data Interface (FDDI)'
+            -
+              value: '3'
+              newvalue: 'Wide Area Network (WAN)'
+            -
+              value: '4'
+              newvalue: LocalTalk
+            -
+              value: '5'
+              newvalue: 'Ethernet using DIX header format'
+            -
+              value: '6'
+              newvalue: ARCNET
+            -
+              value: '7'
+              newvalue: 'ARCNET (878.2)'
+            -
+              value: '8'
+              newvalue: ATM
+            -
+              value: '9'
+              newvalue: Wireless
+            -
+              value: '10'
+              newvalue: 'Infrared Wireless'
+            -
+              value: '11'
+              newvalue: Bpc
+            -
+              value: '12'
+              newvalue: CoWan
+            -
+              value: '13'
+              newvalue: '1394'
+        -
+          name: 'Win32_NetworkAdapter::NetConnectionStatus'
+          mappings:
+            -
+              value: '0'
+              newvalue: Disconnected
+            -
+              value: '1'
+              newvalue: Connecting
+            -
+              value: '2'
+              newvalue: Connected
+            -
+              value: '3'
+              newvalue: Disconnecting
+            -
+              value: '4'
+              newvalue: 'Hardware Not Present'
+            -
+              value: '5'
+              newvalue: 'Hardware Disabled'
+            -
+              value: '6'
+              newvalue: 'Hardware Malfunction'
+            -
+              value: '7'
+              newvalue: 'Media Disconnected'
+            -
+              value: '8'
+              newvalue: Authenticating
+            -
+              value: '9'
+              newvalue: 'Authentication Succeeded'
+            -
+              value: '10'
+              newvalue: 'Authentication Failed'
+            -
+              value: '11'
+              newvalue: 'Invalid Address'
+            -
+              value: '12'
+              newvalue: 'Credentials Required'
+        -
+          name: 'Windows service state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Running
+            -
+              value: '1'
+              newvalue: Paused
+            -
+              value: '2'
+              newvalue: 'Start pending'
+            -
+              value: '3'
+              newvalue: 'Pause pending'
+            -
+              value: '4'
+              newvalue: 'Continue pending'
+            -
+              value: '5'
+              newvalue: 'Stop pending'
+            -
+              value: '6'
+              newvalue: Stopped
+            -
+              value: '7'
+              newvalue: Unknown
+            -
+              value: '255'
+              newvalue: 'No such service'
     -
       template: 'Windows network by Zabbix agent'
       name: 'Windows network by Zabbix agent'
@@ -877,8 +1804,7 @@ zabbix_export:
           description: 'Raw data of win32_networkadapter.'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
       discovery_rules:
         -
           name: 'Network interfaces discovery'
@@ -930,8 +1856,8 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Inbound packets with errors'
               key: 'net.if.in["{#IFNAME}",errors]'
@@ -945,8 +1871,8 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Bits received'
               key: 'net.if.in["{#IFNAME}"]'
@@ -965,8 +1891,8 @@ zabbix_export:
                     - '8'
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Outbound packets discarded'
               key: 'net.if.out["{#IFNAME}",dropped]'
@@ -980,8 +1906,8 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Outbound packets with errors'
               key: 'net.if.out["{#IFNAME}",errors]'
@@ -995,8 +1921,8 @@ zabbix_export:
                     - ''
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Bits sent'
               key: 'net.if.out["{#IFNAME}"]'
@@ -1015,8 +1941,8 @@ zabbix_export:
                     - '8'
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Speed'
               type: DEPENDENT
@@ -1045,8 +1971,8 @@ zabbix_export:
                 key: 'wmi.getall[root\cimv2,"select Name,Description,NetConnectionID,Speed,AdapterTypeId,NetConnectionStatus from win32_networkadapter where PhysicalAdapter=True and NetConnectionStatus>0"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
             -
               name: 'Interface {#IFNAME}({#IFALIAS}): Operational status'
               type: DEPENDENT
@@ -1070,8 +1996,8 @@ zabbix_export:
                 key: 'wmi.getall[root\cimv2,"select Name,Description,NetConnectionID,Speed,AdapterTypeId,NetConnectionStatus from win32_networkadapter where PhysicalAdapter=True and NetConnectionStatus>0"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
               trigger_prototypes:
                 -
                   expression: '{$IFCONTROL:"{#IFNAME}"}=1 and ({last()}<>2 and {diff()}=1)'
@@ -1112,8 +2038,8 @@ zabbix_export:
                 key: 'wmi.getall[root\cimv2,"select Name,Description,NetConnectionID,Speed,AdapterTypeId,NetConnectionStatus from win32_networkadapter where PhysicalAdapter=True and NetConnectionStatus>0"]'
               tags:
                 -
-                  tag: Application
-                  value: 'Interface {#IFNAME}({#IFALIAS})'
+                  tag: Interface
+                  value: '{#IFNAME}({#IFALIAS})'
           trigger_prototypes:
             -
               expression: |
@@ -1139,7 +2065,7 @@ zabbix_export:
               recovery_expression: |
                 {Windows network by Zabbix agent:net.if.in["{#IFNAME}"].avg(15m)}<(({$IF.UTIL.MAX:"{#IFNAME}"}-3)/100)*{Windows network by Zabbix agent:net.if.speed["{#IFNAME}"].last()} and
                 {Windows network by Zabbix agent:net.if.out["{#IFNAME}"].avg(15m)}<(({$IF.UTIL.MAX:"{#IFNAME}"}-3)/100)*{Windows network by Zabbix agent:net.if.speed["{#IFNAME}"].last()}
-              name: 'Interface {#IFNAME}({#IFALIAS}): High bandwidth usage (>{$IF.UTIL.MAX:"{#IFNAME}"}% )'
+              name: 'Interface {#IFNAME}({#IFALIAS}): High bandwidth usage ( > {$IF.UTIL.MAX:"{#IFNAME}"}% )'
               opdata: 'In: {ITEM.LASTVALUE1}, out: {ITEM.LASTVALUE3}, speed: {ITEM.LASTVALUE2}'
               priority: WARNING
               description: 'The network interface utilization is close to its estimated maximum bandwidth.'
@@ -1157,7 +2083,7 @@ zabbix_export:
               recovery_expression: |
                 {Windows network by Zabbix agent:net.if.in["{#IFNAME}",errors].max(5m)}<{$IF.ERRORS.WARN:"{#IFNAME}"}*0.8
                 and {Windows network by Zabbix agent:net.if.out["{#IFNAME}",errors].max(5m)}<{$IF.ERRORS.WARN:"{#IFNAME}"}*0.8
-              name: 'Interface {#IFNAME}({#IFALIAS}): High error rate (>{$IF.ERRORS.WARN:"{#IFNAME}"} for 5m)'
+              name: 'Interface {#IFNAME}({#IFALIAS}): High error rate ( > {$IF.ERRORS.WARN:"{#IFNAME}"} for 5m)'
               opdata: 'errors in: {ITEM.LASTVALUE1}, errors out: {ITEM.LASTVALUE2}'
               priority: WARNING
               description: 'Recovers when below 80% of {$IF.ERRORS.WARN:"{#IFNAME}"} threshold'
@@ -1267,31 +2193,99 @@ zabbix_export:
       dashboards:
         -
           name: 'Netowrk interfaces'
-          widgets:
+          pages:
             -
-              type: GRAPH_PROTOTYPE
-              width: '24'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: columns
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: rows
-                  value: '1'
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '2'
+              widgets:
                 -
                   type: GRAPH_PROTOTYPE
-                  name: graphid
-                  value:
-                    name: 'Interface {#IFNAME}({#IFALIAS}): Network traffic'
-                    host: 'Windows network by Zabbix agent'
+                  width: '24'
+                  height: '12'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '2'
+                    -
+                      type: INTEGER
+                      name: columns
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: rows
+                      value: '3'
+                    -
+                      type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        name: 'Interface {#IFNAME}({#IFALIAS}): Network traffic'
+                        host: 'Windows network by Zabbix agent'
       valuemaps:
+        -
+          name: 'CIM_LogicalDevice::Availability'
+          mappings:
+            -
+              value: '1'
+              newvalue: Other
+            -
+              value: '2'
+              newvalue: Unknown
+            -
+              value: '3'
+              newvalue: 'Running/Full Power'
+            -
+              value: '4'
+              newvalue: Warning
+            -
+              value: '5'
+              newvalue: 'In Test'
+            -
+              value: '6'
+              newvalue: 'Not Applicable'
+            -
+              value: '7'
+              newvalue: 'Power Off'
+            -
+              value: '8'
+              newvalue: 'Off Line'
+            -
+              value: '9'
+              newvalue: 'Off Duty'
+            -
+              value: '10'
+              newvalue: Degraded
+            -
+              value: '11'
+              newvalue: 'Not Installed'
+            -
+              value: '12'
+              newvalue: 'Install Error'
+            -
+              value: '13'
+              newvalue: 'Power Save - Unknown'
+            -
+              value: '14'
+              newvalue: 'Power Save - Low Power Mode'
+            -
+              value: '15'
+              newvalue: 'Power Save - Standby'
+            -
+              value: '16'
+              newvalue: 'Power Cycle'
+            -
+              value: '17'
+              newvalue: 'Power Save - Warning'
+            -
+              value: '18'
+              newvalue: Paused
+            -
+              value: '19'
+              newvalue: 'Not Ready'
+            -
+              value: '20'
+              newvalue: 'Not Configured'
+            -
+              value: '21'
+              newvalue: Quiesced
         -
           name: 'Win32_NetworkAdapter::AdapterTypeId'
           mappings:
@@ -1379,6 +2373,36 @@ zabbix_export:
             -
               value: '12'
               newvalue: 'Credentials Required'
+        -
+          name: 'Windows service state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Running
+            -
+              value: '1'
+              newvalue: Paused
+            -
+              value: '2'
+              newvalue: 'Start pending'
+            -
+              value: '3'
+              newvalue: 'Pause pending'
+            -
+              value: '4'
+              newvalue: 'Continue pending'
+            -
+              value: '5'
+              newvalue: 'Stop pending'
+            -
+              value: '6'
+              newvalue: Stopped
+            -
+              value: '7'
+              newvalue: Unknown
+            -
+              value: '255'
+              newvalue: 'No such service'
     -
       template: 'Windows physical disks by Zabbix agent'
       name: 'Windows physical disks by Zabbix agent'
@@ -1414,8 +2438,8 @@ zabbix_export:
               description: 'This item is the percentage of elapsed time that the selected disk drive was busy servicing read or writes requests.'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
               trigger_prototypes:
                 -
                   expression: '{min(15m)}>{$VFS.DEV.UTIL.MAX.WARN}'
@@ -1423,69 +2447,6 @@ zabbix_export:
                   priority: WARNING
                   description: 'The disk appears to be under heavy load'
                   manual_close: 'YES'
-                  dependencies:
-                    -
-                      name: '{#DEVNAME}: Disk read request responses are too high (read > {$VFS.DEV.READ.AWAIT.WARN:"{#DEVNAME}"}s for 15m'
-                      expression: '{Windows physical disks by Zabbix agent:perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk sec/Read",60].min(15m)} > {$VFS.DEV.READ.AWAIT.WARN:"{#DEVNAME}"}'
-                    -
-                      name: '{#DEVNAME}: Disk write request responses are too high (write > {$VFS.DEV.WRITE.AWAIT.WARN:"{#DEVNAME}"}s for 15m)'
-                      expression: '{Windows physical disks by Zabbix agent:perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk sec/Write",60].min(15m)} > {$VFS.DEV.WRITE.AWAIT.WARN:"{#DEVNAME}"}'
-            -
-              name: '{#DEVNAME}: Average disk read queue length'
-              key: 'perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk Read Queue Length",60]'
-              history: 7d
-              value_type: FLOAT
-              description: 'Average disk read queue, the number of requests outstanding on the disk at the time the performance data is collected.'
-              tags:
-                -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
-            -
-              name: '{#DEVNAME}: Disk read request avg waiting time'
-              key: 'perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk sec/Read",60]'
-              history: 7d
-              value_type: FLOAT
-              units: s
-              description: 'The average time for read requests issued to the device to be served. This includes the time spent by the requests in queue and the time spent servicing them.'
-              tags:
-                -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
-              trigger_prototypes:
-                -
-                  expression: '{min(15m)} > {$VFS.DEV.READ.AWAIT.WARN:"{#DEVNAME}"}'
-                  name: '{#DEVNAME}: Disk read request responses are too high (read > {$VFS.DEV.READ.AWAIT.WARN:"{#DEVNAME}"}s for 15m'
-                  priority: WARNING
-                  description: 'This trigger might indicate disk {#DEVNAME} saturation.'
-                  manual_close: 'YES'
-            -
-              name: '{#DEVNAME}: Disk write request avg waiting time'
-              key: 'perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk sec/Write",60]'
-              history: 7d
-              value_type: FLOAT
-              units: s
-              description: 'The average time for write requests issued to the device to be served. This includes the time spent by the requests in queue and the time spent servicing them.'
-              tags:
-                -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
-              trigger_prototypes:
-                -
-                  expression: '{min(15m)} > {$VFS.DEV.WRITE.AWAIT.WARN:"{#DEVNAME}"}'
-                  name: '{#DEVNAME}: Disk write request responses are too high (write > {$VFS.DEV.WRITE.AWAIT.WARN:"{#DEVNAME}"}s for 15m)'
-                  priority: WARNING
-                  description: 'This trigger might indicate disk {#DEVNAME} saturation.'
-                  manual_close: 'YES'
-            -
-              name: '{#DEVNAME}: Average disk write queue length'
-              key: 'perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk Write Queue Length",60]'
-              history: 7d
-              value_type: FLOAT
-              description: 'Average disk write queue, the number of requests outstanding on the disk at the time the performance data is collected.'
-              tags:
-                -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk average queue size (avgqu-sz)'
               key: 'perf_counter_en["\PhysicalDisk({#DEVNAME})\Current Disk Queue Length",60]'
@@ -1494,8 +2455,8 @@ zabbix_export:
               description: 'Current average disk queue, the number of requests outstanding on the disk at the time the performance data is collected.'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk read rate'
               key: 'perf_counter_en["\PhysicalDisk({#DEVNAME})\Disk Reads/sec",60]'
@@ -1505,8 +2466,8 @@ zabbix_export:
               description: 'Rate of read operations on the disk.'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
             -
               name: '{#DEVNAME}: Disk write rate'
               key: 'perf_counter_en["\PhysicalDisk({#DEVNAME})\Disk Writes/sec",60]'
@@ -1516,38 +2477,9 @@ zabbix_export:
               description: 'Rate of write operations on the disk.'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk {#DEVNAME}'
+                  tag: Disk
+                  value: '{#DEVNAME}'
           graph_prototypes:
-            -
-              name: '{#DEVNAME}: Disk average queue length'
-              graph_items:
-                -
-                  color: 1A7C11
-                  item:
-                    host: 'Windows physical disks by Zabbix agent'
-                    key: 'perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk Read Queue Length",60]'
-                -
-                  sortorder: '1'
-                  color: 2774A4
-                  item:
-                    host: 'Windows physical disks by Zabbix agent'
-                    key: 'perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk Write Queue Length",60]'
-            -
-              name: '{#DEVNAME}: Disk average waiting time'
-              graph_items:
-                -
-                  color: 1A7C11
-                  item:
-                    host: 'Windows physical disks by Zabbix agent'
-                    key: 'perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk sec/Read",60]'
-                -
-                  sortorder: '1'
-                  drawtype: GRADIENT_LINE
-                  color: 2774A4
-                  item:
-                    host: 'Windows physical disks by Zabbix agent'
-                    key: 'perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk sec/Write",60]'
             -
               name: '{#DEVNAME}: Disk read/write rates'
               graph_items:
@@ -1595,17 +2527,193 @@ zabbix_export:
           value: _Total
           description: 'This macro is used in physical disks discovery. Can be overridden on the host or linked template level.'
         -
-          macro: '{$VFS.DEV.READ.AWAIT.WARN}'
-          value: '0.02'
-          description: 'Disk read average response time (in s) before the trigger would fire.'
-        -
           macro: '{$VFS.DEV.UTIL.MAX.WARN}'
           value: '95'
           description: 'The warning threshold of disk time utilization in percent.'
+      valuemaps:
         -
-          macro: '{$VFS.DEV.WRITE.AWAIT.WARN}'
-          value: '0.02'
-          description: 'Disk write average response time (in s) before the trigger would fire.'
+          name: 'CIM_LogicalDevice::Availability'
+          mappings:
+            -
+              value: '1'
+              newvalue: Other
+            -
+              value: '2'
+              newvalue: Unknown
+            -
+              value: '3'
+              newvalue: 'Running/Full Power'
+            -
+              value: '4'
+              newvalue: Warning
+            -
+              value: '5'
+              newvalue: 'In Test'
+            -
+              value: '6'
+              newvalue: 'Not Applicable'
+            -
+              value: '7'
+              newvalue: 'Power Off'
+            -
+              value: '8'
+              newvalue: 'Off Line'
+            -
+              value: '9'
+              newvalue: 'Off Duty'
+            -
+              value: '10'
+              newvalue: Degraded
+            -
+              value: '11'
+              newvalue: 'Not Installed'
+            -
+              value: '12'
+              newvalue: 'Install Error'
+            -
+              value: '13'
+              newvalue: 'Power Save - Unknown'
+            -
+              value: '14'
+              newvalue: 'Power Save - Low Power Mode'
+            -
+              value: '15'
+              newvalue: 'Power Save - Standby'
+            -
+              value: '16'
+              newvalue: 'Power Cycle'
+            -
+              value: '17'
+              newvalue: 'Power Save - Warning'
+            -
+              value: '18'
+              newvalue: Paused
+            -
+              value: '19'
+              newvalue: 'Not Ready'
+            -
+              value: '20'
+              newvalue: 'Not Configured'
+            -
+              value: '21'
+              newvalue: Quiesced
+        -
+          name: 'Win32_NetworkAdapter::AdapterTypeId'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'Ethernet 802.3'
+            -
+              value: '1'
+              newvalue: 'Token Ring 802.5'
+            -
+              value: '2'
+              newvalue: 'Fiber Distributed Data Interface (FDDI)'
+            -
+              value: '3'
+              newvalue: 'Wide Area Network (WAN)'
+            -
+              value: '4'
+              newvalue: LocalTalk
+            -
+              value: '5'
+              newvalue: 'Ethernet using DIX header format'
+            -
+              value: '6'
+              newvalue: ARCNET
+            -
+              value: '7'
+              newvalue: 'ARCNET (878.2)'
+            -
+              value: '8'
+              newvalue: ATM
+            -
+              value: '9'
+              newvalue: Wireless
+            -
+              value: '10'
+              newvalue: 'Infrared Wireless'
+            -
+              value: '11'
+              newvalue: Bpc
+            -
+              value: '12'
+              newvalue: CoWan
+            -
+              value: '13'
+              newvalue: '1394'
+        -
+          name: 'Win32_NetworkAdapter::NetConnectionStatus'
+          mappings:
+            -
+              value: '0'
+              newvalue: Disconnected
+            -
+              value: '1'
+              newvalue: Connecting
+            -
+              value: '2'
+              newvalue: Connected
+            -
+              value: '3'
+              newvalue: Disconnecting
+            -
+              value: '4'
+              newvalue: 'Hardware Not Present'
+            -
+              value: '5'
+              newvalue: 'Hardware Disabled'
+            -
+              value: '6'
+              newvalue: 'Hardware Malfunction'
+            -
+              value: '7'
+              newvalue: 'Media Disconnected'
+            -
+              value: '8'
+              newvalue: Authenticating
+            -
+              value: '9'
+              newvalue: 'Authentication Succeeded'
+            -
+              value: '10'
+              newvalue: 'Authentication Failed'
+            -
+              value: '11'
+              newvalue: 'Invalid Address'
+            -
+              value: '12'
+              newvalue: 'Credentials Required'
+        -
+          name: 'Windows service state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Running
+            -
+              value: '1'
+              newvalue: Paused
+            -
+              value: '2'
+              newvalue: 'Start pending'
+            -
+              value: '3'
+              newvalue: 'Pause pending'
+            -
+              value: '4'
+              newvalue: 'Continue pending'
+            -
+              value: '5'
+              newvalue: 'Stop pending'
+            -
+              value: '6'
+              newvalue: Stopped
+            -
+              value: '7'
+              newvalue: Unknown
+            -
+              value: '255'
+              newvalue: 'No such service'
     -
       template: 'Windows services by Zabbix agent'
       name: 'Windows services by Zabbix agent'
@@ -1652,8 +2760,7 @@ zabbix_export:
                 name: 'Windows service state'
               tags:
                 -
-                  tag: Application
-                  value: Services
+                  tag: Services
               trigger_prototypes:
                 -
                   expression: '{min(#3)}<>0'
@@ -1678,6 +2785,159 @@ zabbix_export:
           value: ^manual|disabled$
           description: 'This macro is used in Service discovery. Can be overridden on the host or linked template level.'
       valuemaps:
+        -
+          name: 'CIM_LogicalDevice::Availability'
+          mappings:
+            -
+              value: '1'
+              newvalue: Other
+            -
+              value: '2'
+              newvalue: Unknown
+            -
+              value: '3'
+              newvalue: 'Running/Full Power'
+            -
+              value: '4'
+              newvalue: Warning
+            -
+              value: '5'
+              newvalue: 'In Test'
+            -
+              value: '6'
+              newvalue: 'Not Applicable'
+            -
+              value: '7'
+              newvalue: 'Power Off'
+            -
+              value: '8'
+              newvalue: 'Off Line'
+            -
+              value: '9'
+              newvalue: 'Off Duty'
+            -
+              value: '10'
+              newvalue: Degraded
+            -
+              value: '11'
+              newvalue: 'Not Installed'
+            -
+              value: '12'
+              newvalue: 'Install Error'
+            -
+              value: '13'
+              newvalue: 'Power Save - Unknown'
+            -
+              value: '14'
+              newvalue: 'Power Save - Low Power Mode'
+            -
+              value: '15'
+              newvalue: 'Power Save - Standby'
+            -
+              value: '16'
+              newvalue: 'Power Cycle'
+            -
+              value: '17'
+              newvalue: 'Power Save - Warning'
+            -
+              value: '18'
+              newvalue: Paused
+            -
+              value: '19'
+              newvalue: 'Not Ready'
+            -
+              value: '20'
+              newvalue: 'Not Configured'
+            -
+              value: '21'
+              newvalue: Quiesced
+        -
+          name: 'Win32_NetworkAdapter::AdapterTypeId'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'Ethernet 802.3'
+            -
+              value: '1'
+              newvalue: 'Token Ring 802.5'
+            -
+              value: '2'
+              newvalue: 'Fiber Distributed Data Interface (FDDI)'
+            -
+              value: '3'
+              newvalue: 'Wide Area Network (WAN)'
+            -
+              value: '4'
+              newvalue: LocalTalk
+            -
+              value: '5'
+              newvalue: 'Ethernet using DIX header format'
+            -
+              value: '6'
+              newvalue: ARCNET
+            -
+              value: '7'
+              newvalue: 'ARCNET (878.2)'
+            -
+              value: '8'
+              newvalue: ATM
+            -
+              value: '9'
+              newvalue: Wireless
+            -
+              value: '10'
+              newvalue: 'Infrared Wireless'
+            -
+              value: '11'
+              newvalue: Bpc
+            -
+              value: '12'
+              newvalue: CoWan
+            -
+              value: '13'
+              newvalue: '1394'
+        -
+          name: 'Win32_NetworkAdapter::NetConnectionStatus'
+          mappings:
+            -
+              value: '0'
+              newvalue: Disconnected
+            -
+              value: '1'
+              newvalue: Connecting
+            -
+              value: '2'
+              newvalue: Connected
+            -
+              value: '3'
+              newvalue: Disconnecting
+            -
+              value: '4'
+              newvalue: 'Hardware Not Present'
+            -
+              value: '5'
+              newvalue: 'Hardware Disabled'
+            -
+              value: '6'
+              newvalue: 'Hardware Malfunction'
+            -
+              value: '7'
+              newvalue: 'Media Disconnected'
+            -
+              value: '8'
+              newvalue: Authenticating
+            -
+              value: '9'
+              newvalue: 'Authentication Succeeded'
+            -
+              value: '10'
+              newvalue: 'Authentication Failed'
+            -
+              value: '11'
+              newvalue: 'Invalid Address'
+            -
+              value: '12'
+              newvalue: 'Credentials Required'
         -
           name: 'Windows service state'
           mappings:
@@ -1720,13 +2980,13 @@ zabbix_export:
           expression: '{Windows CPU by Zabbix agent:system.cpu.util.min(5m)}>{$CPU.UTIL.CRIT}'
     -
       expression: '{Windows memory by Zabbix agent:system.swap.pfree.min(5m)}<{$SWAP.PFREE.MIN.WARN} and {Windows memory by Zabbix agent:system.swap.size[,total].last()}>0'
-      name: 'High swap space usage (less than {$SWAP.PFREE.MIN.WARN}% free)'
+      name: 'High swap space usage ( less than {$SWAP.PFREE.MIN.WARN}% free)'
       opdata: 'Free: {ITEM.LASTVALUE1}, total: {ITEM.LASTVALUE2}'
       priority: WARNING
       description: 'This trigger is ignored, if there is no swap configured'
       dependencies:
         -
-          name: 'High memory utilization (>{$MEMORY.UTIL.MAX}% for 5m)'
+          name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
           expression: '{Windows memory by Zabbix agent:vm.memory.util.min(5m)}>{$MEMORY.UTIL.MAX}'
   graphs:
     -

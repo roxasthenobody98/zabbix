@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:37Z'
+  date: '2021-04-14T13:14:47Z'
   groups:
     -
       name: Templates/Applications
@@ -37,8 +37,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Election time, avg'
           type: DEPENDENT
@@ -63,8 +62,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Fsync time, avg'
           type: DEPENDENT
@@ -89,8 +87,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Latency, avg'
           type: DEPENDENT
@@ -109,8 +106,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Snapshot write time, avg'
           type: DEPENDENT
@@ -135,8 +131,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Bytes received per sec'
           type: DEPENDENT
@@ -159,8 +154,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Elections'
           type: DEPENDENT
@@ -184,8 +178,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Fsync'
           type: DEPENDENT
@@ -204,8 +197,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Snapshot writes'
           type: DEPENDENT
@@ -224,8 +216,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Commit per sec'
           type: DEPENDENT
@@ -247,8 +238,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Drop connections per sec'
           type: DEPENDENT
@@ -270,8 +260,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Rejected connections per sec'
           type: DEPENDENT
@@ -293,8 +282,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Revalidate connections per sec'
           type: DEPENDENT
@@ -316,8 +304,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Diff syncs per sec'
           type: DEPENDENT
@@ -339,8 +326,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Ephemeral nodes count'
           type: DEPENDENT
@@ -357,8 +343,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Get connections stats'
           type: HTTP_AGENT
@@ -370,8 +355,7 @@ zabbix_export:
           url: '{$ZOOKEEPER.SCHEME}://{HOST.CONN}:{$ZOOKEEPER.PORT}/{$ZOOKEEPER.COMMAND_URL}/connections'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Zookeeper: Get server metrics'
           type: HTTP_AGENT
@@ -382,8 +366,7 @@ zabbix_export:
           url: '{$ZOOKEEPER.SCHEME}://{HOST.CONN}:{$ZOOKEEPER.PORT}/{$ZOOKEEPER.COMMAND_URL}/monitor'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Zookeeper: Global sessions'
           type: DEPENDENT
@@ -400,8 +383,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Local sessions'
           type: DEPENDENT
@@ -418,8 +400,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Looking per sec'
           type: DEPENDENT
@@ -441,8 +422,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: File descriptors, max'
           type: DEPENDENT
@@ -463,8 +443,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Latency, max'
           type: DEPENDENT
@@ -483,8 +462,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Latency, min'
           type: DEPENDENT
@@ -503,8 +481,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Alive connections'
           type: DEPENDENT
@@ -521,8 +498,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: File descriptors, open'
           type: DEPENDENT
@@ -539,8 +515,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Outstanding requests'
           type: DEPENDENT
@@ -557,8 +532,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
           triggers:
             -
               expression: '{min(5m)}>{$ZOOKEEPER.OUTSTANDING_REQ.MAX.WARN}'
@@ -587,8 +561,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Packets sent per sec'
           type: DEPENDENT
@@ -610,8 +583,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Revalidate per sec'
           type: DEPENDENT
@@ -633,8 +605,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Server mode'
           type: DEPENDENT
@@ -657,8 +628,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -687,8 +657,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Uptime'
           type: DEPENDENT
@@ -710,8 +679,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
           triggers:
             -
               expression: '{nodata(10m)}=1'
@@ -752,8 +720,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -777,8 +744,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
         -
           name: 'Zookeeper: Znode count'
           type: DEPENDENT
@@ -799,8 +765,7 @@ zabbix_export:
             key: zookeeper.get_metrics
           tags:
             -
-              tag: Application
-              value: Zookeeper
+              tag: Zookeeper
       discovery_rules:
         -
           name: 'Clients discovery'
@@ -829,8 +794,8 @@ zabbix_export:
                 key: zookeeper.get_connections_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zookeeper {#TYPE} {#CLIENT}'
+                  tag: Zookeeper
+                  value: '{#TYPE}'
             -
               name: 'Zookeeper client {#TYPE} [{#CLIENT}]: Latency, max'
               type: DEPENDENT
@@ -849,8 +814,8 @@ zabbix_export:
                 key: zookeeper.get_connections_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zookeeper {#TYPE} {#CLIENT}'
+                  tag: Zookeeper
+                  value: '{#TYPE}'
             -
               name: 'Zookeeper client {#TYPE} [{#CLIENT}]: Latency, min'
               type: DEPENDENT
@@ -869,8 +834,8 @@ zabbix_export:
                 key: zookeeper.get_connections_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zookeeper {#TYPE} {#CLIENT}'
+                  tag: Zookeeper
+                  value: '{#TYPE}'
             -
               name: 'Zookeeper client {#TYPE} [{#CLIENT}]: Outstanding requests'
               type: DEPENDENT
@@ -887,8 +852,8 @@ zabbix_export:
                 key: zookeeper.get_connections_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zookeeper {#TYPE} {#CLIENT}'
+                  tag: Zookeeper
+                  value: '{#TYPE}'
             -
               name: 'Zookeeper client {#TYPE} [{#CLIENT}]: Packets received per sec'
               type: DEPENDENT
@@ -910,8 +875,8 @@ zabbix_export:
                 key: zookeeper.get_connections_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zookeeper {#TYPE} {#CLIENT}'
+                  tag: Zookeeper
+                  value: '{#TYPE}'
             -
               name: 'Zookeeper client {#TYPE} [{#CLIENT}]: Packets sent per sec'
               type: DEPENDENT
@@ -933,8 +898,8 @@ zabbix_export:
                 key: zookeeper.get_connections_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Zookeeper {#TYPE} {#CLIENT}'
+                  tag: Zookeeper
+                  value: '{#TYPE}'
           graph_prototypes:
             -
               name: 'Zookeeper client {#TYPE} [{#CLIENT}]: Latency'
@@ -1018,8 +983,7 @@ zabbix_export:
                 key: zookeeper.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: Zookeeper
+                  tag: Zookeeper
             -
               name: 'Zookeeper: Pending syncs{#SINGLETON}'
               type: DEPENDENT
@@ -1036,8 +1000,7 @@ zabbix_export:
                 key: zookeeper.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: Zookeeper
+                  tag: Zookeeper
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ZOOKEEPER.PENDING_SYNCS.MAX.WARN}'
@@ -1059,8 +1022,7 @@ zabbix_export:
                 key: zookeeper.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: Zookeeper
+                  tag: Zookeeper
             -
               name: 'Zookeeper: Synced followers{#SINGLETON}'
               type: DEPENDENT
@@ -1077,8 +1039,7 @@ zabbix_export:
                 key: zookeeper.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: Zookeeper
+                  tag: Zookeeper
             -
               name: 'Zookeeper: Synced non-voting follower{#SINGLETON}'
               type: DEPENDENT
@@ -1095,8 +1056,7 @@ zabbix_export:
                 key: zookeeper.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: Zookeeper
+                  tag: Zookeeper
             -
               name: 'Zookeeper: Synced observers{#SINGLETON}'
               type: DEPENDENT
@@ -1113,8 +1073,7 @@ zabbix_export:
                 key: zookeeper.get_metrics
               tags:
                 -
-                  tag: Application
-                  value: Zookeeper
+                  tag: Zookeeper
           trigger_prototypes:
             -
               expression: '{Zookeeper by HTTP:zookeeper.synced_followers[{#SINGLETON}].last()} < {Zookeeper by HTTP:zookeeper.quorum_size[{#SINGLETON}].last()}-1'
@@ -1157,6 +1116,16 @@ zabbix_export:
           macro: '{$ZOOKEEPER.SCHEME}'
           value: http
           description: 'Request scheme which may be http or https'
+      valuemaps:
+        -
+          name: 'Service state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Down
+            -
+              value: '1'
+              newvalue: Up
   triggers:
     -
       expression: '{Zookeeper by HTTP:zookeeper.open_file_descriptor_count.min(5m)} * 100 / {Zookeeper by HTTP:zookeeper.max_file_descriptor_count.last()} > {$ZOOKEEPER.FILE_DESCRIPTORS.MAX.WARN}'

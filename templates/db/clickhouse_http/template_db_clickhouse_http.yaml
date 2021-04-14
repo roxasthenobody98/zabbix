@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:54Z'
+  date: '2021-04-14T13:15:13Z'
   groups:
     -
       name: Templates/Databases
@@ -32,8 +32,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Current HTTP connections'
           type: DEPENDENT
@@ -50,8 +49,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Current Interserver connections'
           type: DEPENDENT
@@ -68,8 +66,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Current MySQL connections'
           type: DEPENDENT
@@ -88,8 +85,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Current TCP connections'
           type: DEPENDENT
@@ -106,8 +102,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Get dictionaries info'
           type: HTTP_AGENT
@@ -134,8 +129,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'ClickHouse: Current distributed files to insert'
           type: DEPENDENT
@@ -152,8 +146,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
           triggers:
             -
               expression: '{min(5m)}>{$CLICKHOUSE.DELAYED.FILES.DISTRIBUTED.COUNT.MAX.WARN}'
@@ -186,8 +179,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Distributed connection fail with retry per second'
           type: DEPENDENT
@@ -211,8 +203,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Delayed insert queries'
           type: DEPENDENT
@@ -230,8 +221,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
           triggers:
             -
               expression: '{min(5m)}>{$CLICKHOUSE.DELAYED.INSERTS.MAX.WARN}'
@@ -263,8 +253,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Inserted rows per second'
           type: DEPENDENT
@@ -288,8 +277,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: New INSERT queries per second'
           type: DEPENDENT
@@ -313,8 +301,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Allocated bytes'
           type: DEPENDENT
@@ -332,8 +319,7 @@ zabbix_export:
             key: clickhouse.system.asynchronous_metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Mapped memory'
           type: DEPENDENT
@@ -351,8 +337,7 @@ zabbix_export:
             key: clickhouse.system.asynchronous_metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Resident memory'
           type: DEPENDENT
@@ -373,8 +358,7 @@ zabbix_export:
             key: clickhouse.system.asynchronous_metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Max count of parts per partition across all tables'
           type: DEPENDENT
@@ -393,8 +377,7 @@ zabbix_export:
             key: clickhouse.system.asynchronous_metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
           triggers:
             -
               expression: '{min(5m)}>{$CLICKHOUSE.PARTS.PER.PARTITION.WARN} * 0.9'
@@ -425,8 +408,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Memory used for background merges'
           type: DEPENDENT
@@ -447,8 +429,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Memory used for background moves'
           type: DEPENDENT
@@ -471,8 +452,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Memory used for merges'
           type: DEPENDENT
@@ -493,8 +473,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Memory used for background schedule pool'
           type: DEPENDENT
@@ -513,8 +492,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Current running merges'
           type: DEPENDENT
@@ -531,8 +509,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Uncompressed bytes merged per second'
           type: DEPENDENT
@@ -557,8 +534,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Merged rows per second'
           type: DEPENDENT
@@ -582,8 +558,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Network errors per second'
           type: DEPENDENT
@@ -607,8 +582,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
           triggers:
             -
               expression: '{min(5m)}>{$CLICKHOUSE.NETWORK.ERRORS.MAX.WARN}'
@@ -638,8 +612,7 @@ zabbix_export:
           status_codes: ''
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Longest currently running query time'
           type: HTTP_AGENT
@@ -662,8 +635,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
           triggers:
             -
               expression: '{last()}>{$CLICKHOUSE.QUERY_TIME.MAX.WARN}'
@@ -686,8 +658,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: New queries per second'
           type: DEPENDENT
@@ -711,8 +682,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Read syscalls in fly'
           type: DEPENDENT
@@ -729,8 +699,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Read bytes per second'
           type: DEPENDENT
@@ -755,8 +724,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Get replicas info'
           type: HTTP_AGENT
@@ -783,8 +751,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'ClickHouse: Replication lag across all tables'
           type: DEPENDENT
@@ -802,8 +769,7 @@ zabbix_export:
             key: clickhouse.system.asynchronous_metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
           triggers:
             -
               expression: '{min(5m)}>{$CLICKHOUSE.REPLICA.MAX.WARN}'
@@ -832,8 +798,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Total replication tasks in queue'
           type: DEPENDENT
@@ -849,8 +814,7 @@ zabbix_export:
             key: clickhouse.system.asynchronous_metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Revision'
           type: DEPENDENT
@@ -867,8 +831,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: New SELECT queries per second'
           type: DEPENDENT
@@ -892,8 +855,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: Get system.asynchronous_metrics'
           type: HTTP_AGENT
@@ -921,8 +883,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'ClickHouse: Get system.events'
           type: HTTP_AGENT
@@ -950,8 +911,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'ClickHouse: Get system.metrics'
           type: HTTP_AGENT
@@ -979,8 +939,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'ClickHouse: Get system.settings'
           type: HTTP_AGENT
@@ -1012,8 +971,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -1047,8 +1005,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'ClickHouse: Uptime'
           type: DEPENDENT
@@ -1066,8 +1023,7 @@ zabbix_export:
             key: clickhouse.system.asynchronous_metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
           triggers:
             -
               expression: '{nodata(30m)}=1'
@@ -1112,8 +1068,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -1137,8 +1092,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
         -
           name: 'ClickHouse: ZooKeeper exceptions per second'
           type: DEPENDENT
@@ -1162,12 +1116,11 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: 'ClickHouse ZooKeeper'
+              tag: ClickHouse_ZooKeeper
         -
           name: 'ClickHouse: ZooKeeper hardware exceptions per second'
           type: DEPENDENT
-          key: clickhouse.zookeper.hw_exeptions.rate
+          key: clickhouse.zookeper.hw_exceptions.rate
           delay: '0'
           history: 7d
           value_type: FLOAT
@@ -1187,8 +1140,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: 'ClickHouse ZooKeeper'
+              tag: ClickHouse_ZooKeeper
         -
           name: 'ClickHouse: ZooKeeper requests'
           type: DEPENDENT
@@ -1205,8 +1157,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: 'ClickHouse ZooKeeper'
+              tag: ClickHouse_ZooKeeper
         -
           name: 'ClickHouse: ZooKeeper sessions'
           type: DEPENDENT
@@ -1223,8 +1174,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: 'ClickHouse ZooKeeper'
+              tag: ClickHouse_ZooKeeper
           triggers:
             -
               expression: '{min(5m)}>1'
@@ -1236,7 +1186,7 @@ zabbix_export:
         -
           name: 'ClickHouse: ZooKeeper user exceptions per second'
           type: DEPENDENT
-          key: clickhouse.zookeper.user_exeptions.rate
+          key: clickhouse.zookeper.user_exceptions.rate
           delay: '0'
           history: 7d
           value_type: FLOAT
@@ -1256,8 +1206,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: 'ClickHouse ZooKeeper'
+              tag: ClickHouse_ZooKeeper
         -
           name: 'ClickHouse: ZooKeeper wait time'
           type: DEPENDENT
@@ -1286,8 +1235,7 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: Application
-              value: 'ClickHouse ZooKeeper'
+              tag: ClickHouse_ZooKeeper
         -
           name: 'ClickHouse: ZooKeeper watches'
           type: DEPENDENT
@@ -1304,8 +1252,7 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: Application
-              value: 'ClickHouse ZooKeeper'
+              tag: ClickHouse_ZooKeeper
         -
           name: 'ClickHouse: Check port availability'
           type: SIMPLE
@@ -1320,8 +1267,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: ClickHouse
+              tag: ClickHouse
           triggers:
             -
               expression: '{last()}=0'
@@ -1365,8 +1311,10 @@ zabbix_export:
                 key: clickhouse.dictionaries
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: Dictionary "{#NAME}"'
+                  tag: ClickHouse
+                -
+                  tag: Dictionary
+                  value: '"{#NAME}"'
             -
               name: 'ClickHouse: Dictionary {#NAME}: Element count'
               type: DEPENDENT
@@ -1383,8 +1331,10 @@ zabbix_export:
                 key: clickhouse.dictionaries
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: Dictionary "{#NAME}"'
+                  tag: ClickHouse
+                -
+                  tag: Dictionary
+                  value: '"{#NAME}"'
             -
               name: 'ClickHouse: Dictionary {#NAME}: Load factor'
               type: DEPENDENT
@@ -1406,8 +1356,10 @@ zabbix_export:
                 key: clickhouse.dictionaries
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: Dictionary "{#NAME}"'
+                  tag: ClickHouse
+                -
+                  tag: Dictionary
+                  value: '"{#NAME}"'
           master_item:
             key: clickhouse.dictionaries
           lld_macro_paths:
@@ -1449,8 +1401,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: "{#DB}.{#TABLE}" replica status'
+                  tag: '"{#DB}.{#TABLE}"'
+                  value: replica
+                -
+                  tag: ClickHouse
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica future parts'
               type: DEPENDENT
@@ -1467,8 +1421,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: "{#DB}.{#TABLE}" replica status'
+                  tag: '"{#DB}.{#TABLE}"'
+                  value: replica
+                -
+                  tag: ClickHouse
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica queue inserts size'
               type: DEPENDENT
@@ -1485,8 +1441,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: "{#DB}.{#TABLE}" replica status'
+                  tag: '"{#DB}.{#TABLE}"'
+                  value: replica
+                -
+                  tag: ClickHouse
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica readonly'
               type: DEPENDENT
@@ -1507,8 +1465,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: "{#DB}.{#TABLE}" replica status'
+                  tag: '"{#DB}.{#TABLE}"'
+                  value: replica
+                -
+                  tag: ClickHouse
               trigger_prototypes:
                 -
                   expression: '{min(5m)}=1'
@@ -1533,8 +1493,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: "{#DB}.{#TABLE}" replica status'
+                  tag: '"{#DB}.{#TABLE}"'
+                  value: replica
+                -
+                  tag: ClickHouse
               trigger_prototypes:
                 -
                   expression: '{min(5m)}=1'
@@ -1558,8 +1520,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: "{#DB}.{#TABLE}" replica status'
+                  tag: '"{#DB}.{#TABLE}"'
+                  value: replica
+                -
+                  tag: ClickHouse
               trigger_prototypes:
                 -
                   expression: '{min(5m)} > {$CLICKHOUSE.LOG_POSITION.DIFF.MAX.WARN}'
@@ -1581,8 +1545,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: "{#DB}.{#TABLE}" replica status'
+                  tag: '"{#DB}.{#TABLE}"'
+                  value: replica
+                -
+                  tag: ClickHouse
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica log pointer'
               type: DEPENDENT
@@ -1599,8 +1565,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: "{#DB}.{#TABLE}" replica status'
+                  tag: '"{#DB}.{#TABLE}"'
+                  value: replica
+                -
+                  tag: ClickHouse
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica queue merges size'
               type: DEPENDENT
@@ -1617,8 +1585,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: "{#DB}.{#TABLE}" replica status'
+                  tag: '"{#DB}.{#TABLE}"'
+                  value: replica
+                -
+                  tag: ClickHouse
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica parts to check'
               type: DEPENDENT
@@ -1635,8 +1605,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: "{#DB}.{#TABLE}" replica status'
+                  tag: '"{#DB}.{#TABLE}"'
+                  value: replica
+                -
+                  tag: ClickHouse
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica queue size'
               type: DEPENDENT
@@ -1653,8 +1625,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: "{#DB}.{#TABLE}" replica status'
+                  tag: '"{#DB}.{#TABLE}"'
+                  value: replica
+                -
+                  tag: ClickHouse
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$CLICKHOUSE.QUEUE.SIZE.MAX.WARN:"{#TABLE}"}'
@@ -1676,8 +1650,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: "{#DB}.{#TABLE}" replica status'
+                  tag: '"{#DB}.{#TABLE}"'
+                  value: replica
+                -
+                  tag: ClickHouse
           trigger_prototypes:
             -
               expression: '{ClickHouse by HTTP:clickhouse.replica.active_replicas["{#DB}.{#TABLE}"].max(5m)} < {ClickHouse by HTTP:clickhouse.replica.total_replicas["{#DB}.{#TABLE}"].last()}'
@@ -1775,8 +1751,10 @@ zabbix_export:
                 key: clickhouse.tables
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: DB "{#DB}"'
+                  tag: ClickHouse
+                -
+                  tag: DB
+                  value: '"{#DB}"'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Bytes'
               type: DEPENDENT
@@ -1794,8 +1772,10 @@ zabbix_export:
                 key: clickhouse.tables
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: Table "{#DB}.{#TABLE}"'
+                  tag: ClickHouse
+                -
+                  tag: Table
+                  value: '"{#DB}.{#TABLE}"'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Parts'
               type: DEPENDENT
@@ -1812,8 +1792,10 @@ zabbix_export:
                 key: clickhouse.tables
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: Table "{#DB}.{#TABLE}"'
+                  tag: ClickHouse
+                -
+                  tag: Table
+                  value: '"{#DB}.{#TABLE}"'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Rows'
               type: DEPENDENT
@@ -1830,8 +1812,10 @@ zabbix_export:
                 key: clickhouse.tables
               tags:
                 -
-                  tag: Application
-                  value: 'ClickHouse: Table "{#DB}.{#TABLE}"'
+                  tag: ClickHouse
+                -
+                  tag: Table
+                  value: '"{#DB}.{#TABLE}"'
           master_item:
             key: clickhouse.tables
           lld_macro_paths:
@@ -2156,13 +2140,13 @@ zabbix_export:
           color: 2774A4
           item:
             host: 'ClickHouse by HTTP'
-            key: clickhouse.zookeper.hw_exeptions.rate
+            key: clickhouse.zookeper.hw_exceptions.rate
         -
           sortorder: '2'
           color: F63100
           item:
             host: 'ClickHouse by HTTP'
-            key: clickhouse.zookeper.user_exeptions.rate
+            key: clickhouse.zookeper.user_exceptions.rate
         -
           sortorder: '3'
           drawtype: BOLD_LINE

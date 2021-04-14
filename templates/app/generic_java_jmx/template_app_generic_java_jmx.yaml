@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:36Z'
+  date: '2021-04-14T13:14:46Z'
   groups:
     -
       name: Templates/Applications
@@ -27,8 +27,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'ClassLoading: Total loaded class count'
           type: JMX
@@ -43,8 +42,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'ClassLoading: Unloaded class count'
           type: JMX
@@ -59,8 +57,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'Compilation: Name of the current JIT compiler'
           type: JMX
@@ -77,8 +74,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
           triggers:
             -
               expression: '{str(Client)}=1'
@@ -105,8 +101,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'GarbageCollector: ConcurrentMarkSweep number of collections per second'
           type: JMX
@@ -122,8 +117,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'GarbageCollector: ConcurrentMarkSweep accumulated time spent in collection'
           type: JMX
@@ -144,8 +138,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'GarbageCollector: Copy number of collections per second'
           type: JMX
@@ -161,8 +154,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'GarbageCollector: Copy accumulated time spent in collection'
           type: JMX
@@ -183,8 +175,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'GarbageCollector: MarkSweepCompact number of collections per second'
           type: JMX
@@ -200,8 +191,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'GarbageCollector: MarkSweepCompact accumulated time spent in collection'
           type: JMX
@@ -222,8 +212,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'GarbageCollector: ParNew number of collections per second'
           type: JMX
@@ -239,8 +228,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'GarbageCollector: ParNew accumulated time spent in collection'
           type: JMX
@@ -261,8 +249,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'GarbageCollector: PS MarkSweep number of collections per second'
           type: JMX
@@ -278,8 +265,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'GarbageCollector: PS MarkSweep accumulated time spent in collection'
           type: JMX
@@ -300,8 +286,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'GarbageCollector: PS Scavenge number of collections per second'
           type: JMX
@@ -317,8 +302,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'GarbageCollector: PS Scavenge accumulated time spent in collection'
           type: JMX
@@ -339,8 +323,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'Memory: Heap memory committed'
           type: JMX
@@ -351,8 +334,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'Memory: Heap memory maximum size'
           type: JMX
@@ -368,8 +350,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'Memory: Heap memory used'
           type: JMX
@@ -385,8 +366,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'Memory: Non-Heap memory committed'
           type: JMX
@@ -402,8 +382,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'Memory: Non-Heap memory maximum size'
           type: JMX
@@ -419,8 +398,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'Memory: Non-Heap memory used'
           type: JMX
@@ -436,8 +414,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'Memory: Object pending finalization count'
           type: JMX
@@ -452,8 +429,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: CMS Old Gen committed'
           type: JMX
@@ -469,8 +445,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: CMS Old Gen maximum size'
           type: JMX
@@ -481,8 +456,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: CMS Old Gen used'
           type: JMX
@@ -493,8 +467,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: CMS Perm Gen committed'
           type: JMX
@@ -510,8 +483,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: CMS Perm Gen maximum size'
           type: JMX
@@ -522,8 +494,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: CMS Perm Gen used'
           type: JMX
@@ -534,8 +505,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: Code Cache committed'
           type: JMX
@@ -551,8 +521,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: CodeCache maximum size'
           type: JMX
@@ -563,8 +532,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: Code Cache used'
           type: JMX
@@ -575,8 +543,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: Perm Gen committed'
           type: JMX
@@ -592,8 +559,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: Perm Gen maximum size'
           type: JMX
@@ -604,8 +570,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: Perm Gen used'
           type: JMX
@@ -616,8 +581,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: PS Old Gen'
           type: JMX
@@ -633,8 +597,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: PS Old Gen maximum size'
           type: JMX
@@ -645,8 +608,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: PS Old Gen used'
           type: JMX
@@ -657,8 +619,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: PS Perm Gen committed'
           type: JMX
@@ -674,8 +635,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: PS Perm Gen maximum size'
           type: JMX
@@ -686,8 +646,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: PS Perm Gen used'
           type: JMX
@@ -698,8 +657,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: Tenured Gen committed'
           type: JMX
@@ -715,8 +673,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: Tenured Gen maximum size'
           type: JMX
@@ -727,8 +684,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'MemoryPool: Tenured Gen used'
           type: JMX
@@ -739,8 +695,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'OperatingSystem: File descriptors maximum count'
           type: JMX
@@ -755,8 +710,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'OperatingSystem: File descriptors opened'
           type: JMX
@@ -766,8 +720,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'OperatingSystem: Process CPU Load'
           type: JMX
@@ -784,8 +737,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
           triggers:
             -
               expression: '{min({$JMX.CPU.LOAD.TIME})}>{$JMX.CPU.LOAD.MAX}'
@@ -804,8 +756,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
           triggers:
             -
               expression: '{nodata(5m)}=1'
@@ -828,8 +779,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
           triggers:
             -
               expression: '{str(Server)}<>1'
@@ -852,8 +802,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'Threading: Daemon thread count'
           type: JMX
@@ -868,8 +817,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'Threading: Peak thread count'
           type: JMX
@@ -879,8 +827,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'Threading: Thread count'
           type: JMX
@@ -890,8 +837,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
         -
           name: 'Threading: Total started thread count'
           type: JMX
@@ -901,8 +847,7 @@ zabbix_export:
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
           tags:
             -
-              tag: Application
-              value: JMX
+              tag: JMX
       macros:
         -
           macro: '{$JMX.CPU.LOAD.MAX}'

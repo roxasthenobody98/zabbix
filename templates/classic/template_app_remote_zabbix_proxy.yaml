@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:46Z'
+  date: '2021-04-14T15:02:30Z'
   groups:
     -
       name: Templates/Applications
@@ -28,8 +28,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -53,8 +52,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -78,8 +76,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -103,8 +100,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -128,8 +124,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -153,8 +148,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -178,8 +172,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -203,8 +196,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(30m)}>75'
@@ -228,8 +220,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -253,8 +244,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -278,8 +268,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -303,8 +292,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -328,8 +316,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -353,8 +340,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -378,8 +364,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -403,8 +388,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -428,8 +412,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -453,8 +436,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -478,8 +460,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -503,8 +484,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{avg(10m)}>75'
@@ -528,8 +508,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{max(10m)}>75'
@@ -558,8 +537,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -583,8 +561,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{max(10m)}>75'
@@ -607,8 +584,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{max(10m)}>75'
@@ -631,8 +607,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{max(10m)}>75'
@@ -659,8 +634,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
         -
           name: 'Number of processed numeric (float) values per second'
           type: DEPENDENT
@@ -681,8 +655,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
         -
           name: 'Number of processed log values per second'
           type: DEPENDENT
@@ -703,8 +676,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
         -
           name: 'Number of processed not supported values per second'
           type: DEPENDENT
@@ -725,8 +697,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
         -
           name: 'Number of processed character values per second'
           type: DEPENDENT
@@ -747,8 +718,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
         -
           name: 'Number of processed text values per second'
           type: DEPENDENT
@@ -769,8 +739,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
         -
           name: 'Number of processed numeric (unsigned) values per second'
           type: DEPENDENT
@@ -791,8 +760,7 @@ zabbix_export:
             key: 'zabbix[stats,{$ADDRESS},{$PORT}]'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
         -
           name: 'Zabbix stats queue over $5'
           type: INTERNAL
@@ -806,8 +774,7 @@ zabbix_export:
                 - $.queue
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
           triggers:
             -
               expression: '{min(10m)}>100'
@@ -826,8 +793,7 @@ zabbix_export:
                 - $.queue
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
         -
           name: 'Zabbix stats'
           type: INTERNAL
@@ -838,8 +804,7 @@ zabbix_export:
           description: 'Zabbix proxy statistics master item.'
           tags:
             -
-              tag: Application
-              value: 'Zabbix proxy'
+              tag: 'Zabbix proxy'
       macros:
         -
           macro: '{$ADDRESS}'
@@ -848,71 +813,73 @@ zabbix_export:
       dashboards:
         -
           name: 'Zabbix proxy health'
-          widgets:
+          pages:
             -
-              type: GRAPH_CLASSIC
-              width: '12'
-              height: '6'
-              fields:
+              widgets:
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
+                  type: GRAPH_CLASSIC
+                  width: '12'
+                  height: '6'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Zabbix proxy performance'
+                        host: 'Remote Zabbix proxy'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Zabbix proxy performance'
-                    host: 'Remote Zabbix proxy'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              width: '12'
-              height: '6'
-              fields:
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  width: '12'
+                  height: '6'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Zabbix data gathering process busy %'
+                        host: 'Remote Zabbix proxy'
                 -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
+                  type: GRAPH_CLASSIC
+                  'y': '6'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Zabbix internal process busy %'
+                        host: 'Remote Zabbix proxy'
                 -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Zabbix data gathering process busy %'
-                    host: 'Remote Zabbix proxy'
-            -
-              type: GRAPH_CLASSIC
-              'y': '6'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Zabbix internal process busy %'
-                    host: 'Remote Zabbix proxy'
-            -
-              type: GRAPH_CLASSIC
-              x: '12'
-              'y': '6'
-              width: '12'
-              height: '5'
-              fields:
-                -
-                  type: INTEGER
-                  name: source_type
-                  value: '0'
-                -
-                  type: GRAPH
-                  name: graphid
-                  value:
-                    name: 'Zabbix cache usage, % free'
-                    host: 'Remote Zabbix proxy'
+                  type: GRAPH_CLASSIC
+                  x: '12'
+                  'y': '6'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: source_type
+                      value: '0'
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Zabbix cache usage, % free'
+                        host: 'Remote Zabbix proxy'
   graphs:
     -
       name: 'Zabbix cache usage, % free'

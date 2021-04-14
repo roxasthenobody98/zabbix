@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:48Z'
+  date: '2021-04-14T13:15:04Z'
   groups:
     -
       name: Templates/Modules
@@ -21,8 +21,7 @@ zabbix_export:
             name: 'Service state'
           tags:
             -
-              tag: Application
-              value: 'FTP service'
+              tag: 'FTP service'
           triggers:
             -
               expression: '{max(#3)}=0'

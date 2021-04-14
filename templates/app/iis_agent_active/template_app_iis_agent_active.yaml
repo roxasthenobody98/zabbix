@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:41Z'
+  date: '2021-04-14T13:14:52Z'
   groups:
     -
       name: Templates/Applications
@@ -33,8 +33,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
           triggers:
             -
               expression: '{last()}=0'
@@ -54,8 +53,7 @@ zabbix_export:
           description: 'The number of requests from users over an anonymous connection per second. Average per minute.'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Bytes Received per second'
           type: ZABBIX_ACTIVE
@@ -66,8 +64,7 @@ zabbix_export:
           description: 'The average rate per minute at which data bytes are received by the service at the Application Layer. Does not include protocol headers or control bytes.'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Bytes Sent per second'
           type: ZABBIX_ACTIVE
@@ -78,8 +75,7 @@ zabbix_export:
           description: 'The average rate per minute at which data bytes are sent by the service.'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Bytes Total per second'
           type: ZABBIX_ACTIVE
@@ -90,8 +86,7 @@ zabbix_export:
           description: 'The average rate per minute of total bytes/sec transferred by the Web service (sum of bytes sent/sec and bytes received/sec).'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method CGI requests per second'
           type: ZABBIX_ACTIVE
@@ -106,8 +101,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Connection attempts per second'
           type: ZABBIX_ACTIVE
@@ -122,8 +116,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method COPY requests per second'
           type: ZABBIX_ACTIVE
@@ -138,8 +131,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Current connections'
           type: ZABBIX_ACTIVE
@@ -149,8 +141,7 @@ zabbix_export:
           description: 'The number of active connections.'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method DELETE requests per second'
           type: ZABBIX_ACTIVE
@@ -165,8 +156,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method Method GET requests per second'
           type: ZABBIX_ACTIVE
@@ -181,8 +171,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method HEAD requests per second'
           type: ZABBIX_ACTIVE
@@ -197,8 +186,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method ISAPI requests per second'
           type: ZABBIX_ACTIVE
@@ -213,8 +201,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Locked errors per second'
           type: ZABBIX_ACTIVE
@@ -229,8 +216,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method LOCK requests per second'
           type: ZABBIX_ACTIVE
@@ -245,8 +231,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method MKCOL requests per second'
           type: ZABBIX_ACTIVE
@@ -261,8 +246,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method MOVE requests per second'
           type: ZABBIX_ACTIVE
@@ -277,8 +261,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: NonAnonymous users per second'
           type: ZABBIX_ACTIVE
@@ -288,8 +271,7 @@ zabbix_export:
           description: 'The number of requests from users over a non-anonymous connection per second. Average per minute.'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Not Found errors per second'
           type: ZABBIX_ACTIVE
@@ -304,8 +286,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method OPTIONS requests per second'
           type: ZABBIX_ACTIVE
@@ -320,8 +301,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method Total Other requests per second'
           type: ZABBIX_ACTIVE
@@ -336,8 +316,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method POST requests per second'
           type: ZABBIX_ACTIVE
@@ -352,8 +331,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method PROPFIND requests per second'
           type: ZABBIX_ACTIVE
@@ -368,8 +346,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method PROPPATCH requests per second'
           type: ZABBIX_ACTIVE
@@ -384,8 +361,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method PUT requests per second'
           type: ZABBIX_ACTIVE
@@ -400,8 +376,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method MS-SEARCH requests per second'
           type: ZABBIX_ACTIVE
@@ -416,8 +391,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Uptime'
           type: ZABBIX_ACTIVE
@@ -428,8 +402,7 @@ zabbix_export:
           description: 'Service uptime in seconds.'
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
           triggers:
             -
               expression: '{last()}<10m'
@@ -451,8 +424,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method Total requests per second'
           type: ZABBIX_ACTIVE
@@ -467,8 +439,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method TRACE requests per second'
           type: ZABBIX_ACTIVE
@@ -483,8 +454,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Method TRACE requests per second'
           type: ZABBIX_ACTIVE
@@ -499,8 +469,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: Files cache hits percentage'
           type: ZABBIX_ACTIVE
@@ -515,8 +484,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: File cache misses'
           type: ZABBIX_ACTIVE
@@ -531,8 +499,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: URIs cache hits percentage'
           type: ZABBIX_ACTIVE
@@ -547,8 +514,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: URI cache misses'
           type: ZABBIX_ACTIVE
@@ -563,8 +529,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
         -
           name: 'IIS: World Wide Web Publishing Service (W3SVC) state'
           type: ZABBIX_ACTIVE
@@ -580,8 +545,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
           triggers:
             -
               expression: '{last()}<>0'
@@ -607,8 +571,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: IIS
+              tag: IIS
           triggers:
             -
               expression: '{last()}<>0'
@@ -649,8 +612,7 @@ zabbix_export:
                     - 10m
               tags:
                 -
-                  tag: Application
-                  value: '{#APPPOOL}'
+                  tag: '{#APPPOOL}'
               trigger_prototypes:
                 -
                   expression: '{last()}<>3 and {$IIS.APPPOOL.MONITORED:"{#APPPOOL}"}=1'
@@ -666,8 +628,7 @@ zabbix_export:
               description: 'The web application uptime period since the last restart.'
               tags:
                 -
-                  tag: Application
-                  value: '{#APPPOOL}'
+                  tag: '{#APPPOOL}'
               trigger_prototypes:
                 -
                   expression: '{last()}<10m'
@@ -688,8 +649,7 @@ zabbix_export:
                     - 10m
               tags:
                 -
-                  tag: Application
-                  value: '{#APPPOOL}'
+                  tag: '{#APPPOOL}'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {$IIS.APPPOOL.MONITORED:"{#APPPOOL}"}=1'
@@ -709,8 +669,7 @@ zabbix_export:
                     - 10m
               tags:
                 -
-                  tag: Application
-                  value: '{#APPPOOL}'
+                  tag: '{#APPPOOL}'
               trigger_prototypes:
                 -
                   expression: '{min({$IIS.QUEUE.MAX.TIME})}>{$IIS.QUEUE.MAX.WARN}'

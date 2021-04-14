@@ -1,9 +1,9 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-03-05T15:51:28Z'
+  date: '2021-04-14T13:15:20Z'
   groups:
     -
-      name: Templates/SAN
+      name: Templates/Modules
   templates:
     -
       template: 'NetApp AFF A700 by HTTP'
@@ -16,12 +16,7 @@ zabbix_export:
         Template tooling version used: 0.38
       groups:
         -
-          name: Templates/SAN
-      applications:
-        -
-          name: General
-        -
-          name: 'Zabbix raw items'
+          name: Templates/Modules
       items:
         -
           name: 'Get chassis'
@@ -33,11 +28,11 @@ zabbix_export:
           authtype: BASIC
           username: '{$USERNAME}'
           password: '{$PASSWORD}'
-          applications:
-            -
-              name: 'Zabbix raw items'
           timeout: '{$HTTP.AGENT.TIMEOUT}'
           url: '{$URL}/api/cluster/chassis?fields=id,state'
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Get cluster'
           type: HTTP_AGENT
@@ -48,11 +43,11 @@ zabbix_export:
           authtype: BASIC
           username: '{$USERNAME}'
           password: '{$PASSWORD}'
-          applications:
-            -
-              name: 'Zabbix raw items'
           timeout: '{$HTTP.AGENT.TIMEOUT}'
           url: '{$URL}/api/cluster'
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Cluster location'
           type: DEPENDENT
@@ -62,9 +57,6 @@ zabbix_export:
           trends: '0'
           value_type: CHAR
           description: 'The location of the cluster.'
-          applications:
-            -
-              name: General
           preprocessing:
             -
               type: JSONPATH
@@ -76,6 +68,9 @@ zabbix_export:
                 - 6h
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: General
         -
           name: 'Cluster name'
           type: DEPENDENT
@@ -85,9 +80,6 @@ zabbix_export:
           trends: '0'
           value_type: CHAR
           description: 'The name of the cluster.'
-          applications:
-            -
-              name: General
           preprocessing:
             -
               type: JSONPATH
@@ -99,6 +91,9 @@ zabbix_export:
                 - 6h
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: General
         -
           name: 'Cluster IOPS, other rate'
           type: DEPENDENT
@@ -108,9 +103,6 @@ zabbix_export:
           value_type: FLOAT
           units: '!iops'
           description: 'The number of I/O operations observed at the storage object. Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.'
-          applications:
-            -
-              name: General
           preprocessing:
             -
               type: JSONPATH
@@ -122,6 +114,9 @@ zabbix_export:
                 - ''
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: General
         -
           name: 'Cluster IOPS, read rate'
           type: DEPENDENT
@@ -131,9 +126,6 @@ zabbix_export:
           value_type: FLOAT
           units: '!iops'
           description: 'The number of I/O operations observed at the storage object. Performance metric for read I/O operations.'
-          applications:
-            -
-              name: General
           preprocessing:
             -
               type: JSONPATH
@@ -145,6 +137,9 @@ zabbix_export:
                 - ''
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: General
         -
           name: 'Cluster IOPS, total rate'
           type: DEPENDENT
@@ -154,9 +149,6 @@ zabbix_export:
           value_type: FLOAT
           units: '!iops'
           description: 'The number of I/O operations observed at the storage object. Performance metric aggregated over all types of I/O operations.'
-          applications:
-            -
-              name: General
           preprocessing:
             -
               type: JSONPATH
@@ -168,6 +160,9 @@ zabbix_export:
                 - ''
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: General
         -
           name: 'Cluster IOPS, write rate'
           type: DEPENDENT
@@ -177,9 +172,6 @@ zabbix_export:
           value_type: FLOAT
           units: '!iops'
           description: 'The number of I/O operations observed at the storage object. Performance metric for write I/O operations.'
-          applications:
-            -
-              name: General
           preprocessing:
             -
               type: JSONPATH
@@ -191,6 +183,9 @@ zabbix_export:
                 - ''
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: General
         -
           name: 'Cluster IOPS raw, other'
           type: DEPENDENT
@@ -199,9 +194,6 @@ zabbix_export:
           history: 7d
           units: '!iops'
           description: 'The number of I/O operations observed at the storage object. Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.'
-          applications:
-            -
-              name: 'Zabbix raw items'
           preprocessing:
             -
               type: JSONPATH
@@ -209,6 +201,9 @@ zabbix_export:
                 - $.statistics.iops_raw.other
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Cluster IOPS raw, read'
           type: DEPENDENT
@@ -217,9 +212,6 @@ zabbix_export:
           history: 7d
           units: '!iops'
           description: 'The number of I/O operations observed at the storage object. Performance metric for read I/O operations.'
-          applications:
-            -
-              name: 'Zabbix raw items'
           preprocessing:
             -
               type: JSONPATH
@@ -227,6 +219,9 @@ zabbix_export:
                 - $.statistics.iops_raw.read
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Cluster IOPS raw, total'
           type: DEPENDENT
@@ -235,9 +230,6 @@ zabbix_export:
           history: 7d
           units: '!iops'
           description: 'The number of I/O operations observed at the storage object. Performance metric aggregated over all types of I/O operations.'
-          applications:
-            -
-              name: 'Zabbix raw items'
           preprocessing:
             -
               type: JSONPATH
@@ -245,6 +237,9 @@ zabbix_export:
                 - $.statistics.iops_raw.total
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Cluster IOPS raw, write'
           type: DEPENDENT
@@ -253,9 +248,6 @@ zabbix_export:
           history: 7d
           units: '!iops'
           description: 'The number of I/O operations observed at the storage object. Performance metric for write I/O operations.'
-          applications:
-            -
-              name: 'Zabbix raw items'
           preprocessing:
             -
               type: JSONPATH
@@ -263,6 +255,9 @@ zabbix_export:
                 - $.statistics.iops_raw.write
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Cluster latency, other'
           type: CALCULATED
@@ -275,9 +270,9 @@ zabbix_export:
             (last(netapp.cluster.statistics.iops_raw.other) - prev(netapp.cluster.statistics.iops_raw.other) +
             (last(netapp.cluster.statistics.iops_raw.other) - prev(netapp.cluster.statistics.iops_raw.other) = 0) ) * 0.001
           description: 'The average latency per I/O operation in milliseconds observed at the storage object. Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.'
-          applications:
+          tags:
             -
-              name: General
+              tag: General
         -
           name: 'Cluster latency, read'
           type: CALCULATED
@@ -290,9 +285,9 @@ zabbix_export:
             ( last(netapp.cluster.statistics.iops_raw.read) - prev(netapp.cluster.statistics.iops_raw.read) +
             (last(netapp.cluster.statistics.iops_raw.read) - prev(netapp.cluster.statistics.iops_raw.read) = 0) ) * 0.001
           description: 'The average latency per I/O operation in milliseconds observed at the storage object. Performance metric for read I/O operations.'
-          applications:
+          tags:
             -
-              name: General
+              tag: General
         -
           name: 'Cluster latency, total'
           type: CALCULATED
@@ -305,9 +300,9 @@ zabbix_export:
             ( last(netapp.cluster.statistics.iops_raw.total) - prev(netapp.cluster.statistics.iops_raw.total) +
             (last(netapp.cluster.statistics.iops_raw.total) - prev(netapp.cluster.statistics.iops_raw.total) = 0) ) * 0.001
           description: 'The average latency per I/O operation in milliseconds observed at the storage object. Performance metric aggregated over all types of I/O operations.'
-          applications:
+          tags:
             -
-              name: General
+              tag: General
         -
           name: 'Cluster latency, write'
           type: CALCULATED
@@ -320,9 +315,9 @@ zabbix_export:
             ( last(netapp.cluster.statistics.iops_raw.write) - prev(netapp.cluster.statistics.iops_raw.write) +
             (last(netapp.cluster.statistics.iops_raw.write) - prev(netapp.cluster.statistics.iops_raw.write) = 0) ) * 0.001
           description: 'The average latency per I/O operation in milliseconds observed at the storage object. Performance metric for write I/O operations.'
-          applications:
+          tags:
             -
-              name: General
+              tag: General
         -
           name: 'Cluster latency raw, other'
           type: DEPENDENT
@@ -331,9 +326,6 @@ zabbix_export:
           history: 7d
           units: '!mcs'
           description: 'The raw latency in microseconds observed at the storage object. This can be divided by the raw IOPS value to calculate the average latency per I/O operation. Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.'
-          applications:
-            -
-              name: 'Zabbix raw items'
           preprocessing:
             -
               type: JSONPATH
@@ -341,6 +333,9 @@ zabbix_export:
                 - $.statistics.latency_raw.other
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Cluster latency raw, read'
           type: DEPENDENT
@@ -349,9 +344,6 @@ zabbix_export:
           history: 7d
           units: '!mcs'
           description: 'The raw latency in microseconds observed at the storage object. This can be divided by the raw IOPS value to calculate the average latency per I/O operation. Performance metric for read I/O operations.'
-          applications:
-            -
-              name: 'Zabbix raw items'
           preprocessing:
             -
               type: JSONPATH
@@ -359,6 +351,9 @@ zabbix_export:
                 - $.statistics.latency_raw.read
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Cluster latency raw, total'
           type: DEPENDENT
@@ -367,9 +362,6 @@ zabbix_export:
           history: 7d
           units: '!mcs'
           description: 'The raw latency in microseconds observed at the storage object. This can be divided by the raw IOPS value to calculate the average latency per I/O operation. Performance metric aggregated over all types of I/O operations.'
-          applications:
-            -
-              name: 'Zabbix raw items'
           preprocessing:
             -
               type: JSONPATH
@@ -377,6 +369,9 @@ zabbix_export:
                 - $.statistics.latency_raw.total
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Cluster latency raw, write'
           type: DEPENDENT
@@ -385,9 +380,6 @@ zabbix_export:
           history: 7d
           units: '!mcs'
           description: 'The raw latency in microseconds observed at the storage object. This can be divided by the raw IOPS value to calculate the average latency per I/O operation. Performance metric for write I/O operations.'
-          applications:
-            -
-              name: 'Zabbix raw items'
           preprocessing:
             -
               type: JSONPATH
@@ -395,6 +387,9 @@ zabbix_export:
                 - $.statistics.latency_raw.write
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Cluster throughput, other rate'
           type: DEPENDENT
@@ -404,9 +399,6 @@ zabbix_export:
           value_type: FLOAT
           units: Bps
           description: 'Throughput bytes observed at the storage object. Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.'
-          applications:
-            -
-              name: General
           preprocessing:
             -
               type: JSONPATH
@@ -418,6 +410,9 @@ zabbix_export:
                 - ''
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: General
         -
           name: 'Cluster throughput, read rate'
           type: DEPENDENT
@@ -427,9 +422,6 @@ zabbix_export:
           value_type: FLOAT
           units: Bps
           description: 'Throughput bytes observed at the storage object. Performance metric for read I/O operations.'
-          applications:
-            -
-              name: General
           preprocessing:
             -
               type: JSONPATH
@@ -441,6 +433,9 @@ zabbix_export:
                 - ''
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: General
         -
           name: 'Cluster throughput, total rate'
           type: DEPENDENT
@@ -450,9 +445,6 @@ zabbix_export:
           value_type: FLOAT
           units: Bps
           description: 'Throughput bytes observed at the storage object. Performance metric aggregated over all types of I/O operations.'
-          applications:
-            -
-              name: General
           preprocessing:
             -
               type: JSONPATH
@@ -464,6 +456,9 @@ zabbix_export:
                 - ''
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: General
         -
           name: 'Cluster throughput, write rate'
           type: DEPENDENT
@@ -473,9 +468,6 @@ zabbix_export:
           value_type: FLOAT
           units: Bps
           description: 'Throughput bytes observed at the storage object. Performance metric for write I/O operations.'
-          applications:
-            -
-              name: General
           preprocessing:
             -
               type: JSONPATH
@@ -487,6 +479,9 @@ zabbix_export:
                 - ''
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: General
         -
           name: 'Cluster status'
           type: DEPENDENT
@@ -496,9 +491,6 @@ zabbix_export:
           trends: '0'
           value_type: CHAR
           description: 'The status of the cluster: ok, error, partial_no_data, partial_no_response, partial_other_error, negative_delta, backfilled_data, inconsistent_delta_time, inconsistent_old_data.'
-          applications:
-            -
-              name: General
           preprocessing:
             -
               type: JSONPATH
@@ -510,6 +502,9 @@ zabbix_export:
                 - 6h
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: General
           triggers:
             -
               expression: '({last()}<>"ok")'
@@ -525,9 +520,6 @@ zabbix_export:
           trends: '0'
           value_type: CHAR
           description: 'This returns the cluster version information. When the cluster has more than one node, the cluster version is equivalent to the lowest of generation, major, and minor versions on all nodes.'
-          applications:
-            -
-              name: General
           preprocessing:
             -
               type: JSONPATH
@@ -539,6 +531,9 @@ zabbix_export:
                 - 6h
           master_item:
             key: netapp.cluster.get
+          tags:
+            -
+              tag: General
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -556,11 +551,11 @@ zabbix_export:
           authtype: BASIC
           username: '{$USERNAME}'
           password: '{$PASSWORD}'
-          applications:
-            -
-              name: 'Zabbix raw items'
           timeout: '{$HTTP.AGENT.TIMEOUT}'
           url: '{$URL}/api/storage/disks?fields=state,node.name'
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Get FRUs'
           type: HTTP_AGENT
@@ -571,9 +566,6 @@ zabbix_export:
           authtype: BASIC
           username: '{$USERNAME}'
           password: '{$PASSWORD}'
-          applications:
-            -
-              name: 'Zabbix raw items'
           preprocessing:
             -
               type: JAVASCRIPT
@@ -591,6 +583,9 @@ zabbix_export:
                   return JSON.stringify(result);
           timeout: '{$HTTP.AGENT.TIMEOUT}'
           url: '{$URL}/api/cluster/chassis?fields=id,frus.id,frus.state'
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Get LUNs'
           type: HTTP_AGENT
@@ -601,11 +596,11 @@ zabbix_export:
           authtype: BASIC
           username: '{$USERNAME}'
           password: '{$PASSWORD}'
-          applications:
-            -
-              name: 'Zabbix raw items'
           timeout: '{$HTTP.AGENT.TIMEOUT}'
           url: '{$URL}/api/storage/luns?fields=name,svm.name,space.size,space.used,status.state,status.container_state'
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Get nodes'
           type: HTTP_AGENT
@@ -616,11 +611,11 @@ zabbix_export:
           authtype: BASIC
           username: '{$USERNAME}'
           password: '{$PASSWORD}'
-          applications:
-            -
-              name: 'Zabbix raw items'
           timeout: '{$HTTP.AGENT.TIMEOUT}'
           url: '{$URL}/api/cluster/nodes?fields=*'
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Get ethernet ports'
           type: HTTP_AGENT
@@ -631,11 +626,11 @@ zabbix_export:
           authtype: BASIC
           username: '{$USERNAME}'
           password: '{$PASSWORD}'
-          applications:
-            -
-              name: 'Zabbix raw items'
           timeout: '{$HTTP.AGENT.TIMEOUT}'
           url: '{$URL}/api/network/ethernet/ports?fields=name,type,node.name,broadcast_domain.name,enabled,state,mtu,speed'
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Get FC ports'
           type: HTTP_AGENT
@@ -646,11 +641,11 @@ zabbix_export:
           authtype: BASIC
           username: '{$USERNAME}'
           password: '{$PASSWORD}'
-          applications:
-            -
-              name: 'Zabbix raw items'
           timeout: '{$HTTP.AGENT.TIMEOUT}'
           url: '{$URL}/api/network/fc/ports?fields=name,node.name,description,enabled,fabric.switch_port,state'
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Get SVMs'
           type: HTTP_AGENT
@@ -661,11 +656,11 @@ zabbix_export:
           authtype: BASIC
           username: '{$USERNAME}'
           password: '{$PASSWORD}'
-          applications:
-            -
-              name: 'Zabbix raw items'
           timeout: '{$HTTP.AGENT.TIMEOUT}'
           url: '{$URL}/api/svm/svms?fields=name,state,comment'
+          tags:
+            -
+              tag: Zabbix_raw_items
         -
           name: 'Get volumes'
           type: HTTP_AGENT
@@ -676,11 +671,11 @@ zabbix_export:
           authtype: BASIC
           username: '{$USERNAME}'
           password: '{$PASSWORD}'
-          applications:
-            -
-              name: 'Zabbix raw items'
           timeout: '{$HTTP.AGENT.TIMEOUT}'
           url: '{$URL}/api/storage/volumes?fields=name,comment,state,type,svm.name,space.size,space.available,space.used,statistics'
+          tags:
+            -
+              tag: Zabbix_raw_items
       discovery_rules:
         -
           name: 'Chassis discovery'
@@ -700,9 +695,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'The chassis state: ok, error.'
-              application_prototypes:
-                -
-                  name: 'Chassis "{#ID}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -714,6 +706,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.chassis.get
+              tags:
+                -
+                  tag: Chassis
+                  value: '"{#ID}"'
               trigger_prototypes:
                 -
                   expression: '({diff()}=1 and {last()}="error")'
@@ -755,9 +751,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'The state of the disk. Possible values: broken, copy, maintenance, partner, pending, present, reconstructing, removed, spare, unfail, zeroing'
-              application_prototypes:
-                -
-                  name: 'Node "{#NODENAME}" disks'
               preprocessing:
                 -
                   type: JSONPATH
@@ -769,6 +762,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.disks.get
+              tags:
+                -
+                  tag: Node
+                  value: '"{#NODENAME}"'
               trigger_prototypes:
                 -
                   expression: '({diff()}=1 and {last()}<>"present")'
@@ -807,9 +804,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'The FRU state: ok, error.'
-              application_prototypes:
-                -
-                  name: 'Chassis "{#CHASSISID}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -821,6 +815,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.frus.get
+              tags:
+                -
+                  tag: Chassis
+                  value: '"{#CHASSISID}"'
               trigger_prototypes:
                 -
                   expression: '({diff()}=1 and {last()}="error")'
@@ -865,9 +863,6 @@ zabbix_export:
               history: 7d
               units: B
               description: 'The total provisioned size of the LUN.'
-              application_prototypes:
-                -
-                  name: 'SVM "{#SVMNAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -879,6 +874,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.luns.get
+              tags:
+                -
+                  tag: SVM
+                  value: '"{#SVMNAME}"'
             -
               name: '{#LUNNAME}: Space used'
               type: DEPENDENT
@@ -887,9 +886,6 @@ zabbix_export:
               history: 7d
               units: B
               description: 'The amount of space consumed by the main data stream of the LUN.'
-              application_prototypes:
-                -
-                  name: 'SVM "{#SVMNAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -901,6 +897,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.luns.get
+              tags:
+                -
+                  tag: SVM
+                  value: '"{#SVMNAME}"'
             -
               name: '{#LUNNAME}: Container state'
               type: DEPENDENT
@@ -910,9 +910,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'The state of the volume and aggregate that contain the LUN: online, aggregate_offline, volume_offline. LUNs are only available when their containers are available.'
-              application_prototypes:
-                -
-                  name: 'SVM "{#SVMNAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -924,6 +921,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.luns.get
+              tags:
+                -
+                  tag: SVM
+                  value: '"{#SVMNAME}"'
               trigger_prototypes:
                 -
                   expression: '({diff()}=1 and {last()}<>"online")'
@@ -942,9 +943,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'The state of the LUN. Normal states for a LUN are online and offline. Other states indicate errors. Possible values: foreign_lun_error, nvfail, offline, online, space_error.'
-              application_prototypes:
-                -
-                  name: 'SVM "{#SVMNAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -956,6 +954,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.luns.get
+              tags:
+                -
+                  tag: SVM
+                  value: '"{#SVMNAME}"'
               trigger_prototypes:
                 -
                   expression: '({diff()}=1 and {last()}<>"online")'
@@ -997,9 +999,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'This returns the cluster version information. When the cluster has more than one node, the cluster version is equivalent to the lowest of generation, major, and minor versions on all nodes.'
-              application_prototypes:
-                -
-                  name: 'Node "{#NODENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1011,6 +1010,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.nodes.get
+              tags:
+                -
+                  tag: Node
+                  value: '"{#NODENAME}"'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -1027,9 +1030,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'Specifies whether the hardware is currently operating outside of its recommended temperature range. The hardware shuts down if the temperature exceeds critical thresholds. Possible values: over, normal'
-              application_prototypes:
-                -
-                  name: 'Node "{#NODENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1041,6 +1041,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.nodes.get
+              tags:
+                -
+                  tag: Node
+                  value: '"{#NODENAME}"'
               trigger_prototypes:
                 -
                   expression: '({last()}<>"normal")'
@@ -1056,9 +1060,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'The location of the node.'
-              application_prototypes:
-                -
-                  name: 'Node "{#NODENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1070,6 +1071,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.nodes.get
+              tags:
+                -
+                  tag: Node
+                  value: '"{#NODENAME}"'
             -
               name: '{#NODENAME}: Membership'
               type: DEPENDENT
@@ -1083,9 +1088,6 @@ zabbix_export:
                   available - If a node is available, this means it is detected on the internal cluster network and can be added to the cluster. Nodes that have a membership of “available” are not returned when a GET request is called when the cluster exists. A query on the “membership” property for available must be provided to scan for nodes on the cluster network. Nodes that have a membership of “available” are returned automatically before a cluster is created.
                   joining - Joining nodes are in the process of being added to the cluster. The node may be progressing through the steps to become a member or might have failed. The job to add the node or create the cluster provides details on the current progress of the node.
                   member - Nodes that are members have successfully joined the cluster.
-              application_prototypes:
-                -
-                  name: 'Node "{#NODENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1097,6 +1099,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.nodes.get
+              tags:
+                -
+                  tag: Node
+                  value: '"{#NODENAME}"'
             -
               name: '{#NODENAME}: State'
               type: DEPENDENT
@@ -1114,9 +1120,6 @@ zabbix_export:
                 waiting_for_giveback - Node has been taken over by its HA partner and is waiting for the HA partner to giveback disks.
                 degraded - Node has one or more critical services offline.
                 unknown - Node or its HA partner cannot be contacted and there is no information on the node’s state.
-              application_prototypes:
-                -
-                  name: 'Node "{#NODENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1128,6 +1131,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.nodes.get
+              tags:
+                -
+                  tag: Node
+                  value: '"{#NODENAME}"'
               trigger_prototypes:
                 -
                   expression: '({last()}<>"up")'
@@ -1149,9 +1156,6 @@ zabbix_export:
               history: 7d
               units: s
               description: 'The total time, in seconds, that the node has been up.'
-              application_prototypes:
-                -
-                  name: 'Node "{#NODENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1159,6 +1163,10 @@ zabbix_export:
                     - '$.records[?(@.name==''{#NODENAME}'')].uptime.first()'
               master_item:
                 key: netapp.nodes.get
+              tags:
+                -
+                  tag: Node
+                  value: '"{#NODENAME}"'
               trigger_prototypes:
                 -
                   expression: '{last()}<10m'
@@ -1198,9 +1206,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'The operational state of the port. Possible values: up, down.'
-              application_prototypes:
-                -
-                  name: 'Node "{#NODENAME}" Ethernet ports'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1212,6 +1217,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.ports.eth.get
+              tags:
+                -
+                  tag: Node
+                  value: '"{#NODENAME}"'
               trigger_prototypes:
                 -
                   expression: '({diff()}=1 and {last()}="down")'
@@ -1253,9 +1262,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'A description of the FC port.'
-              application_prototypes:
-                -
-                  name: 'Node "{#NODENAME}" FC ports'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1267,6 +1273,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.ports.fc.get
+              tags:
+                -
+                  tag: Node
+                  value: '"{#NODENAME}"'
             -
               name: '{#FCPORTNAME}: State'
               type: DEPENDENT
@@ -1284,9 +1294,6 @@ zabbix_export:
                 offlined_by_user - The port is administratively disabled.
                 offlined_by_system - The port is set to offline by the system. This happens when the port encounters too many errors.
                 node_offline - The state information for the port cannot be retrieved. The node is offline or inaccessible.
-              application_prototypes:
-                -
-                  name: 'Node "{#NODENAME}" FC ports'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1298,6 +1305,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.ports.fc.get
+              tags:
+                -
+                  tag: Node
+                  value: '"{#NODENAME}"'
               trigger_prototypes:
                 -
                   expression: '({diff()}=1 and {last()}<>"online")'
@@ -1339,9 +1350,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'The comment for the SVM.'
-              application_prototypes:
-                -
-                  name: 'SVM "{#SVMNAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1353,6 +1361,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.svms.get
+              tags:
+                -
+                  tag: SVM
+                  value: '"{#SVMNAME}"'
             -
               name: '{#SVMNAME}: State'
               type: DEPENDENT
@@ -1362,9 +1374,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'SVM state: starting, running, stopping, stopped, deleting.'
-              application_prototypes:
-                -
-                  name: 'SVM "{#SVMNAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1376,6 +1385,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.svms.get
+              tags:
+                -
+                  tag: SVM
+                  value: '"{#SVMNAME}"'
               trigger_prototypes:
                 -
                   expression: '({diff()}=1 and {last()}<>"running")'
@@ -1417,9 +1430,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'A comment for the volume.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1431,6 +1441,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Available size'
               type: DEPENDENT
@@ -1439,9 +1453,6 @@ zabbix_export:
               history: 7d
               units: B
               description: 'The available space, in bytes.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1453,6 +1464,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Space size'
               type: DEPENDENT
@@ -1461,9 +1476,6 @@ zabbix_export:
               history: 7d
               units: B
               description: 'Total provisioned size. The default size is equal to the minimum size of 20MB, in bytes.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1475,6 +1487,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Used size'
               type: DEPENDENT
@@ -1483,9 +1499,6 @@ zabbix_export:
               history: 7d
               units: B
               description: 'The virtual space used (includes volume reserves) before storage efficiency, in bytes.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1497,6 +1510,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: State'
               type: DEPENDENT
@@ -1506,9 +1523,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'Volume state. A volume can only be brought online if it is offline. Taking a volume offline removes its junction path. The ‘mixed’ state applies to FlexGroup volumes only and cannot be specified as a target state. An ‘error’ state implies that the volume is not in a state to serve data.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1520,6 +1534,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
               trigger_prototypes:
                 -
                   expression: '({diff()}=1 and {last()}<>"online")'
@@ -1538,9 +1556,6 @@ zabbix_export:
               value_type: FLOAT
               units: '!iops'
               description: 'The number of I/O operations observed at the storage object. Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1552,6 +1567,10 @@ zabbix_export:
                     - ''
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Volume IOPS, read rate'
               type: DEPENDENT
@@ -1561,9 +1580,6 @@ zabbix_export:
               value_type: FLOAT
               units: '!iops'
               description: 'The number of I/O operations observed at the storage object. Performance metric for read I/O operations.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1575,6 +1591,10 @@ zabbix_export:
                     - ''
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Volume IOPS, total rate'
               type: DEPENDENT
@@ -1584,9 +1604,6 @@ zabbix_export:
               value_type: FLOAT
               units: '!iops'
               description: 'The number of I/O operations observed at the storage object. Performance metric aggregated over all types of I/O operations.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1598,6 +1615,10 @@ zabbix_export:
                     - ''
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Volume IOPS, write rate'
               type: DEPENDENT
@@ -1607,9 +1628,6 @@ zabbix_export:
               value_type: FLOAT
               units: '!iops'
               description: 'The number of I/O operations observed at the storage object. Performance metric for write I/O operations.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1621,6 +1639,10 @@ zabbix_export:
                     - ''
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Volume IOPS raw, other'
               type: DEPENDENT
@@ -1629,9 +1651,6 @@ zabbix_export:
               history: 7d
               units: '!iops'
               description: 'The number of I/O operations observed at the storage object. Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.'
-              applications:
-                -
-                  name: 'Zabbix raw items'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1639,6 +1658,9 @@ zabbix_export:
                     - '$.records[?(@.name==''{#VOLUMENAME}'')].statistics.iops_raw.other.first()'
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Zabbix_raw_items
             -
               name: '{#VOLUMENAME}: Volume IOPS raw, read'
               type: DEPENDENT
@@ -1647,9 +1669,6 @@ zabbix_export:
               history: 7d
               units: '!iops'
               description: 'The number of I/O operations observed at the storage object. Performance metric for read I/O operations.'
-              applications:
-                -
-                  name: 'Zabbix raw items'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1657,6 +1676,9 @@ zabbix_export:
                     - '$.records[?(@.name==''{#VOLUMENAME}'')].statistics.iops_raw.read.first()'
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Zabbix_raw_items
             -
               name: '{#VOLUMENAME}: Volume IOPS raw, total'
               type: DEPENDENT
@@ -1665,9 +1687,6 @@ zabbix_export:
               history: 7d
               units: '!iops'
               description: 'The number of I/O operations observed at the storage object. Performance metric aggregated over all types of I/O operations.'
-              applications:
-                -
-                  name: 'Zabbix raw items'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1675,6 +1694,9 @@ zabbix_export:
                     - '$.records[?(@.name==''{#VOLUMENAME}'')].statistics.iops_raw.total.first()'
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Zabbix_raw_items
             -
               name: '{#VOLUMENAME}: Volume IOPS raw, write'
               type: DEPENDENT
@@ -1683,9 +1705,6 @@ zabbix_export:
               history: 7d
               units: '!iops'
               description: 'The number of I/O operations observed at the storage object. Performance metric for write I/O operations.'
-              applications:
-                -
-                  name: 'Zabbix raw items'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1693,6 +1712,9 @@ zabbix_export:
                     - '$.records[?(@.name==''{#VOLUMENAME}'')].statistics.iops_raw.write.first()'
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Zabbix_raw_items
             -
               name: '{#VOLUMENAME}: Volume latency, other'
               type: CALCULATED
@@ -1705,9 +1727,10 @@ zabbix_export:
                 ( last(netapp.volume.statistics.iops_raw.other[{#VOLUMENAME}]) - prev(netapp.volume.statistics.iops_raw.other[{#VOLUMENAME}]) +
                 (last(netapp.volume.statistics.iops_raw.other[{#VOLUMENAME}]) - prev(netapp.volume.statistics.iops_raw.other[{#VOLUMENAME}]) = 0) ) * 0.001
               description: 'The average latency per I/O operation in milliseconds observed at the storage object. Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.'
-              application_prototypes:
+              tags:
                 -
-                  name: 'Volume "{#VOLUMENAME}"'
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Volume latency, read'
               type: CALCULATED
@@ -1720,9 +1743,10 @@ zabbix_export:
                 ( last(netapp.volume.statistics.iops_raw.read[{#VOLUMENAME}]) - prev(netapp.volume.statistics.iops_raw.read[{#VOLUMENAME}]) +
                 (last(netapp.volume.statistics.iops_raw.read[{#VOLUMENAME}]) - prev(netapp.volume.statistics.iops_raw.read[{#VOLUMENAME}]) = 0)) * 0.001
               description: 'The average latency per I/O operation in milliseconds observed at the storage object. Performance metric for read I/O operations.'
-              application_prototypes:
+              tags:
                 -
-                  name: 'Volume "{#VOLUMENAME}"'
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Volume latency, total'
               type: CALCULATED
@@ -1735,9 +1759,10 @@ zabbix_export:
                 ( last(netapp.volume.statistics.iops_raw.total[{#VOLUMENAME}]) - prev(netapp.volume.statistics.iops_raw.total[{#VOLUMENAME}]) +
                 (last(netapp.volume.statistics.iops_raw.total[{#VOLUMENAME}]) - prev(netapp.volume.statistics.iops_raw.total[{#VOLUMENAME}]) = 0) ) * 0.001
               description: 'The average latency per I/O operation in milliseconds observed at the storage object. Performance metric aggregated over all types of I/O operations.'
-              application_prototypes:
+              tags:
                 -
-                  name: 'Volume "{#VOLUMENAME}"'
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Volume latency, write'
               type: CALCULATED
@@ -1750,9 +1775,10 @@ zabbix_export:
                 ( last(netapp.volume.statistics.iops_raw.write[{#VOLUMENAME}]) - prev(netapp.volume.statistics.iops_raw.write[{#VOLUMENAME}]) +
                 (last(netapp.volume.statistics.iops_raw.write[{#VOLUMENAME}]) - prev(netapp.volume.statistics.iops_raw.write[{#VOLUMENAME}]) = 0) ) * 0.001
               description: 'The average latency per I/O operation in milliseconds observed at the storage object. Performance metric for write I/O operations.'
-              application_prototypes:
+              tags:
                 -
-                  name: 'Volume "{#VOLUMENAME}"'
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Volume latency raw, other'
               type: DEPENDENT
@@ -1761,9 +1787,6 @@ zabbix_export:
               history: 7d
               units: '!mcs'
               description: 'The raw latency in microseconds observed at the storage object. Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.'
-              applications:
-                -
-                  name: 'Zabbix raw items'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1771,6 +1794,9 @@ zabbix_export:
                     - '$.records[?(@.name==''{#VOLUMENAME}'')].statistics.latency_raw.other.first()'
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Zabbix_raw_items
             -
               name: '{#VOLUMENAME}: Volume latency raw, read'
               type: DEPENDENT
@@ -1779,9 +1805,6 @@ zabbix_export:
               history: 7d
               units: '!mcs'
               description: 'The raw latency in microseconds observed at the storage object. Performance metric for read I/O operations.'
-              applications:
-                -
-                  name: 'Zabbix raw items'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1789,6 +1812,9 @@ zabbix_export:
                     - '$.records[?(@.name==''{#VOLUMENAME}'')].statistics.latency_raw.read.first()'
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Zabbix_raw_items
             -
               name: '{#VOLUMENAME}: Volume latency raw, total'
               type: DEPENDENT
@@ -1797,9 +1823,6 @@ zabbix_export:
               history: 7d
               units: '!mcs'
               description: 'The raw latency in microseconds observed at the storage object. Performance metric aggregated over all types of I/O operations.'
-              applications:
-                -
-                  name: 'Zabbix raw items'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1807,6 +1830,9 @@ zabbix_export:
                     - '$.records[?(@.name==''{#VOLUMENAME}'')].statistics.latency_raw.total.first()'
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Zabbix_raw_items
             -
               name: '{#VOLUMENAME}: Volume latency raw, write'
               type: DEPENDENT
@@ -1815,9 +1841,6 @@ zabbix_export:
               history: 7d
               units: '!mcs'
               description: 'The raw latency in microseconds observed at the storage object. Performance metric for write I/O operations.'
-              applications:
-                -
-                  name: 'Zabbix raw items'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1825,6 +1848,9 @@ zabbix_export:
                     - '$.records[?(@.name==''{#VOLUMENAME}'')].statistics.latency_raw.write.first()'
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Zabbix_raw_items
             -
               name: '{#VOLUMENAME}: Volume throughput, other rate'
               type: DEPENDENT
@@ -1834,9 +1860,6 @@ zabbix_export:
               value_type: FLOAT
               units: Bps
               description: 'Throughput bytes observed at the storage object. Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1848,6 +1871,10 @@ zabbix_export:
                     - ''
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Volume throughput, read rate'
               type: DEPENDENT
@@ -1857,9 +1884,6 @@ zabbix_export:
               value_type: FLOAT
               units: Bps
               description: 'Throughput bytes observed at the storage object. Performance metric for read I/O operations.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1871,6 +1895,10 @@ zabbix_export:
                     - ''
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Volume throughput, total rate'
               type: DEPENDENT
@@ -1880,9 +1908,6 @@ zabbix_export:
               value_type: FLOAT
               units: Bps
               description: 'Throughput bytes observed at the storage object. Performance metric aggregated over all types of I/O operations.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1894,6 +1919,10 @@ zabbix_export:
                     - ''
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Volume throughput, write rate'
               type: DEPENDENT
@@ -1903,9 +1932,6 @@ zabbix_export:
               value_type: FLOAT
               units: Bps
               description: 'Throughput bytes observed at the storage object. Performance metric for write I/O operations.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1917,6 +1943,10 @@ zabbix_export:
                     - ''
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: SVM name'
               type: DEPENDENT
@@ -1926,9 +1956,6 @@ zabbix_export:
               trends: '0'
               value_type: CHAR
               description: 'The volume belongs this SVM.'
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1940,6 +1967,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
             -
               name: '{#VOLUMENAME}: Type'
               type: DEPENDENT
@@ -1953,9 +1984,6 @@ zabbix_export:
                 rw ‐ read-write volume.
                 dp ‐ data-protection volume.
                 ls ‐ load-sharing dp volume.
-              application_prototypes:
-                -
-                  name: 'Volume "{#VOLUMENAME}"'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1967,6 +1995,10 @@ zabbix_export:
                     - 6h
               master_item:
                 key: netapp.volumes.get
+              tags:
+                -
+                  tag: Volume
+                  value: '"{#VOLUMENAME}"'
           graph_prototypes:
             -
               name: '{#VOLUMENAME}: Volume latency'

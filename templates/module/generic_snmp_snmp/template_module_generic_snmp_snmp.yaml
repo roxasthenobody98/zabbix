@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:50Z'
+  date: '2021-04-14T13:15:06Z'
   groups:
     -
       name: Templates/Modules
@@ -33,8 +33,7 @@ zabbix_export:
           logtimefmt: 'hh:mm:sszyyyy/MM/dd'
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'System contact details'
           type: SNMP_AGENT
@@ -55,8 +54,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'System description'
           type: SNMP_AGENT
@@ -78,8 +76,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'System location'
           type: SNMP_AGENT
@@ -100,8 +97,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: 'System name'
           type: SNMP_AGENT
@@ -122,8 +118,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -150,8 +145,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
         -
           name: Uptime
           type: SNMP_AGENT
@@ -171,8 +165,7 @@ zabbix_export:
                 - '0.01'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{last()}<10m'
@@ -193,8 +186,7 @@ zabbix_export:
             name: zabbix.host.available
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{max({$SNMP.TIMEOUT})}=0'

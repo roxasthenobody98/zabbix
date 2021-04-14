@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:30Z'
+  date: '2021-04-14T13:14:35Z'
   groups:
     -
       name: Templates/Modules
@@ -39,8 +39,7 @@ zabbix_export:
                 - \1\2
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Load: A/C Current'
           type: SNMP_AGENT
@@ -67,8 +66,7 @@ zabbix_export:
                 - \1\2
           tags:
             -
-              tag: Application
-              value: Load
+              tag: Load
         -
           name: 'Load: State'
           type: SNMP_AGENT
@@ -99,8 +97,7 @@ zabbix_export:
                 - 1h
           tags:
             -
-              tag: Application
-              value: Load
+              tag: Load
           triggers:
             -
               expression: '{last()}={$LOAD.STATE.CRIT:"lvd"} or {last()}={$LOAD.STATE.CRIT:"fault"}'
@@ -156,8 +153,7 @@ zabbix_export:
                   return result.length ? result.join('\n') : 'No alarms';
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{count(#3,"heatsinkTempSensorOpen","like")}=2'
@@ -223,8 +219,7 @@ zabbix_export:
                   return result.length ? result.join('\n') : 'No faults';
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{count(#3,"customSettingsEdit","like")}=2'
@@ -281,8 +276,7 @@ zabbix_export:
                 - '0.01'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{last()}<10m'
@@ -313,8 +307,7 @@ zabbix_export:
             Modbus address:0x0006
           tags:
             -
-              tag: Application
-              value: Temperature
+              tag: Temperature
       discovery_rules:
         -
           name: 'Battery voltage discovery'
@@ -350,8 +343,7 @@ zabbix_export:
                     - \1\2
               tags:
                 -
-                  tag: Application
-                  value: Battery
+                  tag: Battery
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{#VOLTAGE.MAX.CRIT}'

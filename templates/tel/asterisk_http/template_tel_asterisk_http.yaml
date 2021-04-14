@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-02-23T11:04:25Z'
+  date: '2021-04-14T13:14:29Z'
   groups:
     -
       name: Templates/Telephony
@@ -34,8 +34,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: Active channels'
           type: DEPENDENT
@@ -52,8 +51,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: Calls processed'
           type: DEPENDENT
@@ -70,8 +68,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: Calls processed per second'
           type: DEPENDENT
@@ -93,8 +90,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: Get stats'
           type: HTTP_AGENT
@@ -113,22 +109,22 @@ zabbix_export:
                           url: '{$AMI.URL}',
                           trunk: '{$AMI.TRUNK_REGEXP}'
                       },
-                      api_request: new HttpRequest(),
+                      api_request: new CurlHttpRequest(),
                   
                       request: function (url, action) {
                           url += action;
-                          Zabbix.log(4, '[ Asterisk ] Sending request: ' + url);
+                          Zabbix.Log(4, '[ Asterisk ] Sending request: ' + url);
                           try {
-                              response = Ami.api_request.get(url);
+                              response = Ami.api_request.Get(url);
                           } catch (error) {
-                              Zabbix.log(4, '[ Asterisk ] Get request returned error ' + error);
+                              Zabbix.Log(4, '[ Asterisk ] Get request returned error ' + error);
                               throw 'Get request returned error ' + error + '. Check debug log for more information.';
                           }
-                          Zabbix.log(4, '[ Asterisk ] Received response with status code ' +
-                              Ami.api_request.getStatus() + '\n' + response);
+                          Zabbix.Log(4, '[ Asterisk ] Received response with status code ' +
+                              Ami.api_request.Status() + '\n' + response);
                   
-                          if (Ami.api_request.getStatus() !== 200) {
-                              var message = 'Request failed with status code ' + Ami.api_request.getStatus();
+                          if (Ami.api_request.Status() !== 200) {
+                              var message = 'Request failed with status code ' + Ami.api_request.Status();
                               if (response !== null) {
                                   if (typeof response.message === 'string') {
                                       message += ': ' + response.message;
@@ -151,7 +147,7 @@ zabbix_export:
                           }
                   
                           return {
-                              status: Ami.api_request.getStatus(),
+                              status: Ami.api_request.Status(),
                               body: response
                           };
                       }
@@ -315,7 +311,7 @@ zabbix_export:
                   
                   var url = Ami.params.url.split('?')[0] + '?action=';
                   
-                  Ami.api_request.addHeader('Cookie: mansession_id="' + cookie[1] + '"');
+                  Ami.api_request.AddHeader('Cookie: mansession_id="' + cookie[1] + '"');
                   
                   var response = Ami.request(url, 'CoreSettings');
                   var coreSettings = block2Object(response.body);
@@ -382,8 +378,7 @@ zabbix_export:
           retrieve_mode: HEADERS
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: Zabbix_raw_items
         -
           name: 'Asterisk: IAX offline peers'
           type: DEPENDENT
@@ -400,8 +395,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: IAX online peers'
           type: DEPENDENT
@@ -418,8 +412,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: IAX peers'
           type: DEPENDENT
@@ -436,8 +429,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: IAX unmonitored peers'
           type: DEPENDENT
@@ -454,8 +446,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: PJSIP available endpoints'
           type: DEPENDENT
@@ -472,8 +463,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: PJSIP endpoints'
           type: DEPENDENT
@@ -490,8 +480,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: PJSIP unavailable endpoints'
           type: DEPENDENT
@@ -508,8 +497,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: SIP monitored offline'
           type: DEPENDENT
@@ -526,8 +514,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: SIP monitored online'
           type: DEPENDENT
@@ -544,8 +531,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: SIP peers'
           type: DEPENDENT
@@ -562,8 +548,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: SIP unmonitored offline'
           type: DEPENDENT
@@ -580,8 +565,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: SIP unmonitored online'
           type: DEPENDENT
@@ -598,8 +582,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: Total queues'
           type: DEPENDENT
@@ -616,8 +599,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
         -
           name: 'Asterisk: Uptime'
           type: DEPENDENT
@@ -636,8 +618,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
           triggers:
             -
               expression: '{nodata(30m)}=1'
@@ -673,8 +654,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
           triggers:
             -
               expression: '{last()}<10m'
@@ -700,8 +680,7 @@ zabbix_export:
             key: asterisk.get_stats
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -719,8 +698,7 @@ zabbix_export:
           description: 'Asterisk Manager API performance.'
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
           triggers:
             -
               expression: '{min(5m)}>{$AMI.RESPONSE_TIME.MAX.WARN}'
@@ -746,8 +724,7 @@ zabbix_export:
                 - 10m
           tags:
             -
-              tag: Application
-              value: Asterisk
+              tag: Asterisk
           triggers:
             -
               expression: '{last()}=0'
@@ -777,8 +754,8 @@ zabbix_export:
                 key: asterisk.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Asterisk IAX trunks'
+                  tag: Asterisk
+                  value: IAX
               trigger_prototypes:
                 -
                   expression: '{min(10m)}>={$AMI.TRUNK_ACTIVE_CHANNELS.MAX.WARN:"{#OBJECTNAME}"}'
@@ -812,8 +789,8 @@ zabbix_export:
                 key: asterisk.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Asterisk IAX trunks'
+                  tag: Asterisk
+                  value: IAX
               trigger_prototypes:
                 -
                   expression: '{last()}="UNKNOWN" or {last()}="UNREACHABLE"'
@@ -857,8 +834,8 @@ zabbix_export:
                 key: asterisk.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Asterisk PJSIP trunks'
+                  tag: Asterisk
+                  value: PJSIP
               trigger_prototypes:
                 -
                   expression: '{min(10m)}>={$AMI.TRUNK_ACTIVE_CHANNELS.MAX.WARN:"{#OBJECTNAME}"}'
@@ -891,8 +868,8 @@ zabbix_export:
                 key: asterisk.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Asterisk PJSIP trunks'
+                  tag: Asterisk
+                  value: PJSIP
               trigger_prototypes:
                 -
                   expression: '{last()}="Unavailable"'
@@ -936,8 +913,8 @@ zabbix_export:
                 key: asterisk.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Asterisk queue "{#QUEUE}"'
+                  tag: Asterisk
+                  value: queue
             -
               name: '"{#QUEUE}": Callers'
               type: DEPENDENT
@@ -954,8 +931,8 @@ zabbix_export:
                 key: asterisk.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Asterisk queue "{#QUEUE}"'
+                  tag: Asterisk
+                  value: queue
               trigger_prototypes:
                 -
                   expression: '{min(10m)}>{$AMI.QUEUE_CALLERS.MAX.WARN:"{#QUEUE}"}'
@@ -978,8 +955,8 @@ zabbix_export:
                 key: asterisk.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Asterisk queue "{#QUEUE}"'
+                  tag: Asterisk
+                  value: queue
           master_item:
             key: asterisk.get_stats
           lld_macro_paths:
@@ -1017,8 +994,8 @@ zabbix_export:
                 key: asterisk.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Asterisk SIP trunks'
+                  tag: Asterisk
+                  value: SIP
               trigger_prototypes:
                 -
                   expression: '{min(10m)}>={$AMI.TRUNK_ACTIVE_CHANNELS.MAX.WARN:"{#OBJECTNAME}"}'
@@ -1052,8 +1029,8 @@ zabbix_export:
                 key: asterisk.get_stats
               tags:
                 -
-                  tag: Application
-                  value: 'Asterisk SIP trunks'
+                  tag: Asterisk
+                  value: SIP
               trigger_prototypes:
                 -
                   expression: '{last()}="UNKNOWN" or {last()}="UNREACHABLE"'
