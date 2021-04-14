@@ -24,6 +24,9 @@
 #include "zbxalgo.h"
 #include "../zbxdbhigh/template.h"
 
+void	get_items_names_and_flags(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names,
+		zbx_vector_uint64_t *items_flags);
+
 void	zbx_items_audit_init(void);
 void	zbx_items_persist(const char *recsetid_cuid);
 void	zbx_items_audit_bulk_delete(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names,

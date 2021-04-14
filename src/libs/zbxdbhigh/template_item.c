@@ -767,7 +767,7 @@ static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items, ch
  *                                    be inserted                             *
  *                                                                            *
  ******************************************************************************/
-static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *rules, int new_conditions)
+static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *rules, int new_conditions, char *recsetid_cuid)
 {
 	char				*macro_esc, *value_esc;
 	int				i, j, index;
@@ -815,6 +815,13 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 
 				zbx_db_insert_add_values(&db_insert, rule->conditionid++, item->itemid,
 						(int)condition->op, condition->macro, condition->value);
+
+				zbx_items_audit_update_json_uint64(item->itemid,
+						"discoveryrule.filter.conditions[].operator", condition->op);
+				zbx_items_audit_update_json_string(item->itemid,
+						"discoveryrule.filter.conditions[].macro", condition->macro);
+				zbx_items_audit_update_json_string(item->itemid,
+						"discoveryrule.filter.conditions[].value", condition->value);
 			}
 		}
 	}
@@ -849,6 +856,13 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 
 			zbx_free(value_esc);
 			zbx_free(macro_esc);
+
+			zbx_items_audit_update_json_uint64(rule->itemid,
+					"discoveryrule.filter.conditions[].operator", condition->op);
+			zbx_items_audit_update_json_string(rule->itemid,
+					"discoveryrule.filter.conditions[].macro", macro_esc);
+			zbx_items_audit_update_json_string(rule->itemid,
+					"discoveryrule.filter.conditions[].value", value_esc);
 		}
 
 		/* delete removed rule conditions */
@@ -865,6 +879,13 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 		}
 	}
 
+	{
+	zbx_vector_str_t        items_names;
+	zbx_vector_uint64_t	items_flags;
+	zbx_vector_str_create(&items_names);
+	zbx_vector_uint64_create(&items_flags);
+	get_items_names_and_flags(&item_conditionids, &items_names, &items_flags);
+
 	/* delete removed item conditions */
 	if (0 != item_conditionids.values_num)
 	{
@@ -874,6 +895,10 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 		zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, ";\n");
 	}
 
+	zbx_items_audit_bulk_delete(&item_conditionids, &items_names, &items_flags, recsetid_cuid);
+	zbx_vector_str_clear_ext(&items_names, zbx_str_free);
+	zbx_vector_str_destroy(&items_names);
+	}
 	DBend_multiple_update(&sql, &sql_alloc, &sql_offset);
 
 	if (16 < sql_offset)
@@ -1326,7 +1351,7 @@ static void	copy_template_item_script_params(const zbx_vector_uint64_t *template
 	result = DBselect("%s", sql);
 	while (NULL != (row = DBfetch(result)))
 	{
-		char audit_key[100];
+		/*char audit_key[100]; */
 		zbx_template_item_t	item_local, *pitem_local = &item_local;
 
 		ZBX_STR2UINT64(item_local.templateid, row[0]);
@@ -1336,8 +1361,10 @@ static void	copy_template_item_script_params(const zbx_vector_uint64_t *template
 			continue;
 		}
 
-		zbx_snprintf(audit_key, 100, "item.parameters[%s]", row[1]);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key, row[2]);
+		/* zbx_snprintf(audit_key, 100, "item.parameters[%s]", row[1]);
+		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key, row[2]); */
+		zbx_items_audit_update_json_string((*pitem)->itemid, "item.parameters[].name", row[1]);
+		zbx_items_audit_update_json_string((*pitem)->itemid, "item.parameters[].value", row[2]);
 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, row[1], row[2]);
 	}
@@ -1915,7 +1942,7 @@ void	DBcopy_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *templ
 
 	link_template_dependent_items(&items);
 	save_template_items(hostid, &items, recsetid_cuid);
-	save_template_lld_rules(&items, &lld_rules, new_conditions);
+	save_template_lld_rules(&items, &lld_rules, new_conditions, recsetid_cuid);
 	save_template_discovery_prototypes(hostid, &items);
 	copy_template_items_preproc(templateids, &items);
 	copy_template_item_script_params(templateids, &items);
