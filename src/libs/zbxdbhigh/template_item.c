@@ -818,9 +818,9 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 				zbx_db_insert_add_values(&db_insert, rule->conditionid++, item->itemid,
 						(int)condition->op, condition->macro, condition->value);
 
-				zbx_snprintf(audit_key_operator, 100, "discoveryrule.filter.conditions[%d].operator", audit_index);
-				zbx_snprintf(audit_key_macro, 100, "discoveryrule.filter.conditions[%d].macro", audit_index);
-				zbx_snprintf(audit_key_value, 100, "discoveryrule.filter.conditions[%d].value", audit_index);
+				zbx_snprintf(audit_key_operator, 100, "discoveryrule.overrides[].filter.conditions[%d].operator", audit_index);
+				zbx_snprintf(audit_key_macro, 100, "discoveryrule.overrides[].filter.conditions[%d].macro", audit_index);
+				zbx_snprintf(audit_key_value, 100, "discoveryrule.overrides[].filter.conditions[%d].value", audit_index);
 				audit_index++;
 
 				zbx_items_audit_update_json_uint64(item->itemid, audit_key_operator, condition->op);
@@ -1380,8 +1380,8 @@ static void	copy_template_item_script_params(const zbx_vector_uint64_t *template
 		}
 
 		zbx_snprintf(audit_key_name, 100, "item.parameters[%d].name", audit_index);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_name, row[1]);
 		zbx_snprintf(audit_key_name, 100, "item.parameters[%d].value", audit_index);
+		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_name, row[1]);
 		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_value, row[2]);
 		audit_index++;
 
@@ -1659,66 +1659,137 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 
 		for (j = 0; j < override->override_operations.values_num; j++)
 		{
+			char audit_key_operationobject[100], audit_key_operator[100], audit_key_value[100];
+
 			override_operation = (zbx_lld_override_operation_t *)override->override_operations.values[j];
 
 			zbx_db_insert_add_values(&db_insert_ooperations, override_operationid, overrideid,
 					(int)override_operation->operationtype, (int)override_operation->operator,
 					override_operation->value);
 
+			zbx_snprintf(audit_key_operationobject, 100,
+					"discoveryrule.overrides[].operations[%d].operationobject", j);
+			zbx_snprintf(audit_key_operator, 100, "discoveryrule.overrides[].operations[%d].operator", j);
+			zbx_snprintf(audit_key_value, 100, "discoveryrule.overrides[].operations[%d].value", j);
+			zbx_items_audit_update_json_uint64((*pitem)->itemid, audit_key_operationobject,
+					override_operation->operationtype);
+			zbx_items_audit_update_json_uint64((*pitem)->itemid, audit_key_operator,
+					override_operation->operator);
+			zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_value,
+					override_operation->value);
+
 			if (ZBX_PROTOTYPE_STATUS_COUNT != override_operation->status)
 			{
+				char	audit_key_opstatus[100];
+
 				zbx_db_insert_add_values(&db_insert_opstatus, override_operationid,
 						(int)override_operation->status);
+				zbx_snprintf(audit_key_opstatus, 100,
+						"discoveryrule.overrides[].operations[%d].opstatus", j);
+				zbx_items_audit_update_json_uint64((*pitem)->itemid, audit_key_opstatus,
+						override_operation->status);
 			}
 
 			if (ZBX_PROTOTYPE_DISCOVER_COUNT != override_operation->discover)
 			{
+				char audit_key_opdiscover[100];
+
 				zbx_db_insert_add_values(&db_insert_opdiscover, override_operationid,
 						(int)override_operation->discover);
+				zbx_snprintf(audit_key_opdiscover, 100,
+						"discoveryrule.overrides[].operations[%d].opdiscover", j);
+				zbx_items_audit_update_json_uint64((*pitem)->itemid, audit_key_opdiscover,
+						override_operation->discover);
 			}
 
 			if (NULL != override_operation->delay)
 			{
+				char	audit_key_opperiod[100];
+
 				zbx_db_insert_add_values(&db_insert_opperiod, override_operationid,
+						override_operation->delay);
+				zbx_snprintf(audit_key_opperiod, 100,
+						"discoveryrule.overrides[].operations[%d].opperiod", j);
+				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_opperiod,
 						override_operation->delay);
 			}
 
 			if (NULL != override_operation->history)
 			{
+				char	audit_key_ophistory[100];
+
 				zbx_db_insert_add_values(&db_insert_ophistory, override_operationid,
+						override_operation->history);
+				zbx_snprintf(audit_key_ophistory, 100,
+						"discoveryrule.overrides[].operations[%d].ophistory", j);
+				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_ophistory,
 						override_operation->history);
 			}
 
 			if (NULL != override_operation->trends)
 			{
+				char	audit_key_optrends[100];
+
 				zbx_db_insert_add_values(&db_insert_optrends, override_operationid,
+						override_operation->trends);
+				zbx_snprintf(audit_key_optrends, 100,
+						"discoveryrule.overrides[].operations[%d].optrends", j);
+				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_optrends,
 						override_operation->trends);
 			}
 
 			if (TRIGGER_SEVERITY_COUNT != override_operation->severity)
 			{
+				char	audit_key_severity[100];
+
 				zbx_db_insert_add_values(&db_insert_opseverity, override_operationid,
 						(int)override_operation->severity);
+				zbx_snprintf(audit_key_severity, 100,
+						"discoveryrule.overrides[].operations[%d].opseverity", j);
+				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_severity,
+						override_operation->severity);
 			}
 
 			for (k = 0; k < override_operation->tags.values_num; k++)
 			{
+				char		audit_key_tag[100], audit_key_value[100];
 				zbx_db_tag_t	*tag = override_operation->tags.values[k];
 
 				zbx_db_insert_add_values(&db_insert_optag, __UINT64_C(0), override_operationid,
 						tag->tag, tag->value);
+				zbx_snprintf(audit_key_tag, 100,
+						"discoveryrule.overrides[].operations[%d].optag[%d].tag", j, k);
+				zbx_snprintf(audit_key_value, 100,
+						"discoveryrule.overrides[].operations[%d].optag[%d].value", j, k);
+				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_tag, tag->tag);
+				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_value, tag->value);
 			}
 
 			for (k = 0; k < override_operation->templateids.values_num; k++)
 			{
+				char	audit_key_optemplate[100];
+
 				zbx_db_insert_add_values(&db_insert_optemplate, __UINT64_C(0), override_operationid,
+						override_operation->templateids.values[k]);
+
+				zbx_snprintf(audit_key_optemplate, 100,
+						"discoveryrule.overrides[].operations[%d].optemplate[%d].templateid", j,
+						k);
+				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_optemplate,
 						override_operation->templateids.values[k]);
 			}
 
 			if (HOST_INVENTORY_COUNT != override_operation->inventory_mode)
 			{
+				char	audit_key_opinventory[100];
+
 				zbx_db_insert_add_values(&db_insert_opinventory, override_operationid,
 						(int)override_operation->inventory_mode);
+				zbx_snprintf(audit_key_opinventory, 100,
+						"discoveryrule.overrides[].operations[%d].opinventory.inventory_mode",
+						j);
+				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_opinventory,
+						override_operation->inventory_mode);
 			}
 
 			override_operationid++;
