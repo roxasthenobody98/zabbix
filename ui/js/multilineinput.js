@@ -165,7 +165,11 @@
 		$textarea
 			.on('change contextmenu keydown keyup paste scroll', function() {
 				var value = $(this).val();
-				updateSymbolsRemaining($(this).attr('maxlength') - value.length);
+				let symbol_remaining = $(this).attr('maxlength') - value.length;
+				if (0 > symbol_remaining) {
+					symbol_remaining = 0;
+				}
+				updateSymbolsRemaining(symbol_remaining);
 				if (obj.options.line_numbers) {
 					updateLineNumbers(value.split("\n").length);
 				}
