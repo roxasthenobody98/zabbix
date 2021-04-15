@@ -1352,8 +1352,7 @@ class testMassUpdateItems extends CWebTest{
 			$this->assertEquals($old_hash, CDBHelper::getHash('SELECT * FROM items ORDER BY itemid'));
 		}
 		else {
-			$success_message = ($prototypes) ? 'Item prototypes updated' : 'Items updated';
-			$this->assertMessage(TEST_GOOD, $success_message);
+			$this->assertMessage(TEST_GOOD, (($prototypes) ? 'Item prototypes updated' : 'Items updated'));
 
 			// Check changed fields in saved item form.
 			foreach ($data['names'] as $name) {
@@ -1763,13 +1762,12 @@ class testMassUpdateItems extends CWebTest{
 		$this->page->waitUntilReady();
 
 		if (CTestArrayHelper::get($data, 'expected', TEST_GOOD) === TEST_BAD) {
-			$error = ($prototypes) ? 'Cannot update item prototypes' : 'Cannot update items';
-			$this->assertMessage(TEST_BAD, $error, $data['details']);
+			$this->assertMessage(TEST_BAD, (($prototypes) ? 'Cannot update item prototypes' : 'Cannot update items'),
+					$data['details']);
 			$this->assertEquals($old_hash, CDBHelper::getHash('SELECT * FROM items ORDER BY itemid'));
 		}
 		else {
-			$success_message = ($prototypes) ? 'Item prototypes updated' : 'Items updated';
-			$this->assertMessage(TEST_GOOD, $success_message);
+			$this->assertMessage(TEST_GOOD, (($prototypes) ? 'Item prototypes updated' : 'Items updated'));
 
 			// Check changed fields in saved item form.
 			foreach ($data['names'] as $name) {
@@ -1829,9 +1827,8 @@ class testMassUpdateItems extends CWebTest{
 
 		// Open mass update form.
 		$this->query('button:Mass update')->one()->click();
-		$form_locator = ($prototypes) ? 'item_prototype_form' : 'itemForm';
-		$form = $this->query('name', $form_locator)->waitUntilPresent()->asForm()->one();
 
-		return $form;
+		return $this->query('name', (($prototypes) ? 'item_prototype_form' : 'itemForm'))->waitUntilPresent()
+				->asForm()->one();
 	}
 }
