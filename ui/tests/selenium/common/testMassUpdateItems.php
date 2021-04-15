@@ -1798,27 +1798,12 @@ class testMassUpdateItems extends CWebTest{
 		];
 
 		$old_hash = CDBHelper::getHash('SELECT * FROM items ORDER BY itemid');
-
-		$link = ($prototypes)
-			? 'disc_prototypes.php?parent_discoveryid='.self::RULEID
-			: 'items.php?filter_set=1&filter_hostids%5B0%5D='.self::HOSTID;
-		$this->page->login()->open($link);
-
-		// Get item table.
-		$table = $this->query('xpath://form[@name="items"]/table[@class="list-table"]')->asTable()->one();
-		foreach ($items as $item) {
-			$table->findRow('Name', $item)->select();
-		}
-
-		// Open mass update form and click Cancel.
-		$this->query('button:Mass update')->one()->click();
+		$this->openMassUpdateForm($prototypes, $items);
 		$this->query('button:Cancel')->one()->waitUntilClickable()->click();
 
 		// Check that UI returned to previous page and hash remained unchanged.
 		$this->page->waitUntilReady();
-		$header = ($prototypes) ? 'Item prototypes' : 'Items';
-		$this->page->assertHeader($header);
-
+		$this->page->assertHeader(($prototypes) ? 'Item prototypes' : 'Items');
 		$this->assertEquals($old_hash, CDBHelper::getHash('SELECT * FROM items ORDER BY itemid'));
 	}
 
