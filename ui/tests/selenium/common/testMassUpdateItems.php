@@ -39,7 +39,6 @@ class testMassUpdateItems extends CWebTest{
 	const SNMP2_INTERFACE_ID = 40012;
 	const IPMI_INTERFACE_ID = 40013;
 
-
 	const INTERVAL_MAPPING = [
 		'Type' => [
 			'name' => 'type',
@@ -1248,22 +1247,7 @@ class testMassUpdateItems extends CWebTest{
 	public function executeItemsMassUpdate($data, $prototypes = false) {
 		$old_hash = CDBHelper::getHash('SELECT * FROM items ORDER BY itemid');
 
-		$link = ($prototypes)
-			? 'disc_prototypes.php?parent_discoveryid='.self::RULEID
-			: 'items.php?filter_set=1&filter_hostids%5B0%5D='.self::HOSTID;
-		$this->page->login()->open($link);
-
-		// Get item table.
-		$table = $this->query('xpath://form[@name="items"]/table[@class="list-table"]')->asTable()->one();
-		foreach ($data['names'] as $name) {
-			$table->findRow('Name', $name)->select();
-		}
-
-		// Open mass update form.
-		$this->query('button:Mass update')->one()->click();
-
-		$form_locator = ($prototypes) ? 'item_prototype_form' : 'itemForm';
-		$form = $this->query('name', $form_locator)->waitUntilPresent()->asForm()->one();
+		$form = $this->openMassUpdateForm($prototypes, $data['names']);
 
 		// Set field value.
 		foreach ($data['change'] as $field => $value) {
@@ -1373,6 +1357,7 @@ class testMassUpdateItems extends CWebTest{
 
 			// Check changed fields in saved item form.
 			foreach ($data['names'] as $name) {
+				$table = $this->query('xpath://form[@name="items"]/table[@class="list-table"]')->asTable()->one();
 				$table->query('link', $name)->one()->waitUntilClickable()->click();
 				$form = $this->query('name:itemForm')->waitUntilPresent()->asForm()->one();
 
@@ -1766,24 +1751,8 @@ class testMassUpdateItems extends CWebTest{
 	public function executeItemsPreprocessingMassUpdate($data, $prototypes = false) {
 		$old_hash = CDBHelper::getHash('SELECT * FROM items ORDER BY itemid');
 
-		$link = ($prototypes)
-			? 'disc_prototypes.php?parent_discoveryid='.self::RULEID
-			: 'items.php?filter_set=1&filter_hostids%5B0%5D='.self::HOSTID;
-		$this->page->login()->open($link);
-
-		// Get item table.
-		$table = $this->query('xpath://form[@name="items"]/table[@class="list-table"]')->asTable()->one();
-		foreach ($data['names'] as $name) {
-			$table->findRow('Name', $name)->select();
-		}
-
-		// Open mass update form and Preprocessing tab.
-		$this->query('button:Mass update')->one()->click();
-
-		$form_locator = ($prototypes) ? 'item_prototype_form' : 'itemForm';
-		$form = $this->query('name', $form_locator)->waitUntilPresent()->asForm()->one();
+		$form = $this->openMassUpdateForm($prototypes, $data['names']);
 		$form->selectTab('Preprocessing');
-
 		$form->getLabel('Preprocessing steps')->click();
 
 		if ($data['Preprocessing steps'] !== []) {
@@ -1804,6 +1773,7 @@ class testMassUpdateItems extends CWebTest{
 
 			// Check changed fields in saved item form.
 			foreach ($data['names'] as $name) {
+				$table = $this->query('xpath://form[@name="items"]/table[@class="list-table"]')->asTable()->one();
 				$table->query('link', $name)->one()->waitUntilClickable()->click();
 				$form = $this->query('name:itemForm')->waitUntilPresent()->asForm()->one();
 				$form->selectTab('Preprocessing');
@@ -1850,5 +1820,33 @@ class testMassUpdateItems extends CWebTest{
 		$this->page->assertHeader($header);
 
 		$this->assertEquals($old_hash, CDBHelper::getHash('SELECT * FROM items ORDER BY itemid'));
+	}
+
+	/**
+	 * Select items or item prototypes in list and open Mass update form.
+	 *
+	 * @param    boolean    $prototypes   true if item prototype, false if item
+	 * @param    array      $data	      items to be mass updated
+	 *
+	 * @return CElement
+	 */
+	private function openMassUpdateForm($prototypes, $data) {
+		$link = ($prototypes)
+			? 'disc_prototypes.php?parent_discoveryid='.self::RULEID
+			: 'items.php?filter_set=1&filter_hostids%5B0%5D='.self::HOSTID;
+		$this->page->login()->open($link);
+
+		// Get item table.
+		$table = $this->query('xpath://form[@name="items"]/table[@class="list-table"]')->asTable()->one();
+		foreach ($data as $name) {
+			$table->findRow('Name', $name)->select();
+		}
+
+		// Open mass update form.
+		$this->query('button:Mass update')->one()->click();
+		$form_locator = ($prototypes) ? 'item_prototype_form' : 'itemForm';
+		$form = $this->query('name', $form_locator)->waitUntilPresent()->asForm()->one();
+
+		return $form;
 	}
 }
