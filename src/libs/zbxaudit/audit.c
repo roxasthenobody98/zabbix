@@ -81,6 +81,7 @@ void	get_items_names_and_flags(zbx_vector_uint64_t *itemids, zbx_vector_str_t *i
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
+
 void	zbx_items_audit_init(void)
 {
 	zbx_hashset_create(&items_audit, 10, zbx_items_audit_hash_func, zbx_items_audit_compare_func);
@@ -180,6 +181,28 @@ void	zbx_items_audit_bulk_delete(zbx_vector_uint64_t *itemids, zbx_vector_str_t 
 
 	zbx_db_insert_execute(&db_insert_items_audit);
 	zbx_db_insert_clean(&db_insert_items_audit);
+}
+
+char	*get_audit_type_json_identifier(int flag)
+{
+	if (ZBX_FLAG_DISCOVERY_NORMAL == flag || ZBX_FLAG_DISCOVERY_CREATED == flag)
+	{
+		return "item";
+	}
+	else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flag)
+	{
+		return "itemprototype";
+	}
+	else if (ZBX_FLAG_DISCOVERY_RULE == flag)
+	{
+		return "discoveryrule";
+	}
+	else
+	{
+		zabbix_log(LOG_LEVEL_DEBUG, "unexpected audit flag detected: ->%d<-", flag);
+		THIS_SHOULD_NEVER_HAPPEN;
+		exit(EXIT_FAILURE);
+	}
 }
 
 void	zbx_items_audit_create_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid, const int audit_action)

@@ -879,26 +879,25 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 		}
 	}
 
-	{
-	zbx_vector_str_t        items_names;
-	zbx_vector_uint64_t	items_flags;
-	zbx_vector_str_create(&items_names);
-	zbx_vector_uint64_create(&items_flags);
-	get_items_names_and_flags(&item_conditionids, &items_names, &items_flags);
-
 	/* delete removed item conditions */
 	if (0 != item_conditionids.values_num)
 	{
+		zbx_vector_str_t        items_names;
+		zbx_vector_uint64_t	items_flags;
+		zbx_vector_str_create(&items_names);
+		zbx_vector_uint64_create(&items_flags);
+		get_items_names_and_flags(&item_conditionids, &items_names, &items_flags);
+
 		zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, "delete from item_condition where");
 		DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "item_conditionid", item_conditionids.values,
 				item_conditionids.values_num);
 		zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, ";\n");
+
+		zbx_items_audit_bulk_delete(&item_conditionids, &items_names, &items_flags, recsetid_cuid);
+		zbx_vector_str_clear_ext(&items_names, zbx_str_free);
+		zbx_vector_str_destroy(&items_names);
 	}
 
-	zbx_items_audit_bulk_delete(&item_conditionids, &items_names, &items_flags, recsetid_cuid);
-	zbx_vector_str_clear_ext(&items_names, zbx_str_free);
-	zbx_vector_str_destroy(&items_names);
-	}
 	DBend_multiple_update(&sql, &sql_alloc, &sql_offset);
 
 	if (16 < sql_offset)
@@ -1117,7 +1116,8 @@ static int	template_item_compare_func(const void *d1, const void *d2)
  *             items       - [IN] array of new/updated items                  *
  *                                                                            *
  ******************************************************************************/
-static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, const zbx_vector_ptr_t *items)
+static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, const zbx_vector_ptr_t *items,
+		char *recsetid_cuid)
 {
 	zbx_vector_uint64_t		itemids;
 	zbx_hashset_t			items_t;
@@ -1128,6 +1128,8 @@ static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, 
 	DB_ROW				row;
 	DB_RESULT			result;
 	zbx_db_insert_t			db_insert;
+
+	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
 	if (0 == items->values_num)
 		return;
@@ -1171,7 +1173,8 @@ static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, 
 	result = DBselect("%s", sql);
 	while (NULL != (row = DBfetch(result)))
 	{
-		char audit_key[100];
+		char audit_key_type[100], audit_key_params[100], audit_key_error_handler[100],
+				audit_key_error_handler_params[100];
 		zbx_template_item_t	item_local, *pitem_local = &item_local;
 
 		ZBX_STR2UINT64(item_local.templateid, row[0]);
@@ -1184,12 +1187,18 @@ static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, atoi(row[1]), atoi(row[2]),
 				row[3], atoi(row[4]), row[5]);
 
-		zbx_snprintf(audit_key, 100, "item.preprocessing[%s]", row[1]);
-
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key, row[2]);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key, row[3]);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key, row[4]);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key, row[5]);
+		zbx_snprintf(audit_key_type, 100, "%s.preprocessing[%s].type",
+				get_audit_type_json_identifier((*pitem)->flags), row[1]);
+		zbx_snprintf(audit_key_params, 100, "%s.preprocessing[%s].params",
+				get_audit_type_json_identifier((*pitem)->flags), row[1]);
+		zbx_snprintf(audit_key_error_handler, 100, "%s.preprocessing[%s].error_handler",
+				get_audit_type_json_identifier((*pitem)->flags), row[1]);
+		zbx_snprintf(audit_key_error_handler_params, 100, "%s.preprocessing[%s].error_handler_params",
+				get_audit_type_json_identifier((*pitem)->flags), row[1]);
+		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_type, row[2]);
+		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_params, row[3]);
+		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_error_handler, row[4]);
+		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_error_handler_params, row[5]);
 	}
 	DBfree_result(result);
 
@@ -1200,6 +1209,8 @@ static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, 
 	zbx_free(sql);
 	zbx_hashset_destroy(&items_t);
 	zbx_vector_uint64_destroy(&itemids);
+
+	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
 /******************************************************************************
@@ -1944,7 +1955,7 @@ void	DBcopy_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *templ
 	save_template_items(hostid, &items, recsetid_cuid);
 	save_template_lld_rules(&items, &lld_rules, new_conditions, recsetid_cuid);
 	save_template_discovery_prototypes(hostid, &items);
-	copy_template_items_preproc(templateids, &items);
+	copy_template_items_preproc(templateids, &items, recsetid_cuid);
 	copy_template_item_script_params(templateids, &items);
 	copy_template_item_tags(templateids, &items);
 
