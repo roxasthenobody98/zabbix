@@ -770,7 +770,7 @@ static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items, ch
 static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *rules, int new_conditions, char *recsetid_cuid)
 {
 	char				*macro_esc, *value_esc;
-	int				i, j, index;
+	int				i, j, index, audit_index = 0;
 	zbx_db_insert_t			db_insert;
 	zbx_lld_rule_map_t		*rule;
 	zbx_lld_rule_condition_t	*condition;
@@ -811,17 +811,21 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 
 			for (j = 0; j < rule->conditions.values_num; j++)
 			{
+				char audit_key_operator[100], audit_key_macro[100], audit_key_value[100];
+
 				condition = (zbx_lld_rule_condition_t *)rule->conditions.values[j];
 
 				zbx_db_insert_add_values(&db_insert, rule->conditionid++, item->itemid,
 						(int)condition->op, condition->macro, condition->value);
 
-				zbx_items_audit_update_json_uint64(item->itemid,
-						"discoveryrule.filter.conditions[].operator", condition->op);
-				zbx_items_audit_update_json_string(item->itemid,
-						"discoveryrule.filter.conditions[].macro", condition->macro);
-				zbx_items_audit_update_json_string(item->itemid,
-						"discoveryrule.filter.conditions[].value", condition->value);
+				zbx_snprintf(audit_key_operator, 100, "discoveryrule.filter.conditions[%d].operator", audit_index);
+				zbx_snprintf(audit_key_macro, 100, "discoveryrule.filter.conditions[%d].macro", audit_index);
+				zbx_snprintf(audit_key_value, 100, "discoveryrule.filter.conditions[%d].value", audit_index);
+				audit_index++;
+
+				zbx_items_audit_update_json_uint64(item->itemid, audit_key_operator, condition->op);
+				zbx_items_audit_update_json_string(item->itemid, audit_key_macro, condition->macro);
+				zbx_items_audit_update_json_string(item->itemid, audit_key_value, condition->value);
 			}
 		}
 	}
@@ -842,6 +846,8 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 		/* update intersecting rule conditions */
 		for (j = 0; j < index; j++)
 		{
+			char audit_key_operator[100], audit_key_macro[100], audit_key_value[100];
+
 			condition = (zbx_lld_rule_condition_t *)rule->conditions.values[j];
 
 			macro_esc = DBdyn_escape_string(condition->macro);
@@ -857,12 +863,14 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 			zbx_free(value_esc);
 			zbx_free(macro_esc);
 
-			zbx_items_audit_update_json_uint64(rule->itemid,
-					"discoveryrule.filter.conditions[].operator", condition->op);
-			zbx_items_audit_update_json_string(rule->itemid,
-					"discoveryrule.filter.conditions[].macro", macro_esc);
-			zbx_items_audit_update_json_string(rule->itemid,
-					"discoveryrule.filter.conditions[].value", value_esc);
+			zbx_snprintf(audit_key_operator, 100, "discoveryrule.filter.conditions[%d].operator", audit_index);
+			zbx_snprintf(audit_key_macro, 100, "discoveryrule.filter.conditions[%d].macro", audit_index);
+			zbx_snprintf(audit_key_value, 100, "discoveryrule.filter.conditions[%d].value", audit_index);
+			audit_index++;
+
+			zbx_items_audit_update_json_uint64(rule->itemid, audit_key_operator, condition->op);
+			zbx_items_audit_update_json_string(rule->itemid, audit_key_macro, macro_esc);
+			zbx_items_audit_update_json_string(rule->itemid, audit_key_value, value_esc);
 		}
 
 		/* delete removed rule conditions */
@@ -1116,8 +1124,7 @@ static int	template_item_compare_func(const void *d1, const void *d2)
  *             items       - [IN] array of new/updated items                  *
  *                                                                            *
  ******************************************************************************/
-static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, const zbx_vector_ptr_t *items,
-		char *recsetid_cuid)
+static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, const zbx_vector_ptr_t *items)
 {
 	zbx_vector_uint64_t		itemids;
 	zbx_hashset_t			items_t;
@@ -1313,7 +1320,7 @@ static void	copy_template_item_script_params(const zbx_vector_uint64_t *template
 {
 	zbx_vector_uint64_t		itemids;
 	zbx_hashset_t			items_t;
-	int				i;
+	int				i, audit_index = 0;
 	const zbx_template_item_t	*item, **pitem;
 	char				*sql = NULL;
 	size_t				sql_alloc = 0, sql_offset = 0;
@@ -1362,7 +1369,7 @@ static void	copy_template_item_script_params(const zbx_vector_uint64_t *template
 	result = DBselect("%s", sql);
 	while (NULL != (row = DBfetch(result)))
 	{
-		/*char audit_key[100]; */
+		char audit_key_name[100], audit_key_value[100];
 		zbx_template_item_t	item_local, *pitem_local = &item_local;
 
 		ZBX_STR2UINT64(item_local.templateid, row[0]);
@@ -1372,10 +1379,11 @@ static void	copy_template_item_script_params(const zbx_vector_uint64_t *template
 			continue;
 		}
 
-		/* zbx_snprintf(audit_key, 100, "item.parameters[%s]", row[1]);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key, row[2]); */
-		zbx_items_audit_update_json_string((*pitem)->itemid, "item.parameters[].name", row[1]);
-		zbx_items_audit_update_json_string((*pitem)->itemid, "item.parameters[].value", row[2]);
+		zbx_snprintf(audit_key_name, 100, "item.parameters[%d].name", audit_index);
+		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_name, row[1]);
+		zbx_snprintf(audit_key_name, 100, "item.parameters[%d].value", audit_index);
+		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_value, row[2]);
+		audit_index++;
 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, row[1], row[2]);
 	}
@@ -1406,7 +1414,7 @@ static void	copy_template_lld_macro_paths(const zbx_vector_uint64_t *templateids
 {
 	const zbx_template_item_t	**pitem;
 	char				*sql = NULL;
-	size_t				sql_alloc = 0, sql_offset = 0;
+	size_t				sql_alloc = 0, sql_offset = 0, i = 0;
 	DB_ROW				row;
 	DB_RESULT			result;
 	zbx_db_insert_t			db_insert;
@@ -1431,8 +1439,10 @@ static void	copy_template_lld_macro_paths(const zbx_vector_uint64_t *templateids
 
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "i.hostid", templateids->values, templateids->values_num);
 	result = DBselect("%s", sql);
+
 	while (NULL != (row = DBfetch(result)))
 	{
+		char audit_key_lld_macro[100], audit_key_lld_path[100];
 		zbx_template_item_t	item_local, *pitem_local = &item_local;
 
 		ZBX_STR2UINT64(item_local.templateid, row[0]);
@@ -1444,6 +1454,12 @@ static void	copy_template_lld_macro_paths(const zbx_vector_uint64_t *templateids
 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, row[1], row[2]);
 
+		zbx_snprintf(audit_key_lld_macro, 100, "discoveryrule.lld_macro_paths[%lu].lld_macro", i);
+		zbx_snprintf(audit_key_lld_path, 100, "discoveryrule.lld_macro_paths[%lu].path", i);
+
+		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_lld_macro, row[1]);
+		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_lld_path, row[2]);
+		i++;
 	}
 	DBfree_result(result);
 
@@ -1955,7 +1971,7 @@ void	DBcopy_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *templ
 	save_template_items(hostid, &items, recsetid_cuid);
 	save_template_lld_rules(&items, &lld_rules, new_conditions, recsetid_cuid);
 	save_template_discovery_prototypes(hostid, &items);
-	copy_template_items_preproc(templateids, &items, recsetid_cuid);
+	copy_template_items_preproc(templateids, &items);
 	copy_template_item_script_params(templateids, &items);
 	copy_template_item_tags(templateids, &items);
 
