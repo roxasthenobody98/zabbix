@@ -1766,7 +1766,6 @@ void	zbx_new_cuid(char *cuid);
 #define AUDIT_RESOURCE_USER_ROLE		44
 #define AUDIT_RESOURCE_AUTH_TOKEN		45
 
-
 #define AUDIT_ACTION_ADD		0
 #define AUDIT_ACTION_UPDATE		1
 #define AUDIT_ACTION_DELETE		2

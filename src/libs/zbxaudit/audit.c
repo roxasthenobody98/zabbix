@@ -18,7 +18,7 @@ static unsigned	zbx_items_audit_hash_func(const void *data)
 {
 	const zbx_item_audit_entry_t	**item_audit_entry = (const zbx_item_audit_entry_t **)data;
 
-	return ZBX_DEFAULT_UINT64_HASH_ALGO(&((*item_audit_entry)->itemid), sizeof(zbx_uint64_t),
+	return ZBX_DEFAULT_UINT64_HASH_ALGO(&((*item_audit_entry)->itemid), sizeof((*item_audit_entry)->itemid),
 			ZBX_DEFAULT_HASH_SEED);
 }
 
@@ -27,7 +27,9 @@ static int	zbx_items_audit_compare_func(const void *d1, const void *d2)
 	const zbx_item_audit_entry_t	**item_audit_entry_1 = (const zbx_item_audit_entry_t **)d1;
 	const zbx_item_audit_entry_t	**item_audit_entry_2 = (const zbx_item_audit_entry_t **)d2;
 
-	return (*item_audit_entry_1)->itemid > (*item_audit_entry_2)->itemid;
+	ZBX_RETURN_IF_NOT_EQUAL((*item_audit_entry_1)->itemid, (*item_audit_entry_2)->itemid);
+
+	return 0;
 }
 
 static void	clean_items_audit(void)
@@ -81,7 +83,6 @@ void	get_items_names_and_flags(zbx_vector_uint64_t *itemids, zbx_vector_str_t *i
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
-
 void	zbx_items_audit_init(void)
 {
 	zbx_hashset_create(&items_audit, 10, zbx_items_audit_hash_func, zbx_items_audit_compare_func);
@@ -110,7 +111,7 @@ int	item_flag_to_resource_type(int flag)
 	}
 }
 
-void	zbx_items_persist(const char *recsetid_cuid)
+void	zbx_audit_items_flush(const char *recsetid_cuid)
 {
 	zbx_hashset_iter_t	iter;
 	zbx_item_audit_entry_t	**item_audit_entry;

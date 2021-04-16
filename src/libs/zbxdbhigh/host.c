@@ -2331,7 +2331,7 @@ int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_tem
 
 	zbx_free(sql);
 
-	zbx_items_persist(recsetid_cuid);
+	zbx_audit_items_flush(recsetid_cuid);
 clean:
 	zbx_vector_uint64_destroy(&templateids);
 
@@ -5608,7 +5608,7 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 		DBcopy_template_httptests(hostid, lnk_templateids);
 	}
 
-	zbx_items_persist(recsetid_cuid);
+	zbx_audit_items_flush(recsetid_cuid);
 clean:
 	zbx_vector_uint64_destroy(&templateids);
 
