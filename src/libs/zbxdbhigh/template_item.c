@@ -652,7 +652,7 @@ static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_te
 		item->itemid = (*itemid)++;
 	}
 
-	zbx_items_audit_create_entry(item, hostid, audit_action);
+	zbx_audit_items_create_entry(item, hostid, audit_action);
 
 	for (i = 0; i < item->dependent_items.values_num; i++)
 	{
@@ -815,14 +815,18 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 				zbx_db_insert_add_values(&db_insert, rule->conditionid++, item->itemid,
 						(int)condition->op, condition->macro, condition->value);
 
-				zbx_snprintf(audit_key_operator, 100, "discoveryrule.overrides[].filter.conditions[%d].operator", audit_index);
-				zbx_snprintf(audit_key_macro, 100, "discoveryrule.overrides[].filter.conditions[%d].macro", audit_index);
-				zbx_snprintf(audit_key_value, 100, "discoveryrule.overrides[].filter.conditions[%d].value", audit_index);
+				zbx_snprintf(audit_key_operator, 100,
+						"discoveryrule.overrides[].filter.conditions[%d].operator",
+						audit_index);
+				zbx_snprintf(audit_key_macro, 100,
+						"discoveryrule.overrides[].filter.conditions[%d].macro", audit_index);
+				zbx_snprintf(audit_key_value, 100,
+						"discoveryrule.overrides[].filter.conditions[%d].value", audit_index);
 				audit_index++;
 
-				zbx_items_audit_update_json_uint64(item->itemid, audit_key_operator, condition->op);
-				zbx_items_audit_update_json_string(item->itemid, audit_key_macro, condition->macro);
-				zbx_items_audit_update_json_string(item->itemid, audit_key_value, condition->value);
+				zbx_audit_items_update_json_uint64(item->itemid, audit_key_operator, condition->op);
+				zbx_audit_items_update_json_string(item->itemid, audit_key_macro, condition->macro);
+				zbx_audit_items_update_json_string(item->itemid, audit_key_value, condition->value);
 			}
 		}
 	}
@@ -865,9 +869,9 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 			zbx_snprintf(audit_key_value, 100, "discoveryrule.filter.conditions[%d].value", audit_index);
 			audit_index++;
 
-			zbx_items_audit_update_json_uint64(rule->itemid, audit_key_operator, condition->op);
-			zbx_items_audit_update_json_string(rule->itemid, audit_key_macro, macro_esc);
-			zbx_items_audit_update_json_string(rule->itemid, audit_key_value, value_esc);
+			zbx_audit_items_update_json_uint64(rule->itemid, audit_key_operator, condition->op);
+			zbx_audit_items_update_json_string(rule->itemid, audit_key_macro, macro_esc);
+			zbx_audit_items_update_json_string(rule->itemid, audit_key_value, value_esc);
 		}
 
 		/* delete removed rule conditions */
@@ -887,18 +891,19 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 	/* delete removed item conditions */
 	if (0 != item_conditionids.values_num)
 	{
-		zbx_vector_str_t        items_names;
+		zbx_vector_str_t	items_names;
 		zbx_vector_uint64_t	items_flags;
+
 		zbx_vector_str_create(&items_names);
 		zbx_vector_uint64_create(&items_flags);
-		get_items_names_and_flags(&item_conditionids, &items_names, &items_flags);
+		zbx_audit_items_get_names_and_flags(&item_conditionids, &items_names, &items_flags);
 
 		zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, "delete from item_condition where");
 		DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "item_conditionid", item_conditionids.values,
 				item_conditionids.values_num);
 		zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, ";\n");
 
-		zbx_items_audit_bulk_delete(&item_conditionids, &items_names, &items_flags, recsetid_cuid);
+		zbx_audit_items_bulk_delete(&item_conditionids, &items_names, &items_flags, recsetid_cuid);
 		zbx_vector_str_clear_ext(&items_names, zbx_str_free);
 		zbx_vector_str_destroy(&items_names);
 	}
@@ -1192,17 +1197,17 @@ static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, 
 				row[3], atoi(row[4]), row[5]);
 
 		zbx_snprintf(audit_key_type, 100, "%s.preprocessing[%s].type",
-				get_audit_type_json_identifier((*pitem)->flags), row[1]);
+				zbx_audit_items_get_type_json_identifier((*pitem)->flags), row[1]);
 		zbx_snprintf(audit_key_params, 100, "%s.preprocessing[%s].params",
-				get_audit_type_json_identifier((*pitem)->flags), row[1]);
+				zbx_audit_items_get_type_json_identifier((*pitem)->flags), row[1]);
 		zbx_snprintf(audit_key_error_handler, 100, "%s.preprocessing[%s].error_handler",
-				get_audit_type_json_identifier((*pitem)->flags), row[1]);
+				zbx_audit_items_get_type_json_identifier((*pitem)->flags), row[1]);
 		zbx_snprintf(audit_key_error_handler_params, 100, "%s.preprocessing[%s].error_handler_params",
-				get_audit_type_json_identifier((*pitem)->flags), row[1]);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_type, row[2]);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_params, row[3]);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_error_handler, row[4]);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_error_handler_params, row[5]);
+				zbx_audit_items_get_type_json_identifier((*pitem)->flags), row[1]);
+		zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_type, row[2]);
+		zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_params, row[3]);
+		zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_error_handler, row[4]);
+		zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_error_handler_params, row[5]);
 	}
 	DBfree_result(result);
 
@@ -1378,8 +1383,8 @@ static void	copy_template_item_script_params(const zbx_vector_uint64_t *template
 
 		zbx_snprintf(audit_key_name, 100, "item.parameters[%d].name", audit_index);
 		zbx_snprintf(audit_key_name, 100, "item.parameters[%d].value", audit_index);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_name, row[1]);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_value, row[2]);
+		zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_name, row[1]);
+		zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_value, row[2]);
 		audit_index++;
 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, row[1], row[2]);
@@ -1454,8 +1459,8 @@ static void	copy_template_lld_macro_paths(const zbx_vector_uint64_t *templateids
 		zbx_snprintf(audit_key_lld_macro, 100, "discoveryrule.lld_macro_paths[%lu].lld_macro", i);
 		zbx_snprintf(audit_key_lld_path, 100, "discoveryrule.lld_macro_paths[%lu].path", i);
 
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_lld_macro, row[1]);
-		zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_lld_path, row[2]);
+		zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_lld_macro, row[1]);
+		zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_lld_path, row[2]);
 		i++;
 	}
 	DBfree_result(result);
@@ -1668,11 +1673,11 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 					"discoveryrule.overrides[].operations[%d].operationobject", j);
 			zbx_snprintf(audit_key_operator, 100, "discoveryrule.overrides[].operations[%d].operator", j);
 			zbx_snprintf(audit_key_value, 100, "discoveryrule.overrides[].operations[%d].value", j);
-			zbx_items_audit_update_json_uint64((*pitem)->itemid, audit_key_operationobject,
+			zbx_audit_items_update_json_uint64((*pitem)->itemid, audit_key_operationobject,
 					override_operation->operationtype);
-			zbx_items_audit_update_json_uint64((*pitem)->itemid, audit_key_operator,
+			zbx_audit_items_update_json_uint64((*pitem)->itemid, audit_key_operator,
 					override_operation->operator);
-			zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_value,
+			zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_value,
 					override_operation->value);
 
 			if (ZBX_PROTOTYPE_STATUS_COUNT != override_operation->status)
@@ -1683,7 +1688,7 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 						(int)override_operation->status);
 				zbx_snprintf(audit_key_opstatus, 100,
 						"discoveryrule.overrides[].operations[%d].opstatus", j);
-				zbx_items_audit_update_json_uint64((*pitem)->itemid, audit_key_opstatus,
+				zbx_audit_items_update_json_uint64((*pitem)->itemid, audit_key_opstatus,
 						override_operation->status);
 			}
 
@@ -1695,7 +1700,7 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 						(int)override_operation->discover);
 				zbx_snprintf(audit_key_opdiscover, 100,
 						"discoveryrule.overrides[].operations[%d].opdiscover", j);
-				zbx_items_audit_update_json_uint64((*pitem)->itemid, audit_key_opdiscover,
+				zbx_audit_items_update_json_uint64((*pitem)->itemid, audit_key_opdiscover,
 						override_operation->discover);
 			}
 
@@ -1707,7 +1712,7 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 						override_operation->delay);
 				zbx_snprintf(audit_key_opperiod, 100,
 						"discoveryrule.overrides[].operations[%d].opperiod", j);
-				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_opperiod,
+				zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_opperiod,
 						override_operation->delay);
 			}
 
@@ -1719,7 +1724,7 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 						override_operation->history);
 				zbx_snprintf(audit_key_ophistory, 100,
 						"discoveryrule.overrides[].operations[%d].ophistory", j);
-				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_ophistory,
+				zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_ophistory,
 						override_operation->history);
 			}
 
@@ -1731,7 +1736,7 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 						override_operation->trends);
 				zbx_snprintf(audit_key_optrends, 100,
 						"discoveryrule.overrides[].operations[%d].optrends", j);
-				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_optrends,
+				zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_optrends,
 						override_operation->trends);
 			}
 
@@ -1743,7 +1748,7 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 						(int)override_operation->severity);
 				zbx_snprintf(audit_key_severity, 100,
 						"discoveryrule.overrides[].operations[%d].opseverity", j);
-				zbx_items_audit_update_json_uint64((*pitem)->itemid, audit_key_severity,
+				zbx_audit_items_update_json_uint64((*pitem)->itemid, audit_key_severity,
 						override_operation->severity);
 			}
 
@@ -1758,8 +1763,8 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 						"discoveryrule.overrides[].operations[%d].optag[%d].tag", j, k);
 				zbx_snprintf(audit_key_optag_value, 100,
 						"discoveryrule.overrides[].operations[%d].optag[%d].value", j, k);
-				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_optag_tag, tag->tag);
-				zbx_items_audit_update_json_string((*pitem)->itemid, audit_key_optag_value, tag->value);
+				zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_optag_tag, tag->tag);
+				zbx_audit_items_update_json_string((*pitem)->itemid, audit_key_optag_value, tag->value);
 			}
 
 			for (k = 0; k < override_operation->templateids.values_num; k++)
@@ -1772,7 +1777,7 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 				zbx_snprintf(audit_key_optemplate, 100,
 						"discoveryrule.overrides[].operations[%d].optemplate[%d].templateid", j,
 						k);
-				zbx_items_audit_update_json_uint64((*pitem)->itemid, audit_key_optemplate,
+				zbx_audit_items_update_json_uint64((*pitem)->itemid, audit_key_optemplate,
 						override_operation->templateids.values[k]);
 			}
 
@@ -1785,7 +1790,7 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 				zbx_snprintf(audit_key_opinventory, 100,
 						"discoveryrule.overrides[].operations[%d].opinventory.inventory_mode",
 						j);
-				zbx_items_audit_update_json_uint64((*pitem)->itemid, audit_key_opinventory,
+				zbx_audit_items_update_json_uint64((*pitem)->itemid, audit_key_opinventory,
 						override_operation->inventory_mode);
 			}
 

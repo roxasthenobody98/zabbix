@@ -24,19 +24,20 @@
 #include "zbxalgo.h"
 #include "../zbxdbhigh/template.h"
 
-void	get_items_names_and_flags(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names,
+void	zbx_audit_items_get_names_and_flags(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names,
 		zbx_vector_uint64_t *items_flags);
 
-void	zbx_items_audit_init(void);
+void	zbx_audit_items_init(void);
 void	zbx_audit_items_flush(const char *recsetid_cuid);
-void	zbx_items_audit_bulk_delete(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names,
+void	zbx_audit_items_bulk_delete(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names,
 		zbx_vector_uint64_t *items_flags, char *recsetid_cuid);
-char	*get_audit_type_json_identifier(int flag);
+char	*zbx_audit_items_get_type_json_identifier(int flag);
+void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid, const int action);
+void	zbx_audit_items_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
+void	zbx_audit_items_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
+
 int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, const char* resourcename,
 		const int resourcetype, const char *recsetid, const char *details);
-void	zbx_items_audit_create_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid, const int action);
-void	zbx_items_audit_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
-void	zbx_items_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
 
 void	zbx_audit_groups_add(zbx_uint64_t hostid, zbx_uint64_t hostgroupid, zbx_uint64_t groupid);
 void	zbx_audit_groups_delete(zbx_uint64_t hostid);

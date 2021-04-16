@@ -1336,7 +1336,7 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
 
 	zbx_vector_str_create(&items_names);
 	zbx_vector_uint64_create(&items_flags);
-	get_items_names_and_flags(itemids, &items_names, &items_flags);
+	zbx_audit_items_get_names_and_flags(itemids, &items_names, &items_flags);
 
 	sql_offset = 0;
 	DBbegin_multiple_update(&sql, &sql_alloc, &sql_offset);
@@ -1364,7 +1364,7 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
 
 	zbx_free(sql);
 
-	zbx_items_audit_bulk_delete(itemids, &items_names, &items_flags, recsetid_cuid);
+	zbx_audit_items_bulk_delete(itemids, &items_names, &items_flags, recsetid_cuid);
 	zbx_vector_str_clear_ext(&items_names, zbx_str_free);
 	zbx_vector_str_destroy(&items_names);
 out:
@@ -2282,7 +2282,7 @@ int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_tem
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
-	zbx_items_audit_init();
+	zbx_audit_items_init();
 
 	zbx_vector_uint64_create(&templateids);
 
@@ -5547,7 +5547,7 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
-	zbx_items_audit_init();
+	zbx_audit_items_init();
 
 	zbx_vector_uint64_create(&templateids);
 
