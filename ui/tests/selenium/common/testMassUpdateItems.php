@@ -1195,6 +1195,23 @@ class testMassUpdateItems extends CWebTest{
 						'Type' => ['id' => 'type', 'value' => 'Database monitor'],
 						'User name' => ['id' => 'username', 'value' => 'db_monitor_name'],
 						'Password' => ['id' => 'password', 'value' => 'db_monitor_password']
+					],
+					'expected_preprocessing' => [
+						'13_DB_Monitor' => [
+							[
+								'type' => 'Regular expression',
+								'parameter_1' => 'regular expression pattern',
+								'parameter_2' => 'output template',
+								'error_handler' => 'Set value to',
+								'error_handler_params' => 'Error custom value'
+							]
+						],
+						'14_DB_Monitor' => [
+									[
+								'type' => 'Custom multiplier',
+								'parameter_1' => '2'
+							]
+						]
 					]
 				]
 			],
@@ -1466,27 +1483,9 @@ class testMassUpdateItems extends CWebTest{
 				}
 
 				// Check that preprocessing is not changed after other fields are mass updated.
-				if ($name === '13_DB_Monitor') {
+				if (CTestArrayHelper::get($data, 'expected_preprocessing')) {
 					$form->selectTab('Preprocessing');
-					$this->assertPreprocessingSteps([
-						[
-							'type' => 'Regular expression',
-							'parameter_1' => 'regular expression pattern',
-							'parameter_2' => 'output template',
-							'error_handler' => 'Set value to',
-							'error_handler_params' => 'Error custom value'
-						]
-					]);
-				}
-
-				if ($name === '14_DB_Monitor') {
-					$form->selectTab('Preprocessing');
-					$this->assertPreprocessingSteps([
-						[
-							'type' => 'Custom multiplier',
-							'parameter_1' => '2'
-						]
-					]);
+					$this->assertPreprocessingSteps($data['expected_preprocessing'][$name]);
 				}
 
 				$form->query('button:Cancel')->one()->waitUntilClickable()->click();
