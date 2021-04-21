@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T14:29:04Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Applications
@@ -1598,8 +1598,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Available swap space'
               type: DEPENDENT
@@ -1618,8 +1620,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Clock difference'
               type: DEPENDENT
@@ -1643,8 +1647,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Available disk space'
               type: DEPENDENT
@@ -1663,8 +1669,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Idle'
               type: DEPENDENT
@@ -1691,8 +1699,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Executors'
               type: DEPENDENT
@@ -1710,8 +1720,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Offline cause reason'
               type: DEPENDENT
@@ -1734,8 +1746,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Response time average'
               type: DEPENDENT
@@ -1758,8 +1772,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: State'
               type: DEPENDENT
@@ -1788,8 +1804,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Temporarily offline'
               type: DEPENDENT
@@ -1816,8 +1834,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Available temp space'
               type: DEPENDENT
@@ -1836,8 +1856,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Total physical memory'
               type: DEPENDENT
@@ -1856,8 +1878,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
             -
               name: 'Jenkins: Computer [{#DISPLAY_NAME}]: Total swap space'
               type: DEPENDENT
@@ -1876,8 +1900,10 @@ zabbix_export:
                 key: jenkins.computer_info
               tags:
                 -
+                  tag: Computer
+                  value: '{#DISPLAY_NAME}'
+                -
                   tag: Jenkins
-                  value: 'Computer [{#DISPLAY_NAME}]'
           trigger_prototypes:
             -
               expression: '{Jenkins by HTTP:jenkins.computer.state[{#DISPLAY_NAME}].last()}=1 and {Jenkins by HTTP:jenkins.computer.offline.reason[{#DISPLAY_NAME}].strlen()}>0'
@@ -1977,7 +2003,9 @@ zabbix_export:
               tags:
                 -
                   tag: Jenkins
-                  value: 'job [{#NAME}]'
+                -
+                  tag: Job
+                  value: '{#NAME}'
               trigger_prototypes:
                 -
                   expression: '{last()}<{$JENKINS.JOB.HEALTH.SCORE.MIN.WARN}'
@@ -2011,7 +2039,9 @@ zabbix_export:
               tags:
                 -
                   tag: Jenkins
-                  value: 'job [{#NAME}]'
+                -
+                  tag: Job
+                  value: '{#NAME}'
             -
               name: 'Jenkins job [{#NAME}]: Last Build number'
               type: DEPENDENT
@@ -2034,7 +2064,9 @@ zabbix_export:
               tags:
                 -
                   tag: Jenkins
-                  value: 'job [{#NAME}]'
+                -
+                  tag: Job
+                  value: '{#NAME}'
             -
               name: 'Jenkins job [{#NAME}]: Last Build result'
               type: DEPENDENT
@@ -2058,7 +2090,9 @@ zabbix_export:
               tags:
                 -
                   tag: Jenkins
-                  value: 'job [{#NAME}]'
+                -
+                  tag: Job
+                  value: '{#NAME}'
             -
               name: 'Jenkins job [{#NAME}]: Last Build timestamp'
               type: DEPENDENT
@@ -2085,7 +2119,9 @@ zabbix_export:
               tags:
                 -
                   tag: Jenkins
-                  value: 'job [{#NAME}]'
+                -
+                  tag: Job
+                  value: '{#NAME}'
             -
               name: 'Jenkins job [{#NAME}]: Last Failed Build duration'
               type: DEPENDENT
@@ -2113,7 +2149,9 @@ zabbix_export:
               tags:
                 -
                   tag: Jenkins
-                  value: 'job [{#NAME}]'
+                -
+                  tag: Job
+                  value: '{#NAME}'
             -
               name: 'Jenkins job [{#NAME}]: Last Failed Build number'
               type: DEPENDENT
@@ -2136,7 +2174,9 @@ zabbix_export:
               tags:
                 -
                   tag: Jenkins
-                  value: 'job [{#NAME}]'
+                -
+                  tag: Job
+                  value: '{#NAME}'
             -
               name: 'Jenkins job [{#NAME}]: Last Failed Build timestamp'
               type: DEPENDENT
@@ -2163,7 +2203,9 @@ zabbix_export:
               tags:
                 -
                   tag: Jenkins
-                  value: 'job [{#NAME}]'
+                -
+                  tag: Job
+                  value: '{#NAME}'
             -
               name: 'Jenkins job [{#NAME}]: Last Successful Build duration'
               type: DEPENDENT
@@ -2191,7 +2233,9 @@ zabbix_export:
               tags:
                 -
                   tag: Jenkins
-                  value: 'job [{#NAME}]'
+                -
+                  tag: Job
+                  value: '{#NAME}'
             -
               name: 'Jenkins job [{#NAME}]: Last Successful Build number'
               type: DEPENDENT
@@ -2214,7 +2258,9 @@ zabbix_export:
               tags:
                 -
                   tag: Jenkins
-                  value: 'job [{#NAME}]'
+                -
+                  tag: Job
+                  value: '{#NAME}'
             -
               name: 'Jenkins job [{#NAME}]: Last Successful Build timestamp'
               type: DEPENDENT
@@ -2241,7 +2287,9 @@ zabbix_export:
               tags:
                 -
                   tag: Jenkins
-                  value: 'job [{#NAME}]'
+                -
+                  tag: Job
+                  value: '{#NAME}'
           url: '{$JENKINS.URL}/api/json'
           query_fields:
             -

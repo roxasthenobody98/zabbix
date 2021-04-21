@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:15:19Z'
+  date: '2021-04-21T06:05:09Z'
   groups:
     -
       name: Templates/Databases
@@ -76,7 +76,7 @@ zabbix_export:
           value_type: TEXT
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Archiver state'
           type: DEPENDENT
@@ -158,7 +158,7 @@ zabbix_export:
           description: 'Get info about CDB and  No-CDB databases on instansce.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Cursor cache hit ratio'
           type: DEPENDENT
@@ -255,7 +255,7 @@ zabbix_export:
           description: 'Get ASM disk groups stats.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Disk sort per second'
           type: DEPENDENT
@@ -303,7 +303,7 @@ zabbix_export:
           description: 'Get FRA statistics.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: FRA, Number of files'
           type: DEPENDENT
@@ -438,7 +438,7 @@ zabbix_export:
           description: 'The item gets state of the current instance.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Instance role'
           type: DEPENDENT
@@ -614,7 +614,7 @@ zabbix_export:
           description: 'Get info about PDB databases on instansce.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Get PGA stats'
           key: 'oracle.pga.stats["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
@@ -624,7 +624,7 @@ zabbix_export:
           description: 'Get PGA statistics.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: PGA, Global memory bound'
           type: DEPENDENT
@@ -857,7 +857,7 @@ zabbix_export:
           description: 'Get sessions statistics. {$ORACLE.SESSION.LOCK.MAX.TIME} -- maximum seconds in the current wait condition for counting long time locked sessions. Default: 600 seconds.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Active background sessions'
           type: DEPENDENT
@@ -1036,7 +1036,7 @@ zabbix_export:
           description: 'Get SGA statistics.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: SGA, buffer cache'
           type: DEPENDENT
@@ -1198,7 +1198,7 @@ zabbix_export:
           description: 'The item gets system metric values.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Get system parameters'
           key: 'oracle.sys.params["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
@@ -1208,7 +1208,7 @@ zabbix_export:
           description: 'Get a set of system parameter values.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Temp space used'
           type: DEPENDENT
@@ -1291,7 +1291,7 @@ zabbix_export:
           description: 'Get tablespaces stats.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Uptime'
           type: DEPENDENT
@@ -1422,8 +1422,9 @@ zabbix_export:
                 key: 'oracle.archive.info["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
               tags:
                 -
+                  tag: Archivelog
+                -
                   tag: Oracle
-                  value: Archivelog
             -
               name: 'Archivelog ''{#DEST_NAME}'': Last sequence'
               type: DEPENDENT
@@ -1431,26 +1432,6 @@ zabbix_export:
               delay: '0'
               history: 7d
               description: 'Identifies the sequence number of the last archived redo log to be archived'
-              preprocessing:
-                -
-                  type: JSONPATH
-                  parameters:
-                    - '$..[''{#DEST_NAME}''].log_sequence.first()'
-              master_item:
-                key: 'oracle.archive.info["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
-              tags:
-                -
-                  tag: Oracle
-                  value: Archivelog
-            -
-              name: 'Archivelog ''{#DEST_NAME}'': Status'
-              type: DEPENDENT
-              key: 'oracle.archivelog_log_status["{#DEST_NAME}"]'
-              delay: '0'
-              history: 7d
-              description: 'Identifies the current status of the destination: 1 - ''Valid'', 2 - ''Dederred'',3 - ''Error'', 0 - ''Unknown'''
-              valuemap:
-                name: 'Oracle Archivelog status'
               preprocessing:
                 -
                   type: JSONPATH
@@ -1464,8 +1445,30 @@ zabbix_export:
                 key: 'oracle.archive.info["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
               tags:
                 -
+                  tag: Archivelog
+                -
                   tag: Oracle
-                  value: Archivelog
+            -
+              name: 'Archivelog ''{#DEST_NAME}'': Status'
+              type: DEPENDENT
+              key: 'oracle.archivelog_log_status["{#DEST_NAME}"]'
+              delay: '0'
+              history: 7d
+              description: 'Identifies the current status of the destination: 1 - ''Valid'', 2 - ''Dederred'',3 - ''Error'', 0 - ''Unknown'''
+              valuemap:
+                name: 'Oracle Archivelog status'
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - '$..[''{#DEST_NAME}''].log_sequence.first()'
+              master_item:
+                key: 'oracle.archive.info["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
+              tags:
+                -
+                  tag: Archivelog
+                -
+                  tag: Oracle
               trigger_prototypes:
                 -
                   expression: '{last()}<2'
@@ -1513,6 +1516,8 @@ zabbix_export:
               tags:
                 -
                   tag: Oracle
+                -
+                  tag: Type
                   value: '{#TYPE}'
             -
               name: 'Oracle Database ''{#DBNAME}'': Log mode'
@@ -1537,6 +1542,8 @@ zabbix_export:
               tags:
                 -
                   tag: Oracle
+                -
+                  tag: Type
                   value: '{#TYPE}'
             -
               name: 'Oracle Database ''{#DBNAME}'': Open status'
@@ -1561,6 +1568,8 @@ zabbix_export:
               tags:
                 -
                   tag: Oracle
+                -
+                  tag: Type
                   value: '{#TYPE}'
               trigger_prototypes:
                 -
@@ -1601,6 +1610,8 @@ zabbix_export:
               tags:
                 -
                   tag: Oracle
+                -
+                  tag: Type
                   value: '{#TYPE}'
               trigger_prototypes:
                 -
@@ -1638,8 +1649,9 @@ zabbix_export:
                 key: 'oracle.diskgroups.stats["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
               tags:
                 -
+                  tag: ASM
+                -
                   tag: Oracle
-                  value: ASM
             -
               name: 'ASM ''{#DG_NAME}'': Total size'
               type: DEPENDENT
@@ -1657,8 +1669,9 @@ zabbix_export:
                 key: 'oracle.diskgroups.stats["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
               tags:
                 -
+                  tag: ASM
+                -
                   tag: Oracle
-                  value: ASM
             -
               name: 'ASM ''{#DG_NAME}'': Free size'
               type: DEPENDENT
@@ -1677,8 +1690,9 @@ zabbix_export:
                 key: 'oracle.diskgroups.stats["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
               tags:
                 -
+                  tag: ASM
+                -
                   tag: Oracle
-                  value: ASM
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ORACLE.ASM.USED.PCT.MAX.HIGH}'
@@ -1750,7 +1764,8 @@ zabbix_export:
               tags:
                 -
                   tag: Oracle
-                  value: PDB
+                -
+                  tag: PDB
               trigger_prototypes:
                 -
                   expression: '{diff()}=1'
@@ -1798,8 +1813,13 @@ zabbix_export:
                 key: 'oracle.ts.stats["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
             -
               name: 'Oracle TBS ''{#TABLESPACE}'': Tablespace free, bytes'
               type: DEPENDENT
@@ -1817,8 +1837,13 @@ zabbix_export:
                 key: 'oracle.ts.stats["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
             -
               name: 'Oracle TBS ''{#TABLESPACE}'': Tablespace MAX size, bytes'
               type: DEPENDENT
@@ -1836,8 +1861,13 @@ zabbix_export:
                 key: 'oracle.ts.stats["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
             -
               name: 'Oracle TBS ''{#TABLESPACE}'': Open status'
               type: DEPENDENT
@@ -1856,8 +1886,13 @@ zabbix_export:
                 key: 'oracle.ts.stats["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1'
@@ -1891,8 +1926,13 @@ zabbix_export:
                 key: 'oracle.ts.stats["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
             -
               name: 'Oracle TBS ''{#TABLESPACE}'': Tablespace usage, percent'
               type: DEPENDENT
@@ -1911,8 +1951,13 @@ zabbix_export:
                 key: 'oracle.ts.stats["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ORACLE.TBS.USED.PCT.MAX.HIGH}'
@@ -1944,8 +1989,13 @@ zabbix_export:
                 key: 'oracle.ts.stats["{$ORACLE.CONNSTRING}","{$ORACLE.USER}","{$ORACLE.PASSWORD}","{$ORACLE.SERVICE}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ORACLE.TBS.USED.PCT.MAX.WARN}'

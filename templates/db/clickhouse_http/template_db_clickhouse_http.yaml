@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:15:13Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Databases
@@ -129,7 +129,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'ClickHouse: Current distributed files to insert'
           type: DEPENDENT
@@ -751,7 +751,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'ClickHouse: Replication lag across all tables'
           type: DEPENDENT
@@ -883,7 +883,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'ClickHouse: Get system.events'
           type: HTTP_AGENT
@@ -911,7 +911,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'ClickHouse: Get system.metrics'
           type: HTTP_AGENT
@@ -939,7 +939,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'ClickHouse: Get system.settings'
           type: HTTP_AGENT
@@ -971,7 +971,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -1005,7 +1005,7 @@ zabbix_export:
               value: '{$CLICKHOUSE.PASSWORD}'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'ClickHouse: Uptime'
           type: DEPENDENT
@@ -1096,7 +1096,7 @@ zabbix_export:
         -
           name: 'ClickHouse: ZooKeeper exceptions per second'
           type: DEPENDENT
-          key: clickhouse.zookeper.exceptions.rate
+          key: clickhouse.zookeper.exeptions.rate
           delay: '0'
           history: 7d
           value_type: FLOAT
@@ -1116,11 +1116,13 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: ClickHouse_ZooKeeper
+              tag: ClickHouse
+            -
+              tag: ZooKeeper
         -
           name: 'ClickHouse: ZooKeeper hardware exceptions per second'
           type: DEPENDENT
-          key: clickhouse.zookeper.hw_exceptions.rate
+          key: clickhouse.zookeper.hw_exeptions.rate
           delay: '0'
           history: 7d
           value_type: FLOAT
@@ -1140,7 +1142,9 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: ClickHouse_ZooKeeper
+              tag: ClickHouse
+            -
+              tag: ZooKeeper
         -
           name: 'ClickHouse: ZooKeeper requests'
           type: DEPENDENT
@@ -1157,7 +1161,9 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: ClickHouse_ZooKeeper
+              tag: ClickHouse
+            -
+              tag: ZooKeeper
         -
           name: 'ClickHouse: ZooKeeper sessions'
           type: DEPENDENT
@@ -1174,7 +1180,9 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: ClickHouse_ZooKeeper
+              tag: ClickHouse
+            -
+              tag: ZooKeeper
           triggers:
             -
               expression: '{min(5m)}>1'
@@ -1186,7 +1194,7 @@ zabbix_export:
         -
           name: 'ClickHouse: ZooKeeper user exceptions per second'
           type: DEPENDENT
-          key: clickhouse.zookeper.user_exceptions.rate
+          key: clickhouse.zookeper.user_exeptions.rate
           delay: '0'
           history: 7d
           value_type: FLOAT
@@ -1206,7 +1214,9 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: ClickHouse_ZooKeeper
+              tag: ClickHouse
+            -
+              tag: ZooKeeper
         -
           name: 'ClickHouse: ZooKeeper wait time'
           type: DEPENDENT
@@ -1235,7 +1245,9 @@ zabbix_export:
             key: clickhouse.system.events
           tags:
             -
-              tag: ClickHouse_ZooKeeper
+              tag: ClickHouse
+            -
+              tag: ZooKeeper
         -
           name: 'ClickHouse: ZooKeeper watches'
           type: DEPENDENT
@@ -1252,7 +1264,9 @@ zabbix_export:
             key: clickhouse.system.metrics
           tags:
             -
-              tag: ClickHouse_ZooKeeper
+              tag: ClickHouse
+            -
+              tag: ZooKeeper
         -
           name: 'ClickHouse: Check port availability'
           type: SIMPLE
@@ -1271,7 +1285,7 @@ zabbix_export:
           triggers:
             -
               expression: '{last()}=0'
-              name: 'ClickHouse: Port {$CLICKHOUSE.PORT} is unavaliable'
+              name: 'ClickHouse: Port {$CLICKHOUSE.PORT} is unavailable'
               priority: AVERAGE
               manual_close: 'YES'
       discovery_rules:
@@ -1314,7 +1328,7 @@ zabbix_export:
                   tag: ClickHouse
                 -
                   tag: Dictionary
-                  value: '"{#NAME}"'
+                  value: '{#NAME}'
             -
               name: 'ClickHouse: Dictionary {#NAME}: Element count'
               type: DEPENDENT
@@ -1334,7 +1348,7 @@ zabbix_export:
                   tag: ClickHouse
                 -
                   tag: Dictionary
-                  value: '"{#NAME}"'
+                  value: '{#NAME}'
             -
               name: 'ClickHouse: Dictionary {#NAME}: Load factor'
               type: DEPENDENT
@@ -1359,7 +1373,7 @@ zabbix_export:
                   tag: ClickHouse
                 -
                   tag: Dictionary
-                  value: '"{#NAME}"'
+                  value: '{#NAME}'
           master_item:
             key: clickhouse.dictionaries
           lld_macro_paths:
@@ -1401,10 +1415,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: '"{#DB}.{#TABLE}"'
-                  value: replica
-                -
                   tag: ClickHouse
+                -
+                  tag: 'Replica status'
+                  value: '{#DB}.{#TABLE}'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica future parts'
               type: DEPENDENT
@@ -1421,10 +1435,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: '"{#DB}.{#TABLE}"'
-                  value: replica
-                -
                   tag: ClickHouse
+                -
+                  tag: 'Replica status'
+                  value: '{#DB}.{#TABLE}'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica queue inserts size'
               type: DEPENDENT
@@ -1441,10 +1455,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: '"{#DB}.{#TABLE}"'
-                  value: replica
-                -
                   tag: ClickHouse
+                -
+                  tag: 'Replica status'
+                  value: '{#DB}.{#TABLE}'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica readonly'
               type: DEPENDENT
@@ -1465,10 +1479,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: '"{#DB}.{#TABLE}"'
-                  value: replica
-                -
                   tag: ClickHouse
+                -
+                  tag: 'Replica status'
+                  value: '{#DB}.{#TABLE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}=1'
@@ -1493,10 +1507,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: '"{#DB}.{#TABLE}"'
-                  value: replica
-                -
                   tag: ClickHouse
+                -
+                  tag: 'Replica status'
+                  value: '{#DB}.{#TABLE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}=1'
@@ -1520,10 +1534,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: '"{#DB}.{#TABLE}"'
-                  value: replica
-                -
                   tag: ClickHouse
+                -
+                  tag: 'Replica status'
+                  value: '{#DB}.{#TABLE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)} > {$CLICKHOUSE.LOG_POSITION.DIFF.MAX.WARN}'
@@ -1545,10 +1559,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: '"{#DB}.{#TABLE}"'
-                  value: replica
-                -
                   tag: ClickHouse
+                -
+                  tag: 'Replica status'
+                  value: '{#DB}.{#TABLE}'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica log pointer'
               type: DEPENDENT
@@ -1565,10 +1579,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: '"{#DB}.{#TABLE}"'
-                  value: replica
-                -
                   tag: ClickHouse
+                -
+                  tag: 'Replica status'
+                  value: '{#DB}.{#TABLE}'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica queue merges size'
               type: DEPENDENT
@@ -1585,10 +1599,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: '"{#DB}.{#TABLE}"'
-                  value: replica
-                -
                   tag: ClickHouse
+                -
+                  tag: 'Replica status'
+                  value: '{#DB}.{#TABLE}'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica parts to check'
               type: DEPENDENT
@@ -1605,10 +1619,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: '"{#DB}.{#TABLE}"'
-                  value: replica
-                -
                   tag: ClickHouse
+                -
+                  tag: 'Replica status'
+                  value: '{#DB}.{#TABLE}'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Replica queue size'
               type: DEPENDENT
@@ -1625,10 +1639,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: '"{#DB}.{#TABLE}"'
-                  value: replica
-                -
                   tag: ClickHouse
+                -
+                  tag: 'Replica status'
+                  value: '{#DB}.{#TABLE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$CLICKHOUSE.QUEUE.SIZE.MAX.WARN:"{#TABLE}"}'
@@ -1650,10 +1664,10 @@ zabbix_export:
                 key: clickhouse.replicas
               tags:
                 -
-                  tag: '"{#DB}.{#TABLE}"'
-                  value: replica
-                -
                   tag: ClickHouse
+                -
+                  tag: 'Replica status'
+                  value: '{#DB}.{#TABLE}'
           trigger_prototypes:
             -
               expression: '{ClickHouse by HTTP:clickhouse.replica.active_replicas["{#DB}.{#TABLE}"].max(5m)} < {ClickHouse by HTTP:clickhouse.replica.total_replicas["{#DB}.{#TABLE}"].last()}'
@@ -1754,7 +1768,7 @@ zabbix_export:
                   tag: ClickHouse
                 -
                   tag: DB
-                  value: '"{#DB}"'
+                  value: '{#DB}'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Bytes'
               type: DEPENDENT
@@ -1775,7 +1789,7 @@ zabbix_export:
                   tag: ClickHouse
                 -
                   tag: Table
-                  value: '"{#DB}.{#TABLE}"'
+                  value: '{#DB}.{#TABLE}'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Parts'
               type: DEPENDENT
@@ -1795,7 +1809,7 @@ zabbix_export:
                   tag: ClickHouse
                 -
                   tag: Table
-                  value: '"{#DB}.{#TABLE}"'
+                  value: '{#DB}.{#TABLE}'
             -
               name: 'ClickHouse: {#DB}.{#TABLE}: Rows'
               type: DEPENDENT
@@ -1815,7 +1829,7 @@ zabbix_export:
                   tag: ClickHouse
                 -
                   tag: Table
-                  value: '"{#DB}.{#TABLE}"'
+                  value: '{#DB}.{#TABLE}'
           master_item:
             key: clickhouse.tables
           lld_macro_paths:
@@ -1915,7 +1929,7 @@ zabbix_export:
       manual_close: 'YES'
       dependencies:
         -
-          name: 'ClickHouse: Port {$CLICKHOUSE.PORT} is unavaliable'
+          name: 'ClickHouse: Port {$CLICKHOUSE.PORT} is unavailable'
           expression: '{ClickHouse by HTTP:net.tcp.service[{$CLICKHOUSE.SCHEME},"{HOST.CONN}","{$CLICKHOUSE.PORT}"].last()}=0'
   graphs:
     -
@@ -2134,19 +2148,19 @@ zabbix_export:
           color: 1A7C11
           item:
             host: 'ClickHouse by HTTP'
-            key: clickhouse.zookeper.exceptions.rate
+            key: clickhouse.zookeper.exeptions.rate
         -
           sortorder: '1'
           color: 2774A4
           item:
             host: 'ClickHouse by HTTP'
-            key: clickhouse.zookeper.hw_exceptions.rate
+            key: clickhouse.zookeper.hw_exeptions.rate
         -
           sortorder: '2'
           color: F63100
           item:
             host: 'ClickHouse by HTTP'
-            key: clickhouse.zookeper.user_exceptions.rate
+            key: clickhouse.zookeper.user_exeptions.rate
         -
           sortorder: '3'
           drawtype: BOLD_LINE

@@ -492,8 +492,7 @@ zabbix_export:
                     - '8'
               tags:
                 -
-                  tag: Application
-                  value: 'Network interfaces'
+                  tag: 'Network interfaces'
             -
               name: 'Outgoing network traffic on {#IFNAME}'
               key: 'net.if.out[{#IFNAME}]'
@@ -510,8 +509,7 @@ zabbix_export:
                     - '8'
               tags:
                 -
-                  tag: Application
-                  value: 'Network interfaces'
+                  tag: 'Network interfaces'
           graph_prototypes:
             -
               name: 'Network traffic on {#IFNAME}'
@@ -550,8 +548,7 @@ zabbix_export:
               units: '%'
               tags:
                 -
-                  tag: Application
-                  value: Filesystems
+                  tag: Filesystems
               trigger_prototypes:
                 -
                   expression: '{last()}<20'
@@ -564,8 +561,7 @@ zabbix_export:
               units: B
               tags:
                 -
-                  tag: Application
-                  value: Filesystems
+                  tag: Filesystems
             -
               name: 'Free disk space on {#FSNAME} (percentage)'
               key: 'vfs.fs.size[{#FSNAME},pfree]'
@@ -574,8 +570,7 @@ zabbix_export:
               units: '%'
               tags:
                 -
-                  tag: Application
-                  value: Filesystems
+                  tag: Filesystems
               trigger_prototypes:
                 -
                   expression: '{last()}<20'
@@ -589,8 +584,7 @@ zabbix_export:
               units: B
               tags:
                 -
-                  tag: Application
-                  value: Filesystems
+                  tag: Filesystems
             -
               name: 'Used disk space on {#FSNAME}'
               key: 'vfs.fs.size[{#FSNAME},used]'
@@ -598,8 +592,7 @@ zabbix_export:
               units: B
               tags:
                 -
-                  tag: Application
-                  value: Filesystems
+                  tag: Filesystems
           graph_prototypes:
             -
               name: 'Disk space usage {#FSNAME}'

@@ -41,8 +41,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -71,8 +70,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
         -
           name: 'Hardware serial number'
           type: SNMP_AGENT
@@ -93,8 +91,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -117,8 +114,7 @@ zabbix_export:
             name: 'IDRAC-MIB-SMIv2::ObjectStatusEnum'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{count(#1,{$HEALTH_DISASTER_STATUS},eq)}=1'
@@ -169,8 +165,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -209,8 +204,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::batteryState'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk arrays'
+                  tag: 'Disk arrays'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$DISK_ARRAY_CACHE_BATTERY_CRIT_STATUS},eq)}=1'
@@ -271,8 +265,7 @@ zabbix_export:
                 coolingDeviceSubTypeIsDiscrete, a value is not returned for this attribute.
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
             -
               name: '{#FAN_DESCR}: Fan status'
               type: SNMP_AGENT
@@ -288,8 +281,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::StatusProbeEnum'
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS:"criticalUpper"},eq)}=1 or {count(#1,{$FAN_CRIT_STATUS:"nonRecoverableUpper"},eq)}=1 or {count(#1,{$FAN_CRIT_STATUS:"criticalLower"},eq)}=1 or {count(#1,{$FAN_CRIT_STATUS:"nonRecoverableLower"},eq)}=1 or {count(#1,{$FAN_CRIT_STATUS:"failed"},eq)}=1'
@@ -328,8 +320,7 @@ zabbix_export:
                 The controller's name as represented in Storage Management.
               tags:
                 -
-                  tag: Application
-                  value: 'Disk arrays'
+                  tag: 'Disk arrays'
             -
               name: '{#CNTLR_NAME}: Disk array controller status'
               type: SNMP_AGENT
@@ -351,8 +342,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::ObjectStatusEnum'
               tags:
                 -
-                  tag: Application
-                  value: 'Disk arrays'
+                  tag: 'Disk arrays'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$DISK_ARRAY_CRIT_STATUS:"critical"},eq)}=1'
@@ -409,8 +399,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::physicalDiskMediaType'
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
             -
               name: '{#DISK_NAME}: Physical disk model name'
               type: SNMP_AGENT
@@ -425,8 +414,7 @@ zabbix_export:
                 The model number of the physical disk.
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
             -
               name: '{#DISK_NAME}: Physical disk part number'
               type: SNMP_AGENT
@@ -441,8 +429,7 @@ zabbix_export:
                 The part number of the disk.
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
             -
               name: '{#DISK_NAME}: Physical disk serial number'
               type: SNMP_AGENT
@@ -456,8 +443,7 @@ zabbix_export:
                 The physical disk's unique identification number from the manufacturer.
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -484,8 +470,7 @@ zabbix_export:
                     - '1048576'
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
             -
               name: '{#DISK_NAME}: Physical disk S.M.A.R.T. status'
               type: SNMP_AGENT
@@ -500,8 +485,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::BooleanType'
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$DISK_SMART_FAIL_STATUS},eq)}=1'
@@ -534,8 +518,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::physicalDiskComponentStatus'
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$DISK_FAIL_STATUS:"critical"},eq)}=1 or {count(#1,{$DISK_FAIL_STATUS:"nonRecoverable"},eq)}=1'
@@ -576,8 +559,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::ObjectStatusEnum'
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: 'Power supply'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS:"critical"},eq)}=1 or {count(#1,{$PSU_CRIT_STATUS:"nonRecoverable"},eq)}=1'
@@ -624,8 +606,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::StatusProbeEnum'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
             -
               name: '{#SENSOR_LOCALE}: Temperature'
               type: SNMP_AGENT
@@ -646,8 +627,7 @@ zabbix_export:
                     - '0.1'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}<{$TEMP_CRIT_LOW:"Ambient"}'
@@ -720,8 +700,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::StatusProbeEnum'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
             -
               name: '{#SENSOR_LOCALE}: Temperature'
               type: SNMP_AGENT
@@ -742,8 +721,7 @@ zabbix_export:
                     - '0.1'
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}<{$TEMP_CRIT_LOW:"CPU"}'
@@ -820,8 +798,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::virtualDiskLayout'
               tags:
                 -
-                  tag: Application
-                  value: 'Virtual disks'
+                  tag: 'Virtual disks'
             -
               name: 'Disk {#SNMPVALUE}({#DISK_NAME}): Read policy'
               type: SNMP_AGENT
@@ -838,8 +815,7 @@ zabbix_export:
                 3: Adaptive Read Ahead.
               tags:
                 -
-                  tag: Application
-                  value: 'Virtual disks'
+                  tag: 'Virtual disks'
             -
               name: 'Disk {#SNMPVALUE}({#DISK_NAME}): Disk size'
               type: SNMP_AGENT
@@ -859,8 +835,7 @@ zabbix_export:
                     - '1048576'
               tags:
                 -
-                  tag: Application
-                  value: 'Virtual disks'
+                  tag: 'Virtual disks'
             -
               name: 'Disk {#SNMPVALUE}({#DISK_NAME}): Current state'
               type: SNMP_AGENT
@@ -881,8 +856,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::virtualDiskOperationalState'
               tags:
                 -
-                  tag: Application
-                  value: 'Virtual disks'
+                  tag: 'Virtual disks'
             -
               name: 'Disk {#SNMPVALUE}({#DISK_NAME}): Status'
               type: SNMP_AGENT
@@ -903,8 +877,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::virtualDiskState'
               tags:
                 -
-                  tag: Application
-                  value: 'Virtual disks'
+                  tag: 'Virtual disks'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$VDISK_CRIT_STATUS:"failed"},eq)}=1'
@@ -940,8 +913,7 @@ zabbix_export:
                 name: 'IDRAC-MIB-SMIv2::virtualDiskWritePolicy'
               tags:
                 -
-                  tag: Application
-                  value: 'Virtual disks'
+                  tag: 'Virtual disks'
       macros:
         -
           macro: '{$DISK_ARRAY_CACHE_BATTERY_CRIT_STATUS}'

@@ -58,8 +58,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
         -
           name: 'Hardware serial number'
           type: SNMP_AGENT
@@ -80,8 +79,7 @@ zabbix_export:
                 - 1d
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -104,8 +102,7 @@ zabbix_export:
             name: 'IMM-MIB::systemHealthStat'
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{count(#1,{$HEALTH_DISASTER_STATUS},eq)}=1'
@@ -164,8 +161,7 @@ zabbix_export:
                     - \1
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
             -
               name: '{#FAN_DESCR}: Fan status'
               type: SNMP_AGENT
@@ -180,8 +176,7 @@ zabbix_export:
                 A description of the fan component status.
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_OK_STATUS},ne)}=1'
@@ -210,8 +205,7 @@ zabbix_export:
                 disk module FRU name.
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
             -
               name: '{#SNMPINDEX}: Physical disk status'
               type: SNMP_AGENT
@@ -223,8 +217,7 @@ zabbix_export:
               description: 'MIB: IMM-MIB'
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$DISK_OK_STATUS},ne)}=1'
@@ -254,8 +247,7 @@ zabbix_export:
                 A description of the power module status.
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: 'Power supply'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_OK_STATUS},ne)}=1'
@@ -290,8 +282,7 @@ zabbix_export:
                 Temperature readings of testpoint: {#SNMPVALUE}
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:""}'
@@ -348,8 +339,7 @@ zabbix_export:
                 Temperature readings of testpoint: Ambient
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:"Ambient"}'
@@ -406,8 +396,7 @@ zabbix_export:
                 Temperature readings of testpoint: CPU
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:"CPU"}'

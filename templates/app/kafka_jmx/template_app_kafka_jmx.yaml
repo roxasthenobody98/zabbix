@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:14:44Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Applications
@@ -1046,7 +1046,9 @@ zabbix_export:
               tags:
                 -
                   tag: Kafka
-                  value: topic
+                -
+                  tag: Topic
+                  value: '{#JMXTOPIC}'
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
         -
           name: 'Topic Metrics (errors)'
@@ -1086,7 +1088,9 @@ zabbix_export:
               tags:
                 -
                   tag: Kafka
-                  value: topic
+                -
+                  tag: Topic
+                  value: '{#JMXTOPIC}'
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
         -
           name: 'Topic Metrics (write)'
@@ -1127,7 +1131,9 @@ zabbix_export:
               tags:
                 -
                   tag: Kafka
-                  value: topic
+                -
+                  tag: Topic
+                  value: '{#JMXTOPIC}'
             -
               name: 'Kafka {#JMXTOPIC}: Messages in per second'
               type: JMX
@@ -1146,7 +1152,9 @@ zabbix_export:
               tags:
                 -
                   tag: Kafka
-                  value: topic
+                -
+                  tag: Topic
+                  value: '{#JMXTOPIC}'
           jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
       macros:
         -

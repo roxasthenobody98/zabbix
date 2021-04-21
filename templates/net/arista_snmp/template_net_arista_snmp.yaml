@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:14:43Z'
+  date: '2021-04-21T06:46:15Z'
   groups:
     -
       name: 'Templates/Network devices'
@@ -60,7 +60,7 @@ zabbix_export:
                   return JSON.stringify(data);
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
       discovery_rules:
         -
           name: 'Entity discovery'
@@ -220,35 +220,19 @@ zabbix_export:
             key: sensors.get
           overrides:
             -
-              name: 'trigger THRESHOLD_LO_WARN'
-              step: '1'
+              name: 'trigger THRESHOLD_HI_CRIT'
+              step: '4'
               filter:
                 conditions:
                   -
-                    macro: '{#THRESHOLD_LO_WARN}'
+                    macro: '{#THRESHOLD_HI_CRIT}'
                     value: ^$
                     formulaid: A
               operations:
                 -
                   operationobject: TRIGGER_PROTOTYPE
                   operator: REGEXP
-                  value: 'Fan speed is below the warning threshold'
-                  status: ENABLED
-                  discover: NO_DISCOVER
-            -
-              name: 'trigger THRESHOLD_LO_CRIT'
-              step: '2'
-              filter:
-                conditions:
-                  -
-                    macro: '{#THRESHOLD_LO_CRIT}'
-                    value: ^$
-                    formulaid: A
-              operations:
-                -
-                  operationobject: TRIGGER_PROTOTYPE
-                  operator: REGEXP
-                  value: 'Fan speed is below the critical threshold'
+                  value: 'Fan speed is above the critical threshold'
                   status: ENABLED
                   discover: NO_DISCOVER
             -
@@ -268,19 +252,35 @@ zabbix_export:
                   status: ENABLED
                   discover: NO_DISCOVER
             -
-              name: 'trigger THRESHOLD_HI_CRIT'
-              step: '4'
+              name: 'trigger THRESHOLD_LO_CRIT'
+              step: '2'
               filter:
                 conditions:
                   -
-                    macro: '{#THRESHOLD_HI_CRIT}'
+                    macro: '{#THRESHOLD_LO_CRIT}'
                     value: ^$
                     formulaid: A
               operations:
                 -
                   operationobject: TRIGGER_PROTOTYPE
                   operator: REGEXP
-                  value: 'Fan speed is above the critical threshold'
+                  value: 'Fan speed is below the critical threshold'
+                  status: ENABLED
+                  discover: NO_DISCOVER
+            -
+              name: 'trigger THRESHOLD_LO_WARN'
+              step: '1'
+              filter:
+                conditions:
+                  -
+                    macro: '{#THRESHOLD_LO_WARN}'
+                    value: ^$
+                    formulaid: A
+              operations:
+                -
+                  operationobject: TRIGGER_PROTOTYPE
+                  operator: REGEXP
+                  value: 'Fan speed is below the warning threshold'
                   status: ENABLED
                   discover: NO_DISCOVER
         -
@@ -303,13 +303,13 @@ zabbix_export:
               key: 'sensor.psu.status[entStateOper.{#SNMPINDEX}]'
               delay: 3m
               history: 2w
-              trends: 0d
+              trends: '0'
               description: 'MIB: ENTITY-STATE-MIB'
               valuemap:
                 name: 'ENTITY-STATE-MIB::EntityOperState'
               tags:
                 -
-                  tag: Power_supply
+                  tag: 'Power supply'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS},eq)}=1'
@@ -409,35 +409,19 @@ zabbix_export:
             key: sensors.get
           overrides:
             -
-              name: 'trigger THRESHOLD_LO_WARN'
-              step: '1'
+              name: 'trigger THRESHOLD_HI_CRIT'
+              step: '4'
               filter:
                 conditions:
                   -
-                    macro: '{#THRESHOLD_LO_WARN}'
+                    macro: '{#THRESHOLD_HI_CRIT}'
                     value: ^$
                     formulaid: A
               operations:
                 -
                   operationobject: TRIGGER_PROTOTYPE
                   operator: REGEXP
-                  value: 'Temperature is below the warning threshold'
-                  status: ENABLED
-                  discover: NO_DISCOVER
-            -
-              name: 'trigger THRESHOLD_LO_CRIT'
-              step: '2'
-              filter:
-                conditions:
-                  -
-                    macro: '{#THRESHOLD_LO_CRIT}'
-                    value: ^$
-                    formulaid: A
-              operations:
-                -
-                  operationobject: TRIGGER_PROTOTYPE
-                  operator: REGEXP
-                  value: 'Temperature is below the critical threshold'
+                  value: 'Temperature is above the critical threshold'
                   status: ENABLED
                   discover: NO_DISCOVER
             -
@@ -457,19 +441,35 @@ zabbix_export:
                   status: ENABLED
                   discover: NO_DISCOVER
             -
-              name: 'trigger THRESHOLD_HI_CRIT'
-              step: '4'
+              name: 'trigger THRESHOLD_LO_CRIT'
+              step: '2'
               filter:
                 conditions:
                   -
-                    macro: '{#THRESHOLD_HI_CRIT}'
+                    macro: '{#THRESHOLD_LO_CRIT}'
                     value: ^$
                     formulaid: A
               operations:
                 -
                   operationobject: TRIGGER_PROTOTYPE
                   operator: REGEXP
-                  value: 'Temperature is above the critical threshold'
+                  value: 'Temperature is below the critical threshold'
+                  status: ENABLED
+                  discover: NO_DISCOVER
+            -
+              name: 'trigger THRESHOLD_LO_WARN'
+              step: '1'
+              filter:
+                conditions:
+                  -
+                    macro: '{#THRESHOLD_LO_WARN}'
+                    value: ^$
+                    formulaid: A
+              operations:
+                -
+                  operationobject: TRIGGER_PROTOTYPE
+                  operator: REGEXP
+                  value: 'Temperature is below the warning threshold'
                   status: ENABLED
                   discover: NO_DISCOVER
         -
@@ -538,35 +538,19 @@ zabbix_export:
             key: sensors.get
           overrides:
             -
-              name: 'trigger THRESHOLD_LO_WARN'
-              step: '1'
+              name: 'trigger THRESHOLD_HI_CRIT'
+              step: '4'
               filter:
                 conditions:
                   -
-                    macro: '{#THRESHOLD_LO_WARN}'
+                    macro: '{#THRESHOLD_HI_CRIT}'
                     value: ^$
                     formulaid: A
               operations:
                 -
                   operationobject: TRIGGER_PROTOTYPE
                   operator: REGEXP
-                  value: 'Voltage is below the warning threshold'
-                  status: ENABLED
-                  discover: NO_DISCOVER
-            -
-              name: 'trigger THRESHOLD_LO_CRIT'
-              step: '2'
-              filter:
-                conditions:
-                  -
-                    macro: '{#THRESHOLD_LO_CRIT}'
-                    value: ^$
-                    formulaid: A
-              operations:
-                -
-                  operationobject: TRIGGER_PROTOTYPE
-                  operator: REGEXP
-                  value: 'Voltage is below the critical threshold'
+                  value: 'Voltage is above the critical threshold'
                   status: ENABLED
                   discover: NO_DISCOVER
             -
@@ -586,19 +570,35 @@ zabbix_export:
                   status: ENABLED
                   discover: NO_DISCOVER
             -
-              name: 'trigger THRESHOLD_HI_CRIT'
-              step: '4'
+              name: 'trigger THRESHOLD_LO_CRIT'
+              step: '2'
               filter:
                 conditions:
                   -
-                    macro: '{#THRESHOLD_HI_CRIT}'
+                    macro: '{#THRESHOLD_LO_CRIT}'
                     value: ^$
                     formulaid: A
               operations:
                 -
                   operationobject: TRIGGER_PROTOTYPE
                   operator: REGEXP
-                  value: 'Voltage is above the critical threshold'
+                  value: 'Voltage is below the critical threshold'
+                  status: ENABLED
+                  discover: NO_DISCOVER
+            -
+              name: 'trigger THRESHOLD_LO_WARN'
+              step: '1'
+              filter:
+                conditions:
+                  -
+                    macro: '{#THRESHOLD_LO_WARN}'
+                    value: ^$
+                    formulaid: A
+              operations:
+                -
+                  operationobject: TRIGGER_PROTOTYPE
+                  operator: REGEXP
+                  value: 'Voltage is below the warning threshold'
                   status: ENABLED
                   discover: NO_DISCOVER
       macros:
@@ -612,15 +612,6 @@ zabbix_export:
         -
           macro: '{$PSU_CRIT_STATUS}'
           value: '2'
-        -
-          macro: '{$TEMP_CRIT}'
-          value: '60'
-        -
-          macro: '{$TEMP_CRIT_LOW}'
-          value: '5'
-        -
-          macro: '{$TEMP_WARN}'
-          value: '50'
         -
           macro: '{$VFS.FS.PUSED.MAX.CRIT}'
           value: '95'

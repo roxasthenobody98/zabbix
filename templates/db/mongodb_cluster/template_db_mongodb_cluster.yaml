@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:15:13Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Databases
@@ -42,7 +42,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Connections, active'
           type: DEPENDENT
@@ -64,7 +66,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Connections, available'
           type: DEPENDENT
@@ -81,7 +85,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
           triggers:
             -
               expression: '{max(5m)}<{$MONGODB.CONNS.AVAILABLE.MIN.WARN}'
@@ -108,7 +114,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: New connections, rate'
           type: DEPENDENT
@@ -130,7 +138,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Connection pool: available'
           type: DEPENDENT
@@ -147,7 +157,9 @@ zabbix_export:
             key: 'mongodb.connpool.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Connection pool: client connections'
           type: DEPENDENT
@@ -164,7 +176,9 @@ zabbix_export:
             key: 'mongodb.connpool.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Connection pool: created, rate'
           type: DEPENDENT
@@ -186,7 +200,9 @@ zabbix_export:
             key: 'mongodb.connpool.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Connection pool: in use'
           type: DEPENDENT
@@ -203,7 +219,9 @@ zabbix_export:
             key: 'mongodb.connpool.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Connection pool: refreshing'
           type: DEPENDENT
@@ -220,7 +238,9 @@ zabbix_export:
             key: 'mongodb.connpool.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Connection pool: scoped'
           type: DEPENDENT
@@ -237,7 +257,9 @@ zabbix_export:
             key: 'mongodb.connpool.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Get mongodb.connpool.stats'
           key: 'mongodb.connpool.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
@@ -247,7 +269,7 @@ zabbix_export:
           description: 'Returns current info about connpool.stats.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'MongoDB cluster: Cursor: open pinned'
           type: DEPENDENT
@@ -264,7 +286,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Cursor: open total'
           type: DEPENDENT
@@ -281,7 +305,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
           triggers:
             -
               expression: '{min(5m)}>{$MONGODB.CURSOR.OPEN.MAX.WARN}'
@@ -308,7 +334,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
           triggers:
             -
               expression: '{min(5m)}>{$MONGODB.CURSOR.TIMEOUT.MAX.WARN}'
@@ -321,7 +349,9 @@ zabbix_export:
           description: 'Total number of ''jumbo'' chunks in the mongo cluster.'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Last seen configserver'
           type: DEPENDENT
@@ -341,7 +371,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Architecture'
           type: DEPENDENT
@@ -363,7 +395,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Memory: resident'
           type: DEPENDENT
@@ -385,7 +419,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Memory: virtual'
           type: DEPENDENT
@@ -407,7 +443,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Cursor: open no timeout'
           type: DEPENDENT
@@ -424,7 +462,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Bytes in, rate'
           type: DEPENDENT
@@ -446,7 +486,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Bytes out, rate'
           type: DEPENDENT
@@ -469,7 +511,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Requests, rate'
           type: DEPENDENT
@@ -492,7 +536,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Operations: command'
           type: DEPENDENT
@@ -516,7 +562,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Operations: delete'
           type: DEPENDENT
@@ -538,7 +586,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Operations: getmore, rate'
           type: DEPENDENT
@@ -562,7 +612,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Operations: insert, rate'
           type: DEPENDENT
@@ -584,7 +636,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Operations: query, rate'
           type: DEPENDENT
@@ -606,7 +660,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Operations: update, rate'
           type: DEPENDENT
@@ -628,7 +684,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
         -
           name: 'MongoDB cluster: Ping'
           key: 'mongodb.ping["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
@@ -644,7 +702,9 @@ zabbix_export:
                 - 30m
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
           triggers:
             -
               expression: '{last()}=0'
@@ -660,7 +720,7 @@ zabbix_export:
           description: 'The mongos statistic'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'MongoDB cluster: Uptime'
           type: DEPENDENT
@@ -678,7 +738,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
           triggers:
             -
               expression: '{nodata(10m)}=1'
@@ -718,7 +780,9 @@ zabbix_export:
             key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
           tags:
             -
-              tag: MongoDBshardedcluster
+              tag: MongoDB
+            -
+              tag: 'Sharded cluster'
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -799,10 +863,15 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Capped'
               type: DEPENDENT
@@ -831,10 +900,15 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Objects, count'
               type: DEPENDENT
@@ -851,10 +925,15 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Capped, max number'
               type: DEPENDENT
@@ -873,10 +952,15 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Capped, max size'
               type: DEPENDENT
@@ -895,10 +979,15 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Indexes'
               type: DEPENDENT
@@ -915,10 +1004,15 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Size'
               type: DEPENDENT
@@ -936,10 +1030,15 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Get collection stats {#DBNAME}.{#COLLECTION}'
               key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
@@ -949,7 +1048,7 @@ zabbix_export:
               description: 'Returns a variety of storage statistics for a given collection.'
               tags:
                 -
-                  tag: Zabbix_raw_items
+                  tag: 'Zabbix raw items'
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Storage size'
               type: DEPENDENT
@@ -967,10 +1066,15 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
         -
           name: 'Database discovery'
           key: 'mongodb.db.discovery["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
@@ -1008,10 +1112,12 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}: Extents'
               type: DEPENDENT
@@ -1029,10 +1135,12 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}: Size, file'
               type: DEPENDENT
@@ -1051,10 +1159,12 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}: Size, index'
               type: DEPENDENT
@@ -1072,10 +1182,12 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}: Objects, count'
               type: DEPENDENT
@@ -1092,10 +1204,12 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}: Objects, avg size'
               type: DEPENDENT
@@ -1114,10 +1228,12 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
             -
               name: 'MongoDB {#DBNAME}: Get db stats {#DBNAME}'
               key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
@@ -1127,7 +1243,7 @@ zabbix_export:
               description: 'Returns statistics reflecting the database system’s state.'
               tags:
                 -
-                  tag: Zabbix_raw_items
+                  tag: 'Zabbix raw items'
             -
               name: 'MongoDB {#DBNAME}: Size, storage'
               type: DEPENDENT
@@ -1145,10 +1261,12 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
-                  value: sharded
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
+                -
+                  tag: 'Sharded cluster'
           graph_prototypes:
             -
               name: 'MongoDB {#DBNAME}: Disk usage'

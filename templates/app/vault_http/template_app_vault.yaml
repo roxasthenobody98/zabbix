@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:38:38Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Applications
@@ -2155,8 +2155,10 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
+                  tag: Mountpoint
+                  value: '{#MOUNTPOINT}'
+                -
                   tag: Vault
-                  value: 'Mountpoint {#MOUNTPOINT}'
             -
               name: 'Vault: Route rollback [{#MOUNTPOINT}] ops, rate'
               type: DEPENDENT
@@ -2180,8 +2182,10 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
+                  tag: Mountpoint
+                  value: '{#MOUNTPOINT}'
+                -
                   tag: Vault
-                  value: 'Mountpoint {#MOUNTPOINT}'
           master_item:
             key: vault.check_mountpoint_discovery
         -
@@ -2210,8 +2214,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
+                  tag: Replication
+                -
                   tag: Vault
-                  value: Replication
             -
               name: 'Vault: Stream WAL missing guard, count{#SINGLETON}'
               type: DEPENDENT
@@ -2231,8 +2236,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
+                  tag: Replication
+                -
                   tag: Vault
-                  value: Replication
             -
               name: 'Vault: Last remote WAL{#SINGLETON}'
               type: DEPENDENT
@@ -2252,8 +2258,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
+                  tag: Replication
+                -
                   tag: Vault
-                  value: Replication
             -
               name: 'Vault: Merkle commit index{#SINGLETON}'
               type: DEPENDENT
@@ -2273,8 +2280,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
+                  tag: Replication
+                -
                   tag: Vault
-                  value: Replication
             -
               name: 'Vault: Last DR WAL{#SINGLETON}'
               type: DEPENDENT
@@ -2294,8 +2302,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
+                  tag: Replication
+                -
                   tag: Vault
-                  value: Replication
             -
               name: 'Vault: Last performance WAL{#SINGLETON}'
               type: DEPENDENT
@@ -2315,8 +2324,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
+                  tag: Replication
+                -
                   tag: Vault
-                  value: Replication
             -
               name: 'Vault: Last WAL{#SINGLETON}'
               type: DEPENDENT
@@ -2336,8 +2346,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
+                  tag: Replication
+                -
                   tag: Vault
-                  value: Replication
           master_item:
             key: vault.check_replication_discovery
         -
@@ -2377,8 +2388,10 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
+                  tag: Storage
+                  value: '{#STORAGE}'
+                -
                   tag: Vault
-                  value: 'Storage {#STORAGE}'
           master_item:
             key: vault.check_storage_discovery
         -
@@ -2412,8 +2425,10 @@ zabbix_export:
                 key: vault.get_tokens
               tags:
                 -
+                  tag: Token
+                  value: '{#TOKEN_NAME}'
+                -
                   tag: Vault
-                  value: 'Token {#TOKEN_NAME}'
               trigger_prototypes:
                 -
                   expression: '{strlen()}>0'
@@ -2449,8 +2464,10 @@ zabbix_export:
                 key: vault.get_tokens
               tags:
                 -
+                  tag: Token
+                  value: '{#TOKEN_NAME}'
+                -
                   tag: Vault
-                  value: 'Token {#TOKEN_NAME}'
             -
               name: 'Token [{#TOKEN_NAME}] TTL'
               type: DEPENDENT
@@ -2468,8 +2485,10 @@ zabbix_export:
                 key: vault.get_tokens
               tags:
                 -
+                  tag: Token
+                  value: '{#TOKEN_NAME}'
+                -
                   tag: Vault
-                  value: 'Token {#TOKEN_NAME}'
           trigger_prototypes:
             -
               expression: '{HashiCorp Vault by HTTP:vault.token_via_accessor.has_ttl["{#ACCESSOR}"].last()}=1 and {HashiCorp Vault by HTTP:vault.token_via_accessor.ttl["{#ACCESSOR}"].last()}<{$VAULT.TOKEN.TTL.MIN.CRIT}'
@@ -2518,11 +2537,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'Vault: WAL'
-                -
                   tag: Vault
-                  value: WAL
+                -
+                  tag: WAL
             -
               name: 'Vault: Flush ready WAL, count{#SINGLETON}'
               type: DEPENDENT
@@ -2542,11 +2559,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'Vault: WAL'
-                -
                   tag: Vault
-                  value: WAL
+                -
+                  tag: WAL
             -
               name: 'Vault: GC deleted WAL{#SINGLETON}'
               type: DEPENDENT
@@ -2566,11 +2581,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'Vault: WAL'
-                -
                   tag: Vault
-                  value: WAL
+                -
+                  tag: WAL
             -
               name: 'Vault: WALs on disk, total{#SINGLETON}'
               type: DEPENDENT
@@ -2590,11 +2603,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'Vault: WAL'
-                -
                   tag: Vault
-                  value: WAL
+                -
+                  tag: WAL
             -
               name: 'Vault: Load WALs, count{#SINGLETON}'
               type: DEPENDENT
@@ -2614,11 +2625,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'Vault: WAL'
-                -
                   tag: Vault
-                  value: WAL
+                -
+                  tag: WAL
             -
               name: 'Vault: Persist WALs, count{#SINGLETON}'
               type: DEPENDENT
@@ -2638,11 +2647,9 @@ zabbix_export:
                 key: vault.clear_metrics
               tags:
                 -
-                  tag: Application
-                  value: 'Vault: WAL'
-                -
                   tag: Vault
-                  value: WAL
+                -
+                  tag: WAL
           master_item:
             key: vault.check_wal_discovery
       macros:

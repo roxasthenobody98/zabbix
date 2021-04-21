@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:14:54Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Applications
@@ -35,7 +35,7 @@ zabbix_export:
                 - 3h
           tags:
             -
-              tag: Exchange
+              tag: 'MS Exchange'
         -
           name: 'MS Exchange [Client Access Server]: ActiveSync: ping command pending'
           type: ZABBIX_ACTIVE
@@ -46,7 +46,7 @@ zabbix_export:
           description: 'Shows the number of ping commands currently pending in the queue.'
           tags:
             -
-              tag: Exchange
+              tag: 'MS Exchange'
         -
           name: 'MS Exchange [Client Access Server]: ActiveSync: requests per second'
           type: ZABBIX_ACTIVE
@@ -57,7 +57,7 @@ zabbix_export:
           description: 'Shows the number of HTTP requests received from the client via ASP.NET per second. Determines the current Exchange ActiveSync request rate. Used only to determine current user load.'
           tags:
             -
-              tag: Exchange
+              tag: 'MS Exchange'
         -
           name: 'MS Exchange [Client Access Server]: ActiveSync: sync commands per second'
           type: ZABBIX_ACTIVE
@@ -68,7 +68,7 @@ zabbix_export:
           description: 'Shows the number of sync commands processed per second. Clients use this command to synchronize items within a folder.'
           tags:
             -
-              tag: Exchange
+              tag: 'MS Exchange'
         -
           name: 'MS Exchange [Client Access Server]: Autodiscover: requests per second'
           type: ZABBIX_ACTIVE
@@ -79,7 +79,7 @@ zabbix_export:
           description: 'Shows the number of Autodiscover service requests processed each second. Determines current user load.'
           tags:
             -
-              tag: Exchange
+              tag: 'MS Exchange'
         -
           name: 'MS Exchange [Client Access Server]: Availability Service: availability requests per second'
           type: ZABBIX_ACTIVE
@@ -90,7 +90,7 @@ zabbix_export:
           description: 'Shows the number of requests serviced per second. The request can be only for free/ busy information or include suggestions. One request may contain multiple mailboxes. Determines the rate at which Availability service requests are occurring.'
           tags:
             -
-              tag: Exchange
+              tag: 'MS Exchange'
         -
           name: 'MS Exchange [Client Access Server]: Outlook Web App: current unique users'
           type: ZABBIX_ACTIVE
@@ -101,7 +101,7 @@ zabbix_export:
           description: 'Shows the number of unique users currently logged on to Outlook Web App. This value monitors the number of unique active user sessions, so that users are only removed from this counter after they log off or their session times out. Determines current user load.'
           tags:
             -
-              tag: Exchange
+              tag: 'MS Exchange'
         -
           name: 'MS Exchange [Client Access Server]: Outlook Web App: requests per second'
           type: ZABBIX_ACTIVE
@@ -112,7 +112,7 @@ zabbix_export:
           description: 'Shows the number of requests handled by Outlook Web App per second. Determines current user load.'
           tags:
             -
-              tag: Exchange
+              tag: 'MS Exchange'
         -
           name: 'MS Exchange [Client Access Server]: MSExchangeWS: requests per second'
           type: ZABBIX_ACTIVE
@@ -123,7 +123,7 @@ zabbix_export:
           description: 'Shows the number of requests processed each second. Determines current user load.'
           tags:
             -
-              tag: Exchange
+              tag: 'MS Exchange'
       discovery_rules:
         -
           name: 'Databases discovery'
@@ -489,7 +489,7 @@ zabbix_export:
                     - '0.001'
               tags:
                 -
-                  tag: Exchange
+                  tag: 'MS Exchange'
               trigger_prototypes:
                 -
                   expression: '{min({$MS.EXCHANGE.LDAP.TIME})}>{$MS.EXCHANGE.LDAP.WARN}'
@@ -512,7 +512,7 @@ zabbix_export:
                     - '0.001'
               tags:
                 -
-                  tag: Exchange
+                  tag: 'MS Exchange'
               trigger_prototypes:
                 -
                   expression: '{min({$MS.EXCHANGE.LDAP.TIME})}>{$MS.EXCHANGE.LDAP.WARN}'
@@ -551,7 +551,7 @@ zabbix_export:
               description: 'Shows the current number of connections established to the each Web Service.'
               tags:
                 -
-                  tag: Exchange
+                  tag: 'MS Exchange'
       macros:
         -
           macro: '{$MS.EXCHANGE.DB.ACTIVE.READ.TIME}'

@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:15:16Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Databases
@@ -48,7 +48,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: DDL waiting jobs'
           type: DEPENDENT
@@ -66,7 +68,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
           triggers:
             -
               expression: '{min(5m)}>{$TIDB.DDL.WAITING.MAX.WARN}'
@@ -94,7 +98,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
           triggers:
             -
               expression: '{min(5m)}>{$TIDB.SCHEMA_LOAD_ERRORS.MAX.WARN}'
@@ -121,7 +127,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Failed Query, rate'
           type: DEPENDENT
@@ -144,7 +152,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Get instance metrics'
           type: HTTP_AGENT
@@ -165,7 +175,7 @@ zabbix_export:
           url: '{$TIDB.URL}:{$TIDB.PORT}/metrics'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'TiDB: Get instance status'
           type: HTTP_AGENT
@@ -184,7 +194,7 @@ zabbix_export:
           url: '{$TIDB.URL}:{$TIDB.PORT}/status'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'TiDB: Goroutine count'
           type: DEPENDENT
@@ -201,7 +211,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Heap memory usage'
           type: DEPENDENT
@@ -220,7 +232,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
           triggers:
             -
               expression: '{min(5m)}>{$TIDB.HEAP.USAGE.MAX.WARN}'
@@ -249,7 +263,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
           triggers:
             -
               expression: '{max(5m)}<{$TIDB.MONITOR_KEEP_ALIVE.MAX.WARN}'
@@ -278,7 +294,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
           triggers:
             -
               expression: '{min(5m)}>{$TIDB.TIME_JUMP_BACK.MAX.WARN}'
@@ -306,7 +324,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: PD TSO requests, rate'
           type: DEPENDENT
@@ -329,7 +349,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Open file descriptors, max'
           type: DEPENDENT
@@ -347,7 +369,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Open file descriptors'
           type: DEPENDENT
@@ -365,7 +389,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: RSS memory usage'
           type: DEPENDENT
@@ -384,7 +410,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Total "error" server query, rate'
           type: DEPENDENT
@@ -407,7 +435,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Total "ok" server query, rate'
           type: DEPENDENT
@@ -430,7 +460,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Total server query, rate'
           type: DEPENDENT
@@ -453,7 +485,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Schema lease "change" errors, rate'
           type: DEPENDENT
@@ -478,7 +512,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Schema lease "outdate" errors , rate'
           type: DEPENDENT
@@ -503,7 +539,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
           triggers:
             -
               expression: '{min(5m)}>{$TIDB.SCHEMA_LEASE_ERRORS.MAX.WARN}'
@@ -531,7 +569,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Status'
           type: DEPENDENT
@@ -558,7 +598,9 @@ zabbix_export:
             key: tidb.get_status
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
           triggers:
             -
               expression: '{last()}=0'
@@ -580,7 +622,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Server critical error, rate'
           type: DEPENDENT
@@ -602,7 +646,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Server panic, rate'
           type: DEPENDENT
@@ -625,7 +671,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
           triggers:
             -
               expression: '{last()}>0'
@@ -655,7 +703,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Lock resolves, rate'
           type: DEPENDENT
@@ -678,7 +728,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: TiClient region errors, rate'
           type: DEPENDENT
@@ -701,7 +753,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
           triggers:
             -
               expression: '{min(5m)}>{$TIDB.REGION_ERROR.MAX.WARN}'
@@ -729,7 +783,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
         -
           name: 'TiDB: Uptime'
           type: DEPENDENT
@@ -754,7 +810,9 @@ zabbix_export:
             key: tidb.get_metrics
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
           triggers:
             -
               expression: '{last()}<10m'
@@ -784,7 +842,9 @@ zabbix_export:
             key: tidb.get_status
           tags:
             -
-              tag: TiDBnode
+              tag: Node
+            -
+              tag: TiDB
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -822,7 +882,9 @@ zabbix_export:
                 key: tidb.get_metrics
               tags:
                 -
-                  tag: TiDBnode
+                  tag: Node
+                -
+                  tag: TiDB
           master_item:
             key: tidb.get_metrics
           preprocessing:
@@ -835,10 +897,10 @@ zabbix_export:
               parameters:
                 - |
                   output = JSON.parse(value).map(function(item){
-                       return {
-                           "{#TYPE}": item.labels.type,
-                       }})
-                   return JSON.stringify({"data": output})
+                  return {
+                  "{#TYPE}": item.labels.type,
+                  }})
+                  return JSON.stringify({"data": output})
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:
@@ -872,7 +934,9 @@ zabbix_export:
                 key: tidb.get_metrics
               tags:
                 -
-                  tag: TiDBnode
+                  tag: Node
+                -
+                  tag: TiDB
             -
               name: 'TiDB: Server query "OK": {#TYPE}, rate'
               type: DEPENDENT
@@ -895,7 +959,9 @@ zabbix_export:
                 key: tidb.get_metrics
               tags:
                 -
-                  tag: TiDBnode
+                  tag: Node
+                -
+                  tag: TiDB
           master_item:
             key: tidb.get_metrics
           preprocessing:
@@ -908,14 +974,14 @@ zabbix_export:
               parameters:
                 - |
                   var lookup = {},
-                      result = [];
+                  result = [];
                   
                   JSON.parse(value).forEach(function (item) {
-                      var type = item.labels.type;
-                      if (!(lookup[type])) {
-                          lookup[type] = 1;
-                          result.push({ "{#TYPE}": type });
-                      }
+                  var type = item.labels.type;
+                  if (!(lookup[type])) {
+                  lookup[type] = 1;
+                  result.push({ "{#TYPE}": type });
+                  }
                   })
                   
                   return JSON.stringify(result);
@@ -951,7 +1017,9 @@ zabbix_export:
                 key: tidb.get_metrics
               tags:
                 -
-                  tag: TiDBnode
+                  tag: Node
+                -
+                  tag: TiDB
           master_item:
             key: tidb.get_metrics
           preprocessing:
@@ -964,10 +1032,10 @@ zabbix_export:
               parameters:
                 - |
                   output = JSON.parse(value).map(function(item){
-                       return {
-                           "{#TYPE}": item.labels.type,
-                       }})
-                   return JSON.stringify({"data": output})
+                  return {
+                  "{#TYPE}": item.labels.type,
+                  }})
+                  return JSON.stringify({"data": output})
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:
@@ -1001,7 +1069,9 @@ zabbix_export:
                 key: tidb.get_metrics
               tags:
                 -
-                  tag: TiDBnode
+                  tag: Node
+                -
+                  tag: TiDB
           master_item:
             key: tidb.get_metrics
           preprocessing:
@@ -1015,10 +1085,10 @@ zabbix_export:
               parameters:
                 - |
                   output = JSON.parse(value).map(function(item){
-                       return {
-                           "{#TYPE}": item.labels.type,
-                       }})
-                   return JSON.stringify({"data": output})
+                  return {
+                  "{#TYPE}": item.labels.type,
+                  }})
+                  return JSON.stringify({"data": output})
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:
@@ -1052,11 +1122,14 @@ zabbix_export:
                 key: tidb.get_metrics
               tags:
                 -
-                  tag: TiDBnode
+                  tag: Node
+                -
+                  tag: TiDB
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$TIDB.GC_ACTIONS.ERRORS.MAX.WARN}'
                   name: 'TiDB: Too many failed GC-related operations (over {$TIDB.GC_ACTIONS.ERRORS.MAX.WARN} in 5m)'
+                  discover: NO_DISCOVER
                   priority: WARNING
           master_item:
             key: tidb.get_metrics
@@ -1071,10 +1144,10 @@ zabbix_export:
               parameters:
                 - |
                   output = JSON.parse(value).map(function(item){
-                       return {
-                           "{#TYPE}": item.labels.type,
-                       }})
-                   return JSON.stringify({"data": output})
+                  return {
+                  "{#TYPE}": item.labels.type,
+                  }})
+                  return JSON.stringify({"data": output})
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:
@@ -1125,7 +1198,9 @@ zabbix_export:
                 key: tidb.get_metrics
               tags:
                 -
-                  tag: TiDBnode
+                  tag: Node
+                -
+                  tag: TiDB
           master_item:
             key: tidb.get_metrics
           preprocessing:
@@ -1138,10 +1213,10 @@ zabbix_export:
               parameters:
                 - |
                   output = JSON.parse(value).map(function(item){
-                       return {
-                           "{#TYPE}": item.labels.type,
-                       }})
-                   return JSON.stringify({"data": output})
+                  return {
+                  "{#TYPE}": item.labels.type,
+                  }})
+                  return JSON.stringify({"data": output})
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:

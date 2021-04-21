@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T15:54:00Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Applications
@@ -997,6 +997,9 @@ zabbix_export:
                   value: '{#HOST}'
                 -
                   tag: OSD
+                  value: 'osd.{#OSDNAME}'
+                -
+                  tag: 'OSD class'
                   value: '{#CLASS}'
             -
               name: 'Ceph: [osd.{#OSDNAME}] OSD in'
@@ -1021,6 +1024,9 @@ zabbix_export:
                   value: '{#HOST}'
                 -
                   tag: OSD
+                  value: 'osd.{#OSDNAME}'
+                -
+                  tag: 'OSD class'
                   value: '{#CLASS}'
             -
               name: 'Ceph: [osd.{#OSDNAME}] OSD latency apply'
@@ -1045,6 +1051,9 @@ zabbix_export:
                   value: '{#HOST}'
                 -
                   tag: OSD
+                  value: 'osd.{#OSDNAME}'
+                -
+                  tag: 'OSD class'
                   value: '{#CLASS}'
             -
               name: 'Ceph: [osd.{#OSDNAME}] OSD latency commit'
@@ -1069,6 +1078,9 @@ zabbix_export:
                   value: '{#HOST}'
                 -
                   tag: OSD
+                  value: 'osd.{#OSDNAME}'
+                -
+                  tag: 'OSD class'
                   value: '{#CLASS}'
             -
               name: 'Ceph: [osd.{#OSDNAME}] OSD PGs'
@@ -1090,6 +1102,9 @@ zabbix_export:
                   value: '{#HOST}'
                 -
                   tag: OSD
+                  value: 'osd.{#OSDNAME}'
+                -
+                  tag: 'OSD class'
                   value: '{#CLASS}'
             -
               name: 'Ceph: [osd.{#OSDNAME}] OSD up'
@@ -1114,6 +1129,9 @@ zabbix_export:
                   value: '{#HOST}'
                 -
                   tag: OSD
+                  value: 'osd.{#OSDNAME}'
+                -
+                  tag: 'OSD class'
                   value: '{#CLASS}'
               trigger_prototypes:
                 -
@@ -1175,8 +1193,11 @@ zabbix_export:
                 -
                   tag: Ceph
                 -
-                  tag: Pool
+                  tag: 'CRUSH rule'
                   value: '{#CRUSHRULE}'
+                -
+                  tag: Pool
+                  value: '{#POOLNAME}'
             -
               name: 'Ceph: [{#POOLNAME}] Max available'
               type: DEPENDENT
@@ -1196,8 +1217,11 @@ zabbix_export:
                 -
                   tag: Ceph
                 -
-                  tag: Pool
+                  tag: 'CRUSH rule'
                   value: '{#CRUSHRULE}'
+                -
+                  tag: Pool
+                  value: '{#POOLNAME}'
             -
               name: 'Ceph: [{#POOLNAME}] Pool objects'
               type: DEPENDENT
@@ -1216,8 +1240,11 @@ zabbix_export:
                 -
                   tag: Ceph
                 -
-                  tag: Pool
+                  tag: 'CRUSH rule'
                   value: '{#CRUSHRULE}'
+                -
+                  tag: Pool
+                  value: '{#POOLNAME}'
             -
               name: 'Ceph: [{#POOLNAME}] Pool Percent Used'
               type: DEPENDENT
@@ -1237,8 +1264,11 @@ zabbix_export:
                 -
                   tag: Ceph
                 -
-                  tag: Pool
+                  tag: 'CRUSH rule'
                   value: '{#CRUSHRULE}'
+                -
+                  tag: Pool
+                  value: '{#POOLNAME}'
             -
               name: 'Ceph: [{#POOLNAME}] Pool Read bandwidth'
               type: DEPENDENT
@@ -1263,8 +1293,11 @@ zabbix_export:
                 -
                   tag: Ceph
                 -
-                  tag: Pool
+                  tag: 'CRUSH rule'
                   value: '{#CRUSHRULE}'
+                -
+                  tag: Pool
+                  value: '{#POOLNAME}'
             -
               name: 'Ceph: [{#POOLNAME}] Pool Read operations'
               type: DEPENDENT
@@ -1289,8 +1322,11 @@ zabbix_export:
                 -
                   tag: Ceph
                 -
-                  tag: Pool
+                  tag: 'CRUSH rule'
                   value: '{#CRUSHRULE}'
+                -
+                  tag: Pool
+                  value: '{#POOLNAME}'
             -
               name: 'Ceph: [{#POOLNAME}] Pool RAW Used'
               type: DEPENDENT
@@ -1310,8 +1346,11 @@ zabbix_export:
                 -
                   tag: Ceph
                 -
-                  tag: Pool
+                  tag: 'CRUSH rule'
                   value: '{#CRUSHRULE}'
+                -
+                  tag: Pool
+                  value: '{#POOLNAME}'
             -
               name: 'Ceph: [{#POOLNAME}] Pool Write bandwidth'
               type: DEPENDENT
@@ -1336,8 +1375,11 @@ zabbix_export:
                 -
                   tag: Ceph
                 -
-                  tag: Pool
+                  tag: 'CRUSH rule'
                   value: '{#CRUSHRULE}'
+                -
+                  tag: Pool
+                  value: '{#POOLNAME}'
             -
               name: 'Ceph: [{#POOLNAME}] Pool Write operations'
               type: DEPENDENT
@@ -1362,8 +1404,11 @@ zabbix_export:
                 -
                   tag: Ceph
                 -
-                  tag: Pool
+                  tag: 'CRUSH rule'
                   value: '{#CRUSHRULE}'
+                -
+                  tag: Pool
+                  value: '{#POOLNAME}'
           graph_prototypes:
             -
               name: 'Ceph: [{#POOLNAME}] Pool bandwidth'

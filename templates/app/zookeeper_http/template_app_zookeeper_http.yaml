@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:14:47Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Applications
@@ -794,8 +794,13 @@ zabbix_export:
                 key: zookeeper.get_connections_stats
               tags:
                 -
-                  tag: Zookeeper
+                  tag: Client
+                  value: '{#CLIENT}'
+                -
+                  tag: Type
                   value: '{#TYPE}'
+                -
+                  tag: Zookeeper
             -
               name: 'Zookeeper client {#TYPE} [{#CLIENT}]: Latency, max'
               type: DEPENDENT
@@ -814,8 +819,13 @@ zabbix_export:
                 key: zookeeper.get_connections_stats
               tags:
                 -
-                  tag: Zookeeper
+                  tag: Client
+                  value: '{#CLIENT}'
+                -
+                  tag: Type
                   value: '{#TYPE}'
+                -
+                  tag: Zookeeper
             -
               name: 'Zookeeper client {#TYPE} [{#CLIENT}]: Latency, min'
               type: DEPENDENT
@@ -834,8 +844,13 @@ zabbix_export:
                 key: zookeeper.get_connections_stats
               tags:
                 -
-                  tag: Zookeeper
+                  tag: Client
+                  value: '{#CLIENT}'
+                -
+                  tag: Type
                   value: '{#TYPE}'
+                -
+                  tag: Zookeeper
             -
               name: 'Zookeeper client {#TYPE} [{#CLIENT}]: Outstanding requests'
               type: DEPENDENT
@@ -852,8 +867,13 @@ zabbix_export:
                 key: zookeeper.get_connections_stats
               tags:
                 -
-                  tag: Zookeeper
+                  tag: Client
+                  value: '{#CLIENT}'
+                -
+                  tag: Type
                   value: '{#TYPE}'
+                -
+                  tag: Zookeeper
             -
               name: 'Zookeeper client {#TYPE} [{#CLIENT}]: Packets received per sec'
               type: DEPENDENT
@@ -875,8 +895,13 @@ zabbix_export:
                 key: zookeeper.get_connections_stats
               tags:
                 -
-                  tag: Zookeeper
+                  tag: Client
+                  value: '{#CLIENT}'
+                -
+                  tag: Type
                   value: '{#TYPE}'
+                -
+                  tag: Zookeeper
             -
               name: 'Zookeeper client {#TYPE} [{#CLIENT}]: Packets sent per sec'
               type: DEPENDENT
@@ -898,8 +923,13 @@ zabbix_export:
                 key: zookeeper.get_connections_stats
               tags:
                 -
-                  tag: Zookeeper
+                  tag: Client
+                  value: '{#CLIENT}'
+                -
+                  tag: Type
                   value: '{#TYPE}'
+                -
+                  tag: Zookeeper
           graph_prototypes:
             -
               name: 'Zookeeper client {#TYPE} [{#CLIENT}]: Latency'

@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:15:19Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Databases
@@ -55,11 +55,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Data
-                  value: region
+                  tag: 'Data region'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Data region {#JMXNAME}: Checkpoint buffer size'
               type: JMX
@@ -73,11 +75,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Data
-                  value: region
+                  tag: 'Data region'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Data region {#JMXNAME}: Dirty pages'
               type: JMX
@@ -90,11 +94,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Data
-                  value: region
+                  tag: 'Data region'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Data region {#JMXNAME}: Eviction, rate'
               type: JMX
@@ -108,11 +114,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Data
-                  value: region
+                  tag: 'Data region'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>0'
@@ -133,11 +141,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Data
-                  value: region
+                  tag: 'Data region'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Data region {#JMXNAME}: Offheap size'
               type: JMX
@@ -151,11 +161,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Data
-                  value: region
+                  tag: 'Data region'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Data region {#JMXNAME}: Offheap used size'
               type: JMX
@@ -169,11 +181,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Data
-                  value: region
+                  tag: 'Data region'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Data region {#JMXNAME}: Pages fill factor'
               type: JMX
@@ -187,11 +201,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Data
-                  value: region
+                  tag: 'Data region'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Data region {#JMXNAME}: Pages replace, rate'
               type: JMX
@@ -205,11 +221,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Data
-                  value: region
+                  tag: 'Data region'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>0'
@@ -229,11 +247,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Data
-                  value: region
+                  tag: 'Data region'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Data region {#JMXNAME}: Used checkpoint buffer size'
               type: JMX
@@ -247,11 +267,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Data
-                  value: region
+                  tag: 'Data region'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
           trigger_prototypes:
             -
               expression: '{Ignite by JMX:jmx["{#JMXOBJ}",UsedCheckpointBufferSize].min(5m)}/{Ignite by JMX:jmx["{#JMXOBJ}",CheckpointBufferSize].last()}*100>{$IGNITE.CHECKPOINT.PUSED.MAX.HIGH}'
@@ -353,7 +375,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Jobs cancelled, current'
               type: JMX
@@ -366,7 +390,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: PME duration, current'
               type: JMX
@@ -380,7 +406,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)} > {$IGNITE.PME.DURATION.MAX.HIGH}'
@@ -408,7 +436,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Threads count, current'
               type: JMX
@@ -421,7 +451,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
               trigger_prototypes:
                 -
                   expression: '{min(15m)} > {$IGNITE.THREADS.COUNT.MAX.WARN}'
@@ -444,7 +476,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
               trigger_prototypes:
                 -
                   expression: '{min(15m)} > {$IGNITE.JOBS.QUEUE.MAX.WARN}'
@@ -464,7 +498,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Jobs cancelled, rate'
               type: JMX
@@ -483,7 +519,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Jobs executed, rate'
               type: JMX
@@ -502,7 +540,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Jobs rejects, rate'
               type: JMX
@@ -521,7 +561,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
           graph_prototypes:
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Jobs current state'
@@ -611,7 +653,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Nodes, Baseline'
               type: JMX
@@ -629,7 +673,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Nodes, Client'
               type: JMX
@@ -647,7 +693,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Nodes, total'
               type: JMX
@@ -665,7 +713,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Nodes, Server'
               type: JMX
@@ -683,7 +733,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
               trigger_prototypes:
                 -
                   expression: '{change()}>0'
@@ -753,7 +805,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -780,7 +834,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Uptime'
               type: JMX
@@ -799,7 +855,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
               trigger_prototypes:
                 -
                   expression: '{nodata(10m)}=1'
@@ -831,7 +889,7 @@ zabbix_export:
                   
                   return JSON.stringify(data)
         -
-          name: 'TCP Ccmmunication SPI metrics'
+          name: 'TCP Communication SPI metrics'
           type: JMX
           key: 'jmx.discovery[beans,"org.apache:group=SPIs,name=TcpCommunicationSpi,*"]'
           delay: 30m
@@ -850,7 +908,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Communication messages received, rate'
               type: JMX
@@ -870,7 +930,30 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
+            -
+              name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Communication reconnect rate'
+              type: JMX
+              key: 'jmx["{#JMXOBJ}",ReconnectCount]'
+              history: 7d
+              value_type: FLOAT
+              username: '{$IGNITE.USER}'
+              password: '{$IGNITE.PASSWORD}'
+              description: 'Gets maximum number of reconnect attempts used when establishing connection with remote nodes per second.'
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Ignite
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Communication messages sent, rate'
               type: JMX
@@ -890,7 +973,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
           graph_prototypes:
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Communication messages rate'
@@ -950,7 +1035,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -970,7 +1057,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Nodes failed'
               type: JMX
@@ -983,7 +1072,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Nodes joined'
               type: JMX
@@ -996,7 +1087,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Nodes left'
               type: JMX
@@ -1009,7 +1102,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Discovery reconnect, rate'
               type: JMX
@@ -1028,7 +1123,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: TotalProcessedMessages'
               type: JMX
@@ -1048,7 +1145,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Discovery messages received, rate'
               type: JMX
@@ -1068,7 +1167,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
           graph_prototypes:
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Discovery messages rate'
@@ -1121,7 +1222,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Transactions owner, current'
               type: JMX
@@ -1134,7 +1237,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Transactions committed, rate'
               type: JMX
@@ -1148,7 +1253,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Transactions holding lock, current'
               type: JMX
@@ -1161,7 +1268,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Transactions rolledback, rate'
               type: JMX
@@ -1175,7 +1284,9 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: instance
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
           graph_prototypes:
             -
               name: 'Ignite [{#JMXIGNITEINSTANCENAME}]: Transactions'
@@ -1253,11 +1364,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXNAME}]: Caches'
               type: JMX
@@ -1276,11 +1389,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -1299,11 +1414,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
               trigger_prototypes:
                 -
                   expression: '{max(30m)}>0'
@@ -1322,11 +1439,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXNAME}]: Local node entries, renting'
               type: JMX
@@ -1338,11 +1457,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXNAME}]: Local node partitions, renting'
               type: JMX
@@ -1354,11 +1475,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXNAME}]: Partition copies, max'
               type: JMX
@@ -1370,11 +1493,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXNAME}]: Partition copies, min'
               type: JMX
@@ -1386,11 +1511,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
               trigger_prototypes:
                 -
                   expression: '{max(30m)}=0'
@@ -1407,11 +1534,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
           trigger_prototypes:
             -
               expression: '{Ignite by JMX:jmx["{#JMXOBJ}",Backups].min(5m)}>={Ignite by JMX:jmx["{#JMXOBJ}",MinimumNumberOfPartitionCopies].max(5m)}'
@@ -1498,10 +1627,12 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
                 -
-                  tag: Thread
-                  value: pool
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
+                -
+                  tag: 'Thread pool'
+                  value: '{#JMXNAME}'
             -
               name: 'Thread pool [{#JMXNAME}]: Pool size, max'
               type: JMX
@@ -1515,10 +1646,12 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
                 -
-                  tag: Thread
-                  value: pool
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
+                -
+                  tag: 'Thread pool'
+                  value: '{#JMXNAME}'
             -
               name: 'Thread pool [{#JMXNAME}]: Pool size'
               type: JMX
@@ -1532,10 +1665,12 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
                 -
-                  tag: Thread
-                  value: pool
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
+                -
+                  tag: 'Thread pool'
+                  value: '{#JMXNAME}'
             -
               name: 'Thread pool [{#JMXNAME}]: Queue size'
               type: JMX
@@ -1549,10 +1684,12 @@ zabbix_export:
               tags:
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
                 -
-                  tag: Thread
-                  value: pool
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
+                -
+                  tag: 'Thread pool'
+                  value: '{#JMXNAME}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)} > {$IGNITE.THREAD.QUEUE.MAX.WARN:"{#JMXNAME}"}'
@@ -1639,11 +1776,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXGROUP}]: Cache hits, pct'
               type: JMX
@@ -1657,11 +1796,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXGROUP}]: Cache misses, pct'
               type: JMX
@@ -1675,11 +1816,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXGROUP}]: Cache puts, rate'
               type: JMX
@@ -1698,11 +1841,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXGROUP}]: Cache removals, rate'
               type: JMX
@@ -1721,11 +1866,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXGROUP}]: Cache size'
               type: JMX
@@ -1738,11 +1885,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXGROUP}]: Cache transaction commits, rate'
               type: JMX
@@ -1761,11 +1910,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXGROUP}]: Cache transaction rollbacks, rate'
               type: JMX
@@ -1784,11 +1935,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
             -
               name: 'Cache group [{#JMXGROUP}]: Cache heap entries'
               type: JMX
@@ -1806,11 +1959,13 @@ zabbix_export:
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
-                  tag: Cache
-                  value: group
+                  tag: 'Cache group'
+                  value: '{#JMXNAME}'
                 -
                   tag: Ignite
-                  value: '[{#JMXIGNITEINSTANCENAME}]'
+                -
+                  tag: Instance
+                  value: '{#JMXIGNITEINSTANCENAME}'
           trigger_prototypes:
             -
               expression: '{Ignite by JMX:jmx["{#JMXOBJ}",CacheSize].last()}={Ignite by JMX:jmx["{#JMXOBJ}",HeapEntriesCount].last()}'

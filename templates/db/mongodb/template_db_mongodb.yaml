@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:15:17Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Databases
@@ -287,7 +287,7 @@ zabbix_export:
           description: 'Returns usage statistics for each collection.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'MongoDB: Connections, active'
           type: DEPENDENT
@@ -832,7 +832,7 @@ zabbix_export:
           description: 'Returns status of the replica set, using data polled from the oplog.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'MongoDB: Ping'
           key: 'mongodb.ping["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
@@ -864,7 +864,7 @@ zabbix_export:
           description: 'Returns the replica set status from the point of view of the member where the method is run.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'MongoDB: Get server status'
           key: 'mongodb.server.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
@@ -874,7 +874,7 @@ zabbix_export:
           description: 'Returns a database’s state.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'MongoDB: Uptime'
           type: DEPENDENT
@@ -990,9 +990,13 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Capped'
               type: DEPENDENT
@@ -1019,9 +1023,13 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Objects, count'
               type: DEPENDENT
@@ -1038,9 +1046,13 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Capped: max number'
               type: DEPENDENT
@@ -1059,9 +1071,13 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Capped: max size'
               type: DEPENDENT
@@ -1080,9 +1096,13 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Indexes'
               type: DEPENDENT
@@ -1099,9 +1119,13 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: commands, ms/s'
               type: DEPENDENT
@@ -1124,9 +1148,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: commands, rate'
               type: DEPENDENT
@@ -1148,9 +1176,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: getmore, ms/s'
               type: DEPENDENT
@@ -1173,9 +1205,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: getmore, rate'
               type: DEPENDENT
@@ -1197,9 +1233,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: insert, ms/s'
               type: DEPENDENT
@@ -1222,9 +1262,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: insert, rate'
               type: DEPENDENT
@@ -1246,9 +1290,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: queries, ms/s'
               type: DEPENDENT
@@ -1271,9 +1319,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: queries, rate'
               type: DEPENDENT
@@ -1295,9 +1347,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: remove, ms/s'
               type: DEPENDENT
@@ -1320,9 +1376,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: remove, rate'
               type: DEPENDENT
@@ -1344,9 +1404,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: total, ms/s'
               type: DEPENDENT
@@ -1369,9 +1433,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: total, rate'
               type: DEPENDENT
@@ -1393,9 +1461,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: update, ms/s'
               type: DEPENDENT
@@ -1418,9 +1490,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Operations: update, rate'
               type: DEPENDENT
@@ -1442,9 +1518,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Read lock, ms/s'
               type: DEPENDENT
@@ -1467,9 +1547,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Read lock, rate'
               type: DEPENDENT
@@ -1491,9 +1575,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Size'
               type: DEPENDENT
@@ -1511,9 +1599,13 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Get collection stats {#DBNAME}.{#COLLECTION}'
               key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
@@ -1523,7 +1615,7 @@ zabbix_export:
               description: 'Returns a variety of storage statistics for a given collection.'
               tags:
                 -
-                  tag: Zabbix_raw_items
+                  tag: 'Zabbix raw items'
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Storage size'
               type: DEPENDENT
@@ -1541,9 +1633,13 @@ zabbix_export:
                 key: 'mongodb.collection.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}","{#COLLECTION}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Write lock, ms/s'
               type: DEPENDENT
@@ -1566,9 +1662,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Write lock, rate'
               type: DEPENDENT
@@ -1590,9 +1690,13 @@ zabbix_export:
                 key: 'mongodb.collections.usage["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Collection
+                  value: '{#COLLECTION}'
                 -
-                  tag: '{#DBNAME}.{#COLLECTION}'
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
+                  tag: MongoDB
           graph_prototypes:
             -
               name: 'MongoDB {#DBNAME}.{#COLLECTION}: Locks'
@@ -1748,9 +1852,10 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}: Size, data'
               type: DEPENDENT
@@ -1768,9 +1873,10 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}: Extents'
               type: DEPENDENT
@@ -1788,9 +1894,10 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}: Size, file'
               type: DEPENDENT
@@ -1809,9 +1916,10 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}: Size, index'
               type: DEPENDENT
@@ -1829,9 +1937,10 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}: Objects, count'
               type: DEPENDENT
@@ -1848,9 +1957,10 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}: Objects, avg size'
               type: DEPENDENT
@@ -1869,9 +1979,10 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
             -
               name: 'MongoDB {#DBNAME}: Get db stats {#DBNAME}'
               key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
@@ -1881,7 +1992,7 @@ zabbix_export:
               description: 'Returns statistics reflecting the database system’s state.'
               tags:
                 -
-                  tag: Zabbix_raw_items
+                  tag: 'Zabbix raw items'
             -
               name: 'MongoDB {#DBNAME}: Size, storage'
               type: DEPENDENT
@@ -1899,9 +2010,10 @@ zabbix_export:
                 key: 'mongodb.db.stats["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}","{#DBNAME}"]'
               tags:
                 -
-                  tag: MongoDB
+                  tag: Database
+                  value: '{#DBNAME}'
                 -
-                  tag: '{#DBNAME}'
+                  tag: MongoDB
           graph_prototypes:
             -
               name: 'MongoDB {#DBNAME}: Collections stats'
@@ -1973,9 +2085,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Apply batches, rate'
               type: DEPENDENT
@@ -1998,9 +2110,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Apply ops, rate'
               type: DEPENDENT
@@ -2023,9 +2135,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Buffer'
               type: DEPENDENT
@@ -2043,9 +2155,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Buffer, max size'
               type: DEPENDENT
@@ -2064,9 +2176,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Buffer, size'
               type: DEPENDENT
@@ -2085,9 +2197,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Replication lag'
               type: DEPENDENT
@@ -2107,9 +2219,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MONGODB.REPL.LAG.MAX.WARN}'
@@ -2138,9 +2250,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Network getmores, ms/s'
               type: DEPENDENT
@@ -2164,9 +2276,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Network getmores, rate'
               type: DEPENDENT
@@ -2189,9 +2301,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Network ops, rate'
               type: DEPENDENT
@@ -2214,9 +2326,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Network readers created, rate'
               type: DEPENDENT
@@ -2239,9 +2351,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB {#RS_NAME}: Oplog time diff'
               type: DEPENDENT
@@ -2260,9 +2372,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Preload docs, ms/s'
               type: DEPENDENT
@@ -2286,9 +2398,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Preload docs, rate'
               type: DEPENDENT
@@ -2311,9 +2423,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Preload indexes, ms/s'
               type: DEPENDENT
@@ -2337,9 +2449,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Preload indexes, rate'
               type: DEPENDENT
@@ -2362,9 +2474,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Node state'
               type: DEPENDENT
@@ -2388,9 +2500,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
               trigger_prototypes:
                 -
                   expression: '{change()}=1'
@@ -2421,9 +2533,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Unhealthy replicas'
               type: DEPENDENT
@@ -2454,9 +2566,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
             -
               name: 'MongoDB: Number of unhealthy replicas'
               type: DEPENDENT
@@ -2479,9 +2591,9 @@ zabbix_export:
               tags:
                 -
                   tag: MongoDB
-                  value: Replica
                 -
-                  tag: '{#RS_NAME}'
+                  tag: 'Replica Set'
+                  value: '{#RS_NAME}'
           trigger_prototypes:
             -
               expression: '{MongoDB node by Zabbix Agent 2:mongodb.rs.unhealthy_count[{#RS_NAME}].last()}>0  and {MongoDB node by Zabbix Agent 2:mongodb.rs.unhealthy[{#RS_NAME}].strlen()}>0'

@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:15:15Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Databases
@@ -43,7 +43,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Scheduler: Low priority commands total, rate'
           type: DEPENDENT
@@ -65,7 +67,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Scheduler: Normal priority commands total, rate'
           type: DEPENDENT
@@ -87,7 +91,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Coprocessor: Requests, rate'
           type: DEPENDENT
@@ -110,7 +116,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Coprocessor: Errors, rate'
           type: DEPENDENT
@@ -134,7 +142,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
           triggers:
             -
               expression: '{min(5m)}>{$TIKV.COPOCESSOR.ERRORS.MAX.WARN}'
@@ -162,7 +172,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Coprocessor: Response size, rate'
           type: DEPENDENT
@@ -185,7 +197,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: CPU util'
           type: DEPENDENT
@@ -212,7 +226,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Bytes read'
           type: DEPENDENT
@@ -231,7 +247,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Bytes write'
           type: DEPENDENT
@@ -250,7 +268,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Store size'
           type: DEPENDENT
@@ -269,7 +289,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Get instance metrics'
           type: HTTP_AGENT
@@ -290,7 +312,7 @@ zabbix_export:
           url: '{$TIKV.URL}:{$TIKV.PORT}/metrics'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'TiKV: Total query, rate'
           type: DEPENDENT
@@ -313,7 +335,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Total query errors, rate'
           type: DEPENDENT
@@ -337,7 +361,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Server: failure messages total, rate'
           type: DEPENDENT
@@ -360,7 +386,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Regions, count'
           type: DEPENDENT
@@ -377,7 +405,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Regions, leader'
           type: DEPENDENT
@@ -394,7 +424,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: RSS memory usage'
           type: DEPENDENT
@@ -413,7 +445,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Scheduler: Commands total, rate'
           type: DEPENDENT
@@ -437,7 +471,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Snapshot: Pending tasks'
           type: DEPENDENT
@@ -454,7 +490,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
           triggers:
             -
               expression: '{min(5m)}>{$TIKV.PENDING_COMMANDS.MAX.WARN}'
@@ -486,7 +524,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Snapshot: Applying'
           type: DEPENDENT
@@ -503,7 +543,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Snapshot: Receiving'
           type: DEPENDENT
@@ -520,7 +562,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Snapshot: Sending'
           type: DEPENDENT
@@ -537,7 +581,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Storage: commands total, rate'
           type: DEPENDENT
@@ -559,7 +605,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Available size'
           type: DEPENDENT
@@ -578,7 +626,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Capacity size'
           type: DEPENDENT
@@ -597,7 +647,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
         -
           name: 'TiKV: Uptime'
           type: DEPENDENT
@@ -622,7 +674,9 @@ zabbix_export:
             key: tikv.get_metrics
           tags:
             -
-              tag: TiKVnode
+              tag: Node
+            -
+              tag: TiKV
           triggers:
             -
               expression: '{last()}<10m'
@@ -660,7 +714,9 @@ zabbix_export:
                 key: tikv.get_metrics
               tags:
                 -
-                  tag: TiKVnode
+                  tag: Node
+                -
+                  tag: TiKV
             -
               name: 'TiKV: Coprocessor: {#REQ_TYPE} errors, rate'
               type: DEPENDENT
@@ -684,7 +740,9 @@ zabbix_export:
                 key: tikv.get_metrics
               tags:
                 -
-                  tag: TiKVnode
+                  tag: Node
+                -
+                  tag: TiKV
             -
               name: 'TiKV: Coprocessor: {#REQ_TYPE} RocksDB ops, rate'
               type: DEPENDENT
@@ -707,7 +765,9 @@ zabbix_export:
                 key: tikv.get_metrics
               tags:
                 -
-                  tag: TiKVnode
+                  tag: Node
+                -
+                  tag: TiKV
             -
               name: 'TiKV: Coprocessor: {#REQ_TYPE} scan keys, rate'
               type: DEPENDENT
@@ -730,7 +790,9 @@ zabbix_export:
                 key: tikv.get_metrics
               tags:
                 -
-                  tag: TiKVnode
+                  tag: Node
+                -
+                  tag: TiKV
           master_item:
             key: tikv.get_metrics
           preprocessing:
@@ -743,10 +805,10 @@ zabbix_export:
               parameters:
                 - |
                   output = JSON.parse(value).map(function(item){
-                       return {
-                           "{#REQ_TYPE}": item.labels.req,
-                       }})
-                   return JSON.stringify({"data": output})
+                  return {
+                  "{#REQ_TYPE}": item.labels.req,
+                  }})
+                  return JSON.stringify({"data": output})
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:
@@ -777,7 +839,9 @@ zabbix_export:
                 key: tikv.get_metrics
               tags:
                 -
-                  tag: TiKVnode
+                  tag: Node
+                -
+                  tag: TiKV
           master_item:
             key: tikv.get_metrics
           preprocessing:
@@ -790,10 +854,10 @@ zabbix_export:
               parameters:
                 - |
                   output = JSON.parse(value).map(function(item){
-                       return {
-                           "{#TYPE}": item.labels.type,
-                       }})
-                   return JSON.stringify({"data": output})
+                  return {
+                  "{#TYPE}": item.labels.type,
+                  }})
+                  return JSON.stringify({"data": output})
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:
@@ -828,7 +892,9 @@ zabbix_export:
                 key: tikv.get_metrics
               tags:
                 -
-                  tag: TiKVnode
+                  tag: Node
+                -
+                  tag: TiKV
           master_item:
             key: tikv.get_metrics
           preprocessing:
@@ -841,14 +907,14 @@ zabbix_export:
               parameters:
                 - |
                   var lookup = {},
-                      result = [];
+                  result = [];
                   
                   JSON.parse(value).forEach(function (item) {
-                      var stage = item.labels.stage;
-                      if (!(lookup[stage])) {
-                          lookup[stage] = 1;
-                          result.push({ "{#STAGE}": stage });
-                      }
+                  var stage = item.labels.stage;
+                  if (!(lookup[stage])) {
+                  lookup[stage] = 1;
+                  result.push({ "{#STAGE}": stage });
+                  }
                   })
                   
                   return JSON.stringify(result);
@@ -884,11 +950,14 @@ zabbix_export:
                 key: tikv.get_metrics
               tags:
                 -
-                  tag: TiKVnode
+                  tag: Node
+                -
+                  tag: TiKV
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$TIKV.STORE.ERRORS.MAX.WARN}'
                   name: 'TiKV: Store_id {#STORE_ID}: Too many failure messages "{#TYPE}" (over {$TIKV.STORE.ERRORS.MAX.WARN} in 5m)'
+                  discover: NO_DISCOVER
                   priority: WARNING
                   description: 'Indicates that the remote TiKV cannot be connected.'
           master_item:
@@ -904,12 +973,12 @@ zabbix_export:
               parameters:
                 - |
                   output = JSON.parse(value).map(function(item){
-                       return {
-                           "{#STORE_ID}": item.labels.store_id,
-                           "{#TYPE}": item.labels.type,
+                  return {
+                  "{#STORE_ID}": item.labels.store_id,
+                  "{#TYPE}": item.labels.type,
                   
-                       }})
-                   return JSON.stringify({"data": output})
+                  }})
+                  return JSON.stringify({"data": output})
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:
@@ -956,16 +1025,6 @@ zabbix_export:
           macro: '{$TIKV.URL}'
           value: localhost
           description: 'TiKV server URL'
-      valuemaps:
-        -
-          name: 'Service state'
-          mappings:
-            -
-              value: '0'
-              newvalue: Down
-            -
-              value: '1'
-              newvalue: Up
   graphs:
     -
       name: 'TiKV: Scheduler priority commands rate'

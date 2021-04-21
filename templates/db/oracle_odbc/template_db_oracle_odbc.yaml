@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:15:16Z'
+  date: '2021-04-21T06:05:06Z'
   groups:
     -
       name: Templates/Databases
@@ -44,7 +44,7 @@ zabbix_export:
           password: '{$ORACLE.PASSWORD}'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Get ASM stats'
           type: ODBC
@@ -64,7 +64,7 @@ zabbix_export:
           description: 'Get ASM disk groups stats.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Get CDB and No-CDB info'
           type: ODBC
@@ -84,7 +84,7 @@ zabbix_export:
           description: 'Get info about CDB and  No-CDB databases on instansce.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Get instance state'
           type: ODBC
@@ -107,7 +107,7 @@ zabbix_export:
           description: 'The item gets state of the current instance.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Get PDB info'
           type: ODBC
@@ -125,7 +125,7 @@ zabbix_export:
           description: 'Get info about PDB databases on instansce.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Get system metrics'
           type: ODBC
@@ -197,7 +197,7 @@ zabbix_export:
           description: 'The item gets system metric values.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Get tablespaces stats'
           type: ODBC
@@ -274,7 +274,7 @@ zabbix_export:
           description: 'Get tablespaces stats.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Oracle: Service''s TCP port state'
           key: 'net.tcp.service[tcp,{HOST.CONN},{$ORACLE.PORT}]'
@@ -1624,8 +1624,9 @@ zabbix_export:
                 key: 'db.odbc.get[get_archivelog_stat,"{$ORACLE.DSN}"]'
               tags:
                 -
+                  tag: Archivelog
+                -
                   tag: Oracle
-                  value: Archivelog
             -
               name: 'Archivelog ''{#DEST_NAME}'': Last sequence'
               type: DEPENDENT
@@ -1642,8 +1643,9 @@ zabbix_export:
                 key: 'db.odbc.get[get_archivelog_stat,"{$ORACLE.DSN}"]'
               tags:
                 -
+                  tag: Archivelog
+                -
                   tag: Oracle
-                  value: Archivelog
             -
               name: 'Archivelog ''{#DEST_NAME}'': Status'
               type: DEPENDENT
@@ -1666,8 +1668,9 @@ zabbix_export:
                 key: 'db.odbc.get[get_archivelog_stat,"{$ORACLE.DSN}"]'
               tags:
                 -
+                  tag: Archivelog
+                -
                   tag: Oracle
-                  value: Archivelog
               trigger_prototypes:
                 -
                   expression: '{last()}<2'
@@ -1701,8 +1704,9 @@ zabbix_export:
                 key: 'db.odbc.get[get_asm_stat,"{$ORACLE.DSN}"]'
               tags:
                 -
+                  tag: ASM
+                -
                   tag: Oracle
-                  value: ASM
             -
               name: 'ASM ''{#DG_NAME}'': Total size'
               type: DEPENDENT
@@ -1720,8 +1724,9 @@ zabbix_export:
                 key: 'db.odbc.get[get_asm_stat,"{$ORACLE.DSN}"]'
               tags:
                 -
+                  tag: ASM
+                -
                   tag: Oracle
-                  value: ASM
             -
               name: 'ASM ''{#DG_NAME}'': Free size'
               type: DEPENDENT
@@ -1740,8 +1745,9 @@ zabbix_export:
                 key: 'db.odbc.get[get_asm_stat,"{$ORACLE.DSN}"]'
               tags:
                 -
+                  tag: ASM
+                -
                   tag: Oracle
-                  value: ASM
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ORACLE.ASM.USED.PCT.MAX.HIGH}'
@@ -1817,6 +1823,8 @@ zabbix_export:
               tags:
                 -
                   tag: Oracle
+                -
+                  tag: Type
                   value: '{#TYPE}'
             -
               name: 'Oracle Database ''{#DBNAME}'': Log mode'
@@ -1841,6 +1849,8 @@ zabbix_export:
               tags:
                 -
                   tag: Oracle
+                -
+                  tag: Type
                   value: '{#TYPE}'
             -
               name: 'Oracle Database ''{#DBNAME}'': Open status'
@@ -1865,6 +1875,8 @@ zabbix_export:
               tags:
                 -
                   tag: Oracle
+                -
+                  tag: Type
                   value: '{#TYPE}'
               trigger_prototypes:
                 -
@@ -1905,6 +1917,8 @@ zabbix_export:
               tags:
                 -
                   tag: Oracle
+                -
+                  tag: Type
                   value: '{#TYPE}'
               trigger_prototypes:
                 -
@@ -1964,7 +1978,8 @@ zabbix_export:
               tags:
                 -
                   tag: Oracle
-                  value: PDB
+                -
+                  tag: PDB
               trigger_prototypes:
                 -
                   expression: '{diff()}=1'
@@ -2019,8 +2034,13 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
             -
               name: 'Oracle TBS ''{#TABLESPACE}'': Tablespace free, bytes'
               type: DEPENDENT
@@ -2038,8 +2058,13 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
             -
               name: 'Oracle TBS ''{#TABLESPACE}'': Tablespace MAX size, bytes'
               type: DEPENDENT
@@ -2057,8 +2082,13 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
             -
               name: 'Oracle TBS ''{#TABLESPACE}'': Open status'
               type: DEPENDENT
@@ -2077,8 +2107,13 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1'
@@ -2112,8 +2147,13 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
             -
               name: 'Oracle TBS ''{#TABLESPACE}'': Tablespace usage, percent'
               type: DEPENDENT
@@ -2132,8 +2172,13 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ORACLE.TBS.USED.PCT.MAX.HIGH}'
@@ -2165,8 +2210,13 @@ zabbix_export:
                 key: 'db.odbc.get[tablespace_stats,"{$ORACLE.DSN}"]'
               tags:
                 -
-                  tag: Oracle
+                  tag: Contents
                   value: '{#CONTENTS}'
+                -
+                  tag: Oracle
+                -
+                  tag: Tablespace
+                  value: '{#TABLESPACE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$ORACLE.TBS.USED.PCT.MAX.WARN}'

@@ -22,8 +22,7 @@ zabbix_export:
           ipmi_sensor: 'BB +1.8V SM'
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
           triggers:
             -
               expression: '{last()}<1.597 or {last()}>2.019'
@@ -54,8 +53,7 @@ zabbix_export:
           ipmi_sensor: 'BB +3.3V'
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
           triggers:
             -
               expression: '{last()}<2.876 or {last()}>3.729'
@@ -86,8 +84,7 @@ zabbix_export:
           ipmi_sensor: 'BB +3.3V STBY'
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
           triggers:
             -
               expression: '{last()}<2.876 or {last()}>3.729'
@@ -111,8 +108,7 @@ zabbix_export:
           ipmi_sensor: 'BB +5.0V'
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
           triggers:
             -
               expression: '{last()}<4.362 or {last()}>5.663'
@@ -143,8 +139,7 @@ zabbix_export:
           ipmi_sensor: 'BB Ambient Temp'
           tags:
             -
-              tag: Application
-              value: Temperature
+              tag: Temperature
           triggers:
             -
               expression: '{last()}<5 or {last()}>66'
@@ -166,8 +161,7 @@ zabbix_export:
           ipmi_sensor: power
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
           triggers:
             -
               expression: '{last()}=0'
@@ -183,8 +177,7 @@ zabbix_export:
           ipmi_sensor: 'Processor Vcc'
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
         -
           name: 'System Fan 3'
           type: IPMI
@@ -195,8 +188,7 @@ zabbix_export:
           ipmi_sensor: 'System Fan 3'
           tags:
             -
-              tag: Application
-              value: Fans
+              tag: Fans
   graphs:
     -
       name: 'Fan speed and ambient temperature'

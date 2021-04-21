@@ -22,8 +22,7 @@ zabbix_export:
           ipmi_sensor: 'Baseboard Temp'
           tags:
             -
-              tag: Application
-              value: Temperature
+              tag: Temperature
           triggers:
             -
               expression: '{last()}<5 or {last()}>90'
@@ -54,8 +53,7 @@ zabbix_export:
           ipmi_sensor: 'BB +1.05V PCH'
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
           triggers:
             -
               expression: '{last()}<0.953 or {last()}>1.149'
@@ -86,8 +84,7 @@ zabbix_export:
           ipmi_sensor: 'BB +1.1V P1 Vccp'
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
           triggers:
             -
               expression: '{last()}<0.683 or {last()}>1.543'
@@ -118,8 +115,7 @@ zabbix_export:
           ipmi_sensor: 'BB +1.5V P1 DDR3'
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
           triggers:
             -
               expression: '{last()}<1.362 or {last()}>1.635'
@@ -150,8 +146,7 @@ zabbix_export:
           ipmi_sensor: 'BB +3.3V'
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
           triggers:
             -
               expression: '{last()}<2.982 or {last()}>3.625'
@@ -182,8 +177,7 @@ zabbix_export:
           ipmi_sensor: 'BB +3.3V STBY'
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
           triggers:
             -
               expression: '{last()}<2.982 or {last()}>3.625'
@@ -207,8 +201,7 @@ zabbix_export:
           ipmi_sensor: 'BB +5.0V'
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
           triggers:
             -
               expression: '{last()}<4.471 or {last()}>5.538'
@@ -239,8 +232,7 @@ zabbix_export:
           ipmi_sensor: 'Front Panel Temp'
           tags:
             -
-              tag: Application
-              value: Temperature
+              tag: Temperature
           triggers:
             -
               expression: '{last()}<0 or {last()}>48'
@@ -269,8 +261,7 @@ zabbix_export:
           ipmi_sensor: power
           tags:
             -
-              tag: Application
-              value: Voltage
+              tag: Voltage
           triggers:
             -
               expression: '{last()}=0'
@@ -286,8 +277,7 @@ zabbix_export:
           ipmi_sensor: 'System Fan 2'
           tags:
             -
-              tag: Application
-              value: Fans
+              tag: Fans
           triggers:
             -
               expression: '{last()}<324'
@@ -318,8 +308,7 @@ zabbix_export:
           ipmi_sensor: 'System Fan 3'
           tags:
             -
-              tag: Application
-              value: Fans
+              tag: Fans
           triggers:
             -
               expression: '{last()}<324'

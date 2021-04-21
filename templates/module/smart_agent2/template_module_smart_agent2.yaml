@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:15:08Z'
+  date: '2021-04-21T06:41:25Z'
   groups:
     -
       name: Templates/Modules
@@ -26,7 +26,7 @@ zabbix_export:
           value_type: TEXT
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
       discovery_rules:
         -
           name: 'Attribute discovery'
@@ -53,7 +53,10 @@ zabbix_export:
                 key: smart.disk.get
               tags:
                 -
-                  tag: '{#DISKTYPE}'
+                  tag: Disktype
+                  value: '{#DISKTYPE}'
+                -
+                  tag: Name
                   value: '{#NAME}'
               trigger_prototypes:
                 -
@@ -107,7 +110,10 @@ zabbix_export:
                 key: smart.disk.get
               tags:
                 -
-                  tag: '{#DISKTYPE}'
+                  tag: Disktype
+                  value: '{#DISKTYPE}'
+                -
+                  tag: Name
                   value: '{#NAME}'
             -
               name: 'SMART [{#NAME}]: Power on hours'
@@ -126,7 +132,10 @@ zabbix_export:
                 key: smart.disk.get
               tags:
                 -
-                  tag: '{#DISKTYPE}'
+                  tag: Disktype
+                  value: '{#DISKTYPE}'
+                -
+                  tag: Name
                   value: '{#NAME}'
             -
               name: 'SMART [{#NAME}]: Media errors'
@@ -148,7 +157,10 @@ zabbix_export:
                 key: smart.disk.get
               tags:
                 -
-                  tag: '{#DISKTYPE}'
+                  tag: Disktype
+                  value: '{#DISKTYPE}'
+                -
+                  tag: Name
                   value: '{#NAME}'
             -
               name: 'SMART [{#NAME}]: Device model'
@@ -171,7 +183,10 @@ zabbix_export:
                 key: smart.disk.get
               tags:
                 -
-                  tag: '{#DISKTYPE}'
+                  tag: Disktype
+                  value: '{#DISKTYPE}'
+                -
+                  tag: Name
                   value: '{#NAME}'
             -
               name: 'SMART [{#NAME}]: Percentage used'
@@ -194,7 +209,10 @@ zabbix_export:
                 key: smart.disk.get
               tags:
                 -
-                  tag: '{#DISKTYPE}'
+                  tag: Disktype
+                  value: '{#DISKTYPE}'
+                -
+                  tag: Name
                   value: '{#NAME}'
               trigger_prototypes:
                 -
@@ -222,7 +240,10 @@ zabbix_export:
                 key: smart.disk.get
               tags:
                 -
-                  tag: '{#DISKTYPE}'
+                  tag: Disktype
+                  value: '{#DISKTYPE}'
+                -
+                  tag: Name
                   value: '{#NAME}'
               trigger_prototypes:
                 -
@@ -252,7 +273,10 @@ zabbix_export:
                 key: smart.disk.get
               tags:
                 -
-                  tag: '{#DISKTYPE}'
+                  tag: Disktype
+                  value: '{#DISKTYPE}'
+                -
+                  tag: Name
                   value: '{#NAME}'
               trigger_prototypes:
                 -
@@ -289,7 +313,10 @@ zabbix_export:
                 key: smart.disk.get
               tags:
                 -
-                  tag: '{#DISKTYPE}'
+                  tag: Disktype
+                  value: '{#DISKTYPE}'
+                -
+                  tag: Name
                   value: '{#NAME}'
               trigger_prototypes:
                 -
@@ -305,6 +332,7 @@ zabbix_export:
                   -
                     macro: '{#DISKTYPE}'
                     value: nvme
+                    operator: NOT_MATCHES_REGEX
                     formulaid: A
               operations:
                 -

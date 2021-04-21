@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:14:46Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Applications
@@ -145,7 +145,7 @@ zabbix_export:
           url: '{$ETCD.SCHEME}://{HOST.CONN}:{$ETCD.PORT}/metrics'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Etcd: Get version'
           type: HTTP_AGENT
@@ -156,7 +156,7 @@ zabbix_export:
           url: '{$ETCD.SCHEME}://{HOST.CONN}:{$ETCD.PORT}/version'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Etcd: RPCs received per second'
           type: DEPENDENT
@@ -1122,8 +1122,8 @@ zabbix_export:
                 key: etcd.get_metrics
               tags:
                 -
-                  tag: Etcd
-                  value: peer
+                  tag: 'Etcd peer'
+                  value: '{#ETCD.PEER}'
             -
               name: 'Etcd: Etcd peer {#ETCD.PEER}: Bytes sent'
               type: DEPENDENT
@@ -1149,8 +1149,8 @@ zabbix_export:
                 key: etcd.get_metrics
               tags:
                 -
-                  tag: Etcd
-                  value: peer
+                  tag: 'Etcd peer'
+                  value: '{#ETCD.PEER}'
             -
               name: 'Etcd: Etcd peer {#ETCD.PEER}: Receive failures failures'
               type: DEPENDENT
@@ -1176,8 +1176,8 @@ zabbix_export:
                 key: etcd.get_metrics
               tags:
                 -
-                  tag: Etcd
-                  value: peer
+                  tag: 'Etcd peer'
+                  value: '{#ETCD.PEER}'
             -
               name: 'Etcd: Etcd peer {#ETCD.PEER}: Send failures'
               type: DEPENDENT
@@ -1203,8 +1203,8 @@ zabbix_export:
                 key: etcd.get_metrics
               tags:
                 -
-                  tag: Etcd
-                  value: peer
+                  tag: 'Etcd peer'
+                  value: '{#ETCD.PEER}'
           master_item:
             key: etcd.get_metrics
           lld_macro_paths:

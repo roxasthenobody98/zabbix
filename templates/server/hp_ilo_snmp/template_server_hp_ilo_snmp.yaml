@@ -48,8 +48,7 @@ zabbix_export:
                 - 6h
           tags:
             -
-              tag: Application
-              value: Temperature
+              tag: Temperature
         -
           name: 'Hardware model name'
           type: SNMP_AGENT
@@ -69,8 +68,7 @@ zabbix_export:
                 - 6h
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
         -
           name: 'Hardware serial number'
           type: SNMP_AGENT
@@ -90,8 +88,7 @@ zabbix_export:
                 - 6h
           tags:
             -
-              tag: Application
-              value: Inventory
+              tag: Inventory
           triggers:
             -
               expression: '{diff()}=1 and {strlen()}>0'
@@ -118,8 +115,7 @@ zabbix_export:
                 - 6h
           tags:
             -
-              tag: Application
-              value: Status
+              tag: Status
           triggers:
             -
               expression: '{count(#1,{$HEALTH_CRIT_STATUS},eq)}=1'
@@ -184,8 +180,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Disk arrays'
+                  tag: 'Disk arrays'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$DISK_ARRAY_CACHE_BATTERY_CRIT_STATUS:"failed"},eq)}=1 or {count(#1,{$DISK_ARRAY_CACHE_BATTERY_CRIT_STATUS:"capacitorFailed"},eq)}=1'
@@ -251,8 +246,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Disk arrays'
+                  tag: 'Disk arrays'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$DISK_ARRAY_CACHE_CRIT_STATUS:"cacheModCriticalFailure"},eq)}=1'
@@ -315,8 +309,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Disk arrays'
+                  tag: 'Disk arrays'
             -
               name: '{#CNTLR_LOCATION}: Disk array controller status'
               type: SNMP_AGENT
@@ -337,8 +330,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Disk arrays'
+                  tag: 'Disk arrays'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$DISK_ARRAY_CRIT_STATUS},eq)}=1'
@@ -393,8 +385,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$FAN_CRIT_STATUS},eq)}=1'
@@ -447,8 +438,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
             -
               name: '{#DISK_LOCATION}: Physical disk model name'
               type: SNMP_AGENT
@@ -470,8 +460,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
             -
               name: '{#DISK_LOCATION}: Physical disk serial number'
               type: SNMP_AGENT
@@ -493,8 +482,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1 and {strlen()}>0'
@@ -530,8 +518,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
             -
               name: '{#DISK_LOCATION}: Physical disk S.M.A.R.T. status'
               type: SNMP_AGENT
@@ -554,8 +541,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$DISK_SMART_FAIL_STATUS:"replaceDrive"},eq)}=1 or {count(#1,{$DISK_SMART_FAIL_STATUS:"replaceDriveSSDWearOut"},eq)}=1'
@@ -591,8 +577,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Physical disks'
+                  tag: 'Physical disks'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$DISK_FAIL_STATUS},eq)}=1'
@@ -646,8 +631,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Power supply'
+                  tag: 'Power supply'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$PSU_CRIT_STATUS},eq)}=1'
@@ -713,8 +697,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{last()} = 1'
@@ -751,8 +734,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
             -
               name: '{#SNMPINDEX}: Temperature'
               type: SNMP_AGENT
@@ -771,8 +753,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
           preprocessing:
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
@@ -825,8 +806,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{last()} = 1'
@@ -862,8 +842,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
           preprocessing:
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
@@ -912,8 +891,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{last()} = 1'
@@ -949,8 +927,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
           preprocessing:
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
@@ -999,8 +976,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{last()} = 1'
@@ -1036,8 +1012,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
           preprocessing:
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
@@ -1086,8 +1061,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{last()} = 1'
@@ -1123,8 +1097,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
           preprocessing:
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
@@ -1173,8 +1146,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{last()} = 1'
@@ -1210,8 +1182,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
           preprocessing:
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
@@ -1260,8 +1231,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{last()} = 1'
@@ -1297,8 +1267,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
           preprocessing:
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
@@ -1330,8 +1299,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Virtual disks'
+                  tag: 'Virtual disks'
             -
               name: 'Disk {#SNMPINDEX}({#DISK_NAME}): Disk size'
               type: SNMP_AGENT
@@ -1358,8 +1326,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Virtual disks'
+                  tag: 'Virtual disks'
             -
               name: 'Disk {#SNMPINDEX}({#DISK_NAME}): Status'
               type: SNMP_AGENT
@@ -1376,8 +1343,7 @@ zabbix_export:
                     - 6h
               tags:
                 -
-                  tag: Application
-                  value: 'Virtual disks'
+                  tag: 'Virtual disks'
               trigger_prototypes:
                 -
                   expression: '{count(#1,{$VDISK_CRIT_STATUS},eq)}=1'

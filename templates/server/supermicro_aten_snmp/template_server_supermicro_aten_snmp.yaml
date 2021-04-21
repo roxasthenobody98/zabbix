@@ -53,8 +53,7 @@ zabbix_export:
                 This string should include the name of the manufacturer, the product name and the version of the interface hardware/software.
               tags:
                 -
-                  tag: Application
-                  value: Fans
+                  tag: Fans
         -
           name: 'Temperature Discovery'
           type: SNMP_AGENT
@@ -88,8 +87,7 @@ zabbix_export:
                 This string should include the name of the manufacturer, the product name and the version of the interface hardware/software.
               tags:
                 -
-                  tag: Application
-                  value: Temperature
+                  tag: Temperature
               trigger_prototypes:
                 -
                   expression: '{avg(5m)}>{$TEMP_CRIT:""}'

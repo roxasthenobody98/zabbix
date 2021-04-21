@@ -23,11 +23,9 @@ zabbix_export:
           description: 'The processor load is calculated as system CPU load divided by number of CPU cores.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
           triggers:
             -
               expression: '{avg(5m)}>5'
@@ -41,11 +39,9 @@ zabbix_export:
           description: 'The processor load is calculated as system CPU load divided by number of CPU cores.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'Processor load (15 min average per core)'
           key: 'system.cpu.load[percpu,avg15]'
@@ -54,11 +50,9 @@ zabbix_export:
           description: 'The processor load is calculated as system CPU load divided by number of CPU cores.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'CPU idle time'
           key: 'system.cpu.util[,idle]'
@@ -68,11 +62,9 @@ zabbix_export:
           description: 'The time the CPU has spent doing nothing.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'CPU nice time'
           key: 'system.cpu.util[,nice]'
@@ -82,11 +74,9 @@ zabbix_export:
           description: 'The time the CPU has spent running users'' processes that have been niced.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'CPU system time'
           key: 'system.cpu.util[,system]'
@@ -96,11 +86,9 @@ zabbix_export:
           description: 'The time the CPU has spent running the kernel and its processes.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'CPU user time'
           key: 'system.cpu.util[,user]'
@@ -110,11 +98,9 @@ zabbix_export:
           description: 'The time the CPU has spent running users'' processes that are not niced.'
           tags:
             -
-              tag: Application
-              value: CPU
+              tag: CPU
             -
-              tag: Application
-              value: Performance
+              tag: Performance
         -
           name: 'Host name'
           key: system.hostname
@@ -126,11 +112,9 @@ zabbix_export:
           inventory_link: NAME
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
             -
-              tag: Application
-              value: OS
+              tag: OS
           triggers:
             -
               expression: '{diff(0)}>0'
@@ -143,11 +127,9 @@ zabbix_export:
           units: unixtime
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
             -
-              tag: Application
-              value: OS
+              tag: OS
         -
           name: 'System information'
           key: system.uname
@@ -159,11 +141,9 @@ zabbix_export:
           inventory_link: OS
           tags:
             -
-              tag: Application
-              value: General
+              tag: General
             -
-              tag: Application
-              value: OS
+              tag: OS
           triggers:
             -
               expression: '{diff(0)}>0'
@@ -176,11 +156,9 @@ zabbix_export:
           description: 'Number of users who are currently logged in.'
           tags:
             -
-              tag: Application
-              value: OS
+              tag: OS
             -
-              tag: Application
-              value: Security
+              tag: Security
         -
           name: 'Checksum of /etc/passwd'
           key: 'vfs.file.cksum[/etc/passwd]'
@@ -188,8 +166,7 @@ zabbix_export:
           history: 1w
           tags:
             -
-              tag: Application
-              value: Security
+              tag: Security
           triggers:
             -
               expression: '{diff(0)}>0'
@@ -203,8 +180,7 @@ zabbix_export:
           description: 'Available memory is defined as free+cached+buffers memory.'
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
           triggers:
             -
               expression: '{last()}<20M'
@@ -218,8 +194,7 @@ zabbix_export:
           units: B
           tags:
             -
-              tag: Application
-              value: Memory
+              tag: Memory
       discovery_rules:
         -
           name: 'Network interface discovery'
@@ -249,8 +224,7 @@ zabbix_export:
                     - '8'
               tags:
                 -
-                  tag: Application
-                  value: 'Network interfaces'
+                  tag: 'Network interfaces'
             -
               name: 'Outgoing network traffic on {#IFNAME}'
               key: 'net.if.out[{#IFNAME}]'
@@ -267,8 +241,7 @@ zabbix_export:
                     - '8'
               tags:
                 -
-                  tag: Application
-                  value: 'Network interfaces'
+                  tag: 'Network interfaces'
           graph_prototypes:
             -
               name: 'Network traffic on {#IFNAME}'
@@ -307,8 +280,7 @@ zabbix_export:
               units: '%'
               tags:
                 -
-                  tag: Application
-                  value: Filesystems
+                  tag: Filesystems
               trigger_prototypes:
                 -
                   expression: '{last()}<20'
@@ -321,8 +293,7 @@ zabbix_export:
               units: B
               tags:
                 -
-                  tag: Application
-                  value: Filesystems
+                  tag: Filesystems
             -
               name: 'Free disk space on {#FSNAME} (percentage)'
               key: 'vfs.fs.size[{#FSNAME},pfree]'
@@ -331,8 +302,7 @@ zabbix_export:
               units: '%'
               tags:
                 -
-                  tag: Application
-                  value: Filesystems
+                  tag: Filesystems
               trigger_prototypes:
                 -
                   expression: '{last()}<20'
@@ -346,8 +316,7 @@ zabbix_export:
               units: B
               tags:
                 -
-                  tag: Application
-                  value: Filesystems
+                  tag: Filesystems
             -
               name: 'Used disk space on {#FSNAME}'
               key: 'vfs.fs.size[{#FSNAME},used]'
@@ -355,8 +324,7 @@ zabbix_export:
               units: B
               tags:
                 -
-                  tag: Application
-                  value: Filesystems
+                  tag: Filesystems
           graph_prototypes:
             -
               name: 'Disk space usage {#FSNAME}'

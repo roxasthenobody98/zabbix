@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:15:18Z'
+  date: '2021-04-21T06:11:40Z'
   groups:
     -
       name: Templates/Databases
@@ -97,7 +97,7 @@ zabbix_export:
           description: 'Collect archive status metrics'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'Autovacuum: Count of autovacuum workers'
           key: 'pgsql.autovacuum.count["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -262,6 +262,33 @@ zabbix_export:
             -
               tag: PostgreSQL
         -
+          name: 'Checkpoint: Checkpoint sync time'
+          type: DEPENDENT
+          key: pgsql.bgwriter.checkpoint_sync_time.rate
+          delay: '0'
+          history: 7d
+          value_type: FLOAT
+          units: s
+          description: 'Total amount of time that has been spent in the portion of checkpoint processing where files are synchronized to disk'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.checkpoint_sync_time
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.001'
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+          master_item:
+            key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
+          tags:
+            -
+              tag: PostgreSQL
+        -
           name: 'Checkpoint: Checkpoint write time'
           type: DEPENDENT
           key: pgsql.bgwriter.checkpoint_write_time.rate
@@ -311,33 +338,6 @@ zabbix_export:
             -
               tag: PostgreSQL
         -
-          name: 'Checkpoint: Checkpoint sync time'
-          type: DEPENDENT
-          key: pgsql.bgwriter.sync_time.rate
-          delay: '0'
-          history: 7d
-          value_type: FLOAT
-          units: s
-          description: 'Total amount of time that has been spent in the portion of checkpoint processing where files are synchronized to disk'
-          preprocessing:
-            -
-              type: JSONPATH
-              parameters:
-                - $.sync_time
-            -
-              type: MULTIPLIER
-              parameters:
-                - '0.001'
-            -
-              type: CHANGE_PER_SECOND
-              parameters:
-                - ''
-          master_item:
-            key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
-          tags:
-            -
-              tag: PostgreSQL
-        -
           name: 'PostgreSQL: Get bgwriter'
           key: 'pgsql.bgwriter["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           history: '0'
@@ -346,10 +346,10 @@ zabbix_export:
           description: 'https://www.postgresql.org/docs/12/monitoring-stats.html#PG-STAT-BGWRITER-VIEW'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'PostgreSQL: Cache hit'
-          key: 'pgsql.cache.hit["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
+          key: 'pgsql.cache.hit["{$PG.URI}"]'
           history: 7d
           value_type: FLOAT
           units: '%'
@@ -547,7 +547,18 @@ zabbix_export:
             https://www.postgresql.org/docs/current/monitoring-stats.html#PG-STAT-ACTIVITY-VIEW
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
+        -
+          name: 'PostgreSQL: Custom queries'
+          key: 'pgsql.custom.query["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}","{$PG.DATABASE}",""]'
+          history: 1h
+          trends: '0'
+          status: DISABLED
+          value_type: TEXT
+          description: 'Execute custom queries from file *.sql'
+          tags:
+            -
+              tag: PostgreSQL
         -
           name: 'Dbstat: Hit blocks read'
           type: DEPENDENT
@@ -660,7 +671,7 @@ zabbix_export:
               parameters:
                 - ''
               error_handler: CUSTOM_VALUE
-              error_handler_params: 'ZBX_NOTSUPPORTED: Checksum failures metric is supported only in PostgreSQL 12 or higher.'
+              error_handler_params: '-1'
           master_item:
             key: 'pgsql.dbstat.sum["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
           tags:
@@ -934,7 +945,7 @@ zabbix_export:
             https://www.postgresql.org/docs/current/monitoring-stats.html#PG-STAT-DATABASE-VIEW
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'PostgreSQL: Get dbstat'
           key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -946,7 +957,7 @@ zabbix_export:
             https://www.postgresql.org/docs/current/monitoring-stats.html#PG-STAT-DATABASE-VIEW
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'PostgreSQL: Get locks'
           key: 'pgsql.locks["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -958,10 +969,10 @@ zabbix_export:
             https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-TABLES
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'PostgreSQL: Age of oldest xid'
-          key: 'pgsql.oldest.xid["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
+          key: 'pgsql.oldest.xid["{$PG.URI}","{$PG.USER}"]'
           history: 7d
           value_type: FLOAT
           description: 'Age of oldest xid.'
@@ -1016,6 +1027,16 @@ zabbix_export:
           tags:
             -
               tag: PostgreSQL
+        -
+          name: 'PostgreSQL: Get replication'
+          key: 'pgsql.replication.process["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
+          history: '0'
+          trends: '0'
+          value_type: TEXT
+          description: 'Collect metrics from the pg_stat_replication, which contains information about the WAL sender process, showing statistics about replication to that sender''s connected standby server.'
+          tags:
+            -
+              tag: 'Zabbix raw items'
         -
           name: 'Replication: Recovery role'
           key: 'pgsql.replication.recovery_role["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
@@ -1077,7 +1098,7 @@ zabbix_export:
           description: 'Collect WAL metrics'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'WAL: Bytes written'
           type: DEPENDENT
@@ -1116,7 +1137,7 @@ zabbix_export:
             -
               name: 'DB {#DBNAME}: Database age'
               key: 'pgsql.db.age["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}","{#DBNAME}"]'
-              delay: 15m
+              delay: 10m
               history: 7d
               description: 'Database age'
               tags:
@@ -1273,15 +1294,9 @@ zabbix_export:
                   parameters:
                     - '$[''{#DBNAME}''].checksum_failures'
                 -
-                  type: MATCHES_REGEX
-                  parameters:
-                    - '^\d*$'
-                -
                   type: CHANGE_PER_SECOND
                   parameters:
                     - ''
-                  error_handler: CUSTOM_VALUE
-                  error_handler_params: 'ZBX_NOTSUPPORTED: Checksum failures metric is supported only in PostgreSQL 12 or higher.'
               master_item:
                 key: 'pgsql.dbstat["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
               tags:
@@ -1939,6 +1954,102 @@ zabbix_export:
                   item:
                     host: 'PostgreSQL Agent 2'
                     key: 'pgsql.db.size["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}","{#DBNAME}"]'
+        -
+          name: 'Replication Discovery'
+          key: 'pgsql.replication.process.discovery["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
+          delay: 15m
+          filter:
+            evaltype: AND
+            conditions:
+              -
+                macro: '{#APPLICATION}'
+                value: '{$PG.LLD.FILTER.APPLICATION}'
+                formulaid: A
+          item_prototypes:
+            -
+              name: 'Application {#APPLICATION}: Replication flush lag'
+              type: DEPENDENT
+              key: 'pgsql.replication.process.flush_lag["{#APPLICATION}"]'
+              delay: '0'
+              history: 7d
+              value_type: FLOAT
+              units: s
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - '$[''{#APPLICATION}''].flush_lag'
+              master_item:
+                key: 'pgsql.replication.process["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
+              tags:
+                -
+                  tag: Application
+                  value: '{#APPLICATION}'
+                -
+                  tag: PostgreSQL
+            -
+              name: 'Application {#APPLICATION}: Replication replay lag'
+              type: DEPENDENT
+              key: 'pgsql.replication.process.replay_lag["{#APPLICATION}"]'
+              delay: '0'
+              history: 7d
+              value_type: FLOAT
+              units: s
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - '$[''{#APPLICATION}''].replay_lag'
+              master_item:
+                key: 'pgsql.replication.process["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
+              tags:
+                -
+                  tag: Application
+                  value: '{#APPLICATION}'
+                -
+                  tag: PostgreSQL
+            -
+              name: 'Application {#APPLICATION}: Replication write lag'
+              type: DEPENDENT
+              key: 'pgsql.replication.process.write_lag["{#APPLICATION}"]'
+              delay: '0'
+              history: 7d
+              value_type: FLOAT
+              units: s
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - '$[''{#APPLICATION}''].write_lag'
+              master_item:
+                key: 'pgsql.replication.process["{$PG.URI}","{$PG.USER}","{$PG.PASSWORD}"]'
+              tags:
+                -
+                  tag: Application
+                  value: '{#APPLICATION}'
+                -
+                  tag: PostgreSQL
+          graph_prototypes:
+            -
+              name: 'Application {#APPLICATION}: Replication lag'
+              graph_items:
+                -
+                  color: 1A7C11
+                  item:
+                    host: 'PostgreSQL Agent 2'
+                    key: 'pgsql.replication.process.flush_lag["{#APPLICATION}"]'
+                -
+                  sortorder: '1'
+                  color: 2774A4
+                  item:
+                    host: 'PostgreSQL Agent 2'
+                    key: 'pgsql.replication.process.replay_lag["{#APPLICATION}"]'
+                -
+                  sortorder: '2'
+                  color: F63100
+                  item:
+                    host: 'PostgreSQL Agent 2'
+                    key: 'pgsql.replication.process.write_lag["{#APPLICATION}"]'
       macros:
         -
           macro: '{$PG.CONFLICTS.MAX.WARN}'
@@ -1947,8 +2058,14 @@ zabbix_export:
           macro: '{$PG.CONN_TOTAL_PCT.MAX.WARN}'
           value: '90'
         -
+          macro: '{$PG.DATABASE}'
+          value: postgres
+        -
           macro: '{$PG.DEADLOCKS.MAX.WARN}'
           value: '0'
+        -
+          macro: '{$PG.LLD.FILTER.APPLICATION}'
+          value: (.+)
         -
           macro: '{$PG.LLD.FILTER.DBNAME}'
           value: (.+)
@@ -1974,10 +2091,6 @@ zabbix_export:
                   fields:
                     -
                       type: INTEGER
-                      name: source_type
-                      value: '2'
-                    -
-                      type: INTEGER
                       name: columns
                       value: '1'
                     -
@@ -1996,10 +2109,6 @@ zabbix_export:
                   width: '12'
                   height: '12'
                   fields:
-                    -
-                      type: INTEGER
-                      name: source_type
-                      value: '2'
                     -
                       type: INTEGER
                       name: columns
@@ -2022,10 +2131,6 @@ zabbix_export:
                   fields:
                     -
                       type: INTEGER
-                      name: source_type
-                      value: '2'
-                    -
-                      type: INTEGER
                       name: columns
                       value: '1'
                     -
@@ -2045,10 +2150,6 @@ zabbix_export:
                   width: '12'
                   height: '12'
                   fields:
-                    -
-                      type: INTEGER
-                      name: source_type
-                      value: '2'
                     -
                       type: INTEGER
                       name: columns

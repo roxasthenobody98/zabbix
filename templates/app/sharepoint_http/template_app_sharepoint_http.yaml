@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:14:53Z'
+  date: '2021-04-18T22:48:55Z'
   groups:
     -
       name: Templates/Applications
@@ -15,6 +15,9 @@ zabbix_export:
         Create a new host. 
         Define macros according to your Sharepoint web portal.
         It is recommended to fill in the values of the filter macros to avoid getting redundant data.
+        
+        
+        Template tooling version used: 0.38
       groups:
         -
           name: Templates/Applications
@@ -38,7 +41,7 @@ zabbix_export:
                     data: {}
                 };
             
-                var req = new HttpRequest();
+                var req = new CurlHttpRequest();
             
                 var out = {};
                 var queue = [];
@@ -52,8 +55,8 @@ zabbix_export:
                 var child_files;
                 var obj_iter_file;
             
-                req.addHeader('Accept: application/json; odata=verbose');
-                req.setHttpAuth(HTTPAUTH_NTLM, params.user, params.password);
+                req.AddHeader('Accept: application/json; odata=verbose');
+                req.SetHttpAuth(HTTPAUTH_NTLM, params.user, params.password);
                 queue.push({
                     patch: params.root,
                     json: []
@@ -64,9 +67,9 @@ zabbix_export:
                     obj_iter_by_name = out;
                     cpath = node.json.slice()
             
-                    current_folder = JSON.parse(req.get(encodeURI(params.url + "/_api/web/GetFolderByServerRelativeUrl('" + node.patch.replace("'", "''") + "')")));
+                    current_folder = JSON.parse(req.Get(encodeURI(params.url + "/_api/web/GetFolderByServerRelativeUrl('" + node.patch.replace("'", "''") + "')")));
             
-                    result.status = req.getStatus();
+                    result.status = req.Status();
                     if (result.status != 200) {
                         throw result.status;
                     }
@@ -84,7 +87,7 @@ zabbix_export:
                         data: {}
                     }
             
-                    child_folders = JSON.parse(req.get(encodeURI(params.url + "/_api/web/GetFolderByServerRelativeUrl('" + node.patch.replace("'", "''") + "')/Folders")));
+                    child_folders = JSON.parse(req.Get(encodeURI(params.url + "/_api/web/GetFolderByServerRelativeUrl('" + node.patch.replace("'", "''") + "')/Folders")));
             
                     cpath.push(current_folder.d.Name, "data");
                     child_folders.d.results.forEach(function (dir) {
@@ -94,7 +97,7 @@ zabbix_export:
                         });
                     });
             
-                    child_files = JSON.parse(req.get(encodeURI(params.url + "/_api/web/GetFolderByServerRelativeUrl('" + node.patch.replace("'", "''") + "')/Files")));
+                    child_files = JSON.parse(req.Get(encodeURI(params.url + "/_api/web/GetFolderByServerRelativeUrl('" + node.patch.replace("'", "''") + "')/Files")));
                     child_files.d.results.forEach(function (file) {
                         obj_iter_by_name[current_folder.d.Name].data[file.Name] = {
                             meta: {
@@ -118,7 +121,7 @@ zabbix_export:
                 result.data = out;
             
             } catch (error) {
-                Zabbix.log(3, "Sharepoint fs scan failed: " + params.url + " Error: " + error);
+                Zabbix.Log(3, "Sharepoint fs scan failed: " + params.url + " Error: " + error);
                 if (!Number.isInteger(error))
                     result.status = 520;
             }
@@ -148,8 +151,7 @@ zabbix_export:
               value: '{$SHAREPOINT.USER}'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: 'Zabbix raw items'
         -
           name: 'Sharepoint: Get directory structure: Status'
           type: DEPENDENT
@@ -174,8 +176,7 @@ zabbix_export:
             key: sharepoint.get_dir
           tags:
             -
-              tag: Application
-              value: Sharepoint
+              tag: Sharepoint
           triggers:
             -
               expression: '{last()}<>200'
@@ -205,8 +206,7 @@ zabbix_export:
             key: sharepoint.get_dir
           tags:
             -
-              tag: Application
-              value: Sharepoint
+              tag: Sharepoint
           triggers:
             -
               expression: '{last()}>2000'
@@ -242,8 +242,7 @@ zabbix_export:
           request_method: HEAD
           tags:
             -
-              tag: Application
-              value: Sharepoint
+              tag: Sharepoint
           triggers:
             -
               expression: '{last()}>"{$SHAREPOINT.MAX_HEALT_SCORE}"'
@@ -261,7 +260,7 @@ zabbix_export:
                 var params = JSON.parse(value);
                 var result = [];
             
-                var req = new HttpRequest();
+                var req = new CurlHttpRequest();
             
                 var queue = [];
             
@@ -270,8 +269,8 @@ zabbix_export:
                 var child_folders;
                 var child_files;
             
-                req.addHeader('Accept: application/json; odata=verbose');
-                req.setHttpAuth(HTTPAUTH_NTLM, params.user, params.password);
+                req.AddHeader('Accept: application/json; odata=verbose');
+                req.SetHttpAuth(HTTPAUTH_NTLM, params.user, params.password);
                 queue.push({
                     patch: params.root,
                     json_query: '$["data"]'
@@ -280,9 +279,9 @@ zabbix_export:
                 while (queue.length) {
                     node = queue.pop();
             
-                    current_folder = JSON.parse(req.get(encodeURI(params.url + "/_api/web/GetFolderByServerRelativeUrl('" + node.patch.replace("'", "''") + "')")));
+                    current_folder = JSON.parse(req.Get(encodeURI(params.url + "/_api/web/GetFolderByServerRelativeUrl('" + node.patch.replace("'", "''") + "')")));
             
-                    result.status = req.getStatus();
+                    result.status = req.Status();
                     if (result.status != 200) {
                         throw result.status;
                     }
@@ -297,7 +296,7 @@ zabbix_export:
                         '{#SHAREPOINT.LLD.MODIFIED}': Math.round(new Date(current_folder.d.TimeLastModified).getTime() / 1000)
                     });
             
-                    child_folders = JSON.parse(req.get(encodeURI(params.url + "/_api/web/GetFolderByServerRelativeUrl('" + node.patch.replace("'", "''") + "')/Folders")));
+                    child_folders = JSON.parse(req.Get(encodeURI(params.url + "/_api/web/GetFolderByServerRelativeUrl('" + node.patch.replace("'", "''") + "')/Folders")));
             
                     child_folders.d.results.forEach(function (dir) {
                         queue.push({
@@ -306,7 +305,7 @@ zabbix_export:
                         });
                     });
             
-                    child_files = JSON.parse(req.get(encodeURI(params.url + "/_api/web/GetFolderByServerRelativeUrl('" + node.patch.replace("'", "''") + "')/Files")));
+                    child_files = JSON.parse(req.Get(encodeURI(params.url + "/_api/web/GetFolderByServerRelativeUrl('" + node.patch.replace("'", "''") + "')/Files")));
                     child_files.d.results.forEach(function (file) {
                         result.push({
                             '{#SHAREPOINT.LLD.NAME}': file.Name,
@@ -321,7 +320,7 @@ zabbix_export:
                 }
             
             } catch (error) {
-                Zabbix.log(3, "Sharepoint fs discovery failed: " + params.url + " Error: " + error);
+                Zabbix.Log(3, "Sharepoint fs discovery failed: " + params.url + " Error: " + error);
                 return "Sharepoint fs discovery failed: " + params.url + " Error: " + error;
             }
             
@@ -381,8 +380,10 @@ zabbix_export:
                 key: sharepoint.get_dir
               tags:
                 -
-                  tag: Application
-                  value: 'Sharepoint object [{#SHAREPOINT.LLD.FULL_PATH}]"'
+                  tag: Object
+                  value: '{#SHAREPOINT.LLD.FULL_PATH}'
+                -
+                  tag: Sharepoint
             -
               name: 'Sharepoint: Modified ({#SHAREPOINT.LLD.FULL_PATH})'
               type: DEPENDENT
@@ -407,8 +408,10 @@ zabbix_export:
                 key: sharepoint.get_dir
               tags:
                 -
-                  tag: Application
-                  value: 'Sharepoint object [{#SHAREPOINT.LLD.FULL_PATH}]"'
+                  tag: Object
+                  value: '{#SHAREPOINT.LLD.FULL_PATH}'
+                -
+                  tag: Sharepoint
               trigger_prototypes:
                 -
                   expression: '{diff()}=1'
@@ -441,8 +444,10 @@ zabbix_export:
                 key: sharepoint.get_dir
               tags:
                 -
-                  tag: Application
-                  value: 'Sharepoint object [{#SHAREPOINT.LLD.FULL_PATH}]"'
+                  tag: Object
+                  value: '{#SHAREPOINT.LLD.FULL_PATH}'
+                -
+                  tag: Sharepoint
           parameters:
             -
               name: password
@@ -461,6 +466,23 @@ zabbix_export:
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:
                 - 6h
+      httptests:
+        -
+          name: 'Sharepoint: Front page'
+          delay: 10m
+          authentication: NTLM
+          http_user: '{$SHAREPOINT.USER}'
+          http_password: '{$SHAREPOINT.PASSWORD}'
+          steps:
+            -
+              name: Login
+              url: '{$SHAREPOINT.URL}'
+              status_codes: '200'
+          tags:
+            -
+              tag: 'Front page'
+            -
+              tag: Sharepoint
       macros:
         -
           macro: '{$SHAREPOINT.GET_INTERVAL}'
@@ -484,7 +506,7 @@ zabbix_export:
         -
           macro: '{$SHAREPOINT.LLD.FILTER.TYPE.MATCHES}'
           value: FOLDER
-          description: 'Filter of discoverable types'
+          description: 'Filter of discoverable types.'
         -
           macro: '{$SHAREPOINT.LLD.FILTER.TYPE.NOT_MATCHES}'
           value: CHANGE_IF_NEEDED

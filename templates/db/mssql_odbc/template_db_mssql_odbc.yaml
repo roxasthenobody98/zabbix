@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-04-14T13:15:16Z'
+  date: '2021-04-20T20:33:39Z'
   groups:
     -
       name: Templates/Databases
@@ -75,7 +75,7 @@ zabbix_export:
           description: 'The item gets server global status information.'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'MSSQL: Auto-param attempts per second'
           type: DEPENDENT
@@ -130,7 +130,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'MSSQL: Average latch wait time raw'
           type: DEPENDENT
@@ -148,7 +148,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'MSSQL: Total average wait time'
           type: CALCULATED
@@ -187,7 +187,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'MSSQL: Total average wait time raw'
           type: DEPENDENT
@@ -205,7 +205,7 @@ zabbix_export:
             key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
           tags:
             -
-              tag: Zabbix_raw_items
+              tag: 'Zabbix raw items'
         -
           name: 'MSSQL: Batch requests per second'
           type: DEPENDENT
@@ -1638,7 +1638,7 @@ zabbix_export:
               name: 'MSSQL AG ''{#GROUP_NAME}'': Get replica states'
               type: ODBC
               key: 'db.odbc.get[{#GROUP_NAME}_replica_states,"{$MSSQL.DSN}"]'
-              history: 0h
+              history: '0'
               trends: '0'
               value_type: TEXT
               params: |
@@ -1653,7 +1653,7 @@ zabbix_export:
               description: 'Getting replica states - name, primary and secondary health, synchronization health.'
               tags:
                 -
-                  tag: Zabbix_raw_items
+                  tag: 'Zabbix raw items'
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'': Primary replica recovery health'
               type: DEPENDENT
@@ -1680,8 +1680,10 @@ zabbix_export:
                 key: 'db.odbc.get[{#GROUP_NAME}_replica_states,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Availability Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Availability
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -1710,8 +1712,10 @@ zabbix_export:
                 key: 'db.odbc.get[{#GROUP_NAME}_replica_states,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Availability Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Availability
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'': Secondary replica recovery health'
               type: DEPENDENT
@@ -1738,8 +1742,10 @@ zabbix_export:
                 key: 'db.odbc.get[{#GROUP_NAME}_replica_states,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Availability Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Availability
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -1772,8 +1778,10 @@ zabbix_export:
                 key: 'db.odbc.get[{#GROUP_NAME}_replica_states,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Availability Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Availability
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -1830,8 +1838,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Data file size'
               type: DEPENDENT
@@ -1853,8 +1863,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log bytes flushed per second'
               type: DEPENDENT
@@ -1877,8 +1889,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log file size'
               type: DEPENDENT
@@ -1900,8 +1914,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log file used size'
               type: DEPENDENT
@@ -1923,8 +1939,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log flushes per second'
               type: DEPENDENT
@@ -1946,8 +1964,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log flush waits per second'
               type: DEPENDENT
@@ -1969,8 +1989,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MSSQL.LOG_FLUSH_WAITS.MAX:"{#DBNAME}"}'
@@ -1999,8 +2021,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MSSQL.LOG_FLUSH_WAIT_TIME.MAX:"{#DBNAME}"}'
@@ -2023,8 +2047,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log shrinks'
               type: DEPENDENT
@@ -2041,8 +2067,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log truncations'
               type: DEPENDENT
@@ -2059,8 +2087,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
             -
               name: 'MSSQL DB ''{#DBNAME}'': Percent log used'
               type: DEPENDENT
@@ -2079,8 +2109,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{$MSSQL.PERCENT_LOG_USED.MAX:"{#DBNAME}"}'
@@ -2118,8 +2150,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
               trigger_prototypes:
                 -
                   expression: '{last()}>1'
@@ -2147,8 +2181,10 @@ zabbix_export:
                 key: 'db.odbc.get[get_status_variables,"{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Database
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Database
           graph_prototypes:
             -
               name: 'MSSQL DB ''{#DBNAME}'': Log size'
@@ -2218,7 +2254,7 @@ zabbix_export:
               name: 'MSSQL AG ''{#GROUP_NAME}'' Local DB ''{#DBNAME}'': Get local DB states'
               type: ODBC
               key: 'db.odbc.get["{#GROUP_NAME}_{#DBNAME}_local_db.states","{$MSSQL.DSN}"]'
-              history: 0h
+              history: '0'
               trends: '0'
               value_type: TEXT
               params: |
@@ -2237,7 +2273,7 @@ zabbix_export:
               description: 'Getting the states of the local availability database.'
               tags:
                 -
-                  tag: Zabbix_raw_items
+                  tag: 'Zabbix raw items'
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Local DB ''{#DBNAME}'': Suspended'
               type: DEPENDENT
@@ -2261,8 +2297,13 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#DBNAME}_local_db.states","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Available Group'
+                  value: '{#GROUP_NAME}'
+                -
+                  tag: 'Local DB'
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Available
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Local DB ''{#DBNAME}'': State'
               type: DEPENDENT
@@ -2292,8 +2333,13 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#DBNAME}_local_db.states","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Available Group'
+                  value: '{#GROUP_NAME}'
+                -
+                  tag: 'Local DB'
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Available
               trigger_prototypes:
                 -
                   expression: '{last()}>0'
@@ -2327,8 +2373,13 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#DBNAME}_local_db.states","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Available Group'
+                  value: '{#GROUP_NAME}'
+                -
+                  tag: 'Local DB'
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Available
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -2367,7 +2418,7 @@ zabbix_export:
               name: 'MSSQL Mirroring ''{#DBNAME}'': Get the mirror state'
               type: ODBC
               key: 'db.odbc.get["{#DBNAME}_mirroring_state","{$MSSQL.DSN}"]'
-              history: 0h
+              history: '0'
               trends: '0'
               value_type: TEXT
               params: |
@@ -2384,7 +2435,7 @@ zabbix_export:
               description: 'Getting mirrors state'
               tags:
                 -
-                  tag: Zabbix_raw_items
+                  tag: 'Zabbix raw items'
             -
               name: 'MSSQL Mirroring ''{#DBNAME}'': Role'
               type: DEPENDENT
@@ -2410,8 +2461,10 @@ zabbix_export:
                 key: 'db.odbc.get["{#DBNAME}_mirroring_state","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Mirroring
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Mirroring
             -
               name: 'MSSQL Mirroring ''{#DBNAME}'': Role sequence'
               type: DEPENDENT
@@ -2432,8 +2485,10 @@ zabbix_export:
                 key: 'db.odbc.get["{#DBNAME}_mirroring_state","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Mirroring
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Mirroring
             -
               name: 'MSSQL Mirroring ''{#DBNAME}'': Safety level'
               type: DEPENDENT
@@ -2460,8 +2515,10 @@ zabbix_export:
                 key: 'db.odbc.get["{#DBNAME}_mirroring_state","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Mirroring
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Mirroring
             -
               name: 'MSSQL Mirroring ''{#DBNAME}'': State'
               type: DEPENDENT
@@ -2492,8 +2549,10 @@ zabbix_export:
                 key: 'db.odbc.get["{#DBNAME}_mirroring_state","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Mirroring
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Mirroring
               trigger_prototypes:
                 -
                   expression: '{last()}=3'
@@ -2536,8 +2595,10 @@ zabbix_export:
                 key: 'db.odbc.get["{#DBNAME}_mirroring_state","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: Mirroring
+                  value: '{#DBNAME}'
+                -
                   tag: MSSQL
-                  value: Mirroring
               trigger_prototypes:
                 -
                   expression: '{last()}=2'
@@ -2585,7 +2646,7 @@ zabbix_export:
               name: 'MSSQL AG ''{#GROUP_NAME}'' Non-Local DB ''*{#REPLICA_NAME}*{#DBNAME}'': Get non-local DB states'
               type: ODBC
               key: 'db.odbc.get["{#GROUP_NAME}*{#REPLICA_NAME}*{#DBNAME}_non-local_db.states","{$MSSQL.DSN}"]'
-              history: 0h
+              history: '0'
               trends: '0'
               value_type: TEXT
               params: |
@@ -2603,7 +2664,7 @@ zabbix_export:
               description: 'Getting the states of the non-local availability database.'
               tags:
                 -
-                  tag: Zabbix_raw_items
+                  tag: 'Zabbix raw items'
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Non-Local DB ''*{#REPLICA_NAME}*{#DBNAME}'': Log queue size'
               type: DEPENDENT
@@ -2629,8 +2690,13 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}*{#REPLICA_NAME}*{#DBNAME}_non-local_db.states","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Available Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Available
+                -
+                  tag: 'Non-Local DB'
+                  value: '{#DBNAME}'
               trigger_prototypes:
                 -
                   expression: '{last(#1)}>{last(#2)} and {last(#2)}>{last(#3)}'
@@ -2662,8 +2728,13 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}*{#REPLICA_NAME}*{#DBNAME}_non-local_db.states","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Available Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Available
+                -
+                  tag: 'Non-Local DB'
+                  value: '{#DBNAME}'
               trigger_prototypes:
                 -
                   expression: '{last(#1)}>{last(#2)} and {last(#2)}>{last(#3)}'
@@ -2694,7 +2765,7 @@ zabbix_export:
               name: 'MSSQL AG ''{#GROUP_NAME}'' Replica ''{#REPLICA_NAME}'': Get the replica state'
               type: ODBC
               key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
-              history: 0h
+              history: '0'
               trends: '0'
               value_type: TEXT
               params: |
@@ -2716,7 +2787,7 @@ zabbix_export:
               description: 'Getting the database replica states.'
               tags:
                 -
-                  tag: Zabbix_raw_items
+                  tag: 'Zabbix raw items'
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Replica ''{#REPLICA_NAME}'': Connected state'
               type: DEPENDENT
@@ -2744,8 +2815,13 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Available Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Available
+                -
+                  tag: Replica
+                  value: '{#REPLICA_NAME}'
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Replica ''{#REPLICA_NAME}'': Is local'
               type: DEPENDENT
@@ -2771,8 +2847,13 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Available Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Available
+                -
+                  tag: Replica
+                  value: '{#REPLICA_NAME}'
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Replica ''{#REPLICA_NAME}'': Join state'
               type: DEPENDENT
@@ -2798,8 +2879,13 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Available Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Available
+                -
+                  tag: Replica
+                  value: '{#REPLICA_NAME}'
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Replica ''{#REPLICA_NAME}'': Operational state'
               type: DEPENDENT
@@ -2830,8 +2916,13 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Available Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Available
+                -
+                  tag: Replica
+                  value: '{#REPLICA_NAME}'
               trigger_prototypes:
                 -
                   expression: '{last()}=0 or {last()}=1 or {last()}=3'
@@ -2874,8 +2965,13 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Available Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Available
+                -
+                  tag: Replica
+                  value: '{#REPLICA_NAME}'
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -2908,8 +3004,13 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Available Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Available
+                -
+                  tag: Replica
+                  value: '{#REPLICA_NAME}'
             -
               name: 'MSSQL AG ''{#GROUP_NAME}'' Replica ''{#REPLICA_NAME}'': Sync health'
               type: DEPENDENT
@@ -2936,8 +3037,13 @@ zabbix_export:
                 key: 'db.odbc.get["{#GROUP_NAME}_{#REPLICA_NAME}_replica.state","{$MSSQL.DSN}"]'
               tags:
                 -
+                  tag: 'Available Group'
+                  value: '{#GROUP_NAME}'
+                -
                   tag: MSSQL
-                  value: Available
+                -
+                  tag: Replica
+                  value: '{#REPLICA_NAME}'
               trigger_prototypes:
                 -
                   expression: '{last()}=0'
@@ -3150,15 +3256,6 @@ zabbix_export:
             -
               value: '2'
               newvalue: Secondary
-        -
-          name: 'MSSQL AG Suspend state'
-          mappings:
-            -
-              value: '0'
-              newvalue: Resumed
-            -
-              value: '1'
-              newvalue: Suspended
         -
           name: 'MSSQL AG Synchronization health'
           mappings:

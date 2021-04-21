@@ -35,8 +35,7 @@ zabbix_export:
           description: 'The master item that receives all sensors with values for LLD and dependent elements from BMC.'
           tags:
             -
-              tag: Application
-              value: 'Zabbix raw items'
+              tag: 'Zabbix raw items'
       discovery_rules:
         -
           name: 'Discrete sensors discovery'
@@ -84,8 +83,7 @@ zabbix_export:
                 key: ipmi.get
               tags:
                 -
-                  tag: Application
-                  value: 'IPMI {#SENSOR_TYPE}'
+                  tag: 'IPMI {#SENSOR_TYPE}'
               trigger_prototypes:
                 -
                   expression: '{diff()}=1'
@@ -152,8 +150,7 @@ zabbix_export:
                 key: ipmi.get
               tags:
                 -
-                  tag: Application
-                  value: 'IPMI {#SENSOR_TYPE}'
+                  tag: 'IPMI {#SENSOR_TYPE}'
               trigger_prototypes:
                 -
                   expression: '{min(5m)}>{#SENSOR_HI_CRIT}'
