@@ -1291,7 +1291,7 @@ out:
  * Parameters: itemids - [IN] array of item identificators from database      *
  *                                                                            *
  ******************************************************************************/
-void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
+void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid, int audit_type)
 {
 	char			*sql = NULL;
 	size_t			sql_alloc = 256, sql_offset;
@@ -1301,8 +1301,8 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
 				"history_text", "trends", "trends_uint"};
 	const char		*event_tables[] = {"events"};
 	const char		*profile_idx = "web.favorite.graphids";
-	zbx_vector_str_t        items_names;
-	zbx_vector_uint64_t	items_flags;
+	/*zbx_vector_str_t        items_names;
+	zbx_vector_uint64_t	items_flags; */
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s() values_num:%d", __func__, itemids->values_num);
 
@@ -1316,11 +1316,13 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
 	{
 		num = itemids->values_num;
 		sql_offset = 0;
-		zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, "select distinct itemid from item_discovery where");
+		zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, "select distinct id.itemid,i.name,i.flags "
+				"from item_discovery id, items i where id.itemid=i.itemid and ");
 		DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "parent_itemid",
 				itemids->values, itemids->values_num);
 
-		DBselect_uint64(sql, itemids);
+		/* DBselect_uint64(sql, itemids); */
+		DBselect_for_item(sql, itemids, audit_type);
 		zbx_vector_uint64_uniq(itemids, ZBX_DEFAULT_UINT64_COMPARE_FUNC);
 	}
 	while (num != itemids->values_num);
@@ -1334,9 +1336,9 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
 	DBadd_to_housekeeper(itemids, "itemid", event_tables, ARRSIZE(event_tables));
 	DBadd_to_housekeeper(itemids, "lldruleid", event_tables, ARRSIZE(event_tables));
 
-	zbx_vector_str_create(&items_names);
+	/*zbx_vector_str_create(&items_names);
 	zbx_vector_uint64_create(&items_flags);
-	zbx_audit_items_get_names_and_flags(itemids, &items_names, &items_flags);
+	zbx_audit_items_get_names_and_flags(itemids, &items_names, &items_flags); */
 
 	sql_offset = 0;
 	DBbegin_multiple_update(&sql, &sql_alloc, &sql_offset);
@@ -1364,12 +1366,24 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid)
 
 	zbx_free(sql);
 
-	zbx_audit_items_bulk_delete(itemids, &items_names, &items_flags, recsetid_cuid);
+	/*zbx_audit_items_bulk_delete(itemids, &items_names, &items_flags, recsetid_cuid);
 	zbx_vector_str_clear_ext(&items_names, zbx_str_free);
-	zbx_vector_str_destroy(&items_names);
+	zbx_vector_str_destroy(&items_names);*/
 out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
+
+/* typedef struct */
+/* { */
+/*	zbx_uint64_t; */
+/*	char *name; */
+/*	char flags; */
+/* } */
+/* zbx_vc_items_audit_t; */
+
+/* ZBX_VECTOR_DECL(zbx_vc_items_audit, zbx_vc_items_audit_t) */
+/* ZBX_VECTOR_IMPL(zbx_vc_items_audit, zbx_vc_items_audit_t) */
+
 
 /******************************************************************************
  *                                                                            *
@@ -1404,23 +1418,23 @@ static void	DBdelete_httptests(zbx_vector_uint64_t *httptestids)
 	/* httpstepitem, httptestitem */
 	sql_offset = 0;
 	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset,
-			"select hsi.itemid"
-			" from httpstepitem hsi,httpstep hs"
-			" where hsi.httpstepid=hs.httpstepid"
+			"select hsi.itemid,i.name,i.flags"
+			" from httpstepitem hsi,httpstep hs,items i"
+			" where hsi.httpstepid=hs.httpstepid and i.itemid=hsi.itemid"
 				" and");
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "hs.httptestid",
 			httptestids->values, httptestids->values_num);
 	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset,
 			" union all "
-			"select itemid"
-			" from httptestitem"
-			" where");
+			"select ht.itemid,i.name,i.flags"
+			" from httptestitem ht,items i"
+			" where ht.itemid=i.itemid and");
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "httptestid",
 			httptestids->values, httptestids->values_num);
 
-	DBselect_uint64(sql, &itemids);
-
-	DBdelete_items(&itemids, recsetid_cuid);
+	/* DBselect_uint64(sql, &itemids); */
+	DBselect_for_item(sql, &itemids, AUDIT_RESOURCE_HTTP_TEST);
+	DBdelete_items(&itemids, recsetid_cuid, AUDIT_RESOURCE_HTTP_TEST);
 
 	sql_offset = 0;
 	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, "delete from httptest where");
@@ -1738,7 +1752,7 @@ static void	DBdelete_template_items(zbx_uint64_t hostid, const zbx_vector_uint64
 
 	DBselect_uint64(sql, &itemids);
 
-	DBdelete_items(&itemids, recsetid_cuid);
+	DBdelete_items(&itemids, recsetid_cuid, AUDIT_RESOURCE_TEMPLATE);
 
 	zbx_vector_uint64_destroy(&itemids);
 	zbx_free(sql);
@@ -2282,7 +2296,7 @@ int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_tem
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
-	zbx_audit_items_init();
+	zbx_audit_init();
 
 	zbx_vector_uint64_create(&templateids);
 
@@ -2331,7 +2345,7 @@ int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_tem
 
 	zbx_free(sql);
 
-	zbx_audit_items_flush(recsetid_cuid);
+	zbx_audit_flush(recsetid_cuid);
 clean:
 	zbx_vector_uint64_destroy(&templateids);
 
@@ -5547,7 +5561,7 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
-	zbx_audit_items_init();
+	zbx_audit_init();
 
 	zbx_vector_uint64_create(&templateids);
 
@@ -5608,7 +5622,7 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 		DBcopy_template_httptests(hostid, lnk_templateids);
 	}
 
-	zbx_audit_items_flush(recsetid_cuid);
+	zbx_audit_flush(recsetid_cuid);
 clean:
 	zbx_vector_uint64_destroy(&templateids);
 
@@ -5672,7 +5686,7 @@ void	DBdelete_hosts(zbx_vector_uint64_t *hostids)
 
 	DBselect_uint64(sql, &itemids);
 
-	DBdelete_items(&itemids, recsetid_cuid);
+	DBdelete_items(&itemids, recsetid_cuid, AUDIT_RESOURCE_ITEM);
 
 	zbx_vector_uint64_destroy(&itemids);
 

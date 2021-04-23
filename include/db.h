@@ -586,7 +586,7 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_templateids, char **error,
 		char *recsetid_cuid);
 
-void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid);
+void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid, int resource_type);
 void	DBdelete_graphs(zbx_vector_uint64_t *graphids);
 void	DBdelete_triggers(zbx_vector_uint64_t *triggerids);
 void	DBdelete_hosts(zbx_vector_uint64_t *hostids);
@@ -673,6 +673,7 @@ int	DBlock_ids(const char *table_name, const char *field_name, zbx_vector_uint64
 void	DBdelete_groups(zbx_vector_uint64_t *groupids);
 
 void	DBselect_uint64(const char *sql, zbx_vector_uint64_t *ids);
+void	DBselect_for_item(const char *sql, zbx_vector_uint64_t *ids, int audit_type);
 
 void	DBcheck_character_set(void);
 
