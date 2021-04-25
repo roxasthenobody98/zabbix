@@ -590,7 +590,7 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid, int resou
 void	DBdelete_graphs(zbx_vector_uint64_t *graphids);
 void	DBdelete_triggers(zbx_vector_uint64_t *triggerids);
 void	DBdelete_hosts(zbx_vector_uint64_t *hostids);
-void	DBdelete_hosts_with_prototypes(zbx_vector_uint64_t *hostids);
+void	DBdelete_hosts_with_prototypes(zbx_vector_uint64_t *hostids, char *recsetid_cuid);
 
 int	DBupdate_itservices(const zbx_vector_ptr_t *trigger_diff);
 int	DBremove_triggers_from_itservices(zbx_uint64_t *triggerids, int triggerids_num);

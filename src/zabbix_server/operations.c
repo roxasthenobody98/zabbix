@@ -678,8 +678,11 @@ void	op_host_del(const DB_EVENT *event)
 {
 	zbx_vector_uint64_t	hostids;
 	zbx_uint64_t		hostid;
+	char			recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
+	zbx_new_cuid(recsetid_cuid);
 
 	if (FAIL == is_discovery_or_autoregistration(event))
 		return;
@@ -691,7 +694,7 @@ void	op_host_del(const DB_EVENT *event)
 
 	zbx_vector_uint64_append(&hostids, hostid);
 
-	DBdelete_hosts_with_prototypes(&hostids);
+	DBdelete_hosts_with_prototypes(&hostids, recsetid_cuid);
 
 	zbx_vector_uint64_destroy(&hostids);
 

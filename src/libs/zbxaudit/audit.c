@@ -117,42 +117,15 @@ void	zbx_audit_flush(const char *recsetid_cuid)
 	zbx_audit_clean();
 }
 
-/* void	zbx_audit_items_bulk_delete(zbx_vector_uint64_t *ids, zbx_vector_str_t *names, */
-/*		 zbx_vector_uint64_t *items_flags, char *recsetid_cuid) */
-/* { */
-/*	size_t			i; */
-/*	char			audit_cuid[CUID_LEN]; */
-/*	zbx_db_insert_t		db_insert_audit; */
-
-/*	zbx_db_insert_prepare(&db_insert_audit, "auditlog2", "auditid", "userid", "clock", "action", "ip", */
-/*			"resourceid","resourcename","resourcetype","recsetid","details", NULL); */
-
-/*	for (i = 0; i < ids->values_num; i++) */
-/*	{ */
-/*		zbx_new_cuid(audit_cuid); */
-/*		zbx_db_insert_add_values(&db_insert_audit, audit_cuid, USER_TYPE_SUPER_ADMIN, */
-/*				(int)time(NULL), AUDIT_ACTION_DELETE, "",  ids->values[i], */
-/*				names->values[i], item_flag_to_resource_type(items_flags->values[i]), */
-/*				recsetid_cuid, */
-/*				""); */
-/*	} */
-
-/*	zbx_db_insert_execute(&db_insert_audit); */
-/*	zbx_db_insert_clean(&db_insert_audit); */
-
-
-
-/* } */
-
 /******************************************************************************
  *                                                                            *
- * Function: DBselect_uint64                                                  *
+ * Function: DBselect_for_item                                                *
  *                                                                            *
  * Parameters: sql - [IN] sql statement                                       *
  *             ids - [OUT] sorted list of selected uint64 values              *
  *                                                                            *
  ******************************************************************************/
-void	DBselect_for_item(const char *sql, zbx_vector_uint64_t *ids, int audit_type)
+void	DBselect_delete_for_item(const char *sql, zbx_vector_uint64_t *ids, int resource_type)
 {
 	DB_RESULT	result;
 	DB_ROW		row;
@@ -165,7 +138,7 @@ void	DBselect_for_item(const char *sql, zbx_vector_uint64_t *ids, int audit_type
 		ZBX_STR2UINT64(id, row[0]);
 
 		zbx_vector_uint64_append(ids, id);
-		zbx_audit_items_create_entry_for_delete(id, row[1], audit_type);
+		zbx_audit_items_create_entry_for_delete(id, row[1], resource_type);
 	}
 	DBfree_result(result);
 
@@ -216,28 +189,22 @@ char	*zbx_audit_items_get_type_json_identifier(int flag)
 	}
 }
 
-void	zbx_audit_items_delete_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid, const int audit_action)
-{
-}
-
 void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid, const int audit_action)
 {
-	int audit_item_type;
 	zbx_audit_entry_t	*local_audit_items_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
 			sizeof(zbx_audit_entry_t));
 	local_audit_items_entry->id = item->itemid;
 	local_audit_items_entry->name = zbx_strdup(NULL, item->name);
 	local_audit_items_entry->audit_action = audit_action;
-	local_audit_items_entry->resource_type = AUDIT_RESOURCE_ITEM;
-	/* local_audit_items_entry->audit_type = zbx_audit_item_flag_to_resource_type(item->flags); */
-	audit_item_type = item_flag_to_resource_type(item->flags);
-	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT_CREATE_ENTRY: %d", audit_item_type);
+	local_audit_items_entry->resource_type = item_flag_to_resource_type(item->flags);
 
-#define ONLY_ITEM (AUDIT_RESOURCE_ITEM == audit_item_type)
-#define ONLY_ITEM_PROTOTYPE (AUDIT_RESOURCE_ITEM_PROTOTYPE == audit_item_type)
-#define ONLY_LLD_RULE (AUDIT_RESOURCE_DISCOVERY_RULE == audit_item_type)
-#define ONLY_ITEM_AND_ITEM_PROTOTYPE (AUDIT_RESOURCE_ITEM == audit_item_type || \
-		AUDIT_RESOURCE_ITEM_PROTOTYPE == audit_item_type)
+	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT_CREATE_ENTRY: %d", local_audit_items_entry->resource_type);
+
+#define ONLY_ITEM (AUDIT_RESOURCE_ITEM == local_audit_items_entry->resource_type)
+#define ONLY_ITEM_PROTOTYPE (AUDIT_RESOURCE_ITEM_PROTOTYPE == local_audit_items_entry->resource_type)
+#define ONLY_LLD_RULE (AUDIT_RESOURCE_DISCOVERY_RULE == local_audit_items_entry->resource_type)
+#define ONLY_ITEM_AND_ITEM_PROTOTYPE (AUDIT_RESOURCE_ITEM == local_audit_items_entry->resource_type || \
+		AUDIT_RESOURCE_ITEM_PROTOTYPE == local_audit_items_entry->resource_type)
 
 #define IT_OR_ITP(s) ONLY_ITEM ? "item."#s :				\
 	(ONLY_ITEM_PROTOTYPE ? "itemprototype."#s : "discoveryrule."#s)
@@ -318,15 +285,39 @@ void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uin
 	zbx_hashset_insert(&zbx_audit, &local_audit_items_entry, sizeof(local_audit_items_entry));
 }
 
+/* could not pass zbx_host_prototype_t because that would mean rewriting half of the zabbix */
+void	zbx_audit_host_prototypes_create_entry(zbx_uint64_t hostid, char *name, unsigned char status,
+		zbx_uint64_t templateid, unsigned char discover, unsigned char custom_interfaces)
+{
+	zbx_audit_entry_t	*local_audit_host_prototype_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
+			sizeof(zbx_audit_entry_t));
+	local_audit_host_prototype_entry->id = hostid;
+	local_audit_host_prototype_entry->name = zbx_strdup(NULL, name);
+	local_audit_host_prototype_entry->audit_action = AUDIT_ACTION_ADD;
+	local_audit_host_prototype_entry->resource_type = AUDIT_RESOURCE_HOST_PROTOTYPE;
+
+	zbx_json_init(&(local_audit_host_prototype_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
+
+	zbx_json_adduint64(&local_audit_host_prototype_entry->details_json, "status", status);
+	zbx_json_adduint64(&local_audit_host_prototype_entry->details_json, "templateid", templateid);
+	zbx_json_adduint64(&local_audit_host_prototype_entry->details_json, "discover", discover);
+	zbx_json_adduint64(&local_audit_host_prototype_entry->details_json, "custom_interfaces",
+			custom_interfaces);
+
+	zbx_hashset_insert(&zbx_audit, &local_audit_host_prototype_entry, sizeof(local_audit_host_prototype_entry));
+}
+
 void	zbx_audit_items_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type)
 {
-	int audit_item_type;
 	zbx_audit_entry_t	*local_audit_items_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
 			sizeof(zbx_audit_entry_t));
 	local_audit_items_entry->id = id;
 	local_audit_items_entry->name = zbx_strdup(NULL, name);
 	local_audit_items_entry->audit_action = AUDIT_ACTION_DELETE;
 	local_audit_items_entry->resource_type = resource_type;
+
+	zbx_json_init(&(local_audit_items_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
+
 	zbx_hashset_insert(&zbx_audit, &local_audit_items_entry, sizeof(local_audit_items_entry));
 }
 

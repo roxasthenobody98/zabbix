@@ -891,22 +891,10 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 	/* delete removed item conditions */
 	if (0 != item_conditionids.values_num)
 	{
-		/*zbx_vector_str_t	items_names;
-		zbx_vector_uint64_t	items_flags;
-
-		zbx_vector_str_create(&items_names);
-		zbx_vector_uint64_create(&items_flags);
-		zbx_audit_items_get_names_and_flags(&item_conditionids, &items_names, &items_flags);
-		*/
 		zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, "delete from item_condition where");
 		DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "item_conditionid", item_conditionids.values,
 				item_conditionids.values_num);
 		zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, ";\n");
-		/*
-		zbx_audit_bulk_delete_items_details(&item_conditionids, &items_names, &items_flags, recsetid_cuid);
-		zbx_vector_str_clear_ext(&items_names, zbx_str_free);
-		zbx_vector_str_destroy(&items_names);
-		*/
 	}
 
 	DBend_multiple_update(&sql, &sql_alloc, &sql_offset);
@@ -2017,17 +2005,17 @@ static void	prepare_lld_items(const zbx_vector_ptr_t *items, zbx_vector_uint64_t
  *             templateids - [IN] array of template IDs                       *
  *                                                                            *
  ******************************************************************************/
-void	DBcopy_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *templateids)
+void	DBcopy_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *templateids, char *recsetid_cuid)
 {
 	zbx_vector_ptr_t	items, lld_rules;
 	int			new_conditions = 0;
 	zbx_vector_uint64_t	lld_itemids;
 	zbx_hashset_t		lld_items;
-	char	recsetid_cuid[CUID_LEN];
+	/* char	recsetid_cuid[CUID_LEN]; */
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
-	zbx_new_cuid(recsetid_cuid);
+	/* zbx_new_cuid(recsetid_cuid); */
 	zbx_vector_ptr_create(&items);
 	zbx_vector_ptr_create(&lld_rules);
 

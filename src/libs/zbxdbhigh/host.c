@@ -1291,7 +1291,7 @@ out:
  * Parameters: itemids - [IN] array of item identificators from database      *
  *                                                                            *
  ******************************************************************************/
-void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid, int audit_type)
+void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid, int resource_type)
 {
 	char			*sql = NULL;
 	size_t			sql_alloc = 256, sql_offset;
@@ -1321,8 +1321,7 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid, int audit
 		DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "parent_itemid",
 				itemids->values, itemids->values_num);
 
-		/* DBselect_uint64(sql, itemids); */
-		DBselect_for_item(sql, itemids, audit_type);
+		DBselect_delete_for_item(sql, itemids, resource_type);
 		zbx_vector_uint64_uniq(itemids, ZBX_DEFAULT_UINT64_COMPARE_FUNC);
 	}
 	while (num != itemids->values_num);
@@ -1335,10 +1334,6 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid, int audit
 	/* add housekeeper task to delete problems associated with item, this allows old events to be deleted */
 	DBadd_to_housekeeper(itemids, "itemid", event_tables, ARRSIZE(event_tables));
 	DBadd_to_housekeeper(itemids, "lldruleid", event_tables, ARRSIZE(event_tables));
-
-	/*zbx_vector_str_create(&items_names);
-	zbx_vector_uint64_create(&items_flags);
-	zbx_audit_items_get_names_and_flags(itemids, &items_names, &items_flags); */
 
 	sql_offset = 0;
 	DBbegin_multiple_update(&sql, &sql_alloc, &sql_offset);
@@ -1365,25 +1360,9 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid, int audit
 	zbx_vector_uint64_destroy(&profileids);
 
 	zbx_free(sql);
-
-	/*zbx_audit_items_bulk_delete(itemids, &items_names, &items_flags, recsetid_cuid);
-	zbx_vector_str_clear_ext(&items_names, zbx_str_free);
-	zbx_vector_str_destroy(&items_names);*/
 out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
-
-/* typedef struct */
-/* { */
-/*	zbx_uint64_t; */
-/*	char *name; */
-/*	char flags; */
-/* } */
-/* zbx_vc_items_audit_t; */
-
-/* ZBX_VECTOR_DECL(zbx_vc_items_audit, zbx_vc_items_audit_t) */
-/* ZBX_VECTOR_IMPL(zbx_vc_items_audit, zbx_vc_items_audit_t) */
-
 
 /******************************************************************************
  *                                                                            *
@@ -1432,8 +1411,7 @@ static void	DBdelete_httptests(zbx_vector_uint64_t *httptestids)
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "httptestid",
 			httptestids->values, httptestids->values_num);
 
-	/* DBselect_uint64(sql, &itemids); */
-	DBselect_for_item(sql, &itemids, AUDIT_RESOURCE_HTTP_TEST);
+	DBselect_delete_for_item(sql, &itemids, AUDIT_RESOURCE_HTTP_TEST);
 	DBdelete_items(&itemids, recsetid_cuid, AUDIT_RESOURCE_HTTP_TEST);
 
 	sql_offset = 0;
@@ -1742,7 +1720,7 @@ static void	DBdelete_template_items(zbx_uint64_t hostid, const zbx_vector_uint64
 	zbx_vector_uint64_create(&itemids);
 
 	zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset,
-			"select distinct i.itemid"
+			"select distinct i.itemid,i.name,i.flags"
 			" from items i,items ti"
 			" where i.templateid=ti.itemid"
 				" and i.hostid=" ZBX_FS_UI64
@@ -1750,9 +1728,9 @@ static void	DBdelete_template_items(zbx_uint64_t hostid, const zbx_vector_uint64
 			hostid);
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "ti.hostid", templateids->values, templateids->values_num);
 
-	DBselect_uint64(sql, &itemids);
-
-	DBdelete_items(&itemids, recsetid_cuid, AUDIT_RESOURCE_TEMPLATE);
+	//DBselect_uint64(sql, &itemids);
+	DBselect_delete_for_item(sql, &itemids, AUDIT_RESOURCE_ITEM);
+	DBdelete_items(&itemids, recsetid_cuid, AUDIT_RESOURCE_ITEM);
 
 	zbx_vector_uint64_destroy(&itemids);
 	zbx_free(sql);
@@ -3885,6 +3863,10 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 					(int)ZBX_FLAG_DISCOVERY_PROTOTYPE, host_prototype->templateid,
 					(int)host_prototype->discover, (int)host_prototype->custom_interfaces);
 
+			zbx_audit_host_prototypes_create_entry(host_prototype->hostid, host_prototype->name,
+					host_prototype->status, host_prototype->templateid,
+					host_prototype->discover, host_prototype->custom_interfaces);
+
 			zbx_db_insert_add_values(&db_insert_hdiscovery, host_prototype->hostid, host_prototype->itemid);
 		}
 		else
@@ -5614,7 +5596,7 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 				hosttemplateid++, hostid, lnk_templateids->values[i]);
 	}
 
-	DBcopy_template_items(hostid, lnk_templateids);
+	DBcopy_template_items(hostid, lnk_templateids, recsetid_cuid);
 	DBcopy_template_host_prototypes(hostid, lnk_templateids);
 	if (SUCCEED == (res = DBcopy_template_triggers(hostid, lnk_templateids)))
 	{
@@ -5684,8 +5666,8 @@ void	DBdelete_hosts(zbx_vector_uint64_t *hostids)
 			" where");
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "hostid", hostids->values, hostids->values_num);
 
-	DBselect_uint64(sql, &itemids);
-
+	//DBselect_uint64(sql, &itemids);
+	DBselect_delete_for_item(sql, &itemids, AUDIT_RESOURCE_ITEM);
 	DBdelete_items(&itemids, recsetid_cuid, AUDIT_RESOURCE_ITEM);
 
 	zbx_vector_uint64_destroy(&itemids);
@@ -5733,13 +5715,15 @@ out:
  * Parameters: hostids - [IN] host identificators from database               *
  *                                                                            *
  ******************************************************************************/
-void	DBdelete_hosts_with_prototypes(zbx_vector_uint64_t *hostids)
+void	DBdelete_hosts_with_prototypes(zbx_vector_uint64_t *hostids, char *recsetid_cuid)
 {
 	zbx_vector_uint64_t	host_prototypeids;
 	char			*sql = NULL;
 	size_t			sql_alloc = 0, sql_offset = 0;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
+	zbx_audit_init();
 
 	zbx_vector_uint64_create(&host_prototypeids);
 
@@ -5758,6 +5742,8 @@ void	DBdelete_hosts_with_prototypes(zbx_vector_uint64_t *hostids)
 	zbx_vector_uint64_destroy(&host_prototypeids);
 
 	DBdelete_hosts(hostids);
+
+	zbx_audit_flush(recsetid_cuid);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }

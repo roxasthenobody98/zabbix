@@ -24,16 +24,13 @@
 #include "zbxalgo.h"
 #include "../zbxdbhigh/template.h"
 
-/*void	zbx_audit_items_get_names_and_flags(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names,
-zbx_vector_uint64_t *items_flags);*/
-
 void	zbx_audit_init(void);
 void	zbx_audit_flush(const char *recsetid_cuid);
-/*void	zbx_audit_items_bulk_delete(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names,
-zbx_vector_uint64_t *items_flags, char *recsetid_cuid);*/
-void	DBselect_for_item(const char *sql, zbx_vector_uint64_t *ids, int audit_type);
+void	DBselect_delete_for_item(const char *sql, zbx_vector_uint64_t *ids, int resource_type_type);
 char	*zbx_audit_items_get_type_json_identifier(int flag);
 void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid, const int action);
+void	zbx_audit_host_prototypes_create_entry(zbx_uint64_t hostid, char *name, unsigned char status,
+		zbx_uint64_t templateid, unsigned char discover, unsigned char custom_interfaces);
 void	zbx_audit_items_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type);
 void	zbx_audit_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
 void	zbx_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
@@ -47,6 +44,5 @@ void	zbx_audit_host_add(zbx_uint64_t hostid, char *recsetid_cuid);
 void	zbx_audit_host_del(zbx_uint64_t hostid);
 void	zbx_audit_host_status(zbx_uint64_t hostid, int status);
 void	zbx_audit_host_inventory(zbx_uint64_t hostid, int inventory_mode);
-
 
 #endif	/* ZABBIX_AUDIT_H */
