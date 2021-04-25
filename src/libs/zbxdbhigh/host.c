@@ -1301,8 +1301,6 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid, int resou
 				"history_text", "trends", "trends_uint"};
 	const char		*event_tables[] = {"events"};
 	const char		*profile_idx = "web.favorite.graphids";
-	/*zbx_vector_str_t        items_names;
-	zbx_vector_uint64_t	items_flags; */
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s() values_num:%d", __func__, itemids->values_num);
 
@@ -1728,7 +1726,6 @@ static void	DBdelete_template_items(zbx_uint64_t hostid, const zbx_vector_uint64
 			hostid);
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "ti.hostid", templateids->values, templateids->values_num);
 
-	//DBselect_uint64(sql, &itemids);
 	DBselect_delete_for_item(sql, &itemids, AUDIT_RESOURCE_ITEM);
 	DBdelete_items(&itemids, recsetid_cuid, AUDIT_RESOURCE_ITEM);
 
@@ -3908,12 +3905,17 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 
 		for (j = 0; j < host_prototype->group_prototypes.values_num; j++)
 		{
+			char audit_key_operator[100];
 			group_prototype = (zbx_group_prototype_t *)host_prototype->group_prototypes.values[j];
 
 			if (0 == group_prototype->group_prototypeid)
 			{
 				zbx_db_insert_add_values(&db_insert_gproto, group_prototypeid++, host_prototype->hostid,
 						group_prototype->name, group_prototype->groupid,
+						group_prototype->templateid);
+				zbx_snprintf(audit_key_operator, 100, "hostprototype.groupLinks[%lu]",
+						group_prototype->groupid);
+				zbx_audit_update_json_uint64(host_prototype->hostid, audit_key_operator,
 						group_prototype->templateid);
 			}
 			else
@@ -3923,6 +3925,11 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 						" set templateid=" ZBX_FS_UI64
 						" where group_prototypeid=" ZBX_FS_UI64 ";\n",
 						group_prototype->templateid, group_prototype->group_prototypeid);
+				zbx_snprintf(audit_key_operator, 100, "hostprototype.groupLinks[%lu]",
+						group_prototype->group_prototypeid);
+				zbx_audit_update_json_uint64(host_prototype->hostid, audit_key_operator,
+						group_prototype->templateid);
+
 			}
 		}
 
@@ -5666,7 +5673,6 @@ void	DBdelete_hosts(zbx_vector_uint64_t *hostids)
 			" where");
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "hostid", hostids->values, hostids->values_num);
 
-	//DBselect_uint64(sql, &itemids);
 	DBselect_delete_for_item(sql, &itemids, AUDIT_RESOURCE_ITEM);
 	DBdelete_items(&itemids, recsetid_cuid, AUDIT_RESOURCE_ITEM);
 

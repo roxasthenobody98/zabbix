@@ -2011,11 +2011,9 @@ void	DBcopy_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *templ
 	int			new_conditions = 0;
 	zbx_vector_uint64_t	lld_itemids;
 	zbx_hashset_t		lld_items;
-	/* char	recsetid_cuid[CUID_LEN]; */
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
-	/* zbx_new_cuid(recsetid_cuid); */
 	zbx_vector_ptr_create(&items);
 	zbx_vector_ptr_create(&lld_rules);
 

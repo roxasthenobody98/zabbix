@@ -48,41 +48,6 @@ static void	zbx_audit_clean(void)
 	zbx_hashset_destroy(&zbx_audit);
 }
 
-/* void	zbx_audit_items_get_names_and_flags(zbx_vector_uint64_t *itemids, zbx_vector_str_t *items_names */
-/*					    /\*,zbx_vector_uint64_t *items_flags*\/) */
-/* { */
-/*	char		*sql = NULL; */
-/*	size_t		sql_alloc = 512, sql_offset = 0; */
-/*	DB_RESULT	result; */
-/*	DB_ROW		row; */
-
-/*	zabbix_log(LOG_LEVEL_DEBUG, "In %s() ", __func__); */
-
-/*	sql = (char *)zbx_malloc(sql, sql_alloc); */
-
-/*	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, */
-/*			"select name,flags from items" */
-/*			" where"); */
-
-/*	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "itemid", */
-/*			itemids->values, itemids->values_num); */
-
-/*	result = DBselect("%s", sql); */
-
-/*	while (NULL != (row = DBfetch(result))) */
-/*	{ */
-/*		zbx_uint64_t    flags; */
-/*		zbx_vector_str_append(items_names, zbx_strdup(NULL, row[0])); */
-/*		ZBX_STR2UINT64(flags, row[1]); */
-/*		zbx_vector_uint64_append(items_flags, flags); */
-/*	} */
-
-/*	DBfree_result(result); */
-/*	zbx_free(sql); */
-
-/*	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__); */
-/* } */
-
 void	zbx_audit_init(void)
 {
 	zbx_hashset_create(&zbx_audit, 10, zbx_audit_hash_func, zbx_audit_compare_func);
