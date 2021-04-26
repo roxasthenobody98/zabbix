@@ -24,6 +24,9 @@
 
 typedef struct zbx_lld_value
 {
+	/* the LLD rule id */
+	zbx_uint64_t		itemid;
+
 	char			*value;
 	char			*error;
 	zbx_timespec_t		ts;
@@ -39,8 +42,8 @@ zbx_lld_data_t;
 /* queue of values for one LLD rule */
 typedef struct
 {
-	/* the LLD rule id */
-	zbx_uint64_t	itemid;
+	/* the LLD rule host id */
+	zbx_uint64_t	hostid;
 
 	/* the number of queued values */
 	int		values_num;

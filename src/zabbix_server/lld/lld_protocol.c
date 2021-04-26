@@ -166,7 +166,7 @@ zbx_uint32_t	zbx_lld_serialize_top_items_result(unsigned char **data, zbx_lld_ru
 
 	if (0 != items_num)
 	{
-		zbx_serialize_prepare_value(item_len, items[0]->itemid);
+		zbx_serialize_prepare_value(item_len, items[0]->hostid);
 		zbx_serialize_prepare_value(item_len, items[0]->values_num);
 	}
 
@@ -179,7 +179,7 @@ zbx_uint32_t	zbx_lld_serialize_top_items_result(unsigned char **data, zbx_lld_ru
 
 	for (i = 0; i < items_num; i++)
 	{
-		ptr += zbx_serialize_value(ptr, items[i]->itemid);
+		ptr += zbx_serialize_value(ptr, items[i]->hostid);
 		ptr += zbx_serialize_value(ptr, items[i]->values_num);
 	}
 
