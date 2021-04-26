@@ -251,14 +251,14 @@ void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uin
 }
 
 /* could not pass zbx_host_prototype_t because that would mean rewriting half of the zabbix */
-void	zbx_audit_host_prototypes_create_entry(zbx_uint64_t hostid, char *name, unsigned char status,
+void	zbx_audit_host_prototypes_create_entry(const int audit_action, zbx_uint64_t hostid, char *name, unsigned char status,
 		zbx_uint64_t templateid, unsigned char discover, unsigned char custom_interfaces)
 {
 	zbx_audit_entry_t	*local_audit_host_prototype_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
 			sizeof(zbx_audit_entry_t));
 	local_audit_host_prototype_entry->id = hostid;
 	local_audit_host_prototype_entry->name = zbx_strdup(NULL, name);
-	local_audit_host_prototype_entry->audit_action = AUDIT_ACTION_ADD;
+	local_audit_host_prototype_entry->audit_action = audit_action;
 	local_audit_host_prototype_entry->resource_type = AUDIT_RESOURCE_HOST_PROTOTYPE;
 
 	zbx_json_init(&(local_audit_host_prototype_entry->details_json), ZBX_JSON_STAT_BUF_LEN);

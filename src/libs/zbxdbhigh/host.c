@@ -3656,7 +3656,7 @@ static void	DBhost_prototypes_interface_snmp_prepare_sql(const zbx_uint64_t inte
  * Purpose: auxiliary function for DBcopy_template_host_prototypes()          *
  *                                                                            *
  * Parameters: host_prototypes      - [IN] vector of host prototypes          *
- *             del_hosttemplateids  - [IN] host template ids for delate       *
+ *             del_hosttemplateids  - [IN] host template ids for delete       *
  *             del_hostmacroids     - [IN] host macro ids for delete           *
  *             del_tagids           - [IN] tag ids for delete                 *
  *             del_interfaceids     - [IN] interface ids for delete           *
@@ -3684,6 +3684,8 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 	zbx_db_insert_t			db_insert, db_insert_hdiscovery, db_insert_htemplates, db_insert_gproto,
 					db_insert_hmacro, db_insert_tag, db_insert_iface, db_insert_snmp;
 	zbx_vector_db_tag_ptr_t		upd_tags;
+
+	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
 	zbx_vector_db_tag_ptr_create(&upd_tags);
 
@@ -3860,8 +3862,10 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 					(int)ZBX_FLAG_DISCOVERY_PROTOTYPE, host_prototype->templateid,
 					(int)host_prototype->discover, (int)host_prototype->custom_interfaces);
 
-			zbx_audit_host_prototypes_create_entry(host_prototype->hostid, host_prototype->name,
-					host_prototype->status, host_prototype->templateid,
+			zabbix_log(LOG_LEVEL_INFORMATION, "HOST_PROTOTYPE_CREATE_ENTRY ADD: hostid ->%lu<-",
+					host_prototype->hostid);
+			zbx_audit_host_prototypes_create_entry(AUDIT_ACTION_ADD, host_prototype->hostid,
+					host_prototype->name, host_prototype->status, host_prototype->templateid,
 					host_prototype->discover, host_prototype->custom_interfaces);
 
 			zbx_db_insert_add_values(&db_insert_hdiscovery, host_prototype->hostid, host_prototype->itemid);
@@ -3893,6 +3897,13 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 			}
 			zbx_snprintf_alloc(&sql1, &sql1_alloc, &sql1_offset, " where hostid=" ZBX_FS_UI64 ";\n",
 					host_prototype->hostid);
+
+			zabbix_log(LOG_LEVEL_INFORMATION, "HOST_PROTOTYPE_CREATE_ENTRY UPDATE: hostid ->%lu<-",
+					host_prototype->hostid);
+
+			zbx_audit_host_prototypes_create_entry(AUDIT_ACTION_UPDATE, host_prototype->hostid,
+				host_prototype->name, host_prototype->status, host_prototype->templateid,
+				host_prototype->discover, host_prototype->custom_interfaces);
 		}
 
 		DBexecute_overflowed_sql(&sql1, &sql1_alloc, &sql1_offset);
@@ -3908,28 +3919,45 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 			char audit_key_operator[100];
 			group_prototype = (zbx_group_prototype_t *)host_prototype->group_prototypes.values[j];
 
+			zabbix_log(LOG_LEVEL_INFORMATION, "HHH, hostid: %lu, name: %s, groupid: %lu, templateid: %lu",
+					host_prototype->hostid, group_prototype->name, group_prototype->groupid,
+					group_prototype->templateid);
+
 			if (0 == group_prototype->group_prototypeid)
 			{
+				zabbix_log(LOG_LEVEL_INFORMATION, "HUE_999: group_prototype is 0");
+
 				zbx_db_insert_add_values(&db_insert_gproto, group_prototypeid++, host_prototype->hostid,
 						group_prototype->name, group_prototype->groupid,
-						group_prototype->templateid);
-				zbx_snprintf(audit_key_operator, 100, "hostprototype.groupLinks[%lu]",
-						group_prototype->groupid);
-				zbx_audit_update_json_uint64(host_prototype->hostid, audit_key_operator,
 						group_prototype->templateid);
 			}
 			else
 			{
+				zabbix_log(LOG_LEVEL_INFORMATION, "HUE_999: group_prototype is NOT 0");
+
 				zbx_snprintf_alloc(&sql1, &sql1_alloc, &sql1_offset,
 						"update group_prototype"
 						" set templateid=" ZBX_FS_UI64
 						" where group_prototypeid=" ZBX_FS_UI64 ";\n",
 						group_prototype->templateid, group_prototype->group_prototypeid);
-				zbx_snprintf(audit_key_operator, 100, "hostprototype.groupLinks[%lu]",
-						group_prototype->group_prototypeid);
+			}
+
+			if (0 != strlen(group_prototype->name))
+			{
+				zabbix_log(LOG_LEVEL_INFORMATION, "HUE2: name is not empty");
+				zbx_snprintf(audit_key_operator, 100, "hostprototype.groupPrototypes[%s]",
+						group_prototype->name);
 				zbx_audit_update_json_uint64(host_prototype->hostid, audit_key_operator,
 						group_prototype->templateid);
 
+			}
+			else if (0 != group_prototype->groupid)
+			{
+				zabbix_log(LOG_LEVEL_INFORMATION, "HUE3: groupid is not null");
+				zbx_snprintf(audit_key_operator, 100, "hostprototype.groupLinks[%lu]",
+						group_prototype->groupid);
+				zbx_audit_update_json_uint64(host_prototype->hostid, audit_key_operator,
+						group_prototype->templateid);
 			}
 		}
 
@@ -4181,6 +4209,8 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 	}
 
 	zbx_vector_db_tag_ptr_destroy(&upd_tags);
+
+	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
 /******************************************************************************
@@ -4196,6 +4226,8 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 static void	DBcopy_template_host_prototypes(zbx_uint64_t hostid, zbx_vector_uint64_t *templateids)
 {
 	zbx_vector_ptr_t	host_prototypes;
+
+	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
 	/* only regular hosts can have host prototypes */
 	if (SUCCEED != DBis_regular_host(hostid))
@@ -4236,6 +4268,8 @@ static void	DBcopy_template_host_prototypes(zbx_uint64_t hostid, zbx_vector_uint
 
 	DBhost_prototypes_clean(&host_prototypes);
 	zbx_vector_ptr_destroy(&host_prototypes);
+
+	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
 /******************************************************************************
