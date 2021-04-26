@@ -272,6 +272,49 @@ void	zbx_audit_host_prototypes_create_entry(const int audit_action, zbx_uint64_t
 	zbx_hashset_insert(&zbx_audit, &local_audit_host_prototype_entry, sizeof(local_audit_host_prototype_entry));
 }
 
+void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, char *delay,
+		unsigned char status, char *agent, unsigned char authentication, char *http_user, char *http_password,
+		char *http_proxy, int retries, uint64_t hostid, zbx_uint64_t templateid)
+{
+	zbx_audit_entry_t	*local_audit_http_test_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
+			sizeof(zbx_audit_entry_t));
+	local_audit_http_test_entry->id = httptestid;
+	local_audit_http_test_entry->name = zbx_strdup(NULL, name);
+	local_audit_http_test_entry->audit_action = AUDIT_ACTION_ADD;
+	local_audit_http_test_entry->resource_type = AUDIT_RESOURCE_HTTP_TEST;
+
+	zbx_json_init(&(local_audit_http_test_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
+
+	zbx_json_addstring(&local_audit_http_test_entry->details_json, "delay", delay, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "status", status);
+	zbx_json_addstring(&local_audit_http_test_entry->details_json, "agent", agent, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "authentication", authentication);
+	zbx_json_addstring(&local_audit_http_test_entry->details_json, "http_user", http_user, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_http_test_entry->details_json, "http_password", http_password, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_http_test_entry->details_json, "http_proxy", http_proxy, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "retries", retries);
+	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "hostid", hostid);
+	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "templateid", templateid);
+
+	zbx_hashset_insert(&zbx_audit, &local_audit_http_test_entry, sizeof(local_audit_http_test_entry));
+}
+
+
+void	zbx_audit_httptests_create_entry_update(zbx_uint64_t httptestid, char *name,
+		zbx_uint64_t templateid)
+{
+	zbx_audit_entry_t	*local_audit_http_test_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
+			sizeof(zbx_audit_entry_t));
+	local_audit_http_test_entry->id = httptestid;
+	local_audit_http_test_entry->name = zbx_strdup(NULL, name);
+	local_audit_http_test_entry->audit_action = AUDIT_ACTION_UPDATE;
+	local_audit_http_test_entry->resource_type = AUDIT_RESOURCE_HTTP_TEST;
+
+	zbx_json_init(&(local_audit_http_test_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
+	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "templateid", templateid);
+	zbx_hashset_insert(&zbx_audit, &local_audit_http_test_entry, sizeof(local_audit_http_test_entry));
+}
+
 void	zbx_audit_items_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type)
 {
 	zbx_audit_entry_t	*local_audit_items_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,

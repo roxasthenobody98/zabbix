@@ -5322,18 +5322,55 @@ static void	DBsave_httptests(zbx_uint64_t hostid, zbx_vector_ptr_t *httptests)
 					(int)httptest->authentication, httptest->http_user, httptest->http_password,
 					httptest->http_proxy, httptest->retries, hostid, httptest->templateid);
 
+			zbx_audit_httptests_create_entry_add(httptest->httptestid, httptest->name,
+					httptest->delay, httptest->status, httptest->agent,
+					httptest->authentication, httptest->http_user, httptest->http_password,
+					httptest->http_proxy, httptest->retries, hostid, httptest->templateid);
+
 			for (j = 0; j < httptest->fields.values_num; j++)
 			{
+				char audit_key_name[100];
+				char audit_key_value[100];
+
 				httpfield = (httpfield_t *)httptest->fields.values[j];
 
 				zbx_db_insert_add_values(&db_insert_tfield, httptestfieldid, httptest->httptestid,
 						httpfield->type, httpfield->name, httpfield->value);
+
+				if (ZBX_HTTPFIELD_HEADER == httpfield->type)
+				{
+					zbx_snprintf(audit_key_name, 100, "httptest.headers[%lu].name",
+							httpstepid);
+					zbx_snprintf(audit_key_value, 100, "httptest.headers[%lu].value",
+							httpstepid);
+				}
+				else if (ZBX_HTTPFIELD_VARIABLE == httpfield->type)
+				{
+					zbx_snprintf(audit_key_name, 100, "httptest.variables[%lu].name",
+							httpstepid);
+					zbx_snprintf(audit_key_value, 100, "httptest.variables[%lu].value",
+							httpstepid);
+
+				}
+				zbx_audit_update_json_string(httptest->httptestid, audit_key_name,
+						httpfield->name);
+				zbx_audit_update_json_string(httptest->httptestid, audit_key_value,
+						httpfield->value);
 
 				httptestfieldid++;
 			}
 
 			for (j = 0; j < httptest->httpsteps.values_num; j++)
 			{
+				char audit_key_name[100];
+				char audit_key_url[100];
+				char audit_key_timeout[100];
+				char audit_key_posts[100];
+				char audit_key_required[100];
+				char audit_key_status_codes[100];
+				char audit_key_follow_redirects[100];
+				char audit_key_retrieve_mode[100];
+
 				httpstep = (httpstep_t *)httptest->httpsteps.values[j];
 
 				zbx_db_insert_add_values(&db_insert_hstep, httpstepid, httptest->httptestid,
@@ -5342,12 +5379,85 @@ static void	DBsave_httptests(zbx_uint64_t hostid, zbx_vector_ptr_t *httptests)
 						httpstep->follow_redirects, httpstep->retrieve_mode,
 						httpstep->post_type);
 
+				zbx_snprintf(audit_key_name, 100, "httptest.steps[%lu].no[%d].name",
+						httpstepid, httpstep->no);
+				zbx_snprintf(audit_key_url, 100, "httptest.steps[%lu].no[%d].url",
+						httpstepid, httpstep->no);
+				zbx_snprintf(audit_key_timeout, 100, "httptest.steps[%lu].no[%d].timeout",
+						httpstepid, httpstep->no);
+				zbx_snprintf(audit_key_posts, 100, "httptest.steps[%lu].no[%d].posts",
+						httpstepid, httpstep->no);
+				zbx_snprintf(audit_key_required, 100, "httptest.steps[%lu].no[%d].required",
+						httpstepid, httpstep->no);
+				zbx_snprintf(audit_key_status_codes, 100, "httptest.steps[%lu].no[%d].status_codes",
+						httpstepid, httpstep->no);
+				zbx_snprintf(audit_key_follow_redirects, 100,
+						"httptest.steps[%lu].no[%d].follow_redirects",
+						httpstepid, httpstep->no);
+				zbx_snprintf(audit_key_retrieve_mode, 100, "httptest.steps[%lu].no[%d].retrieve_mode",
+						httpstepid, httpstep->no);
+
+				zbx_audit_update_json_string(httptest->httptestid, audit_key_name, httpstep->name);
+				zbx_audit_update_json_string(httptest->httptestid, audit_key_url, httpstep->url);
+				zbx_audit_update_json_string(httptest->httptestid, audit_key_timeout,
+						httpstep->timeout);
+				zbx_audit_update_json_string(httptest->httptestid, audit_key_posts, httpstep->posts);
+				zbx_audit_update_json_string(httptest->httptestid, audit_key_required,
+						httpstep->required);
+				zbx_audit_update_json_string(httptest->httptestid, audit_key_status_codes,
+						httpstep->status_codes);
+				zbx_audit_update_json_uint64(httptest->httptestid, audit_key_follow_redirects,
+						httpstep->follow_redirects);
+				zbx_audit_update_json_uint64(httptest->httptestid, audit_key_retrieve_mode,
+						httpstep->retrieve_mode);
+
 				for (k = 0; k < httpstep->fields.values_num; k++)
 				{
+					char audit_key_name[100];
+					char audit_key_value[100];
+
 					httpfield = (httpfield_t *)httpstep->fields.values[k];
 
 					zbx_db_insert_add_values(&db_insert_sfield, httpstepfieldid, httpstepid,
 							httpfield->type, httpfield->name, httpfield->value);
+
+					if (ZBX_HTTPFIELD_HEADER == httpfield->type)
+					{
+						zbx_snprintf(audit_key_name, 100,
+								"httptest.steps[].headers[%lu].name", httpstepid);
+						zbx_snprintf(audit_key_value, 100,
+								"httptest.steps[].headers[%lu].value", httpstepid);
+					}
+					else if (ZBX_HTTPFIELD_VARIABLE == httpfield->type)
+					{
+						zbx_snprintf(audit_key_name, 100,
+								"httptest.steps[].variables[%lu].name", httpstepid);
+						zbx_snprintf(audit_key_value, 100,
+								"httptest.steps[].variables[%lu].value", httpstepid);
+					}
+					else if (ZBX_HTTPFIELD_POST_FIELD == httpfield->type)
+					{
+						zbx_snprintf(audit_key_name, 100,
+								"httptest.steps[].posts[%lu].name", httpstepid);
+						zbx_snprintf(audit_key_value, 100,
+								"httptest.steps[].posts[%lu].value", httpstepid);
+					}
+					else if (ZBX_HTTPFIELD_QUERY_FIELD == httpfield->type)
+					{
+						zbx_snprintf(audit_key_name, 100,
+								"httptest.steps[].query_fields[%lu].name", httpstepid);
+						zbx_snprintf(audit_key_value, 100,
+								"httptest.steps[].query_fields[%lu].value", httpstepid);
+					}
+					else
+					{
+						THIS_SHOULD_NEVER_HAPPEN;
+					}
+
+					zbx_audit_update_json_string(httptest->httptestid, audit_key_name,
+						httpfield->name);
+					zbx_audit_update_json_string(httptest->httptestid, audit_key_value,
+						httpfield->value);
 
 					httpstepfieldid++;
 				}
@@ -5392,6 +5502,10 @@ static void	DBsave_httptests(zbx_uint64_t hostid, zbx_vector_ptr_t *httptests)
 					" set templateid=" ZBX_FS_UI64
 					" where httptestid=" ZBX_FS_UI64 ";\n",
 					httptest->templateid, httptest->httptestid);
+
+			zbx_audit_httptests_create_entry_update(httptest->httptestid, httptest->name,
+					httptest->templateid);
+
 		}
 	}
 
@@ -5546,7 +5660,7 @@ static void	clean_httptests(zbx_vector_ptr_t *httptests)
  *             templateids - [IN] array of template IDs                       *
  *                                                                            *
  ******************************************************************************/
-static void	DBcopy_template_httptests(zbx_uint64_t hostid, const zbx_vector_uint64_t *templateids)
+static void	DBcopy_template_httptests(zbx_uint64_t hostid, const zbx_vector_uint64_t *templateids, char *recsetid_cuid)
 {
 	zbx_vector_ptr_t	httptests;
 
@@ -5642,7 +5756,7 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 	if (SUCCEED == (res = DBcopy_template_triggers(hostid, lnk_templateids)))
 	{
 		DBcopy_template_graphs(hostid, lnk_templateids);
-		DBcopy_template_httptests(hostid, lnk_templateids);
+		DBcopy_template_httptests(hostid, lnk_templateids, recsetid_cuid);
 	}
 
 	zbx_audit_flush(recsetid_cuid);
