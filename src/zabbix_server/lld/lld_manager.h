@@ -39,7 +39,7 @@ typedef struct zbx_lld_value
 }
 zbx_lld_data_t;
 
-/* queue of values for one LLD rule */
+/* queue of values for one host */
 typedef struct
 {
 	/* the LLD rule host id */
