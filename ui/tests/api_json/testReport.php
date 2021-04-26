@@ -207,7 +207,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
 					'cycle' => 4
 				],
 				'expected_error' => 'Invalid parameter "/1/cycle": value must be one of 0, 1, 2, 3.'
@@ -223,7 +222,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
 					'cycle' => "string"
 				],
 				'expected_error' => 'Invalid parameter "/1/cycle": an integer is expected.'
@@ -239,8 +237,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 3,
 					'start_time' => '86341'
 				],
 				'expected_error' => 'Invalid parameter "/1/start_time": value must be one of 0-86340.'
@@ -256,8 +252,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 3,
 					'start_time' => ''
 				],
 				'expected_error' => 'Invalid parameter "/1/start_time\": an integer is expected.'
@@ -273,9 +267,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 3,
-					'start_time' => '2001',
 					'weekdays' => 1
 				],
 				'expected_error' => 'Invalid parameter "/1/weekdays": value must be 0.'
@@ -291,9 +282,7 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
 					'cycle' => 1,
-					'start_time' => '2001',
 					'weekdays' => 0
 				],
 				'expected_error' => 'Invalid parameter "/1/weekdays": value must be one of 1-127.'
@@ -309,9 +298,7 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
 					'cycle' => 1,
-					'start_time' => '2001',
 					'weekdays' => 'string'
 				],
 				'expected_error' => 'Invalid parameter "/1/weekdays": an integer is expected.'
@@ -327,9 +314,7 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
 					'cycle' => 1,
-					'start_time' => '2001',
 					'weekdays' => ''
 				],
 				'expected_error' => 'Invalid parameter "/1/weekdays": an integer is expected.'
@@ -345,10 +330,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
 					'active_since' => 1
 				],
 				'expected_error' => 'Invalid parameter "/1/active_since": a character string is expected.'
@@ -364,10 +345,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
 					'active_since' => 'string'
 				],
 				'expected_error' => 'Invalid parameter "/1/active_since": a date in YYYY-MM-DD format is expected.'
@@ -383,10 +360,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
 					'active_since' => '1950-01-01'
 				],
 				'expected_error' => 'Invalid parameter "/1/active_since": value must be between "1970-01-01" and "2038-01-18".'
@@ -402,10 +375,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
 					'active_since' => '2039-01-18'
 				],
 				'expected_error' => 'Invalid parameter "/1/active_since": value must be between "1970-01-01" and "2038-01-18".'
@@ -421,10 +390,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
 					'active_till' => 1
 				],
 				'expected_error' => 'Invalid parameter "/1/active_till": a character string is expected.'
@@ -440,10 +405,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
 					'active_till' => 'string'
 				],
 				'expected_error' => 'Invalid parameter "/1/active_till": a date in YYYY-MM-DD format is expected.'
@@ -459,10 +420,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
 					'active_till' => '1950-01-01'
 				],
 				'expected_error' => 'Invalid parameter "/1/active_till": value must be between "1970-01-01" and "2038-01-18".'
@@ -478,10 +435,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
 					'active_till' => '2039-01-18'
 				],
 				'expected_error' => 'Invalid parameter "/1/active_till": value must be between "1970-01-01" and "2038-01-18".'
@@ -497,11 +450,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
 					'subject' => 1
 				],
 				'expected_error' => 'Invalid parameter "/1/subject": a character string is expected.'
@@ -517,11 +465,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
 					'subject' => []
 				],
 				'expected_error' => 'Invalid parameter "/1/subject": a character string is expected.'
@@ -537,12 +480,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
-					'subject' => '',
 					'message' => 1
 				],
 				'expected_error' => 'Invalid parameter "/1/message": a character string is expected.'
@@ -558,12 +495,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
-					'subject' => '',
 					'message' => []
 				],
 				'expected_error' => 'Invalid parameter "/1/message": a character string is expected.'
@@ -579,13 +510,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
-					'subject' => '',
-					'message' => '',
 					'status' => 3
 				],
 				'expected_error' => 'Invalid parameter "/1/status": value must be one of 1, 0.'
@@ -601,13 +525,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
-					'subject' => '',
-					'message' => '',
 					'status' => 'string'
 				],
 				'expected_error' => 'Invalid parameter "/1/status": an integer is expected.'
@@ -623,13 +540,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
-					'subject' => '',
-					'message' => '',
 					'status' => []
 				],
 				'expected_error' => 'Invalid parameter "/1/status": an integer is expected.'
@@ -645,13 +555,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
-					'subject' => '',
-					'message' => '',
 					'status' => ''
 				],
 				'expected_error' => 'Invalid parameter "/1/status": an integer is expected.'
@@ -667,14 +570,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
-					'subject' => '',
-					'message' => '',
-					'status' => 1,
 					'description' => 1
 				],
 				'expected_error' => 'Invalid parameter "/1/description": a character string is expected.'
@@ -690,14 +585,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
-					'subject' => '',
-					'message' => '',
-					'status' => 1,
 					'description' => []
 				],
 				'expected_error' => 'Invalid parameter "/1/description": a character string is expected.'
@@ -713,15 +600,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
-					'subject' => '',
-					'message' => '',
-					'status' => 1,
-					'description' => 'string',
 					'state' => 1
 				],
 				'expected_error' => 'Invalid parameter "/1": unexpected parameter "state".'
@@ -737,15 +615,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
-					'subject' => '',
-					'message' => '',
-					'status' => 1,
-					'description' => 'string',
 					'lastsent' => 1
 				],
 				'expected_error' => 'Invalid parameter "/1": unexpected parameter "lastsent".'
@@ -761,15 +630,6 @@ class testJSONRPC extends CAPITest {
 							'exclude' => '0'
 						]
 					],
-					'period' => 2,
-					'cycle' => 1,
-					'start_time' => '2001',
-					'weekdays' => 'string',
-					'active_till' => '2000-01-18',
-					'subject' => '',
-					'message' => '',
-					'status' => 1,
-					'description' => 'string',
 					'info' => 1
 				],
 				'expected_error' => 'Invalid parameter "/1": unexpected parameter "info".'
@@ -810,7 +670,7 @@ class testJSONRPC extends CAPITest {
 					],
 				],
 				'expected_error' => 'Invalid parameter "/1/users/1/exclude": value must be one of 0, 1.'
-			],
+			]
 		];
 	}
 
