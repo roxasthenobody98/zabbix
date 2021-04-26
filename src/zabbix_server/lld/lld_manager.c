@@ -318,7 +318,7 @@ static void	lld_queue_rule(zbx_lld_manager_t *manager, zbx_lld_rule_t *rule)
  ******************************************************************************/
 static void	lld_queue_request(zbx_lld_manager_t *manager, const zbx_ipc_message_t *message)
 {
-	zbx_uint64_t	itemid;
+	zbx_uint64_t	itemid, hostid;
 	zbx_lld_rule_t	*rule;
 	zbx_lld_data_t	*data;
 
@@ -326,8 +326,8 @@ static void	lld_queue_request(zbx_lld_manager_t *manager, const zbx_ipc_message_
 
 	data = (zbx_lld_data_t *)zbx_malloc(NULL, sizeof(zbx_lld_data_t));
 	data->next = NULL;
-	zbx_lld_deserialize_item_value(message->data, &itemid, &data->value, &data->ts, &data->meta, &data->lastlogsize,
-			&data->mtime, &data->error);
+	zbx_lld_deserialize_item_value(message->data, &itemid, &hostid, &data->value, &data->ts, &data->meta,
+			&data->lastlogsize, &data->mtime, &data->error);
 
 	if (NULL == (rule = zbx_hashset_search(&manager->rule_index, &itemid)))
 	{
@@ -381,7 +381,8 @@ static void	lld_process_next_request(zbx_lld_manager_t *manager, zbx_lld_worker_
 	zbx_binary_heap_remove_min(&manager->rule_queue);
 
 	data = worker->rule->head;
-	buf_len = zbx_lld_serialize_item_value(&buf, worker->rule->itemid, data->value, &data->ts, data->meta,
+	/* hostid is not used by workers */
+	buf_len = zbx_lld_serialize_item_value(&buf, worker->rule->itemid, 0, data->value, &data->ts, data->meta,
 			data->lastlogsize, data->mtime, data->error);
 	zbx_ipc_client_send(worker->client, ZBX_IPC_LLD_TASK, buf, buf_len);
 	zbx_free(buf);
