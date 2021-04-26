@@ -1629,3 +1629,39 @@ INSERT INTO triggers (triggerid, description, expression, comments) VALUES (5017
 INSERT INTO functions (functionid, triggerid, itemid, name, parameter) VALUES (50237, 50177, 58737, 'last', '');
 INSERT INTO triggers (triggerid, description, expression, comments) VALUES (50178, 'template-trigger', '{50238}=0', '');
 INSERT INTO functions (functionid, triggerid, itemid, name, parameter) VALUES (50238, 50178, 58738, 'last', '');
+
+-- reports api data
+INSERT INTO `users` (`userid`, `username`, `name`, `surname`, `passwd`, `url`, `autologin`, `autologout`, `lang`, `refresh`, `theme`, `attempt_failed`, `attempt_ip`, `attempt_clock`, `rows_per_page`, `timezone`, `roleid`) VALUES (15, 'Report user super admin', 'Report user super admin', '', '$2y$10$pUjKa4G5mcmCuOLKsk8HoeULBYIcJRClB5uXHX9EStq3szdwp10cS', '', 0, '0', 'default', '30s', 'default', 0, '', 0, 50, 'default', 3);
+INSERT INTO `users` (`userid`, `username`, `name`, `surname`, `passwd`, `url`, `autologin`, `autologout`, `lang`, `refresh`, `theme`, `attempt_failed`, `attempt_ip`, `attempt_clock`, `rows_per_page`, `timezone`, `roleid`) VALUES (16, 'Report user admin', 'Report user admin', '', '$2y$10$KLus6j3y6tHVSfygMAGxwugUG4omam4dqyxE7xSXB3wLIWcmwo5n2', '', 0, '0', 'default', '30s', 'default', 0, '', 0, 50, 'default', 2);
+INSERT INTO `users` (`userid`, `username`, `name`, `surname`, `passwd`, `url`, `autologin`, `autologout`, `lang`, `refresh`, `theme`, `attempt_failed`, `attempt_ip`, `attempt_clock`, `rows_per_page`, `timezone`, `roleid`) VALUES (17, 'Report user user', 'Report user user', '', '$2y$10$PFCn1Fj3A0PXaBNQQtvHiOSoFstyz0lw2aerIS3s60f.1RpnR0J3S', '', 0, '0', 'default', '30s', 'default', 0, '', 0, 50, 'default', 1);
+
+INSERT INTO `usrgrp` (`usrgrpid`, `name`, `gui_access`, `users_status`, `debug_mode`) VALUES (25, 'Reports group 1', 0, 0, 0);
+INSERT INTO `usrgrp` (`usrgrpid`, `name`, `gui_access`, `users_status`, `debug_mode`) VALUES (26, 'Reports group 2', 0, 0, 0);
+INSERT INTO `usrgrp` (`usrgrpid`, `name`, `gui_access`, `users_status`, `debug_mode`) VALUES (27, 'Reports group 3 empty', 0, 0, 0);
+
+INSERT INTO `users_groups` (`id`, `usrgrpid`, `userid`) VALUES (21, 25, 16);
+INSERT INTO `users_groups` (`id`, `usrgrpid`, `userid`) VALUES (22, 25, 15);
+INSERT INTO `users_groups` (`id`, `usrgrpid`, `userid`) VALUES (23, 26, 17);
+
+
+INSERT INTO `dashboard` (`dashboardid`, `name`, `userid`, `private`, `templateid`, `display_period`, `auto_start`) VALUES (59, 'Report test dashboard 1', 1, 1, NULL, 600, 0);
+INSERT INTO `dashboard_page` (`dashboard_pageid`, `dashboardid`, `name`, `display_period`, `sortorder`) VALUES (60, 59, '', 0, 0);
+INSERT INTO `widget` (`widgetid`, `type`, `name`, `x`, `y`, `width`, `height`, `view_mode`, `dashboard_pageid`) VALUES (403, 'clock', '', 0, 0, 4, 3, 0, 60);
+INSERT INTO `widget` (`widgetid`, `type`, `name`, `x`, `y`, `width`, `height`, `view_mode`, `dashboard_pageid`) VALUES (404, 'clock', '', 4, 0, 4, 3, 0, 60);
+INSERT INTO `widget` (`widgetid`, `type`, `name`, `x`, `y`, `width`, `height`, `view_mode`, `dashboard_pageid`) VALUES (405, 'clock', '', 8, 0, 4, 3, 0, 60);
+INSERT INTO `dashboard` (`dashboardid`, `name`, `userid`, `private`, `templateid`, `display_period`, `auto_start`) VALUES (60, 'Report test dashboard 2', 1, 1, NULL, 600, 0);
+INSERT INTO `dashboard_page` (`dashboard_pageid`, `dashboardid`, `name`, `display_period`, `sortorder`) VALUES (61, 60, '', 0, 0);
+INSERT INTO `widget` (`widgetid`, `type`, `name`, `x`, `y`, `width`, `height`, `view_mode`, `dashboard_pageid`) VALUES (406, 'clock', '', 0, 0, 4, 3, 0, 61);
+INSERT INTO `widget` (`widgetid`, `type`, `name`, `x`, `y`, `width`, `height`, `view_mode`, `dashboard_pageid`) VALUES (407, 'clock', '', 4, 0, 4, 3, 0, 61);
+INSERT INTO `widget` (`widgetid`, `type`, `name`, `x`, `y`, `width`, `height`, `view_mode`, `dashboard_pageid`) VALUES (408, 'clock', '', 8, 0, 4, 3, 0, 61);
+
+
+INSERT INTO `report` (`reportid`, `userid`, `name`, `description`, `status`, `dashboardid`, `period`, `cycle`, `weekdays`, `start_time`, `active_since`, `active_till`, `state`, `lastsent`, `info`) VALUES (15, 1, 'Report test GET (Report test dashboard)', '', 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, '');
+INSERT INTO `report_user` (`reportuserid`, `reportid`, `userid`, `exclude`, `access_userid`) VALUES (21, 15, 15, 0, 1);
+
+INSERT INTO `report` (`reportid`, `userid`, `name`, `description`, `status`, `dashboardid`, `period`, `cycle`, `weekdays`, `start_time`, `active_since`, `active_till`, `state`, `lastsent`, `info`) VALUES (16, 1, 'Report test delete success', '', 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, '');
+INSERT INTO `report` (`reportid`, `userid`, `name`, `description`, `status`, `dashboardid`, `period`, `cycle`, `weekdays`, `start_time`, `active_since`, `active_till`, `state`, `lastsent`, `info`) VALUES (17, 1, 'Report test remove user', '', 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, '');
+INSERT INTO `report` (`reportid`, `userid`, `name`, `description`, `status`, `dashboardid`, `period`, `cycle`, `weekdays`, `start_time`, `active_since`, `active_till`, `state`, `lastsent`, `info`) VALUES (18, 1, 'Report test remove group', '', 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, '');
+INSERT INTO `report_user` (`reportuserid`, `reportid`, `userid`, `exclude`, `access_userid`) VALUES (22, 16, 15, 0, 1);
+INSERT INTO `report_user` (`reportuserid`, `reportid`, `userid`, `exclude`, `access_userid`) VALUES (23, 17, 16, 0, 1);
+INSERT INTO `report_usrgrp` (`reportusrgrpid`, `reportid`, `usrgrpid`, `access_userid`) VALUES (6, 18, 25, NULL);
