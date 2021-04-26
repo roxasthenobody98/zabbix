@@ -1365,6 +1365,8 @@ static int	DBget_history_log_value(zbx_uint64_t itemid, char **replace_to, int r
 	if (SUCCEED != zbx_vc_get_value(itemid, item.value_type, &ts, &value))
 		goto out;
 
+	zbx_vc_flush_stats();
+
 	switch (request)
 	{
 		case ZBX_REQUEST_ITEM_LOG_DATE:
@@ -1452,6 +1454,7 @@ static int	DBitem_get_value(zbx_uint64_t itemid, char **lastvalue, int raw, zbx_
 		{
 			char	tmp[MAX_BUFFER_LEN];
 
+			zbx_vc_flush_stats();
 			zbx_history_value_print(tmp, sizeof(tmp), &vc_value.value, value_type);
 			zbx_history_record_clear(&vc_value, value_type);
 
@@ -4941,6 +4944,13 @@ static int	substitute_simple_macros_impl(const zbx_uint64_t *actionid, const DB_
 						*data, &token.data.simple_macro, ZBX_FORMAT_RAW);
 			}
 		}
+		else if (0 == indexed_macro && 0 != (macro_type & MACRO_TYPE_REPORT))
+		{
+			if (0 == strcmp(m, MVAR_TIME))
+			{
+				replace_to = zbx_strdup(replace_to, zbx_time2str(time(NULL), tz));
+			}
+		}
 
 		if (0 != (macro_type & MACRO_TYPE_HTTP_JSON) && NULL != replace_to)
 			zbx_json_escape(&replace_to);
@@ -4993,6 +5003,8 @@ static int	substitute_simple_macros_impl(const zbx_uint64_t *actionid, const DB_
 
 		pos++;
 	}
+
+	zbx_vc_flush_stats();
 
 	zbx_free(user_username);
 	zbx_free(user_name);
@@ -5488,6 +5500,8 @@ static void	zbx_evaluate_item_functions(zbx_hashset_t *funcs, zbx_vector_ptr_t *
 			func->value = zbx_strdup(func->value, buffer);
 		}
 	}
+
+	zbx_vc_flush_stats();
 
 	DCconfig_clean_items(items, errcodes, itemids.values_num);
 	zbx_vector_uint64_destroy(&itemids);

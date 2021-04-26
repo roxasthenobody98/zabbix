@@ -551,7 +551,9 @@ const char	*get_program_type_string(unsigned char program_type);
 #define ZBX_PROCESS_TYPE_ALERTSYNCER	30
 #define ZBX_PROCESS_TYPE_HISTORYPOLLER	31
 #define ZBX_PROCESS_TYPE_AVAILMAN	32
-#define ZBX_PROCESS_TYPE_COUNT		33	/* number of process types */
+#define ZBX_PROCESS_TYPE_REPORTMANAGER	33
+#define ZBX_PROCESS_TYPE_REPORTWRITER	34
+#define ZBX_PROCESS_TYPE_COUNT		35	/* number of process types */
 #define ZBX_PROCESS_TYPE_UNKNOWN	255
 const char	*get_process_type_string(unsigned char proc_type);
 int		get_process_type_by_name(const char *proc_type_str);
@@ -1664,7 +1666,6 @@ int	zbx_validate_value_dbl(double value, int dbl_precision);
 void	zbx_update_env(double time_now);
 int	zbx_get_agent_item_nextcheck(zbx_uint64_t itemid, const char *delay, int now,
 		int *nextcheck, char **error);
-
 #define ZBX_DATA_SESSION_TOKEN_SIZE	(MD5_DIGEST_SIZE * 2)
 char	*zbx_create_token(zbx_uint64_t seed);
 
@@ -1773,5 +1774,15 @@ void	zbx_new_cuid(char *cuid);
 #define AUDIT_ACTION_LOGIN		3
 #define AUDIT_ACTION_LOGOUT		4
 #define AUDIT_ACTION_EXECUTE		7
+
+/* report scheduling */
+
+#define ZBX_REPORT_CYCLE_DAILY		0
+#define ZBX_REPORT_CYCLE_WEEKLY		1
+#define ZBX_REPORT_CYCLE_MONTHLY	2
+#define ZBX_REPORT_CYCLE_YEARLY		3
+
+int	zbx_get_report_nextcheck(int now, unsigned char cycle, unsigned char weekdays, int start_time,
+		const char *timezone);
 
 #endif
