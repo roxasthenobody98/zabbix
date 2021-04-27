@@ -63,6 +63,7 @@ zbx_uint32_t	zbx_lld_serialize_diag_stats(unsigned char **data, zbx_uint64_t ite
 
 void	zbx_lld_deserialize_top_items_request(const unsigned char *data, int *limit);
 
-zbx_uint32_t	zbx_lld_serialize_top_items_result(unsigned char **data, zbx_lld_rule_info_t **items, int items_num);
+zbx_uint32_t	zbx_lld_serialize_top_items_result(unsigned char **data, const zbx_lld_rule_info_t **rule_infos,
+		int num);
 
 #endif

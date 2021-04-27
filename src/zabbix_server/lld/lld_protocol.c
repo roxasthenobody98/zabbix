@@ -158,29 +158,30 @@ void	zbx_lld_deserialize_top_items_request(const unsigned char *data, int *limit
  * Function: zbx_lld_serialize_top_items_result                               *
  *                                                                            *
  ******************************************************************************/
-zbx_uint32_t	zbx_lld_serialize_top_items_result(unsigned char **data, zbx_lld_rule_info_t **items, int items_num)
+zbx_uint32_t	zbx_lld_serialize_top_items_result(unsigned char **data, const zbx_lld_rule_info_t **rule_infos,
+		int num)
 {
 	unsigned char	*ptr;
 	zbx_uint32_t	data_len = 0, item_len = 0;
 	int		i;
 
-	if (0 != items_num)
+	if (0 != num)
 	{
-		zbx_serialize_prepare_value(item_len, items[0]->itemid);
-		zbx_serialize_prepare_value(item_len, items[0]->values_num);
+		zbx_serialize_prepare_value(item_len, rule_infos[0]->itemid);
+		zbx_serialize_prepare_value(item_len, rule_infos[0]->values_num);
 	}
 
-	zbx_serialize_prepare_value(data_len, items_num);
-	data_len += item_len * items_num;
+	zbx_serialize_prepare_value(data_len, num);
+	data_len += item_len * num;
 	*data = (unsigned char *)zbx_malloc(NULL, data_len);
 
 	ptr = *data;
-	ptr += zbx_serialize_value(ptr, items_num);
+	ptr += zbx_serialize_value(ptr, num);
 
-	for (i = 0; i < items_num; i++)
+	for (i = 0; i < num; i++)
 	{
-		ptr += zbx_serialize_value(ptr, items[i]->itemid);
-		ptr += zbx_serialize_value(ptr, items[i]->values_num);
+		ptr += zbx_serialize_value(ptr, rule_infos[i]->itemid);
+		ptr += zbx_serialize_value(ptr, rule_infos[i]->values_num);
 	}
 
 	return data_len;

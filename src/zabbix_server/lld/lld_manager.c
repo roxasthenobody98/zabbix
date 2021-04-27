@@ -556,7 +556,7 @@ static void	lld_process_top_items(zbx_lld_manager_t *manager, zbx_ipc_client_t *
 
 	zbx_vector_ptr_sort(&view, lld_diag_item_compare_values_desc);
 
-	data_len = zbx_lld_serialize_top_items_result(&data, (zbx_lld_rule_info_t **)view.values,
+	data_len = zbx_lld_serialize_top_items_result(&data, (const zbx_lld_rule_info_t **)view.values,
 			MIN(limit, view.values_num));
 	zbx_ipc_client_send(client, ZBX_IPC_LLD_TOP_ITEMS_RESULT, data, data_len);
 
