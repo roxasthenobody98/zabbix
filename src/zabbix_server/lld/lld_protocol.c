@@ -221,6 +221,7 @@ static void	zbx_lld_deserialize_top_items_result(const unsigned char *data, zbx_
  * Purpose: process low level discovery value/error                           *
  *                                                                            *
  * Parameters: itemid - [IN] the LLD rule id                                  *
+ *             hostid - [IN] the host id                                      *
  *             value  - [IN] the rule value (can be NULL if error is set)     *
  *             ts     - [IN] the value timestamp                              *
  *             error  - [IN] the error message (can be NULL)                  *
@@ -259,6 +260,7 @@ void	zbx_lld_process_value(zbx_uint64_t itemid, zbx_uint64_t hostid, const char 
  * Purpose: process low level discovery agent result                          *
  *                                                                            *
  * Parameters: itemid - [IN] the LLD rule id                                  *
+ *             hostid - [IN] the host id                                      *
  *             result - [IN] the agent result                                 *
  *             ts     - [IN] the value timestamp                              *
  *             error  - [IN] the error message (can be NULL)                  *
