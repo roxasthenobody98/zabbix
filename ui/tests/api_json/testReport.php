@@ -719,7 +719,7 @@ class testReport extends CAPITest {
 	public static function reportUserDelete_data() {
 		return [
 			[
-				'params' => [17],
+				'params' => [21],
 				'expected_error' => 'User "Report user user" is report "Test report one subscriptions" recipient.'
 			],
 		];
