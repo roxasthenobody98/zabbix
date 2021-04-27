@@ -491,7 +491,7 @@ static void	update_template_lld_rule_formulas(zbx_vector_ptr_t *items, zbx_vecto
  *                                                                            *
  ******************************************************************************/
 static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_template_item_t *item,
-		zbx_db_insert_t *db_insert_items, zbx_db_insert_t *db_insert_irtdata, char *recsetid_cuid, char **sql,
+		zbx_db_insert_t *db_insert_items, zbx_db_insert_t *db_insert_irtdata, char **sql,
 		size_t *sql_alloc, size_t *sql_offset)
 {
 	int			i, audit_action;
@@ -658,7 +658,7 @@ static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_te
 	{
 		dependent = (zbx_template_item_t *)item->dependent_items.values[i];
 		dependent->master_itemid = item->itemid;
-		save_template_item(hostid, itemid, dependent, db_insert_items, db_insert_irtdata, recsetid_cuid, sql,
+		save_template_item(hostid, itemid, dependent, db_insert_items, db_insert_irtdata, sql,
 				sql_alloc, sql_offset);
 	}
 }
@@ -673,7 +673,7 @@ static void	save_template_item(zbx_uint64_t hostid, zbx_uint64_t *itemid, zbx_te
  *              items  - [IN] the template items                              *
  *                                                                            *
  ******************************************************************************/
-static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items, char *recsetid_cuid)
+static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items)
 {
 	char			*sql = NULL;
 	size_t			sql_alloc = 16 * ZBX_KIBIBYTE, sql_offset = 0;
@@ -726,7 +726,7 @@ static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items, ch
 		/* dependent items are saved within recursive save_template_item calls while saving master */
 		if (0 == item->master_itemid)
 		{
-			save_template_item(hostid, &itemid, item, &db_insert_items, &db_insert_irtdata, recsetid_cuid,
+			save_template_item(hostid, &itemid, item, &db_insert_items, &db_insert_irtdata,
 					&sql, &sql_alloc, &sql_offset);
 		}
 	}
@@ -764,7 +764,7 @@ static void	save_template_items(zbx_uint64_t hostid, zbx_vector_ptr_t *items, ch
  *                                    be inserted                             *
  *                                                                            *
  ******************************************************************************/
-static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *rules, int new_conditions, char *recsetid_cuid)
+static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *rules, int new_conditions)
 {
 	char				*macro_esc, *value_esc;
 	int				i, j, index, audit_index = 0;
@@ -2005,7 +2005,7 @@ static void	prepare_lld_items(const zbx_vector_ptr_t *items, zbx_vector_uint64_t
  *             templateids - [IN] array of template IDs                       *
  *                                                                            *
  ******************************************************************************/
-void	DBcopy_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *templateids, char *recsetid_cuid)
+void	DBcopy_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *templateids)
 {
 	zbx_vector_ptr_t	items, lld_rules;
 	int			new_conditions = 0;
@@ -2028,8 +2028,8 @@ void	DBcopy_template_items(zbx_uint64_t hostid, const zbx_vector_uint64_t *templ
 	update_template_lld_rule_formulas(&items, &lld_rules);
 
 	link_template_dependent_items(&items);
-	save_template_items(hostid, &items, recsetid_cuid);
-	save_template_lld_rules(&items, &lld_rules, new_conditions, recsetid_cuid);
+	save_template_items(hostid, &items);
+	save_template_lld_rules(&items, &lld_rules, new_conditions);
 	save_template_discovery_prototypes(hostid, &items);
 	copy_template_items_preproc(templateids, &items);
 	copy_template_item_script_params(templateids, &items);

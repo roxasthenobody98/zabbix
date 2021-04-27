@@ -1291,7 +1291,7 @@ out:
  * Parameters: itemids - [IN] array of item identificators from database      *
  *                                                                            *
  ******************************************************************************/
-void	DBdelete_items(zbx_vector_uint64_t *itemids, char *recsetid_cuid, int resource_type)
+void	DBdelete_items(zbx_vector_uint64_t *itemids, int resource_type)
 {
 	char			*sql = NULL;
 	size_t			sql_alloc = 256, sql_offset;
@@ -1378,13 +1378,10 @@ out:
 static void	DBdelete_httptests(zbx_vector_uint64_t *httptestids)
 {
 	char			*sql = NULL;
-	char			recsetid_cuid[CUID_LEN];
 	size_t			sql_alloc = 256, sql_offset = 0;
 	zbx_vector_uint64_t	itemids;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s() values_num:%d", __func__, httptestids->values_num);
-
-	zbx_new_cuid(recsetid_cuid);
 
 	if (0 == httptestids->values_num)
 		goto out;
@@ -1409,8 +1406,8 @@ static void	DBdelete_httptests(zbx_vector_uint64_t *httptestids)
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "httptestid",
 			httptestids->values, httptestids->values_num);
 
-	DBselect_delete_for_item(sql, &itemids, AUDIT_RESOURCE_HTTP_TEST);
-	DBdelete_items(&itemids, recsetid_cuid, AUDIT_RESOURCE_HTTP_TEST);
+	DBselect_delete_for_item(sql, &itemids, AUDIT_RESOURCE_SCENARIO);
+	DBdelete_items(&itemids, AUDIT_RESOURCE_SCENARIO);
 
 	sql_offset = 0;
 	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, "delete from httptest where");
@@ -1710,11 +1707,9 @@ static void	DBdelete_template_items(zbx_uint64_t hostid, const zbx_vector_uint64
 	char			*sql = NULL;
 	size_t			sql_alloc = 0, sql_offset = 0;
 	zbx_vector_uint64_t	itemids;
-	char			recsetid_cuid[CUID_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
-	zbx_new_cuid(recsetid_cuid);
 	zbx_vector_uint64_create(&itemids);
 
 	zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset,
@@ -1727,7 +1722,7 @@ static void	DBdelete_template_items(zbx_uint64_t hostid, const zbx_vector_uint64
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "ti.hostid", templateids->values, templateids->values_num);
 
 	DBselect_delete_for_item(sql, &itemids, AUDIT_RESOURCE_ITEM);
-	DBdelete_items(&itemids, recsetid_cuid, AUDIT_RESOURCE_ITEM);
+	DBdelete_items(&itemids, AUDIT_RESOURCE_ITEM);
 
 	zbx_vector_uint64_destroy(&itemids);
 	zbx_free(sql);
@@ -4538,8 +4533,48 @@ static void	DBcopy_graph_to_host(zbx_uint64_t hostid, zbx_uint64_t graphid,
 				DBsql_id_ins(ymin_itemid), DBsql_id_ins(ymax_itemid), (int)flags, (int)discover,
 				hst_graphid);
 
+		zbx_audit_graphs_create_entry(AUDIT_ACTION_UPDATE, hst_graphid, name_esc, width, height, yaxismin,
+				yaxismax, graphid, show_work_period, show_triggers, graphtype, show_legend, show_3d,
+				percent_left, percent_right, ymin_type, ymax_type, ymin_itemid, ymax_itemid, flags,
+				discover);
+
 		for (i = 0; i < gitems_num; i++)
 		{
+			char audit_key_drawtype[100];
+			char audit_key_sortorder[100];
+			char audit_key_color[100];
+			char audit_key_yaxisside[100];
+			char audit_key_calc_fnc[100];
+			char audit_key_type[100];
+
+			if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+			{
+				zbx_snprintf(audit_key_drawtype, 100, "graph.gitems[%lu].drawtype",
+						chd_gitems[i].gitemid);
+				zbx_snprintf(audit_key_sortorder, 100, "graph.gitems[%lu].sortorder",
+						chd_gitems[i].gitemid);
+				zbx_snprintf(audit_key_color, 100, "graph.gitems[%lu].color", chd_gitems[i].gitemid);
+				zbx_snprintf(audit_key_yaxisside, 100, "graph.gitems[%lu].yaxisside",
+						chd_gitems[i].gitemid);
+				zbx_snprintf(audit_key_calc_fnc, 100, "graph.gitems[%lu].calc_fnc",
+						chd_gitems[i].gitemid);
+				zbx_snprintf(audit_key_type, 100, "graph.gitems[%lu].type", chd_gitems[i].gitemid);
+			}
+			else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+			{
+				zbx_snprintf(audit_key_drawtype, 100, "graphprototype.gitems[%lu].drawtype",
+						chd_gitems[i].gitemid);
+				zbx_snprintf(audit_key_sortorder, 100, "graphprototype.gitems[%lu].sortorder",
+						chd_gitems[i].gitemid);
+				zbx_snprintf(audit_key_color, 100, "graphprototype.gitems[%lu].color",
+						chd_gitems[i].gitemid);
+				zbx_snprintf(audit_key_yaxisside, 100, "graphprototype.gitems[%lu].yaxisside",
+						chd_gitems[i].gitemid);
+				zbx_snprintf(audit_key_calc_fnc, 100, "graphprototype.gitems[%lu].calc_fnc",
+						chd_gitems[i].gitemid);
+				zbx_snprintf(audit_key_type, 100, "graphprototype.gitems[%lu].type",
+						chd_gitems[i].gitemid);
+			}
 			color_esc = DBdyn_escape_string(gitems[i].color);
 
 			zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset,
@@ -4558,6 +4593,16 @@ static void	DBcopy_graph_to_host(zbx_uint64_t hostid, zbx_uint64_t graphid,
 					gitems[i].calc_fnc,
 					gitems[i].type,
 					chd_gitems[i].gitemid);
+
+			if (ZBX_FLAG_DISCOVERY_NORMAL == flags || ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+			{
+				zbx_audit_update_json_uint64(hst_graphid, audit_key_drawtype, gitems[i].drawtype);
+				zbx_audit_update_json_uint64(hst_graphid, audit_key_sortorder, gitems[i].sortorder);
+				zbx_audit_update_json_string(hst_graphid, audit_key_color, color_esc);
+				zbx_audit_update_json_uint64(hst_graphid, audit_key_yaxisside, gitems[i].yaxisside);
+				zbx_audit_update_json_uint64(hst_graphid, audit_key_calc_fnc, gitems[i].calc_fnc);
+				zbx_audit_update_json_uint64(hst_graphid, audit_key_type, gitems[i].type);
+			}
 
 			zbx_free(color_esc);
 		}
@@ -4581,10 +4626,45 @@ static void	DBcopy_graph_to_host(zbx_uint64_t hostid, zbx_uint64_t graphid,
 				percent_left, percent_right, (int)ymin_type, (int)ymax_type,
 				DBsql_id_ins(ymin_itemid), DBsql_id_ins(ymax_itemid), (int)flags, (int)discover);
 
+		zbx_audit_graphs_create_entry(AUDIT_ACTION_ADD, hst_graphid, name_esc, width, height, yaxismin,
+				yaxismax, graphid, show_work_period, show_triggers, graphtype, show_legend, show_3d,
+				percent_left, percent_right, ymin_type, ymax_type, ymin_itemid, ymax_itemid, flags,
+				discover);
+
 		hst_gitemid = DBget_maxid_num("graphs_items", gitems_num);
 
 		for (i = 0; i < gitems_num; i++)
 		{
+			char audit_key_drawtype[100];
+			char audit_key_sortorder[100];
+			char audit_key_color[100];
+			char audit_key_yaxisside[100];
+			char audit_key_calc_fnc[100];
+			char audit_key_type[100];
+
+			if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+			{
+				zbx_snprintf(audit_key_drawtype, 100, "graph.gitems[%lu].drawtype", hst_gitemid);
+				zbx_snprintf(audit_key_sortorder, 100, "graph.gitems[%lu].sortorder", hst_gitemid);
+				zbx_snprintf(audit_key_color, 100, "graph.gitems[%lu].color", hst_gitemid);
+				zbx_snprintf(audit_key_yaxisside, 100, "graph.gitems[%lu].yaxisside", hst_gitemid);
+				zbx_snprintf(audit_key_calc_fnc, 100, "graph.gitems[%lu].calc_fnc", hst_gitemid);
+				zbx_snprintf(audit_key_type, 100, "graph.gitems[%lu].type", hst_gitemid);
+			}
+			else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+			{
+				zbx_snprintf(audit_key_drawtype, 100, "graphprototype.gitems[%lu].drawtype",
+						hst_gitemid);
+				zbx_snprintf(audit_key_sortorder, 100, "graphprototype.gitems[%lu].sortorder",
+						hst_gitemid);
+				zbx_snprintf(audit_key_color, 100, "graphprototype.gitems[%lu].color", hst_gitemid);
+				zbx_snprintf(audit_key_yaxisside, 100, "graphprototype.gitems[%lu].yaxisside",
+						hst_gitemid);
+				zbx_snprintf(audit_key_calc_fnc, 100, "graphprototype.gitems[%lu].calc_fnc",
+						hst_gitemid);
+				zbx_snprintf(audit_key_type, 100, "graphprototype.gitems[%lu].type", hst_gitemid);
+			}
+
 			color_esc = DBdyn_escape_string(gitems[i].color);
 
 			zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset,
@@ -4595,6 +4675,17 @@ static void	DBcopy_graph_to_host(zbx_uint64_t hostid, zbx_uint64_t graphid,
 					hst_gitemid, hst_graphid, gitems[i].itemid,
 					gitems[i].drawtype, gitems[i].sortorder, color_esc,
 					gitems[i].yaxisside, gitems[i].calc_fnc, gitems[i].type);
+
+			if (ZBX_FLAG_DISCOVERY_NORMAL == flags || ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+			{
+				zbx_audit_update_json_uint64(hst_graphid, audit_key_drawtype, gitems[i].drawtype);
+				zbx_audit_update_json_uint64(hst_graphid, audit_key_sortorder, gitems[i].sortorder);
+				zbx_audit_update_json_string(hst_graphid, audit_key_color, color_esc);
+				zbx_audit_update_json_uint64(hst_graphid, audit_key_yaxisside, gitems[i].yaxisside);
+				zbx_audit_update_json_uint64(hst_graphid, audit_key_calc_fnc, gitems[i].calc_fnc);
+				zbx_audit_update_json_uint64(hst_graphid, audit_key_type, gitems[i].type);
+			}
+
 			hst_gitemid++;
 
 			zbx_free(color_esc);
@@ -5413,8 +5504,8 @@ static void	DBsave_httptests(zbx_uint64_t hostid, zbx_vector_ptr_t *httptests)
 
 				for (k = 0; k < httpstep->fields.values_num; k++)
 				{
-					char audit_key_name[100];
-					char audit_key_value[100];
+					char audit_step_key_name[100];
+					char audit_step_key_value[100];
 
 					httpfield = (httpfield_t *)httpstep->fields.values[k];
 
@@ -5423,30 +5514,30 @@ static void	DBsave_httptests(zbx_uint64_t hostid, zbx_vector_ptr_t *httptests)
 
 					if (ZBX_HTTPFIELD_HEADER == httpfield->type)
 					{
-						zbx_snprintf(audit_key_name, 100,
+						zbx_snprintf(audit_step_key_name, 100,
 								"httptest.steps[].headers[%lu].name", httpstepid);
-						zbx_snprintf(audit_key_value, 100,
+						zbx_snprintf(audit_step_key_value, 100,
 								"httptest.steps[].headers[%lu].value", httpstepid);
 					}
 					else if (ZBX_HTTPFIELD_VARIABLE == httpfield->type)
 					{
-						zbx_snprintf(audit_key_name, 100,
+						zbx_snprintf(audit_step_key_name, 100,
 								"httptest.steps[].variables[%lu].name", httpstepid);
-						zbx_snprintf(audit_key_value, 100,
+						zbx_snprintf(audit_step_key_value, 100,
 								"httptest.steps[].variables[%lu].value", httpstepid);
 					}
 					else if (ZBX_HTTPFIELD_POST_FIELD == httpfield->type)
 					{
-						zbx_snprintf(audit_key_name, 100,
+						zbx_snprintf(audit_step_key_name, 100,
 								"httptest.steps[].posts[%lu].name", httpstepid);
-						zbx_snprintf(audit_key_value, 100,
+						zbx_snprintf(audit_step_key_value, 100,
 								"httptest.steps[].posts[%lu].value", httpstepid);
 					}
 					else if (ZBX_HTTPFIELD_QUERY_FIELD == httpfield->type)
 					{
-						zbx_snprintf(audit_key_name, 100,
+						zbx_snprintf(audit_step_key_name, 100,
 								"httptest.steps[].query_fields[%lu].name", httpstepid);
-						zbx_snprintf(audit_key_value, 100,
+						zbx_snprintf(audit_step_key_value, 100,
 								"httptest.steps[].query_fields[%lu].value", httpstepid);
 					}
 					else
@@ -5454,9 +5545,9 @@ static void	DBsave_httptests(zbx_uint64_t hostid, zbx_vector_ptr_t *httptests)
 						THIS_SHOULD_NEVER_HAPPEN;
 					}
 
-					zbx_audit_update_json_string(httptest->httptestid, audit_key_name,
+					zbx_audit_update_json_string(httptest->httptestid, audit_step_key_name,
 						httpfield->name);
-					zbx_audit_update_json_string(httptest->httptestid, audit_key_value,
+					zbx_audit_update_json_string(httptest->httptestid, audit_step_key_value,
 						httpfield->value);
 
 					httpstepfieldid++;
@@ -5660,7 +5751,7 @@ static void	clean_httptests(zbx_vector_ptr_t *httptests)
  *             templateids - [IN] array of template IDs                       *
  *                                                                            *
  ******************************************************************************/
-static void	DBcopy_template_httptests(zbx_uint64_t hostid, const zbx_vector_uint64_t *templateids, char *recsetid_cuid)
+static void	DBcopy_template_httptests(zbx_uint64_t hostid, const zbx_vector_uint64_t *templateids)
 {
 	zbx_vector_ptr_t	httptests;
 
@@ -5751,12 +5842,12 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 				hosttemplateid++, hostid, lnk_templateids->values[i]);
 	}
 
-	DBcopy_template_items(hostid, lnk_templateids, recsetid_cuid);
+	DBcopy_template_items(hostid, lnk_templateids);
 	DBcopy_template_host_prototypes(hostid, lnk_templateids);
 	if (SUCCEED == (res = DBcopy_template_triggers(hostid, lnk_templateids)))
 	{
 		DBcopy_template_graphs(hostid, lnk_templateids);
-		DBcopy_template_httptests(hostid, lnk_templateids, recsetid_cuid);
+		DBcopy_template_httptests(hostid, lnk_templateids);
 	}
 
 	zbx_audit_flush(recsetid_cuid);
@@ -5781,13 +5872,10 @@ void	DBdelete_hosts(zbx_vector_uint64_t *hostids)
 {
 	zbx_vector_uint64_t	itemids, httptestids, selementids;
 	char			*sql = NULL;
-	char			recsetid_cuid[CUID_LEN];
 	size_t			sql_alloc = 0, sql_offset;
 	int			i;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
-
-	zbx_new_cuid(recsetid_cuid);
 
 	if (SUCCEED != DBlock_hostids(hostids))
 		goto out;
@@ -5822,7 +5910,7 @@ void	DBdelete_hosts(zbx_vector_uint64_t *hostids)
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "hostid", hostids->values, hostids->values_num);
 
 	DBselect_delete_for_item(sql, &itemids, AUDIT_RESOURCE_ITEM);
-	DBdelete_items(&itemids, recsetid_cuid, AUDIT_RESOURCE_ITEM);
+	DBdelete_items(&itemids, AUDIT_RESOURCE_ITEM);
 
 	zbx_vector_uint64_destroy(&itemids);
 

@@ -32,6 +32,11 @@ void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uin
 		const int action);
 void	zbx_audit_host_prototypes_create_entry(const int audit_action, zbx_uint64_t hostid, char *name, unsigned char status,
 		zbx_uint64_t templateid, unsigned char discover, unsigned char custom_interfaces);
+void	zbx_audit_graphs_create_entry(const int audit_action, zbx_uint64_t hst_graphid, const char *name, int width,
+		int height, double yaxismin, double yaxismax, zbx_uint64_t graphid, unsigned char show_work_period,
+		unsigned char show_triggers, unsigned char graphtype, unsigned char show_legend, unsigned char show_3d,
+		double percent_left, double percent_right, unsigned char ymin_type, unsigned char ymax_type,
+		zbx_uint64_t ymin_itemid, zbx_uint64_t ymax_itemid, unsigned char flags, unsigned char discover);
 void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, char *delay,
 		unsigned char status, char *agent, unsigned char authentication, char *http_user, char *http_password,
 		char *http_proxy, int retries, uint64_t hostid, zbx_uint64_t templateid);
@@ -39,10 +44,8 @@ void	zbx_audit_httptests_create_entry_update(zbx_uint64_t httptestid, char *name
 void	zbx_audit_items_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type);
 void	zbx_audit_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
 void	zbx_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
-
 int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, const char* resourcename,
 		const int resourcetype, const char *recsetid, const char *details);
-
 void	zbx_audit_groups_add(zbx_uint64_t hostid, zbx_uint64_t hostgroupid, zbx_uint64_t groupid);
 void	zbx_audit_groups_delete(zbx_uint64_t hostid);
 void	zbx_audit_host_add(zbx_uint64_t hostid, char *recsetid_cuid);

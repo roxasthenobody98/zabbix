@@ -272,6 +272,44 @@ void	zbx_audit_host_prototypes_create_entry(const int audit_action, zbx_uint64_t
 	zbx_hashset_insert(&zbx_audit, &local_audit_host_prototype_entry, sizeof(local_audit_host_prototype_entry));
 }
 
+void	zbx_audit_graphs_create_entry(const int audit_action, zbx_uint64_t hst_graphid, const char *name, int width,
+		int height, double yaxismin, double yaxismax, zbx_uint64_t graphid, unsigned char show_work_period,
+		unsigned char show_triggers, unsigned char graphtype, unsigned char show_legend, unsigned char show_3d,
+		double percent_left, double percent_right, unsigned char ymin_type, unsigned char ymax_type,
+		zbx_uint64_t ymin_itemid, zbx_uint64_t ymax_itemid, unsigned char flags, unsigned char discover)
+{
+	zbx_audit_entry_t	*local_audit_graph_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
+			sizeof(zbx_audit_entry_t));
+	local_audit_graph_entry->id = hst_graphid;
+	local_audit_graph_entry->name = zbx_strdup(NULL, name);
+	local_audit_graph_entry->audit_action = audit_action;
+	local_audit_graph_entry->resource_type = AUDIT_RESOURCE_GRAPH;
+
+	zbx_json_init(&(local_audit_graph_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
+
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "width", width);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "height", height);
+	zbx_json_addfloat(&local_audit_graph_entry->details_json, "yaxismin", yaxismin);
+	zbx_json_addfloat(&local_audit_graph_entry->details_json, "yaxismax", yaxismax);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "show_work_period", show_work_period);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "show_triggers", show_triggers);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "templateid", graphid);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "graphtype", graphtype);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "show_legend", show_legend);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "show_3d", show_3d);
+	zbx_json_addfloat(&local_audit_graph_entry->details_json, "percent_left", percent_left);
+	zbx_json_addfloat(&local_audit_graph_entry->details_json, "percent_right", percent_right);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "ymin_type", ymin_type);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "ymax_type", ymax_type);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "ymin_itemid", ymin_itemid);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "ymax_itemid", ymax_itemid);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "flags", flags);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, "discover", discover);
+
+	zbx_hashset_insert(&zbx_audit, &local_audit_graph_entry, sizeof(local_audit_graph_entry));
+}
+
+
 void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, char *delay,
 		unsigned char status, char *agent, unsigned char authentication, char *http_user, char *http_password,
 		char *http_proxy, int retries, uint64_t hostid, zbx_uint64_t templateid)
@@ -281,7 +319,7 @@ void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, c
 	local_audit_http_test_entry->id = httptestid;
 	local_audit_http_test_entry->name = zbx_strdup(NULL, name);
 	local_audit_http_test_entry->audit_action = AUDIT_ACTION_ADD;
-	local_audit_http_test_entry->resource_type = AUDIT_RESOURCE_HTTP_TEST;
+	local_audit_http_test_entry->resource_type = AUDIT_RESOURCE_SCENARIO;
 
 	zbx_json_init(&(local_audit_http_test_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
 
@@ -308,7 +346,7 @@ void	zbx_audit_httptests_create_entry_update(zbx_uint64_t httptestid, char *name
 	local_audit_http_test_entry->id = httptestid;
 	local_audit_http_test_entry->name = zbx_strdup(NULL, name);
 	local_audit_http_test_entry->audit_action = AUDIT_ACTION_UPDATE;
-	local_audit_http_test_entry->resource_type = AUDIT_RESOURCE_HTTP_TEST;
+	local_audit_http_test_entry->resource_type = AUDIT_RESOURCE_SCENARIO;
 
 	zbx_json_init(&(local_audit_http_test_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
 	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "templateid", templateid);
