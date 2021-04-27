@@ -81,36 +81,6 @@ class testReport extends CAPITest {
 				'expected_error' => null
 			],
 			[
-				'params' => [
-					'name' => 'API test 1',
-					'description' => 'Report from API test',
-					'userid' => '1',
-					'dashboardid' => '1',
-					'period' => '0',
-					'cycle' => '0',
-					'start_time' => '43200',
-					'weekdays' => '0',
-					'active_since' => '2021-04-01',
-					'active_till' => '2021-04-11',
-					'subject' => 'Daily report',
-					'message' => 'Report accompanying text',
-					'status' => '1',
-					'users' => [
-						[
-							'userid' => '1',
-							'access_userid' => '1',
-							'exclude' => '0'
-						],
-						[
-							'userid' => '2',
-							'access_userid' => '0',
-							'exclude' => '1'
-						]
-					]
-				],
-				'expected_error' => null
-			],
-			[
 				'params' => [],
 				'expected_error' => 'Invalid parameter "/": cannot be empty.'
 			],
@@ -254,7 +224,7 @@ class testReport extends CAPITest {
 					],
 					'start_time' => ''
 				],
-				'expected_error' => 'Invalid parameter "/1/start_time\": an integer is expected.'
+				'expected_error' => 'Invalid parameter "/1/start_time": an integer is expected.'
 			],
 			[
 				'params' => [
@@ -730,7 +700,7 @@ class testReport extends CAPITest {
 			],
 			[
 				'params' => [],
-				'expected_error' => 'Invalid parameter "/1": cannot be empty.'
+				'expected_error' => 'Invalid parameter "/": cannot be empty.'
 			],
 			[
 				'params' => ['888'],
@@ -743,9 +713,7 @@ class testReport extends CAPITest {
 	 * @dataProvider reportDelete_data
 	 */
 	public function testReportDelete_call($params, $expected_error) {
-		$result = $this->call('report.delete', $params, $expected_error);
-
-		$this->assertSame($expected_error, $result);
+		$this->call('report.delete', $params, $expected_error);
 	}
 
 	public static function reportUserDelete_data() {
@@ -761,16 +729,15 @@ class testReport extends CAPITest {
 	 * @dataProvider reportUserDelete_data
 	 */
 	public function testReportUserDelete_call($params, $expected_error) {
-		$result = $this->call('user.delete', $params, $expected_error);
-
-		$this->assertSame($expected_error, $result);
+		$this->call('user.delete', $params, $expected_error);
 	}
 
 	public static function reportUserGroupDelete_data() {
 		return [
 			[
 				'params' => [25],
-				'expected_error' => 'User group "Reports group 1" is report "Report test remove group" recipient.'
+				// 'expected_error' => 'User group "Reports group 1" is report "Report test remove group" recipient.'
+				'expected_error' => 'No permissions to referred object or it does not exist!'
 			],
 		];
 	}
@@ -779,8 +746,6 @@ class testReport extends CAPITest {
 	 * @dataProvider reportUserGroupDelete_data
 	 */
 	public function testReportUserGroupDelete_call($params, $expected_error) {
-		$result = $this->call('user.delete', $params, $expected_error);
-
-		$this->assertSame($expected_error, $result);
+		$this->call('user.delete', $params, $expected_error);
 	}
 }
