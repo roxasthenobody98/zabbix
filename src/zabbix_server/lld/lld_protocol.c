@@ -158,7 +158,7 @@ void	zbx_lld_deserialize_top_items_request(const unsigned char *data, int *limit
  * Function: zbx_lld_serialize_top_items_result                               *
  *                                                                            *
  ******************************************************************************/
-zbx_uint32_t	zbx_lld_serialize_top_items_result(unsigned char **data, zbx_lld_rule_t **items, int items_num)
+zbx_uint32_t	zbx_lld_serialize_top_items_result(unsigned char **data, zbx_lld_rule_info_t **items, int items_num)
 {
 	unsigned char	*ptr;
 	zbx_uint32_t	data_len = 0, item_len = 0;
@@ -166,7 +166,7 @@ zbx_uint32_t	zbx_lld_serialize_top_items_result(unsigned char **data, zbx_lld_ru
 
 	if (0 != items_num)
 	{
-		zbx_serialize_prepare_value(item_len, items[0]->hostid);
+		zbx_serialize_prepare_value(item_len, items[0]->itemid);
 		zbx_serialize_prepare_value(item_len, items[0]->values_num);
 	}
 
@@ -179,7 +179,7 @@ zbx_uint32_t	zbx_lld_serialize_top_items_result(unsigned char **data, zbx_lld_ru
 
 	for (i = 0; i < items_num; i++)
 	{
-		ptr += zbx_serialize_value(ptr, items[i]->hostid);
+		ptr += zbx_serialize_value(ptr, items[i]->itemid);
 		ptr += zbx_serialize_value(ptr, items[i]->values_num);
 	}
 

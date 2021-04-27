@@ -56,6 +56,16 @@ typedef struct
 }
 zbx_lld_rule_t;
 
+typedef struct
+{
+	/* the LLD rule item id */
+	zbx_uint64_t	itemid;
+
+	/* the number of queued values */
+	int		values_num;
+}
+zbx_lld_rule_info_t;
+
 ZBX_THREAD_ENTRY(lld_manager_thread, args);
 
 #endif

@@ -496,8 +496,8 @@ static void	lld_process_diag_stats(zbx_lld_manager_t *manager, zbx_ipc_client_t 
  ******************************************************************************/
 static int	lld_diag_item_compare_values_desc(const void *d1, const void *d2)
 {
-	zbx_lld_rule_t	*r1 = *(zbx_lld_rule_t **)d1;
-	zbx_lld_rule_t	*r2 = *(zbx_lld_rule_t **)d2;
+	zbx_lld_rule_info_t	*r1 = *(zbx_lld_rule_info_t **)d1;
+	zbx_lld_rule_info_t	*r2 = *(zbx_lld_rule_info_t **)d2;
 
 	return r2->values_num - r1->values_num;
 }
@@ -521,27 +521,48 @@ static void	lld_process_top_items(zbx_lld_manager_t *manager, zbx_ipc_client_t *
 	zbx_uint32_t		data_len;
 	zbx_vector_ptr_t	view;
 	zbx_hashset_iter_t	iter;
-	zbx_lld_rule_t		*item;
-	int			items_num;
+	zbx_hashset_t		rule_infos;
+	zbx_lld_rule_t		*rule;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
 	zbx_lld_deserialize_top_items_request(message->data, &limit);
 
+	zbx_hashset_create(&rule_infos, MAX(1000, manager->rule_index.num_data), ZBX_DEFAULT_UINT64_HASH_FUNC,
+			ZBX_DEFAULT_UINT64_COMPARE_FUNC);
 	zbx_vector_ptr_create(&view);
 
 	zbx_hashset_iter_reset(&manager->rule_index, &iter);
-	while (NULL != (item = (zbx_lld_rule_t *)zbx_hashset_iter_next(&iter)))
-		zbx_vector_ptr_append(&view, item);
+	while (NULL != (rule = (zbx_lld_rule_t *)zbx_hashset_iter_next(&iter)))
+	{
+		zbx_lld_data_t	*data_ptr;
+
+		for (data_ptr = rule->head; NULL != data_ptr; data_ptr = data_ptr->next)
+		{
+			zbx_lld_rule_info_t	*rule_info, rule_info_local = {.itemid = data_ptr->itemid};
+
+			rule_info = (zbx_lld_rule_info_t *)zbx_hashset_search(&rule_infos, &rule_info_local);
+
+			if (NULL == rule_info)
+			{
+				rule_info = (zbx_lld_rule_info_t *)zbx_hashset_insert(&rule_infos, &rule_info_local,
+						sizeof(zbx_lld_rule_info_t));
+				zbx_vector_ptr_append(&view, rule_info);
+			}
+
+			rule_info->values_num++;
+		}
+	}
 
 	zbx_vector_ptr_sort(&view, lld_diag_item_compare_values_desc);
-	items_num = MIN(limit, view.values_num);
 
-	data_len = zbx_lld_serialize_top_items_result(&data, (zbx_lld_rule_t **)view.values, items_num);
+	data_len = zbx_lld_serialize_top_items_result(&data, (zbx_lld_rule_info_t **)view.values,
+			MIN(limit, view.values_num));
 	zbx_ipc_client_send(client, ZBX_IPC_LLD_TOP_ITEMS_RESULT, data, data_len);
 
 	zbx_free(data);
 	zbx_vector_ptr_destroy(&view);
+	zbx_hashset_destroy(&rule_infos);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
