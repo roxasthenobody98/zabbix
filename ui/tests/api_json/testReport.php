@@ -24,12 +24,12 @@ require_once dirname(__FILE__).'/../include/CAPITest.php';
 class testReport extends CAPITest {
 
 	public static function reportGet_data() {
-		$reportsids = [15, 16, 17, 18, 21];
+		$reportsids = ['15', '16', '17', '18', '21'];
 
 		return [
 			[
 				'params' => [
-					'output' => ['extend']
+					'output' => 'extend'
 				],
 				'expect' => [
 					'error' => null,
@@ -656,7 +656,7 @@ class testReport extends CAPITest {
 		return [
 			[
 				'params' => [
-					'reportid' => '3',
+					'reportid' => '15',
 					'name' => 'new report name',
 					'users' => [
 						'userid' => '17',
@@ -666,7 +666,7 @@ class testReport extends CAPITest {
 				],
 				'expect' => [
 					'error' => null,
-					'reportid' => [3]
+					'reportid' => [15]
 				]
 			],
 		];
