@@ -1665,3 +1665,6 @@ INSERT INTO `report` (`reportid`, `userid`, `name`, `description`, `status`, `da
 INSERT INTO `report_user` (`reportuserid`, `reportid`, `userid`, `exclude`, `access_userid`) VALUES (22, 16, 15, 0, 1);
 INSERT INTO `report_user` (`reportuserid`, `reportid`, `userid`, `exclude`, `access_userid`) VALUES (23, 17, 16, 0, 1);
 INSERT INTO `report_usrgrp` (`reportusrgrpid`, `reportid`, `usrgrpid`, `access_userid`) VALUES (6, 18, 25, NULL);
+
+INSERT INTO `report` (`reportid`, `userid`, `name`, `description`, `status`, `dashboardid`, `period`, `cycle`, `weekdays`, `start_time`, `active_since`, `active_till`, `state`, `lastsent`, `info`) VALUES (21, 1, 'Test report one subscriptions', '', 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, '');
+INSERT INTO `report_user` (`reportuserid`, `reportid`, `userid`, `exclude`, `access_userid`) VALUES (26, 21, 17, 0, 1);

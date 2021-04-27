@@ -21,7 +21,7 @@
 
 require_once dirname(__FILE__).'/../include/CAPITest.php';
 
-class testJSONRPC extends CAPITest {
+class testReport extends CAPITest {
 
 	public static function reportGet_data() {
 		$reportsids = [15, 16, 17, 18];
@@ -68,7 +68,7 @@ class testJSONRPC extends CAPITest {
 		return [
 			[
 				'params' => [
-					'name' => 'API test  with minimum params',
+					'name' => 'API test with minimum params',
 					'dashboardid' => '1',
 					'users' => [
 						[
@@ -746,6 +746,42 @@ class testJSONRPC extends CAPITest {
 	 */
 	public function testReportDelete_call($params, $expected_error) {
 		$result = $this->call('report.delete', $params, $expected_error);
+
+		$this->assertSame($expected_error, $result);
+	}
+
+	public static function reportUserDelete_data() {
+		return [
+			[
+				'params' => [17],
+				'expected_error' => 'User "Report user user" is report "Test report one subscriptions" recipient.'
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider reportUserDelete_data
+	 */
+	public function testReportUserDelete_call($params, $expected_error) {
+		$result = $this->call('user.delete', $params, $expected_error);
+
+		$this->assertSame($expected_error, $result);
+	}
+
+	public static function reportUserGroupDelete_data() {
+		return [
+			[
+				'params' => [25],
+				'expected_error' => 'User group "Reports group 1" is report "Report test remove group" recipient.'
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider reportUserGroupDelete_data
+	 */
+	public function testReportUserGroupDelete_call($params, $expected_error) {
+		$result = $this->call('user.delete', $params, $expected_error);
 
 		$this->assertSame($expected_error, $result);
 	}
