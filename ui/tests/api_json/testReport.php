@@ -52,7 +52,7 @@ class testReport extends CAPITest {
 	 * @dataProvider reportGet_data
 	 */
 	public function testReportGet_call($params, $expect) {
-		$result = $this->call('report.get', $params, $expect['errror']);
+		$result = $this->call('report.get', $params, $expect['error']);
 		if ($expect['error'] !== null) {
 			return;
 		}
@@ -678,9 +678,10 @@ class testReport extends CAPITest {
 	 * @dataProvider reportCreate_data
 	 */
 	public function testReportCreate_call($params, $expected_error) {
-		$result = $this->call('report.create', $params, $expected_error);
+		$error = null;
+		$result = $this->call('report.create', $params, $error);
 
-		$this->assertSame($expected_error, $result);
+		$this->assertSame($expected_error, $error);
 	}
 
 
