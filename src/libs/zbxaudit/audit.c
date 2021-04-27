@@ -103,7 +103,37 @@ void	DBselect_delete_for_item(const char *sql, zbx_vector_uint64_t *ids, int res
 		ZBX_STR2UINT64(id, row[0]);
 
 		zbx_vector_uint64_append(ids, id);
-		zbx_audit_items_create_entry_for_delete(id, row[1], resource_type);
+		zbx_audit_create_entry_for_delete(id, row[1], resource_type);
+	}
+	DBfree_result(result);
+
+	zbx_vector_uint64_sort(ids, ZBX_DEFAULT_UINT64_COMPARE_FUNC);
+}
+
+void	DBselect_delete_for_graph(const char *sql, zbx_vector_uint64_t *ids)
+{
+	DB_RESULT	result;
+	DB_ROW		row;
+	zbx_uint64_t	id, flags;
+
+	result = DBselect("%s", sql);
+
+	while (NULL != (row = DBfetch(result)))
+	{
+		ZBX_STR2UINT64(id, row[0]);
+
+		zbx_vector_uint64_append(ids, id);
+
+		ZBX_STR2UINT64(flags, row[2]);
+
+		if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+		{
+			zbx_audit_create_entry_for_delete(id, row[1], AUDIT_RESOURCE_GRAPH);
+		}
+		else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+		{
+			zbx_audit_create_entry_for_delete(id, row[1], AUDIT_RESOURCE_GRAPH_PROTOTYPE);
+		}
 	}
 	DBfree_result(result);
 
@@ -353,18 +383,18 @@ void	zbx_audit_httptests_create_entry_update(zbx_uint64_t httptestid, char *name
 	zbx_hashset_insert(&zbx_audit, &local_audit_http_test_entry, sizeof(local_audit_http_test_entry));
 }
 
-void	zbx_audit_items_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type)
+void	zbx_audit_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type)
 {
-	zbx_audit_entry_t	*local_audit_items_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
+	zbx_audit_entry_t	*local_audit_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
 			sizeof(zbx_audit_entry_t));
-	local_audit_items_entry->id = id;
-	local_audit_items_entry->name = zbx_strdup(NULL, name);
-	local_audit_items_entry->audit_action = AUDIT_ACTION_DELETE;
-	local_audit_items_entry->resource_type = resource_type;
+	local_audit_entry->id = id;
+	local_audit_entry->name = zbx_strdup(NULL, name);
+	local_audit_entry->audit_action = AUDIT_ACTION_DELETE;
+	local_audit_entry->resource_type = resource_type;
 
-	zbx_json_init(&(local_audit_items_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
+	zbx_json_init(&(local_audit_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
 
-	zbx_hashset_insert(&zbx_audit, &local_audit_items_entry, sizeof(local_audit_items_entry));
+	zbx_hashset_insert(&zbx_audit, &local_audit_entry, sizeof(local_audit_entry));
 }
 
 void	zbx_audit_update_json_string(const zbx_uint64_t id, const char *key, const char *value)

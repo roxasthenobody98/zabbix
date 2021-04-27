@@ -27,6 +27,7 @@
 void	zbx_audit_init(void);
 void	zbx_audit_flush(const char *recsetid_cuid);
 void	DBselect_delete_for_item(const char *sql, zbx_vector_uint64_t *ids, int resource_type_type);
+void	DBselect_delete_for_graph(const char *sql, zbx_vector_uint64_t *ids);
 char	*zbx_audit_items_get_type_json_identifier(int flag);
 void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid,
 		const int action);
@@ -41,7 +42,7 @@ void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, c
 		unsigned char status, char *agent, unsigned char authentication, char *http_user, char *http_password,
 		char *http_proxy, int retries, uint64_t hostid, zbx_uint64_t templateid);
 void	zbx_audit_httptests_create_entry_update(zbx_uint64_t httptestid, char *name, zbx_uint64_t templateid);
-void	zbx_audit_items_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type);
+void	zbx_audit_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type);
 void	zbx_audit_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
 void	zbx_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
 int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, const char* resourcename,
