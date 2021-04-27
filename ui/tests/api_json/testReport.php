@@ -681,7 +681,7 @@ class testReport extends CAPITest {
 			return;
 		}
 
-		$this->assertSame($expect['reportid'], $result['result']['reportids']);
+		$this->assertSame($expect['reportid'], $result['reportids']);
 	}
 
 	public static function reportDelete_data() {
@@ -719,7 +719,7 @@ class testReport extends CAPITest {
 	public static function reportUserDelete_data() {
 		return [
 			[
-				'params' => [21],
+				'params' => [17],
 				'expected_error' => 'User "Report user user" is report "Test report one subscriptions" recipient.'
 			],
 		];
