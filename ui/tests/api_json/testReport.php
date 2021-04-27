@@ -681,7 +681,7 @@ class testReport extends CAPITest {
 			return;
 		}
 
-		$this->assertSame($expect['reportid'], $result['reportids']);
+		$this->assertSame($expect['reportid'], $result['result']['reportids']);
 	}
 
 	public static function reportDelete_data() {
