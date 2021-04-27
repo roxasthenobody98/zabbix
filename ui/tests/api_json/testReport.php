@@ -666,7 +666,7 @@ class testReport extends CAPITest {
 				],
 				'expect' => [
 					'error' => null,
-					'reportid' => [15]
+					'reportid' => ['15']
 				]
 			],
 		];
@@ -676,7 +676,7 @@ class testReport extends CAPITest {
 	 * @dataProvider reportUpdate_data
 	 */
 	public function testReportUpdate_call($params, $expect) {
-		$result = $this->call('report.update', $params, $expect);
+		$result = $this->call('report.update', $params, $expect['error']);
 		if ($expect['error'] !== null) {
 			return;
 		}
@@ -720,7 +720,7 @@ class testReport extends CAPITest {
 		return [
 			[
 				'params' => [17],
-				'expected_error' => 'User "Report user user" is report "Test report one subscriptions" recipient.'
+				'expected_error' => 'User "Report user user" is report "new report name" recipient.'
 			],
 		];
 	}
