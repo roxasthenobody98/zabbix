@@ -827,12 +827,6 @@ static void	zbx_snmp_dump_oid(char *buffer, size_t buffer_len, const oid *objid,
 		offset += zbx_snprintf(buffer + offset, buffer_len - offset, ".%lu", (unsigned long)objid[i]);
 }
 
-#define ZBX_OID_INDEX_STRING	0
-#define ZBX_OID_INDEX_NUMERIC	1
-
-#define ZBX_OID_FMT_DEFAULT	0
-#define ZBX_OID_FMT_SUFFIX	1
-
 static int	zbx_snmp_print_oid_suffix(char *buffer, size_t buffer_len, const oid *objid, size_t objid_len)
 {
 	int	ret, old_fmt;
@@ -859,8 +853,11 @@ static int	zbx_snmp_print_oid_suffix(char *buffer, size_t buffer_len, const oid 
 	return ret;
 }
 
+#define ZBX_OID_INDEX_STRING	0
+#define ZBX_OID_INDEX_NUMERIC	1
+
 static int	zbx_snmp_print_oid(char *buffer, size_t buffer_len, const oid *objid, size_t objid_len, int format,
-		int fmt_suffix)
+		int print_suffix)
 {
 	if (SNMPERR_SUCCESS != netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_DONT_BREAKDOWN_OIDS,
 			format))
@@ -869,14 +866,16 @@ static int	zbx_snmp_print_oid(char *buffer, size_t buffer_len, const oid *objid,
 		return -1;
 	}
 
-	if (ZBX_OID_INDEX_STRING == format && ZBX_OID_FMT_SUFFIX == fmt_suffix)
+	if (ZBX_OID_INDEX_STRING == format && 1 == print_suffix)
+	{
 		return zbx_snmp_print_oid_suffix(buffer, buffer_len, objid, objid_len);
+	}
 
 	return snprint_objid(buffer, buffer_len, objid, objid_len);
 }
 
 static int	zbx_snmp_choose_index(char *buffer, size_t buffer_len, const oid *objid, size_t objid_len,
-		size_t root_string_len, size_t root_numeric_len)
+		size_t root_string_len, size_t root_numeric_len, int print_suffix)
 {
 	oid	parsed_oid[MAX_OID_LEN];
 	size_t	parsed_oid_len = MAX_OID_LEN;
@@ -939,8 +938,7 @@ static int	zbx_snmp_choose_index(char *buffer, size_t buffer_len, const oid *obj
 	/*                                                                                                            */
 	/**************************************************************************************************************/
 
-	if (-1 == zbx_snmp_print_oid(printed_oid, sizeof(printed_oid), objid, objid_len, ZBX_OID_INDEX_STRING,
-			ZBX_OID_FMT_DEFAULT))
+	if (-1 == zbx_snmp_print_oid(printed_oid, sizeof(printed_oid), objid, objid_len, ZBX_OID_INDEX_STRING, print_suffix))
 	{
 		zabbix_log(LOG_LEVEL_DEBUG, "%s(): cannot print OID with string indices", __func__);
 		goto numeric;
@@ -948,8 +946,10 @@ static int	zbx_snmp_choose_index(char *buffer, size_t buffer_len, const oid *obj
 
 	if (NULL == strchr(printed_oid, '"') && NULL == strchr(printed_oid, '\''))
 	{
-		zbx_strlcpy(buffer, printed_oid + root_string_len + 1, buffer_len);
-
+		if (print_suffix == 1)
+			zbx_strlcpy(buffer, printed_oid, buffer_len);
+		else
+			zbx_strlcpy(buffer, printed_oid + root_string_len + 1, buffer_len);
 		return SUCCEED;
 	}
 
@@ -969,8 +969,7 @@ static int	zbx_snmp_choose_index(char *buffer, size_t buffer_len, const oid *obj
 		return SUCCEED;
 	}
 numeric:
-	if (-1 == zbx_snmp_print_oid(printed_oid, sizeof(printed_oid), objid, objid_len, ZBX_OID_INDEX_NUMERIC,
-			ZBX_OID_FMT_DEFAULT))
+	if (-1 == zbx_snmp_print_oid(printed_oid, sizeof(printed_oid), objid, objid_len, ZBX_OID_INDEX_NUMERIC, 0))
 	{
 		zabbix_log(LOG_LEVEL_DEBUG, "%s(): cannot print OID with numeric indices", __func__);
 		return FAIL;
@@ -1059,6 +1058,27 @@ static int	zbx_oid_is_new(zbx_hashset_t *hs, size_t root_len, const oid *p_oid, 
 #undef ZBX_OIDS_MAX_NUM
 }
 
+static int	zbx_snmp_is_different_root(const oid *oid_root, size_t oid_root_len, const oid *oid_node,
+		size_t oid_node_len)
+{
+	char root_oid[MAX_OID_LEN], node_oid[MAX_OID_LEN];
+
+	int len_min;
+
+	snprint_objid(root_oid, sizeof(root_oid), oid_root, oid_root_len);
+	snprint_objid(node_oid, sizeof(node_oid), oid_node, oid_node_len);
+
+	if (oid_root_len >= oid_node_len)
+		len_min = oid_node_len;
+	else
+		len_min = oid_root_len;
+
+	if (0 != strncmp(root_oid, node_oid, len_min))
+		return 1;
+
+	return 0;
+}
+
 /******************************************************************************
  *                                                                            *
  * Function: zbx_snmp_walk                                                    *
@@ -1088,7 +1108,7 @@ static int	zbx_oid_is_new(zbx_hashset_t *hs, size_t root_len, const oid *p_oid, 
  ******************************************************************************/
 static int	zbx_snmp_walk(struct snmp_session *ss, const DC_ITEM *item, const char *snmp_oid, char *error,
 		size_t max_error_len, int *max_succeed, int *min_fail, int max_vars, int bulk,
-		zbx_snmp_walk_cb_func walk_cb_func, void *walk_cb_arg, int fmt_suffix)
+		zbx_snmp_walk_cb_func walk_cb_func, void *walk_cb_arg)
 {
 	struct snmp_pdu		*pdu, *response;
 	oid			anOID[MAX_OID_LEN], rootOID[MAX_OID_LEN];
@@ -1112,8 +1132,7 @@ static int	zbx_snmp_walk(struct snmp_session *ss, const DC_ITEM *item, const cha
 		goto out;
 	}
 
-	if (-1 == zbx_snmp_print_oid(oid_index, sizeof(oid_index), rootOID, rootOID_len, ZBX_OID_INDEX_STRING,
-			fmt_suffix))
+	if (-1 == zbx_snmp_print_oid(oid_index, sizeof(oid_index), rootOID, rootOID_len, ZBX_OID_INDEX_STRING, 0))
 	{
 		zbx_snprintf(error, max_error_len, "zbx_snmp_print_oid(): cannot print OID \"%s\" with string indices.",
 				snmp_oid);
@@ -1123,8 +1142,7 @@ static int	zbx_snmp_walk(struct snmp_session *ss, const DC_ITEM *item, const cha
 
 	root_string_len = strlen(oid_index);
 
-	if (-1 == zbx_snmp_print_oid(oid_index, sizeof(oid_index), rootOID, rootOID_len, ZBX_OID_INDEX_NUMERIC,
-			ZBX_OID_FMT_DEFAULT))
+	if (-1 == zbx_snmp_print_oid(oid_index, sizeof(oid_index), rootOID, rootOID_len, ZBX_OID_INDEX_NUMERIC, 0))
 	{
 		zbx_snprintf(error, max_error_len, "zbx_snmp_print_oid(): cannot print OID \"%s\""
 				" with numeric indices.", snmp_oid);
@@ -1220,6 +1238,7 @@ static int	zbx_snmp_walk(struct snmp_session *ss, const DC_ITEM *item, const cha
 			}
 			else if (SNMP_NOSUCHOBJECT != var->type && SNMP_NOSUCHINSTANCE != var->type)
 			{
+				int	print_suffix;
 				/* not an exception value */
 
 				if (1 == check_oid_increase)	/* typical case */
@@ -1259,8 +1278,11 @@ static int	zbx_snmp_walk(struct snmp_session *ss, const DC_ITEM *item, const cha
 					break;
 				}
 
+				print_suffix = zbx_snmp_is_different_root(rootOID, rootOID_len, var->name,
+						var->name_length);
+
 				if (SUCCEED != zbx_snmp_choose_index(oid_index, sizeof(oid_index), var->name,
-						var->name_length, root_string_len, root_numeric_len))
+						var->name_length, root_string_len, root_numeric_len, print_suffix))
 				{
 					zbx_snprintf(error, max_error_len, "zbx_snmp_choose_index():"
 							" cannot choose appropriate index while walking for"
@@ -1854,8 +1876,7 @@ static int	zbx_snmp_process_discovery(struct snmp_session *ss, const DC_ITEM *it
 		zbx_snmp_translate(oid_translated, data.request.params[data.num * 2 + 1], sizeof(oid_translated));
 
 		if (SUCCEED != (ret = zbx_snmp_walk(ss, item, oid_translated, error, max_error_len,
-				max_succeed, min_fail, max_vars, bulk, zbx_snmp_walk_discovery_cb, (void *)&data,
-				ZBX_OID_FMT_DEFAULT)))
+				max_succeed, min_fail, max_vars, bulk, zbx_snmp_walk_discovery_cb, (void *)&data)))
 		{
 			goto clean;
 		}
@@ -2033,8 +2054,7 @@ static int	zbx_snmp_process_dynamic(struct snmp_session *ss, const DC_ITEM *item
 			cache_del_snmp_index_subtree(&items[j], oids_translated[j]);
 
 			errcode = zbx_snmp_walk(ss, &items[j], oids_translated[j], error, max_error_len, max_succeed,
-					min_fail, num, bulk, zbx_snmp_walk_cache_cb, (void *)&items[j],
-					ZBX_OID_FMT_DEFAULT);
+					min_fail, num, bulk, zbx_snmp_walk_cache_cb, (void *)&items[j]);
 
 			if (NETWORK_ERROR == errcode)
 			{
