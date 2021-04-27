@@ -24,7 +24,7 @@ require_once dirname(__FILE__).'/../include/CAPITest.php';
 class testReport extends CAPITest {
 
 	public static function reportGet_data() {
-		$reportsids = [15, 16, 17, 18];
+		$reportsids = [15, 16, 17, 18, 21];
 
 		return [
 			[
@@ -678,10 +678,7 @@ class testReport extends CAPITest {
 	 * @dataProvider reportCreate_data
 	 */
 	public function testReportCreate_call($params, $expected_error) {
-		$error = null;
-		$result = $this->call('report.create', $params, $error);
-
-		$this->assertSame($expected_error, $error);
+		$this->call('report.create', $params, $expected_error);
 	}
 
 
