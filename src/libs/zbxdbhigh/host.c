@@ -1867,6 +1867,11 @@ static int	DBcopy_trigger_to_host(zbx_uint64_t *new_triggerid, zbx_uint64_t *cur
 					(int)flags, (int)recovery_mode, (int)correlation_mode, correlation_tag_esc,
 					(int)manual_close, opdata_esc, (int)discover, event_name_esc);
 
+		zbx_audit_triggers_create_entry(AUDIT_ACTION_ADD, *new_triggerid, description_esc, triggerid,
+				recovery_mode, status, type, TRIGGER_VALUE_OK, TRIGGER_STATE_NORMAL, priority,
+				comments_esc, url_esc, flags, correlation_mode, correlation_tag_esc, manual_close,
+				opdata_esc, discover, event_name_esc);
+
 		zbx_free(url_esc);
 		zbx_free(comments_esc);
 
@@ -1926,6 +1931,9 @@ static int	DBcopy_trigger_to_host(zbx_uint64_t *new_triggerid, zbx_uint64_t *cur
 
 		if (SUCCEED == res)
 		{
+			char	audit_key_expression[100];
+			char	audit_key_recovery_expression[100];
+
 			expression_esc = DBdyn_escape_field("triggers", "expression", new_expression);
 			recovery_expression_esc = DBdyn_escape_field("triggers", "recovery_expression",
 					new_recovery_expression);
@@ -1935,6 +1943,26 @@ static int	DBcopy_trigger_to_host(zbx_uint64_t *new_triggerid, zbx_uint64_t *cur
 						" set expression='%s',recovery_expression='%s'"
 					" where triggerid=" ZBX_FS_UI64 ";\n",
 					expression_esc, recovery_expression_esc, *new_triggerid);
+
+			if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+			{
+				zbx_snprintf(audit_key_expression, 100, "trigger.expression");
+				zbx_snprintf(audit_key_recovery_expression, 100, "trigger.recovery_expression");
+				zbx_audit_update_json_string(*new_triggerid, audit_key_expression,
+						new_expression);
+				zbx_audit_update_json_string(*new_triggerid, audit_key_recovery_expression,
+						new_recovery_expression);
+			}
+			else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+			{
+				zbx_snprintf(audit_key_expression, 100, "triggerprototype.expression");
+				zbx_snprintf(audit_key_recovery_expression, 100,
+						"triggerprototype.recovery_expression");
+				zbx_audit_update_json_string(*new_triggerid, audit_key_expression,
+						new_expression);
+				zbx_audit_update_json_string(*new_triggerid, audit_key_recovery_expression,
+						new_recovery_expression);
+			}
 
 			zbx_free(recovery_expression_esc);
 			zbx_free(expression_esc);
@@ -1993,7 +2021,7 @@ static void	DBresolve_template_trigger_dependencies(zbx_uint64_t hostid, const z
 
 	sql_offset = 0;
 	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset,
-			"select distinct td.triggerid_down,td.triggerid_up"
+			"select td.triggerid_down,td.triggerid_up,t.triggerid,t.flags,td.triggerdepid"
 			" from triggers t,trigger_depends td"
 			" where t.templateid in (td.triggerid_up,td.triggerid_down) and");
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "t.triggerid", trids, trids_num);
@@ -2002,12 +2030,41 @@ static void	DBresolve_template_trigger_dependencies(zbx_uint64_t hostid, const z
 
 	while (NULL != (row = DBfetch(result)))
 	{
-		ZBX_STR2UINT64(dep_list_id.first, row[0]);
-		ZBX_STR2UINT64(dep_list_id.second, row[1]);
-		zbx_vector_uint64_pair_append(&dep_list_ids, dep_list_id);
-		zbx_vector_uint64_append(&all_templ_ids, dep_list_id.first);
-		zbx_vector_uint64_append(&all_templ_ids, dep_list_id.second);
+		int		iii, flags;
+		zbx_uint64_t	triggerid;
+		char		audit_key_dependencies[100];
+
+		for (iii = 0; iii < dep_list_ids.values_num; iii++)
+		{
+			zbx_uint64_pair_t p = (zbx_uint64_pair_t)dep_list_ids.values[iii];
+
+			if (!(p.first == dep_list_id.first && p.second == dep_list_id.second))
+			{
+				ZBX_STR2UINT64(dep_list_id.first, row[0]);
+				ZBX_STR2UINT64(dep_list_id.second, row[1]);
+				zbx_vector_uint64_pair_append(&dep_list_ids, dep_list_id);
+				zbx_vector_uint64_append(&all_templ_ids, dep_list_id.first);
+				zbx_vector_uint64_append(&all_templ_ids, dep_list_id.second);
+			}
+		}
+
+		ZBX_STR2UINT64(flags, row[3]);
+		ZBX_STR2UINT64(triggerid, row[2]);
+
+		if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+		{
+			zbx_snprintf(audit_key_dependencies, 100, "trigger.dependencies[%s]", row[4]);
+			zbx_audit_update_json_string(triggerid, audit_key_dependencies,
+					row[1]);
+		}
+		else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+		{
+			zbx_snprintf(audit_key_dependencies, 100, "triggerprototype.dependencies[%s]", row[4]);
+			zbx_audit_update_json_string(triggerid, audit_key_dependencies,
+					row[1]);
+		}
 	}
+
 	DBfree_result(result);
 
 	if (0 == dep_list_ids.values_num)	/* not all trigger template have a dependency trigger */
@@ -2184,7 +2241,7 @@ static int	DBcopy_template_trigger_tags(const zbx_vector_uint64_t *new_triggerid
 	zbx_vector_uint64_sort(&triggerids, ZBX_DEFAULT_UINT64_COMPARE_FUNC);
 
 	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset,
-			"select t.triggerid,tt.tag,tt.value"
+			"select t.triggerid,tt.tag,tt.value,t.flags,tt.triggertagid"
 			" from trigger_tag tt,triggers t"
 			" where tt.triggerid=t.templateid"
 			" and");
@@ -2197,10 +2254,30 @@ static int	DBcopy_template_trigger_tags(const zbx_vector_uint64_t *new_triggerid
 
 	while (NULL != (row = DBfetch(result)))
 	{
+		int	flags;
+		char	audit_key_tags_tag[100], audit_key_tags_value[100];
+
 		ZBX_STR2UINT64(triggerid, row[0]);
+		ZBX_STR2UINT64(flags, row[3]);
 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), triggerid, row[1], row[2]);
+
+		if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+		{
+			zbx_snprintf(audit_key_tags_tag, 100, "trigger.tags[%s].tag", row[4]);
+			zbx_snprintf(audit_key_tags_value, 100, "trigger.tags[%s].value", row[4]);
+			zbx_audit_update_json_string(triggerid, audit_key_tags_tag, row[1]);
+			zbx_audit_update_json_string(triggerid, audit_key_tags_value, row[2]);
+		}
+		else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+		{
+			zbx_snprintf(audit_key_tags_tag, 100, "triggerprototype.tags[%s].tag", row[4]);
+			zbx_snprintf(audit_key_tags_value, 100, "triggerprototype.tags[%s].value", row[4]);
+			zbx_audit_update_json_string(triggerid, audit_key_tags_tag, row[1]);
+			zbx_audit_update_json_string(triggerid, audit_key_tags_value, row[2]);
+		}
 	}
+
 	DBfree_result(result);
 
 	zbx_free(sql);

@@ -339,6 +339,44 @@ void	zbx_audit_graphs_create_entry(const int audit_action, zbx_uint64_t hst_grap
 	zbx_hashset_insert(&zbx_audit, &local_audit_graph_entry, sizeof(local_audit_graph_entry));
 }
 
+void	zbx_audit_triggers_create_entry(const int audit_action, zbx_uint64_t new_triggerid, const char *description,
+		zbx_uint64_t templateid, unsigned char recovery_mode, unsigned char status, unsigned char type,
+		zbx_uint64_t value, zbx_uint64_t state, unsigned char priority, const char *comments, const char *url,
+		unsigned char flags, unsigned char correlation_mode, const char *correlation_tag,
+		unsigned char manual_close, const char *opdata, unsigned char discover, const char *event_name)
+{
+	zbx_audit_entry_t	*local_audit_trigger_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
+			sizeof(zbx_audit_entry_t));
+	local_audit_trigger_entry->id = new_triggerid;
+	local_audit_trigger_entry->name = zbx_strdup(NULL, description);
+	local_audit_trigger_entry->audit_action = audit_action;
+	local_audit_trigger_entry->resource_type = AUDIT_RESOURCE_TRIGGER;
+
+	zbx_json_init(&(local_audit_trigger_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
+
+	zbx_json_addstring(&local_audit_trigger_entry->details_json, "event_name", event_name, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_trigger_entry->details_json, "opdata", opdata, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_trigger_entry->details_json, "comments", comments, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "flags", flags);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "priority", priority);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "state", state);
+
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "status", status);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "templateid", templateid);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "type", type);
+	zbx_json_addstring(&local_audit_trigger_entry->details_json, "url", url, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "value", value);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "recovery_mode", recovery_mode);
+
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "correlation_mode", correlation_mode);
+	zbx_json_addstring(&local_audit_trigger_entry->details_json, "correlation_tag", correlation_tag,
+			ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "manual_close", manual_close);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "discover", discover);
+
+	zbx_hashset_insert(&zbx_audit, &local_audit_trigger_entry, sizeof(local_audit_trigger_entry));
+}
+
 
 void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, char *delay,
 		unsigned char status, char *agent, unsigned char authentication, char *http_user, char *http_password,
@@ -358,7 +396,8 @@ void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, c
 	zbx_json_addstring(&local_audit_http_test_entry->details_json, "agent", agent, ZBX_JSON_TYPE_STRING);
 	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "authentication", authentication);
 	zbx_json_addstring(&local_audit_http_test_entry->details_json, "http_user", http_user, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_audit_http_test_entry->details_json, "http_password", http_password, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_http_test_entry->details_json, "http_password", http_password,
+			ZBX_JSON_TYPE_STRING);
 	zbx_json_addstring(&local_audit_http_test_entry->details_json, "http_proxy", http_proxy, ZBX_JSON_TYPE_STRING);
 	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "retries", retries);
 	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "hostid", hostid);
@@ -366,7 +405,6 @@ void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, c
 
 	zbx_hashset_insert(&zbx_audit, &local_audit_http_test_entry, sizeof(local_audit_http_test_entry));
 }
-
 
 void	zbx_audit_httptests_create_entry_update(zbx_uint64_t httptestid, char *name,
 		zbx_uint64_t templateid)

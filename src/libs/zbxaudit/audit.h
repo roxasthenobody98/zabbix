@@ -38,6 +38,13 @@ void	zbx_audit_graphs_create_entry(const int audit_action, zbx_uint64_t hst_grap
 		unsigned char show_triggers, unsigned char graphtype, unsigned char show_legend, unsigned char show_3d,
 		double percent_left, double percent_right, unsigned char ymin_type, unsigned char ymax_type,
 		zbx_uint64_t ymin_itemid, zbx_uint64_t ymax_itemid, unsigned char flags, unsigned char discover);
+
+void	zbx_audit_triggers_create_entry(const int audit_action, zbx_uint64_t new_triggerid, const char *description,
+		zbx_uint64_t templateid, unsigned char recovery_mode, unsigned char status, unsigned char type,
+		zbx_uint64_t value, zbx_uint64_t state, unsigned char priority, const char *comments, const char *url,
+		unsigned char flags, unsigned char correlation_mode, const char *correlation_tag,
+		unsigned char manual_close, const char *opdata, unsigned char discover, const char *event_name);
+
 void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, char *delay,
 		unsigned char status, char *agent, unsigned char authentication, char *http_user, char *http_password,
 		char *http_proxy, int retries, uint64_t hostid, zbx_uint64_t templateid);
