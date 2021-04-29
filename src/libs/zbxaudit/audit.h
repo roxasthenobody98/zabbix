@@ -22,6 +22,7 @@
 
 #include "common.h"
 #include "zbxalgo.h"
+#include "db.h"
 #include "../zbxdbhigh/template.h"
 
 void	zbx_audit_init(void);
@@ -76,6 +77,14 @@ void	zbx_audit_discovery_rule_lld_macro_paths_update(zbx_uint64_t no, zbx_uint64
 		const char *path);
 void	zbx_audit_discovery_rule_overrides_operations_update(int operation_no, zbx_uint64_t itemid,
 		zbx_uint64_t operation_type, zbx_uint64_t operator, const char *value);
+void	zbx_audit_discovery_rule_overrides_operations_update_extra(int operation_no,
+		zbx_lld_override_operation_t *override_operation, zbx_uint64_t itemid);
+void	zbx_audit_discovery_rule_overrides_operations_optag_update(int override_operation_no,
+		int override_operation_tag_no, zbx_uint64_t itemid, const char *tag, const char *value);
+void	zbx_audit_discovery_rule_overrides_operations_optemplate_update(int override_operation_no,
+		int override_operation_tag_no, zbx_uint64_t itemid, zbx_uint64_t templateid);
+void	zbx_audit_discovery_rule_overrides_operations_opinventory_update(int override_operation_no, zbx_uint64_t itemid,
+		zbx_uint64_t inventory_mode);
 void	zbx_audit_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type);
 void	zbx_audit_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
 void	zbx_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);

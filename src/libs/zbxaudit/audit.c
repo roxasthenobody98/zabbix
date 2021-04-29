@@ -3,6 +3,8 @@
 #include "db.h"
 #include "log.h"
 
+#define AUDIT_DETAILS_KEY_LEN	100
+
 zbx_hashset_t zbx_audit;
 
 typedef struct zbx_audit_entry
@@ -848,10 +850,110 @@ void	zbx_audit_discovery_rule_overrides_operations_update(int operation_no, zbx_
 	zbx_audit_update_json_string(itemid, audit_key_value, value);
 }
 
+void	zbx_audit_discovery_rule_overrides_operations_update_extra(int operation_no,
+		zbx_lld_override_operation_t *override_operation, zbx_uint64_t itemid)
+{
+	if (ZBX_PROTOTYPE_STATUS_COUNT != override_operation->status)
+	{
+		char	audit_key_opstatus[AUDIT_DETAILS_KEY_LEN];
+
+		zbx_snprintf(audit_key_opstatus, AUDIT_DETAILS_KEY_LEN,
+				"discoveryrule.overrides[].operations[%d].opstatus", operation_no);
+		zbx_audit_update_json_uint64(itemid, audit_key_opstatus, override_operation->status);
+	}
+
+	if (ZBX_PROTOTYPE_DISCOVER_COUNT != override_operation->discover)
+	{
+		char audit_key_opdiscover[AUDIT_DETAILS_KEY_LEN];
+
+		zbx_snprintf(audit_key_opdiscover, AUDIT_DETAILS_KEY_LEN,
+				"discoveryrule.overrides[].operations[%d].opdiscover", operation_no);
+		zbx_audit_update_json_uint64(itemid, audit_key_opdiscover, override_operation->discover);
+	}
+
+	if (NULL != override_operation->delay)
+	{
+		char	audit_key_opperiod[AUDIT_DETAILS_KEY_LEN];
+
+		zbx_snprintf(audit_key_opperiod, AUDIT_DETAILS_KEY_LEN,
+				"discoveryrule.overrides[].operations[%d].opperiod", operation_no);
+		zbx_audit_update_json_string(itemid, audit_key_opperiod,
+				override_operation->delay);
+	}
+
+	if (NULL != override_operation->history)
+	{
+		char	audit_key_ophistory[AUDIT_DETAILS_KEY_LEN];
+
+		zbx_snprintf(audit_key_ophistory, AUDIT_DETAILS_KEY_LEN,
+				"discoveryrule.overrides[].operations[%d].ophistory", operation_no);
+		zbx_audit_update_json_string(itemid, audit_key_ophistory,
+				override_operation->history);
+	}
+
+	if (NULL != override_operation->trends)
+	{
+		char	audit_key_optrends[AUDIT_DETAILS_KEY_LEN];
+
+		zbx_snprintf(audit_key_optrends, AUDIT_DETAILS_KEY_LEN,
+				"discoveryrule.overrides[].operations[%d].optrends", operation_no);
+		zbx_audit_update_json_string(itemid, audit_key_optrends,
+				override_operation->trends);
+	}
+
+	if (TRIGGER_SEVERITY_COUNT != override_operation->severity)
+	{
+		char	audit_key_severity[AUDIT_DETAILS_KEY_LEN];
+
+		zbx_snprintf(audit_key_severity, AUDIT_DETAILS_KEY_LEN,
+				"discoveryrule.overrides[].operations[%d].opseverity", operation_no);
+		zbx_audit_update_json_uint64(itemid, audit_key_severity,
+				override_operation->severity);
+	}
+}
+
+void	zbx_audit_discovery_rule_overrides_operations_optag_update(int override_operation_no,
+		int override_operation_tag_no, zbx_uint64_t itemid, const char *tag, const char *value)
+{
+	char	audit_key_optag_tag[AUDIT_DETAILS_KEY_LEN], audit_key_optag_value[AUDIT_DETAILS_KEY_LEN];
+
+	zbx_snprintf(audit_key_optag_tag, AUDIT_DETAILS_KEY_LEN,
+			"discoveryrule.overrides[].operations[%d].optag[%d].tag", override_operation_no,
+			override_operation_tag_no);
+	zbx_snprintf(audit_key_optag_value, AUDIT_DETAILS_KEY_LEN,
+			"discoveryrule.overrides[].operations[%d].optag[%d].value", override_operation_no,
+			override_operation_tag_no);
+	zbx_audit_update_json_string(itemid, audit_key_optag_tag, tag);
+	zbx_audit_update_json_string(itemid, audit_key_optag_value, value);
+}
+
+void	zbx_audit_discovery_rule_overrides_operations_optemplate_update(int override_operation_no,
+		int override_operation_tag_no, zbx_uint64_t itemid, zbx_uint64_t templateid)
+{
+	char	audit_key_optemplate[AUDIT_DETAILS_KEY_LEN];
+
+	zbx_snprintf(audit_key_optemplate, AUDIT_DETAILS_KEY_LEN,
+			"discoveryrule.overrides[].operations[%d].optemplate[%d].templateid", override_operation_no,
+			override_operation_tag_no);
+	zbx_audit_update_json_uint64(itemid, audit_key_optemplate, templateid);
+}
+
+void	zbx_audit_discovery_rule_overrides_operations_opinventory_update(int override_operation_no, zbx_uint64_t itemid,
+		zbx_uint64_t inventory_mode)
+{
+	char	audit_key_opinventory[AUDIT_DETAILS_KEY_LEN];
+
+	zbx_snprintf(audit_key_opinventory, AUDIT_DETAILS_KEY_LEN,
+			"discoveryrule.overrides[].operations[%d].opinventory.inventory_mode",
+			override_operation_no);
+	zbx_audit_update_json_uint64(itemid, audit_key_opinventory, inventory_mode);
+}
+
 void	zbx_audit_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type)
 {
 	zbx_audit_entry_t	*local_audit_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
 			sizeof(zbx_audit_entry_t));
+
 	local_audit_entry->id = id;
 	local_audit_entry->name = zbx_strdup(NULL, name);
 	local_audit_entry->audit_action = AUDIT_ACTION_DELETE;
@@ -883,8 +985,8 @@ void	zbx_audit_update_json_string(const zbx_uint64_t id, const char *key, const 
 
 void	zbx_audit_update_json_uint64(const zbx_uint64_t id, const char *key, const uint64_t value)
 {
-	zbx_audit_entry_t local_audit_entry, **found_audit_entry;
-	zbx_audit_entry_t *local_audit_entry_x = &local_audit_entry;
+	zbx_audit_entry_t	local_audit_entry, **found_audit_entry;
+	zbx_audit_entry_t	*local_audit_entry_x = &local_audit_entry;
 	local_audit_entry.id = id;
 
 	found_audit_entry = (zbx_audit_entry_t**)zbx_hashset_search(&zbx_audit,

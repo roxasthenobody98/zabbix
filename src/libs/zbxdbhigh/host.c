@@ -2014,7 +2014,7 @@ static void	DBresolve_template_trigger_dependencies(zbx_uint64_t hostid, const z
 
 		for (iii = 0; iii < dep_list_ids.values_num; iii++)
 		{
-			zbx_uint64_pair_t p = (zbx_uint64_pair_t)dep_list_ids.values[iii];
+			zbx_uint64_pair_t	p = (zbx_uint64_pair_t)dep_list_ids.values[iii];
 
 			if (!(p.first == dep_list_id.first && p.second == dep_list_id.second))
 			{
