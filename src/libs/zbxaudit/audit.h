@@ -64,6 +64,18 @@ void	zbx_audit_httptests_steps_update(zbx_uint64_t httpstepid, zbx_uint64_t http
 void	zbx_audit_httptests_steps_update_extra(int type, zbx_uint64_t httpstepid, zbx_uint64_t httptestid,
 		const char *name, const char *value);
 void	zbx_audit_httptests_create_entry_update(zbx_uint64_t httptestid, char *name, zbx_uint64_t templateid);
+void	zbx_audit_discovery_rule_overrides_update(int audit_index, zbx_uint64_t itemid, zbx_uint64_t op,
+		const char *macro, const char *value);
+void	zbx_audit_discovery_rule_override_conditions_update(int audit_index, zbx_uint64_t itemid, zbx_uint64_t op,
+		const char *macro, const char *value);
+void	zbx_audit_discovery_rule_preprocessing_update(zbx_uint64_t itemid, unsigned char flags, const char *step,
+		const char *type, const char *params, const char *error_handler, const char *error_handler_params);
+void	zbx_audit_discovery_rule_item_parameters_update(int audit_index, zbx_uint64_t itemid, const char *name,
+		const char *value);
+void	zbx_audit_discovery_rule_lld_macro_paths_update(zbx_uint64_t no, zbx_uint64_t itemid, const char *lld_macro,
+		const char *path);
+void	zbx_audit_discovery_rule_overrides_operations_update(int operation_no, zbx_uint64_t itemid,
+		zbx_uint64_t operation_type, zbx_uint64_t operator, const char *value);
 void	zbx_audit_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type);
 void	zbx_audit_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
 void	zbx_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
