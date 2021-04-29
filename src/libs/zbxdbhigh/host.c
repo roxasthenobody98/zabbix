@@ -1931,9 +1931,6 @@ static int	DBcopy_trigger_to_host(zbx_uint64_t *new_triggerid, zbx_uint64_t *cur
 
 		if (SUCCEED == res)
 		{
-			char	audit_key_expression[100];
-			char	audit_key_recovery_expression[100];
-
 			expression_esc = DBdyn_escape_field("triggers", "expression", new_expression);
 			recovery_expression_esc = DBdyn_escape_field("triggers", "recovery_expression",
 					new_recovery_expression);
@@ -1944,25 +1941,8 @@ static int	DBcopy_trigger_to_host(zbx_uint64_t *new_triggerid, zbx_uint64_t *cur
 					" where triggerid=" ZBX_FS_UI64 ";\n",
 					expression_esc, recovery_expression_esc, *new_triggerid);
 
-			if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
-			{
-				zbx_snprintf(audit_key_expression, 100, "trigger.expression");
-				zbx_snprintf(audit_key_recovery_expression, 100, "trigger.recovery_expression");
-				zbx_audit_update_json_string(*new_triggerid, audit_key_expression,
-						new_expression);
-				zbx_audit_update_json_string(*new_triggerid, audit_key_recovery_expression,
-						new_recovery_expression);
-			}
-			else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
-			{
-				zbx_snprintf(audit_key_expression, 100, "triggerprototype.expression");
-				zbx_snprintf(audit_key_recovery_expression, 100,
-						"triggerprototype.recovery_expression");
-				zbx_audit_update_json_string(*new_triggerid, audit_key_expression,
-						new_expression);
-				zbx_audit_update_json_string(*new_triggerid, audit_key_recovery_expression,
-						new_recovery_expression);
-			}
+			zbx_audit_triggers_update_expression_and_recovery_expression(*new_triggerid, flags,
+					new_expression, new_recovery_expression);
 
 			zbx_free(recovery_expression_esc);
 			zbx_free(expression_esc);
@@ -2030,9 +2010,7 @@ static void	DBresolve_template_trigger_dependencies(zbx_uint64_t hostid, const z
 
 	while (NULL != (row = DBfetch(result)))
 	{
-		int		iii, flags;
-		zbx_uint64_t	triggerid;
-		char		audit_key_dependencies[100];
+		int	iii;
 
 		for (iii = 0; iii < dep_list_ids.values_num; iii++)
 		{
@@ -2048,21 +2026,7 @@ static void	DBresolve_template_trigger_dependencies(zbx_uint64_t hostid, const z
 			}
 		}
 
-		ZBX_STR2UINT64(flags, row[3]);
-		ZBX_STR2UINT64(triggerid, row[2]);
-
-		if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
-		{
-			zbx_snprintf(audit_key_dependencies, 100, "trigger.dependencies[%s]", row[4]);
-			zbx_audit_update_json_string(triggerid, audit_key_dependencies,
-					row[1]);
-		}
-		else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
-		{
-			zbx_snprintf(audit_key_dependencies, 100, "triggerprototype.dependencies[%s]", row[4]);
-			zbx_audit_update_json_string(triggerid, audit_key_dependencies,
-					row[1]);
-		}
+		zbx_audit_triggers_update_dependencies(row[1], row[2], row[3], row[4]);
 	}
 
 	DBfree_result(result);
@@ -2254,28 +2218,11 @@ static int	DBcopy_template_trigger_tags(const zbx_vector_uint64_t *new_triggerid
 
 	while (NULL != (row = DBfetch(result)))
 	{
-		int	flags;
-		char	audit_key_tags_tag[100], audit_key_tags_value[100];
-
 		ZBX_STR2UINT64(triggerid, row[0]);
-		ZBX_STR2UINT64(flags, row[3]);
 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), triggerid, row[1], row[2]);
 
-		if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
-		{
-			zbx_snprintf(audit_key_tags_tag, 100, "trigger.tags[%s].tag", row[4]);
-			zbx_snprintf(audit_key_tags_value, 100, "trigger.tags[%s].value", row[4]);
-			zbx_audit_update_json_string(triggerid, audit_key_tags_tag, row[1]);
-			zbx_audit_update_json_string(triggerid, audit_key_tags_value, row[2]);
-		}
-		else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
-		{
-			zbx_snprintf(audit_key_tags_tag, 100, "triggerprototype.tags[%s].tag", row[4]);
-			zbx_snprintf(audit_key_tags_value, 100, "triggerprototype.tags[%s].value", row[4]);
-			zbx_audit_update_json_string(triggerid, audit_key_tags_tag, row[1]);
-			zbx_audit_update_json_string(triggerid, audit_key_tags_value, row[2]);
-		}
+		zbx_audit_triggers_update_tags_and_values(triggerid, row[1], row[2], row[3], row[4]);
 	}
 
 	DBfree_result(result);
@@ -3940,8 +3887,6 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 					(int)ZBX_FLAG_DISCOVERY_PROTOTYPE, host_prototype->templateid,
 					(int)host_prototype->discover, (int)host_prototype->custom_interfaces);
 
-			zabbix_log(LOG_LEVEL_INFORMATION, "HOST_PROTOTYPE_CREATE_ENTRY ADD: hostid ->%lu<-",
-					host_prototype->hostid);
 			zbx_audit_host_prototypes_create_entry(AUDIT_ACTION_ADD, host_prototype->hostid,
 					host_prototype->name, host_prototype->status, host_prototype->templateid,
 					host_prototype->discover, host_prototype->custom_interfaces);
@@ -3976,9 +3921,6 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 			zbx_snprintf_alloc(&sql1, &sql1_alloc, &sql1_offset, " where hostid=" ZBX_FS_UI64 ";\n",
 					host_prototype->hostid);
 
-			zabbix_log(LOG_LEVEL_INFORMATION, "HOST_PROTOTYPE_CREATE_ENTRY UPDATE: hostid ->%lu<-",
-					host_prototype->hostid);
-
 			zbx_audit_host_prototypes_create_entry(AUDIT_ACTION_UPDATE, host_prototype->hostid,
 				host_prototype->name, host_prototype->status, host_prototype->templateid,
 				host_prototype->discover, host_prototype->custom_interfaces);
@@ -3994,25 +3936,16 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 
 		for (j = 0; j < host_prototype->group_prototypes.values_num; j++)
 		{
-			char audit_key_operator[100];
 			group_prototype = (zbx_group_prototype_t *)host_prototype->group_prototypes.values[j];
-
-			zabbix_log(LOG_LEVEL_INFORMATION, "HHH, hostid: %lu, name: %s, groupid: %lu, templateid: %lu",
-					host_prototype->hostid, group_prototype->name, group_prototype->groupid,
-					group_prototype->templateid);
 
 			if (0 == group_prototype->group_prototypeid)
 			{
-				zabbix_log(LOG_LEVEL_INFORMATION, "HUE_999: group_prototype is 0");
-
 				zbx_db_insert_add_values(&db_insert_gproto, group_prototypeid++, host_prototype->hostid,
 						group_prototype->name, group_prototype->groupid,
 						group_prototype->templateid);
 			}
 			else
 			{
-				zabbix_log(LOG_LEVEL_INFORMATION, "HUE_999: group_prototype is NOT 0");
-
 				zbx_snprintf_alloc(&sql1, &sql1_alloc, &sql1_offset,
 						"update group_prototype"
 						" set templateid=" ZBX_FS_UI64
@@ -4020,23 +3953,8 @@ static void	DBhost_prototypes_save(zbx_vector_ptr_t *host_prototypes, zbx_vector
 						group_prototype->templateid, group_prototype->group_prototypeid);
 			}
 
-			if (0 != strlen(group_prototype->name))
-			{
-				zabbix_log(LOG_LEVEL_INFORMATION, "HUE2: name is not empty");
-				zbx_snprintf(audit_key_operator, 100, "hostprototype.groupPrototypes[%s]",
-						group_prototype->name);
-				zbx_audit_update_json_uint64(host_prototype->hostid, audit_key_operator,
-						group_prototype->templateid);
-
-			}
-			else if (0 != group_prototype->groupid)
-			{
-				zabbix_log(LOG_LEVEL_INFORMATION, "HUE3: groupid is not null");
-				zbx_snprintf(audit_key_operator, 100, "hostprototype.groupLinks[%lu]",
-						group_prototype->groupid);
-				zbx_audit_update_json_uint64(host_prototype->hostid, audit_key_operator,
-						group_prototype->templateid);
-			}
+			zbx_audit_host_prototypes_update_details(host_prototype->hostid, group_prototype->name,
+					group_prototype->groupid, group_prototype->templateid);
 		}
 
 		for (j = 0; j < host_prototype->hostmacros.values_num; j++)

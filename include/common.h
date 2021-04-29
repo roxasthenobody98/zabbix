@@ -1727,7 +1727,8 @@ int	zbx_open_xml(char *data, int options, int maxerrlen, void **xml_doc, void **
 int	zbx_check_xml_memory(char *mem, int maxerrlen, char **errmsg);
 #endif
 
-#define CUID_LEN	26
+#define AUDIT_DETAILS_KEY_LEN	100
+#define CUID_LEN		26
 void	zbx_new_cuid(char *cuid);
 
 #define AUDIT_RESOURCE_USER			0

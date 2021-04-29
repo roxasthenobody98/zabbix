@@ -33,18 +33,24 @@ void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uin
 		const int action);
 void	zbx_audit_host_prototypes_create_entry(const int audit_action, zbx_uint64_t hostid, char *name, unsigned char status,
 		zbx_uint64_t templateid, unsigned char discover, unsigned char custom_interfaces);
+void	zbx_audit_host_prototypes_update_details(zbx_uint64_t hostid, const char *name, zbx_uint64_t groupid,
+		zbx_uint64_t templateid);
 void	zbx_audit_graphs_create_entry(const int audit_action, zbx_uint64_t hst_graphid, const char *name, int width,
 		int height, double yaxismin, double yaxismax, zbx_uint64_t graphid, unsigned char show_work_period,
 		unsigned char show_triggers, unsigned char graphtype, unsigned char show_legend, unsigned char show_3d,
 		double percent_left, double percent_right, unsigned char ymin_type, unsigned char ymax_type,
 		zbx_uint64_t ymin_itemid, zbx_uint64_t ymax_itemid, unsigned char flags, unsigned char discover);
-
 void	zbx_audit_triggers_create_entry(const int audit_action, zbx_uint64_t new_triggerid, const char *description,
 		zbx_uint64_t templateid, unsigned char recovery_mode, unsigned char status, unsigned char type,
 		zbx_uint64_t value, zbx_uint64_t state, unsigned char priority, const char *comments, const char *url,
 		unsigned char flags, unsigned char correlation_mode, const char *correlation_tag,
 		unsigned char manual_close, const char *opdata, unsigned char discover, const char *event_name);
-
+void	zbx_audit_triggers_update_expression_and_recovery_expression(zbx_uint64_t triggerid, int flags,
+		const char *new_expression, const char *new_recovery_expression);
+void	zbx_audit_triggers_update_dependencies(const char *triggerid_up_str, const char *triggerid_str,
+		const char *flags_str, const char *triggerdepid_str);
+void	zbx_audit_triggers_update_tags_and_values(zbx_uint64_t triggerid, const char *tag, const char *value,
+		const char *flags_str, const char *tagid_str);
 void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, char *delay,
 		unsigned char status, char *agent, unsigned char authentication, char *http_user, char *http_password,
 		char *http_proxy, int retries, uint64_t hostid, zbx_uint64_t templateid);

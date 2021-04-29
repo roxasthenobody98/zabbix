@@ -281,8 +281,8 @@ void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uin
 }
 
 /* could not pass zbx_host_prototype_t because that would mean rewriting half of the zabbix */
-void	zbx_audit_host_prototypes_create_entry(const int audit_action, zbx_uint64_t hostid, char *name, unsigned char status,
-		zbx_uint64_t templateid, unsigned char discover, unsigned char custom_interfaces)
+void	zbx_audit_host_prototypes_create_entry(const int audit_action, zbx_uint64_t hostid, char *name,
+		unsigned char status, zbx_uint64_t templateid, unsigned char discover, unsigned char custom_interfaces)
 {
 	zbx_audit_entry_t	*local_audit_host_prototype_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
 			sizeof(zbx_audit_entry_t));
@@ -302,39 +302,112 @@ void	zbx_audit_host_prototypes_create_entry(const int audit_action, zbx_uint64_t
 	zbx_hashset_insert(&zbx_audit, &local_audit_host_prototype_entry, sizeof(local_audit_host_prototype_entry));
 }
 
+void	zbx_audit_host_prototypes_update_details(zbx_uint64_t hostid, const char *name, zbx_uint64_t groupid,
+		zbx_uint64_t templateid)
+{
+	char	audit_key_operator[AUDIT_DETAILS_KEY_LEN];
+
+	if (0 != strlen(name))
+	{
+		zbx_snprintf(audit_key_operator, AUDIT_DETAILS_KEY_LEN, "hostprototype.groupPrototypes[%s]", name);
+		zbx_audit_update_json_uint64(hostid, audit_key_operator, templateid);
+	}
+	else if (0 != groupid)
+	{
+		zbx_snprintf(audit_key_operator, AUDIT_DETAILS_KEY_LEN, "hostprototype.groupLinks[%lu]", groupid);
+		zbx_audit_update_json_uint64(hostid, audit_key_operator, templateid);
+	}
+}
+
 void	zbx_audit_graphs_create_entry(const int audit_action, zbx_uint64_t hst_graphid, const char *name, int width,
 		int height, double yaxismin, double yaxismax, zbx_uint64_t graphid, unsigned char show_work_period,
 		unsigned char show_triggers, unsigned char graphtype, unsigned char show_legend, unsigned char show_3d,
 		double percent_left, double percent_right, unsigned char ymin_type, unsigned char ymax_type,
 		zbx_uint64_t ymin_itemid, zbx_uint64_t ymax_itemid, unsigned char flags, unsigned char discover)
 {
+	char	audit_key_width[AUDIT_DETAILS_KEY_LEN], audit_key_height[AUDIT_DETAILS_KEY_LEN],
+		audit_key_yaxismin[AUDIT_DETAILS_KEY_LEN], audit_key_yaxismax[AUDIT_DETAILS_KEY_LEN],
+		audit_key_show_work_period[AUDIT_DETAILS_KEY_LEN], audit_key_show_triggers[AUDIT_DETAILS_KEY_LEN],
+		audit_key_templateid[AUDIT_DETAILS_KEY_LEN], audit_key_graphtype[AUDIT_DETAILS_KEY_LEN],
+		audit_key_show_legend[AUDIT_DETAILS_KEY_LEN], audit_key_show_3d[AUDIT_DETAILS_KEY_LEN],
+		audit_key_percent_left[AUDIT_DETAILS_KEY_LEN], audit_key_percent_right[AUDIT_DETAILS_KEY_LEN],
+		audit_key_ymin_type[AUDIT_DETAILS_KEY_LEN], audit_key_ymax_type[AUDIT_DETAILS_KEY_LEN],
+		audit_key_ymin_itemid[AUDIT_DETAILS_KEY_LEN], audit_key_ymax_itemid[AUDIT_DETAILS_KEY_LEN],
+		audit_key_flags[AUDIT_DETAILS_KEY_LEN], audit_key_discover[AUDIT_DETAILS_KEY_LEN];
+
 	zbx_audit_entry_t	*local_audit_graph_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
 			sizeof(zbx_audit_entry_t));
 	local_audit_graph_entry->id = hst_graphid;
 	local_audit_graph_entry->name = zbx_strdup(NULL, name);
 	local_audit_graph_entry->audit_action = audit_action;
-	local_audit_graph_entry->resource_type = AUDIT_RESOURCE_GRAPH;
+
+	if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+	{
+		local_audit_graph_entry->resource_type = AUDIT_RESOURCE_GRAPH;
+
+		zbx_snprintf(audit_key_width,            AUDIT_DETAILS_KEY_LEN, "graph.width");
+		zbx_snprintf(audit_key_height,           AUDIT_DETAILS_KEY_LEN, "graph.height");
+		zbx_snprintf(audit_key_yaxismin,         AUDIT_DETAILS_KEY_LEN, "graph.yaxismin");
+		zbx_snprintf(audit_key_yaxismax,         AUDIT_DETAILS_KEY_LEN, "graph.yaxismax");
+		zbx_snprintf(audit_key_show_work_period, AUDIT_DETAILS_KEY_LEN, "graph.show_work_period");
+		zbx_snprintf(audit_key_show_triggers,    AUDIT_DETAILS_KEY_LEN, "graph.show_triggers");
+		zbx_snprintf(audit_key_templateid,       AUDIT_DETAILS_KEY_LEN, "graph.templateid");
+		zbx_snprintf(audit_key_graphtype,        AUDIT_DETAILS_KEY_LEN, "graph.graphtype");
+		zbx_snprintf(audit_key_show_legend,      AUDIT_DETAILS_KEY_LEN, "graph.show_legend");
+		zbx_snprintf(audit_key_show_3d,          AUDIT_DETAILS_KEY_LEN, "graph.show_3d");
+		zbx_snprintf(audit_key_percent_left,     AUDIT_DETAILS_KEY_LEN, "graph.percent_left");
+		zbx_snprintf(audit_key_percent_right,    AUDIT_DETAILS_KEY_LEN, "graph.percent_right");
+		zbx_snprintf(audit_key_ymin_type,        AUDIT_DETAILS_KEY_LEN, "graph.ymin_type");
+		zbx_snprintf(audit_key_ymax_type,        AUDIT_DETAILS_KEY_LEN, "graph.ymax_type");
+		zbx_snprintf(audit_key_ymin_itemid,      AUDIT_DETAILS_KEY_LEN, "graph.ymin_itemid");
+		zbx_snprintf(audit_key_ymax_itemid,      AUDIT_DETAILS_KEY_LEN, "graph.ymax_itemid");
+		zbx_snprintf(audit_key_flags,            AUDIT_DETAILS_KEY_LEN, "graph.flags");
+		zbx_snprintf(audit_key_discover,         AUDIT_DETAILS_KEY_LEN, "graph.discover");
+	}
+	else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+	{
+		local_audit_graph_entry->resource_type = AUDIT_RESOURCE_GRAPH_PROTOTYPE;
+
+		zbx_snprintf(audit_key_width,            AUDIT_DETAILS_KEY_LEN, "graphprototype.width");
+		zbx_snprintf(audit_key_height,           AUDIT_DETAILS_KEY_LEN, "graphprototype.height");
+		zbx_snprintf(audit_key_yaxismin,         AUDIT_DETAILS_KEY_LEN, "graphprototype.yaxismin");
+		zbx_snprintf(audit_key_yaxismax,         AUDIT_DETAILS_KEY_LEN, "graphprototype.yaxismax");
+		zbx_snprintf(audit_key_show_work_period, AUDIT_DETAILS_KEY_LEN, "graphprototype.show_work_period");
+		zbx_snprintf(audit_key_show_triggers,    AUDIT_DETAILS_KEY_LEN, "graphprototype.show_triggers");
+		zbx_snprintf(audit_key_templateid,       AUDIT_DETAILS_KEY_LEN, "graphprototype.templateid");
+		zbx_snprintf(audit_key_graphtype,        AUDIT_DETAILS_KEY_LEN, "graphprototype.graphtype");
+		zbx_snprintf(audit_key_show_legend,      AUDIT_DETAILS_KEY_LEN, "graphprototype.show_legend");
+		zbx_snprintf(audit_key_show_3d,          AUDIT_DETAILS_KEY_LEN, "graphprototype.show_3d");
+		zbx_snprintf(audit_key_percent_left,     AUDIT_DETAILS_KEY_LEN, "graphprototype.percent_left");
+		zbx_snprintf(audit_key_percent_right,    AUDIT_DETAILS_KEY_LEN, "graphprototype.percent_right");
+		zbx_snprintf(audit_key_ymin_type,        AUDIT_DETAILS_KEY_LEN, "graphprototype.ymin_type");
+		zbx_snprintf(audit_key_ymax_type,        AUDIT_DETAILS_KEY_LEN, "graphprototype.ymax_type");
+		zbx_snprintf(audit_key_ymin_itemid,      AUDIT_DETAILS_KEY_LEN, "graphprototype.ymin_itemid");
+		zbx_snprintf(audit_key_ymax_itemid,      AUDIT_DETAILS_KEY_LEN, "graphprototype.ymax_itemid");
+		zbx_snprintf(audit_key_flags,            AUDIT_DETAILS_KEY_LEN, "graphprototype.flags");
+		zbx_snprintf(audit_key_discover,         AUDIT_DETAILS_KEY_LEN, "graphprototype.discover");
+	}
 
 	zbx_json_init(&(local_audit_graph_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
 
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "width", width);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "height", height);
-	zbx_json_addfloat(&local_audit_graph_entry->details_json, "yaxismin", yaxismin);
-	zbx_json_addfloat(&local_audit_graph_entry->details_json, "yaxismax", yaxismax);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "show_work_period", show_work_period);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "show_triggers", show_triggers);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "templateid", graphid);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "graphtype", graphtype);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "show_legend", show_legend);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "show_3d", show_3d);
-	zbx_json_addfloat(&local_audit_graph_entry->details_json, "percent_left", percent_left);
-	zbx_json_addfloat(&local_audit_graph_entry->details_json, "percent_right", percent_right);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "ymin_type", ymin_type);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "ymax_type", ymax_type);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "ymin_itemid", ymin_itemid);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "ymax_itemid", ymax_itemid);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "flags", flags);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, "discover", discover);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_width, width);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_height, height);
+	zbx_json_addfloat(&local_audit_graph_entry->details_json, audit_key_yaxismin, yaxismin);
+	zbx_json_addfloat(&local_audit_graph_entry->details_json, audit_key_yaxismax, yaxismax);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_show_work_period, show_work_period);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_show_triggers, show_triggers);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_templateid, graphid);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_graphtype, graphtype);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_show_legend, show_legend);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_show_3d, show_3d);
+	zbx_json_addfloat(&local_audit_graph_entry->details_json, audit_key_percent_left, percent_left);
+	zbx_json_addfloat(&local_audit_graph_entry->details_json, audit_key_percent_right, percent_right);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_ymin_type, ymin_type);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_ymax_type, ymax_type);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_ymin_itemid, ymin_itemid);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_ymax_itemid, ymax_itemid);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_flags, flags);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_discover, discover);
 
 	zbx_hashset_insert(&zbx_audit, &local_audit_graph_entry, sizeof(local_audit_graph_entry));
 }
@@ -345,38 +418,165 @@ void	zbx_audit_triggers_create_entry(const int audit_action, zbx_uint64_t new_tr
 		unsigned char flags, unsigned char correlation_mode, const char *correlation_tag,
 		unsigned char manual_close, const char *opdata, unsigned char discover, const char *event_name)
 {
+	char	audit_key_event_name[AUDIT_DETAILS_KEY_LEN], audit_key_opdata[AUDIT_DETAILS_KEY_LEN],
+		audit_key_comments[AUDIT_DETAILS_KEY_LEN], audit_key_flags[AUDIT_DETAILS_KEY_LEN],
+		audit_key_priority[AUDIT_DETAILS_KEY_LEN], audit_key_state[AUDIT_DETAILS_KEY_LEN],
+		audit_key_status[AUDIT_DETAILS_KEY_LEN], audit_key_templateid[AUDIT_DETAILS_KEY_LEN],
+		audit_key_type[AUDIT_DETAILS_KEY_LEN], audit_key_url[AUDIT_DETAILS_KEY_LEN],
+		audit_key_value[AUDIT_DETAILS_KEY_LEN], audit_key_recovery_mode[AUDIT_DETAILS_KEY_LEN],
+		audit_key_correlation_mode[AUDIT_DETAILS_KEY_LEN], audit_key_correlation_tag[AUDIT_DETAILS_KEY_LEN],
+		audit_key_manual_close[AUDIT_DETAILS_KEY_LEN], audit_key_discover[AUDIT_DETAILS_KEY_LEN];
+
 	zbx_audit_entry_t	*local_audit_trigger_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
 			sizeof(zbx_audit_entry_t));
 	local_audit_trigger_entry->id = new_triggerid;
 	local_audit_trigger_entry->name = zbx_strdup(NULL, description);
 	local_audit_trigger_entry->audit_action = audit_action;
-	local_audit_trigger_entry->resource_type = AUDIT_RESOURCE_TRIGGER;
+
+	if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+	{
+		local_audit_trigger_entry->resource_type = AUDIT_RESOURCE_TRIGGER;
+
+		zbx_snprintf(audit_key_event_name,       AUDIT_DETAILS_KEY_LEN, "trigger.event_name");
+		zbx_snprintf(audit_key_opdata,           AUDIT_DETAILS_KEY_LEN, "trigger.opdata");
+		zbx_snprintf(audit_key_comments,         AUDIT_DETAILS_KEY_LEN, "trigger.comments");
+		zbx_snprintf(audit_key_flags,            AUDIT_DETAILS_KEY_LEN, "trigger.flags");
+		zbx_snprintf(audit_key_priority,         AUDIT_DETAILS_KEY_LEN, "trigger.priority");
+		zbx_snprintf(audit_key_state,            AUDIT_DETAILS_KEY_LEN, "trigger.state");
+		zbx_snprintf(audit_key_status,           AUDIT_DETAILS_KEY_LEN, "trigger.status");
+		zbx_snprintf(audit_key_templateid,       AUDIT_DETAILS_KEY_LEN, "trigger.tempateid");
+		zbx_snprintf(audit_key_type,             AUDIT_DETAILS_KEY_LEN, "trigger.type");
+		zbx_snprintf(audit_key_url,              AUDIT_DETAILS_KEY_LEN, "trigger.url");
+		zbx_snprintf(audit_key_value,            AUDIT_DETAILS_KEY_LEN, "trigger.value");
+		zbx_snprintf(audit_key_recovery_mode,    AUDIT_DETAILS_KEY_LEN, "trigger.recovery_mode");
+		zbx_snprintf(audit_key_correlation_mode, AUDIT_DETAILS_KEY_LEN, "trigger.correlation_mode");
+		zbx_snprintf(audit_key_correlation_tag,  AUDIT_DETAILS_KEY_LEN, "trigger.correlation_tag");
+		zbx_snprintf(audit_key_manual_close,     AUDIT_DETAILS_KEY_LEN, "trigger.manual_close");
+		zbx_snprintf(audit_key_discover,         AUDIT_DETAILS_KEY_LEN, "trigger.discover");
+	}
+	else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+	{
+		local_audit_trigger_entry->resource_type = AUDIT_RESOURCE_TRIGGER_PROTOTYPE;
+
+		zbx_snprintf(audit_key_event_name,       AUDIT_DETAILS_KEY_LEN, "triggerprototype.event_name");
+		zbx_snprintf(audit_key_opdata,           AUDIT_DETAILS_KEY_LEN, "triggerprototype.opdata");
+		zbx_snprintf(audit_key_comments,         AUDIT_DETAILS_KEY_LEN, "triggerprototype.comments");
+		zbx_snprintf(audit_key_flags,            AUDIT_DETAILS_KEY_LEN, "triggerprototype.flags");
+		zbx_snprintf(audit_key_priority,         AUDIT_DETAILS_KEY_LEN, "triggerprototype.priority");
+		zbx_snprintf(audit_key_state,            AUDIT_DETAILS_KEY_LEN, "triggerprototype.state");
+		zbx_snprintf(audit_key_status,           AUDIT_DETAILS_KEY_LEN, "triggerprototype.status");
+		zbx_snprintf(audit_key_templateid,       AUDIT_DETAILS_KEY_LEN, "triggerprototype.tempateid");
+		zbx_snprintf(audit_key_type,             AUDIT_DETAILS_KEY_LEN, "triggerprototype.type");
+		zbx_snprintf(audit_key_url,              AUDIT_DETAILS_KEY_LEN, "triggerprototype.url");
+		zbx_snprintf(audit_key_value,            AUDIT_DETAILS_KEY_LEN, "triggerprototype.value");
+		zbx_snprintf(audit_key_recovery_mode,    AUDIT_DETAILS_KEY_LEN, "triggerprototype.recovery_mode");
+		zbx_snprintf(audit_key_correlation_mode, AUDIT_DETAILS_KEY_LEN, "triggerprototype.correlation_mode");
+		zbx_snprintf(audit_key_correlation_tag,  AUDIT_DETAILS_KEY_LEN, "triggerprototype.correlation_tag");
+		zbx_snprintf(audit_key_manual_close,     AUDIT_DETAILS_KEY_LEN, "triggerprototype.manual_close");
+		zbx_snprintf(audit_key_discover,         AUDIT_DETAILS_KEY_LEN, "triggerprototype.discover");
+	}
 
 	zbx_json_init(&(local_audit_trigger_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
 
-	zbx_json_addstring(&local_audit_trigger_entry->details_json, "event_name", event_name, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_audit_trigger_entry->details_json, "opdata", opdata, ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_audit_trigger_entry->details_json, "comments", comments, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "flags", flags);
-	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "priority", priority);
-	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "state", state);
-
-	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "status", status);
-	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "templateid", templateid);
-	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "type", type);
-	zbx_json_addstring(&local_audit_trigger_entry->details_json, "url", url, ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "value", value);
-	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "recovery_mode", recovery_mode);
-
-	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "correlation_mode", correlation_mode);
-	zbx_json_addstring(&local_audit_trigger_entry->details_json, "correlation_tag", correlation_tag,
+	zbx_json_addstring(&local_audit_trigger_entry->details_json, audit_key_event_name, event_name,
 			ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "manual_close", manual_close);
-	zbx_json_adduint64(&local_audit_trigger_entry->details_json, "discover", discover);
+	zbx_json_addstring(&local_audit_trigger_entry->details_json, audit_key_opdata, opdata, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_trigger_entry->details_json, audit_key_comments, comments,
+			ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, audit_key_flags, flags);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, audit_key_priority, priority);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, audit_key_state, state);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, audit_key_status, status);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, audit_key_templateid, templateid);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, audit_key_type, type);
+	zbx_json_addstring(&local_audit_trigger_entry->details_json, audit_key_url, url, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, audit_key_value, value);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, audit_key_recovery_mode, recovery_mode);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, audit_key_correlation_mode, correlation_mode);
+	zbx_json_addstring(&local_audit_trigger_entry->details_json, audit_key_correlation_tag, correlation_tag,
+			ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, audit_key_manual_close, manual_close);
+	zbx_json_adduint64(&local_audit_trigger_entry->details_json, audit_key_discover, discover);
 
 	zbx_hashset_insert(&zbx_audit, &local_audit_trigger_entry, sizeof(local_audit_trigger_entry));
 }
 
+void	zbx_audit_triggers_update_expression_and_recovery_expression(zbx_uint64_t new_triggerid, int flags,
+		const char *new_expression, const char *new_recovery_expression)
+{
+	char	audit_key_expression[AUDIT_DETAILS_KEY_LEN];
+	char	audit_key_recovery_expression[AUDIT_DETAILS_KEY_LEN];
+
+	if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+	{
+		zbx_snprintf(audit_key_expression, AUDIT_DETAILS_KEY_LEN, "trigger.expression");
+		zbx_snprintf(audit_key_recovery_expression, AUDIT_DETAILS_KEY_LEN, "trigger.recovery_expression");
+		zbx_audit_update_json_string(new_triggerid, audit_key_expression,
+				new_expression);
+		zbx_audit_update_json_string(new_triggerid, audit_key_recovery_expression,
+				new_recovery_expression);
+	}
+	else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+	{
+		zbx_snprintf(audit_key_expression, AUDIT_DETAILS_KEY_LEN, "triggerprototype.expression");
+		zbx_snprintf(audit_key_recovery_expression, AUDIT_DETAILS_KEY_LEN,
+				"triggerprototype.recovery_expression");
+		zbx_audit_update_json_string(new_triggerid, audit_key_expression,
+				new_expression);
+		zbx_audit_update_json_string(new_triggerid, audit_key_recovery_expression,
+				new_recovery_expression);
+	}
+}
+
+void	zbx_audit_triggers_update_dependencies(const char *triggerid_up_str, const char *triggerid_str,
+		const char *flags_str, const char *triggerdepid_str)
+{
+	int		flags;
+	zbx_uint64_t	triggerid;
+	char		audit_key_dependencies[AUDIT_DETAILS_KEY_LEN];
+
+	ZBX_STR2UINT64(flags, flags_str);
+	ZBX_STR2UINT64(triggerid, triggerid_str);
+
+	if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+	{
+		zbx_snprintf(audit_key_dependencies, AUDIT_DETAILS_KEY_LEN, "trigger.dependencies[%s]",
+				triggerdepid_str);
+		zbx_audit_update_json_string(triggerid, audit_key_dependencies,
+				triggerid_up_str);
+	}
+	else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+	{
+		zbx_snprintf(audit_key_dependencies, AUDIT_DETAILS_KEY_LEN, "triggerprototype.dependencies[%s]",
+				triggerdepid_str);
+		zbx_audit_update_json_string(triggerid, audit_key_dependencies,
+				triggerid_up_str);
+	}
+}
+
+void	zbx_audit_triggers_update_tags_and_values(zbx_uint64_t triggerid, const char *tag, const char *value,
+		const char *flags_str, const char *tagid_str)
+{
+	int	flags;
+	char	audit_key_tags_tag[AUDIT_DETAILS_KEY_LEN], audit_key_tags_value[AUDIT_DETAILS_KEY_LEN];
+
+	ZBX_STR2UINT64(flags, flags_str);
+
+	if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+	{
+		zbx_snprintf(audit_key_tags_tag, AUDIT_DETAILS_KEY_LEN, "trigger.tags[%s].tag", tagid_str);
+		zbx_snprintf(audit_key_tags_value, AUDIT_DETAILS_KEY_LEN, "trigger.tags[%s].value", tagid_str);
+		zbx_audit_update_json_string(triggerid, audit_key_tags_tag, tag);
+		zbx_audit_update_json_string(triggerid, audit_key_tags_value, value);
+	}
+	else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+	{
+		zbx_snprintf(audit_key_tags_tag, AUDIT_DETAILS_KEY_LEN, "triggerprototype.tags[%s].tag", tagid_str);
+		zbx_snprintf(audit_key_tags_value, AUDIT_DETAILS_KEY_LEN, "triggerprototype.tags[%s].value", tagid_str);
+		zbx_audit_update_json_string(triggerid, audit_key_tags_tag, tag);
+		zbx_audit_update_json_string(triggerid, audit_key_tags_value, value);
+	}
+}
 
 void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, char *delay,
 		unsigned char status, char *agent, unsigned char authentication, char *http_user, char *http_password,
