@@ -814,7 +814,7 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 				zbx_db_insert_add_values(&db_insert, rule->conditionid++, item->itemid,
 						(int)condition->op, condition->macro, condition->value);
 
-				zbx_audit_discovery_rule_overrides_update(audit_index++, item->itemid, condition->op,
+				zbx_audit_discovery_rule_overrides_update(i, j, item->itemid, condition->op,
 						condition->macro, condition->value);
 			}
 		}
@@ -1164,8 +1164,8 @@ static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, atoi(row[1]), atoi(row[2]),
 				row[3], atoi(row[4]), row[5]);
 
-		zbx_audit_discovery_rule_preprocessing_update((*pitem)->itemid, (*pitem)->flags, row[1], row[2], row[3],
-				row[4], row[5]);
+		zbx_audit_preprocessing_update((*pitem)->itemid, (*pitem)->flags, row[1], row[2], row[3], row[4],
+				row[5]);
 	}
 	DBfree_result(result);
 
@@ -1319,7 +1319,7 @@ static void	copy_template_item_script_params(const zbx_vector_uint64_t *template
 	zbx_db_insert_prepare(&db_insert, "item_parameter", "item_parameterid", "itemid", "name", "value", NULL);
 
 	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset,
-			"select ip.itemid,ip.name,ip.value"
+			"select ip.itemid,ip.name,ip.value,ti.flags"
 				" from item_parameter ip,items ti"
 				" where ip.itemid=ti.itemid"
 				" and");
@@ -1339,7 +1339,7 @@ static void	copy_template_item_script_params(const zbx_vector_uint64_t *template
 		}
 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, row[1], row[2]);
-		zbx_audit_discovery_rule_item_parameters_update(audit_index++, (*pitem)->itemid, row[1], row[2]);
+		zbx_audit_item_parameters_update(audit_index++, (*pitem)->itemid, row[1], row[2], row[3]);
 	}
 
 	DBfree_result(result);
@@ -1612,7 +1612,7 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 					(int)override_operation->operationtype, (int)override_operation->operator,
 					override_operation->value);
 
-			zbx_audit_discovery_rule_overrides_operations_update(j, (*pitem)->itemid,
+			zbx_audit_discovery_rule_overrides_operations_update(i, j, (*pitem)->itemid,
 					override_operation->operationtype, override_operation->operator,
 					override_operation->value);
 
@@ -1652,7 +1652,8 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 						(int)override_operation->severity);
 			}
 
-			zbx_audit_discovery_rule_overrides_operations_update_extra(j, override_operation, (*pitem)->itemid);
+			zbx_audit_discovery_rule_overrides_operations_update_extra(i, j, override_operation,
+					(*pitem)->itemid);
 
 			for (k = 0; k < override_operation->tags.values_num; k++)
 			{
@@ -1661,7 +1662,7 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 				zbx_db_insert_add_values(&db_insert_optag, __UINT64_C(0), override_operationid,
 						tag->tag, tag->value);
 
-				zbx_audit_discovery_rule_overrides_operations_optag_update(j, k, (*pitem)->itemid,
+				zbx_audit_discovery_rule_overrides_operations_optag_update(i, j, k, (*pitem)->itemid,
 						tag->tag, tag->value);
 			}
 
@@ -1670,15 +1671,15 @@ static void	save_template_lld_overrides(zbx_vector_ptr_t *overrides, zbx_hashset
 				zbx_db_insert_add_values(&db_insert_optemplate, __UINT64_C(0), override_operationid,
 						override_operation->templateids.values[k]);
 
-				zbx_audit_discovery_rule_overrides_operations_optemplate_update(j, k, (*pitem)->itemid,
-						override_operation->templateids.values[k]);
+				zbx_audit_discovery_rule_overrides_operations_optemplate_update(i, j, k,
+						(*pitem)->itemid, override_operation->templateids.values[k]);
 			}
 
 			if (HOST_INVENTORY_COUNT != override_operation->inventory_mode)
 			{
 				zbx_db_insert_add_values(&db_insert_opinventory, override_operationid,
 						(int)override_operation->inventory_mode);
-				zbx_audit_discovery_rule_overrides_operations_opinventory_update(j, (*pitem)->itemid,
+				zbx_audit_discovery_rule_overrides_operations_opinventory_update(i, j, (*pitem)->itemid,
 						override_operation->inventory_mode);
 			}
 
