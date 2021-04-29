@@ -412,6 +412,45 @@ void	zbx_audit_graphs_create_entry(const int audit_action, zbx_uint64_t hst_grap
 	zbx_hashset_insert(&zbx_audit, &local_audit_graph_entry, sizeof(local_audit_graph_entry));
 }
 
+void	zbx_audit_graphs_update_gitems(zbx_uint64_t hst_graphid, int flags, zbx_uint64_t gitemid, int drawtype,
+		int sortorder, const char *color, int yaxisside, int calc_fnc, int type)
+{
+	char	audit_key_drawtype[AUDIT_DETAILS_KEY_LEN], audit_key_sortorder[AUDIT_DETAILS_KEY_LEN],
+		audit_key_color[AUDIT_DETAILS_KEY_LEN], audit_key_yaxisside[AUDIT_DETAILS_KEY_LEN],
+		audit_key_calc_fnc[AUDIT_DETAILS_KEY_LEN], audit_key_type[AUDIT_DETAILS_KEY_LEN];
+
+	if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+	{
+		zbx_snprintf(audit_key_drawtype, AUDIT_DETAILS_KEY_LEN, "graph.gitems[%lu].drawtype", gitemid);
+		zbx_snprintf(audit_key_sortorder, AUDIT_DETAILS_KEY_LEN, "graph.gitems[%lu].sortorder", gitemid);
+		zbx_snprintf(audit_key_color, AUDIT_DETAILS_KEY_LEN, "graph.gitems[%lu].color", gitemid);
+		zbx_snprintf(audit_key_yaxisside, AUDIT_DETAILS_KEY_LEN, "graph.gitems[%lu].yaxisside", gitemid);
+		zbx_snprintf(audit_key_calc_fnc, AUDIT_DETAILS_KEY_LEN, "graph.gitems[%lu].calc_fnc", gitemid);
+		zbx_snprintf(audit_key_type, AUDIT_DETAILS_KEY_LEN, "graph.gitems[%lu].type", gitemid);
+	}
+	else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+	{
+		zbx_snprintf(audit_key_drawtype, AUDIT_DETAILS_KEY_LEN, "graphprototype.gitems[%lu].drawtype", gitemid);
+		zbx_snprintf(audit_key_sortorder, AUDIT_DETAILS_KEY_LEN, "graphprototype.gitems[%lu].sortorder",
+				gitemid);
+		zbx_snprintf(audit_key_color, AUDIT_DETAILS_KEY_LEN, "graphprototype.gitems[%lu].color", gitemid);
+		zbx_snprintf(audit_key_yaxisside, AUDIT_DETAILS_KEY_LEN, "graphprototype.gitems[%lu].yaxisside",
+				gitemid);
+		zbx_snprintf(audit_key_calc_fnc, AUDIT_DETAILS_KEY_LEN, "graphprototype.gitems[%lu].calc_fnc", gitemid);
+		zbx_snprintf(audit_key_type, AUDIT_DETAILS_KEY_LEN, "graphprototype.gitems[%lu].type", gitemid);
+	}
+
+	if (ZBX_FLAG_DISCOVERY_NORMAL == flags || ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+	{
+		zbx_audit_update_json_uint64(hst_graphid, audit_key_drawtype, drawtype);
+		zbx_audit_update_json_uint64(hst_graphid, audit_key_sortorder, sortorder);
+		zbx_audit_update_json_string(hst_graphid, audit_key_color, color);
+		zbx_audit_update_json_uint64(hst_graphid, audit_key_yaxisside, yaxisside);
+		zbx_audit_update_json_uint64(hst_graphid, audit_key_calc_fnc, calc_fnc);
+		zbx_audit_update_json_uint64(hst_graphid, audit_key_type, type);
+	}
+}
+
 void	zbx_audit_triggers_create_entry(const int audit_action, zbx_uint64_t new_triggerid, const char *description,
 		zbx_uint64_t templateid, unsigned char recovery_mode, unsigned char status, unsigned char type,
 		zbx_uint64_t value, zbx_uint64_t state, unsigned char priority, const char *comments, const char *url,
@@ -604,6 +643,99 @@ void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, c
 	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "templateid", templateid);
 
 	zbx_hashset_insert(&zbx_audit, &local_audit_http_test_entry, sizeof(local_audit_http_test_entry));
+}
+
+void	zbx_audit_httptests_update_headers_and_variables(int type, zbx_uint64_t httpstepid, zbx_uint64_t httptestid,
+		const char *name, const char *value)
+{
+	char	audit_key_name[AUDIT_DETAILS_KEY_LEN], audit_key_value[AUDIT_DETAILS_KEY_LEN];
+
+	if (ZBX_HTTPFIELD_HEADER == type)
+	{
+		zbx_snprintf(audit_key_name, AUDIT_DETAILS_KEY_LEN, "httptest.headers[%lu].name", httpstepid);
+		zbx_snprintf(audit_key_value, AUDIT_DETAILS_KEY_LEN, "httptest.headers[%lu].value", httpstepid);
+	}
+	else if (ZBX_HTTPFIELD_VARIABLE == type)
+	{
+		zbx_snprintf(audit_key_name, AUDIT_DETAILS_KEY_LEN, "httptest.variables[%lu].name",httpstepid);
+		zbx_snprintf(audit_key_value, AUDIT_DETAILS_KEY_LEN, "httptest.variables[%lu].value", httpstepid);
+	}
+
+	zbx_audit_update_json_string(httptestid, audit_key_name, name);
+	zbx_audit_update_json_string(httptestid, audit_key_value, value);
+}
+
+void	zbx_audit_httptests_steps_update(zbx_uint64_t httpstepid, zbx_uint64_t httptestid, int no,
+		const char *name, const char *url, const char *timeout, const char *posts, const char *required,
+		const char *status_codes, zbx_uint64_t follow_redirects, zbx_uint64_t retrieve_mode)
+{
+	char	audit_key_name[AUDIT_DETAILS_KEY_LEN], audit_key_url[AUDIT_DETAILS_KEY_LEN],
+		audit_key_timeout[AUDIT_DETAILS_KEY_LEN], audit_key_posts[AUDIT_DETAILS_KEY_LEN],
+		audit_key_required[AUDIT_DETAILS_KEY_LEN], audit_key_status_codes[AUDIT_DETAILS_KEY_LEN],
+		audit_key_follow_redirects[AUDIT_DETAILS_KEY_LEN], audit_key_retrieve_mode[AUDIT_DETAILS_KEY_LEN];
+
+	zbx_snprintf(audit_key_name, AUDIT_DETAILS_KEY_LEN, "httptest.steps[%lu].no[%d].name", httpstepid, no);
+	zbx_snprintf(audit_key_url, AUDIT_DETAILS_KEY_LEN, "httptest.steps[%lu].no[%d].url", httpstepid, no);
+	zbx_snprintf(audit_key_timeout, AUDIT_DETAILS_KEY_LEN, "httptest.steps[%lu].no[%d].timeout", httpstepid, no);
+	zbx_snprintf(audit_key_posts, AUDIT_DETAILS_KEY_LEN, "httptest.steps[%lu].no[%d].posts", httpstepid, no);
+	zbx_snprintf(audit_key_required, AUDIT_DETAILS_KEY_LEN, "httptest.steps[%lu].no[%d].required", httpstepid, no);
+	zbx_snprintf(audit_key_status_codes, AUDIT_DETAILS_KEY_LEN, "httptest.steps[%lu].no[%d].status_codes",
+		httpstepid, no);
+	zbx_snprintf(audit_key_follow_redirects, AUDIT_DETAILS_KEY_LEN, "httptest.steps[%lu].no[%d].follow_redirects",
+			httpstepid, no);
+	zbx_snprintf(audit_key_retrieve_mode, AUDIT_DETAILS_KEY_LEN, "httptest.steps[%lu].no[%d].retrieve_mode",
+			httpstepid, no);
+
+	zbx_audit_update_json_string(httptestid, audit_key_name, name);
+	zbx_audit_update_json_string(httptestid, audit_key_url, url);
+	zbx_audit_update_json_string(httptestid, audit_key_timeout, timeout);
+	zbx_audit_update_json_string(httptestid, audit_key_posts, posts);
+	zbx_audit_update_json_string(httptestid, audit_key_required, required);
+	zbx_audit_update_json_string(httptestid, audit_key_status_codes, status_codes);
+	zbx_audit_update_json_uint64(httptestid, audit_key_follow_redirects, follow_redirects);
+	zbx_audit_update_json_uint64(httptestid, audit_key_retrieve_mode, retrieve_mode);
+}
+
+void	zbx_audit_httptests_steps_update_extra(int type, zbx_uint64_t httpstepid, zbx_uint64_t httptestid,
+		const char *name, const char *value)
+{
+	char	audit_step_key_name[AUDIT_DETAILS_KEY_LEN], audit_step_key_value[AUDIT_DETAILS_KEY_LEN];
+
+	if (ZBX_HTTPFIELD_HEADER == type)
+	{
+		zbx_snprintf(audit_step_key_name, AUDIT_DETAILS_KEY_LEN, "httptest.steps[].headers[%lu].name",
+				httpstepid);
+		zbx_snprintf(audit_step_key_value, AUDIT_DETAILS_KEY_LEN, "httptest.steps[].headers[%lu].value",
+				httpstepid);
+	}
+	else if (ZBX_HTTPFIELD_VARIABLE == type)
+	{
+		zbx_snprintf(audit_step_key_name, AUDIT_DETAILS_KEY_LEN, "httptest.steps[].variables[%lu].name",
+				httpstepid);
+		zbx_snprintf(audit_step_key_value, AUDIT_DETAILS_KEY_LEN, "httptest.steps[].variables[%lu].value",
+				httpstepid);
+	}
+	else if (ZBX_HTTPFIELD_POST_FIELD == type)
+	{
+		zbx_snprintf(audit_step_key_name, AUDIT_DETAILS_KEY_LEN, "httptest.steps[].posts[%lu].name",
+				httpstepid);
+		zbx_snprintf(audit_step_key_value, AUDIT_DETAILS_KEY_LEN, "httptest.steps[].posts[%lu].value",
+				httpstepid);
+	}
+	else if (ZBX_HTTPFIELD_QUERY_FIELD == type)
+	{
+		zbx_snprintf(audit_step_key_name, AUDIT_DETAILS_KEY_LEN, "httptest.steps[].query_fields[%lu].name",
+				httpstepid);
+		zbx_snprintf(audit_step_key_value, AUDIT_DETAILS_KEY_LEN, "httptest.steps[].query_fields[%lu].value",
+				httpstepid);
+	}
+	else
+	{
+		THIS_SHOULD_NEVER_HAPPEN;
+	}
+
+	zbx_audit_update_json_string(httptestid, audit_step_key_name, name);
+	zbx_audit_update_json_string(httptestid, audit_step_key_value, value);
 }
 
 void	zbx_audit_httptests_create_entry_update(zbx_uint64_t httptestid, char *name,
