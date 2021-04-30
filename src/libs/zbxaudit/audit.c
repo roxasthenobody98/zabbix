@@ -812,11 +812,12 @@ void	zbx_audit_preprocessing_update(zbx_uint64_t itemid, unsigned char flags, co
 }
 
 void	zbx_audit_item_parameters_update(int audit_index, zbx_uint64_t itemid, const char *name, const char *value,
-		unsigned char flags)
+		const char *flags_str)
 {
-	int	resource_type;
+	int	resource_type, flags;
 	char	audit_key_name[AUDIT_DETAILS_KEY_LEN], audit_key_value[AUDIT_DETAILS_KEY_LEN];
 
+	ZBX_STR2UINT64(flags, flags_str);
 	resource_type = item_flag_to_resource_type(flags);
 
 	if (AUDIT_RESOURCE_ITEM == resource_type)
@@ -1100,66 +1101,31 @@ void	zbx_audit_groups_delete(zbx_uint64_t hostid)
 	DBfree_result(result);
 }
 
-void	zbx_audit_host_add(zbx_uint64_t hostid, char *recsetid_cuid)
+void	zbx_audit_host_update_tls_and_psk(zbx_uint64_t hostid, int tls_connect, int tls_accept,
+		const char *psk_identity, const char *psk)
+{
+	zbx_audit_update_json_uint64(hostid, "host.tls_connect", tls_connect);
+	zbx_audit_update_json_uint64(hostid, "host.tls_accept", tls_accept);
+	zbx_audit_update_json_string(hostid, "host.psk_identity", psk_identity);
+	zbx_audit_update_json_string(hostid, "host.psk", psk);
+}
+
+void	zbx_audit_host_add(const char *recsetid_cuid, zbx_uint64_t hostid, zbx_uint64_t proxy_hostid, const char *host,
+		const char *name)
 {
 	struct zbx_json	details_json;
-	DB_RESULT	result;
-	DB_ROW		row;
 
-	result = DBselect("select hostid,proxy_hostid,host,status,lastaccess, ipmi_authtype,ipmi_privilege,"
-			"ipmi_username,ipmi_password,maintenanceid,maintenance_status,maintenance_type,"
-			"maintenance_from,name,flags,templateid,description,tls_connect,tls_accept,tls_issuer,"
-			"tls_subject,tls_psk_identity,tls_psk,proxy_address,auto_compress,discover,custom_interfaces"
-			" from hosts where hostid=" ZBX_FS_UI64, hostid);
+	zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
+	zbx_json_addobject(&details_json, NULL);
+	zbx_json_adduint64(&details_json, "host.proxy_hostid", proxy_hostid);
+	zbx_json_addstring(&details_json, "host.host", host, ZBX_JSON_TYPE_STRING);
 
-	if (NULL == result)
-	{
-		return;
-	}
+	zbx_json_close(&details_json);
 
-	while (NULL != (row = DBfetch(result)))
-	{
-		zabbix_log(LOG_LEVEL_INFORMATION, "OP_TEMPLATE_ADD RECSETID: ->%s<-\n",recsetid_cuid);
-		zabbix_log(LOG_LEVEL_INFORMATION, "NEW HOSTNAME: ->%s<-\n", row[13]);
+	zbx_audit_create_entry(AUDIT_ACTION_ADD, hostid, name,
+			AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
 
-		zbx_json_init(&details_json, ZBX_JSON_STAT_BUF_LEN);
-		zbx_json_addobject(&details_json, NULL);
-		zbx_json_addstring(&details_json, "hostid", row[0], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "proxy_hostid", row[1], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "host", row[2], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "status", row[3], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "lastaccess", row[4], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "ipmi_authtype", row[5], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "ipmi_privilege", row[6], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "ipmi_username", row[7], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "ipmi_password", row[8], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "maintenanceid", row[9], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "maintenance_status", row[10], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "maintenance_type", row[11], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "maintenance_from", row[12], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "name", row[13], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "flags", row[14], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "templateid", row[15], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "description", row[16], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "tls_connect", row[17], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "tls_accept", row[18], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "tls_issuer", row[19], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "tls_subject", row[20], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "tls_psk_identity", row[21], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "tls_psk", row[22], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "proxy_address", row[23], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "auto_compress", row[24], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "discover", row[25], ZBX_JSON_TYPE_STRING);
-		zbx_json_addstring(&details_json, "custom_interfaces", row[26], ZBX_JSON_TYPE_STRING);
-
-		zbx_json_close(&details_json);
-
-		zbx_audit_create_entry(AUDIT_ACTION_ADD, hostid, row[13],
-				AUDIT_RESOURCE_HOST, recsetid_cuid, details_json.buffer);
-
-		zbx_json_free(&details_json);
-	}
-	DBfree_result(result);
+	zbx_json_free(&details_json);
 }
 
 void	zbx_audit_host_del(zbx_uint64_t hostid)

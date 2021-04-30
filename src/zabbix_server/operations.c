@@ -438,7 +438,8 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char *recsetid_cu
 				zbx_db_insert_clean(&db_insert);
 
 				zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
-				zbx_audit_host_add(hostid, recsetid_cuid);
+				zbx_audit_host_add(recsetid_cuid, hostid, proxy_hostid, host_unique,
+						host_visible_unique);
 
 				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
 					DBadd_host_inventory(hostid, cfg.default_inventory_mode);
@@ -561,11 +562,16 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char *recsetid_cu
 							"tls_psk_identity", "tls_psk", NULL);
 					zbx_db_insert_add_values(&db_insert, hostid, proxy_hostid, row[1], row[1],
 						tls_accepted, tls_accepted, psk_identity, psk);
+
+					zbx_audit_host_add(recsetid_cuid, hostid, proxy_hostid, row[1], row[1]);
+					zbx_audit_host_update_tls_and_psk(hostid, tls_accepted, tls_accepted,
+							psk_identity, psk);
 				}
 				else
 				{
 					zbx_db_insert_prepare(&db_insert, "hosts", "hostid", "proxy_hostid", "host",
 							"name", NULL);
+					zbx_audit_host_add(recsetid_cuid, hostid, proxy_hostid, row[1], row[1]);
 					zbx_db_insert_add_values(&db_insert, hostid, proxy_hostid, row[1], row[1]);
 				}
 
@@ -573,7 +579,6 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char *recsetid_cu
 				zbx_db_insert_clean(&db_insert);
 
 				zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
-				zbx_audit_host_add(hostid, recsetid_cuid);
 
 				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
 					DBadd_host_inventory(hostid, cfg.default_inventory_mode);

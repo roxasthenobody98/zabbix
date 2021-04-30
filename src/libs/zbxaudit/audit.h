@@ -72,7 +72,7 @@ void	zbx_audit_discovery_rule_override_conditions_update(int audit_index, zbx_ui
 void	zbx_audit_preprocessing_update(zbx_uint64_t itemid, unsigned char flags, const char *step, const char *type,
 		const char *params, const char *error_handler, const char *error_handler_params);
 void	zbx_audit_item_parameters_update(int audit_index, zbx_uint64_t itemid, const char *name,
-		const char *value, unsigned char flags);
+		const char *value, const char *flags_str);
 void	zbx_audit_discovery_rule_lld_macro_paths_update(zbx_uint64_t no, zbx_uint64_t itemid, const char *lld_macro,
 		const char *path);
 void	zbx_audit_discovery_rule_overrides_operations_update(int override_no, int operation_no, zbx_uint64_t itemid,
@@ -92,7 +92,10 @@ int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, cons
 		const int resourcetype, const char *recsetid, const char *details);
 void	zbx_audit_groups_add(zbx_uint64_t hostid, zbx_uint64_t hostgroupid, zbx_uint64_t groupid);
 void	zbx_audit_groups_delete(zbx_uint64_t hostid);
-void	zbx_audit_host_add(zbx_uint64_t hostid, char *recsetid_cuid);
+void	zbx_audit_host_update_tls_and_psk(zbx_uint64_t hostid, int tls_connect, int tls_accept, const char *psk_identity,
+		const char *psk);
+void	zbx_audit_host_add(const char *recsetid_cuid, zbx_uint64_t hostid, zbx_uint64_t proxy_hostid, const char *host,
+		const char *name);
 void	zbx_audit_host_del(zbx_uint64_t hostid);
 void	zbx_audit_host_status(zbx_uint64_t hostid, int status);
 void	zbx_audit_host_inventory(zbx_uint64_t hostid, int inventory_mode);
