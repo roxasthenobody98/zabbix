@@ -26,7 +26,7 @@
 #include "../zbxdbhigh/template.h"
 
 void	zbx_audit_init(void);
-void	zbx_audit_flush(const char *recsetid_cuid);
+void	zbx_audit_flush(void);
 void	DBselect_delete_for_item(const char *sql, zbx_vector_uint64_t *ids, int resource_type_type);
 void	DBselect_delete_for_graph(const char *sql, zbx_vector_uint64_t *ids);
 char	*zbx_audit_items_get_type_json_identifier(int flag);
@@ -85,6 +85,8 @@ void	zbx_audit_discovery_rule_overrides_operations_optemplate_update(int overrid
 		int override_operation_tag_no, zbx_uint64_t itemid, zbx_uint64_t templateid);
 void	zbx_audit_discovery_rule_overrides_operations_opinventory_update(int override_no, int override_operation_no,
 		zbx_uint64_t itemid, zbx_uint64_t inventory_mode);
+void	zbx_audit_host_update_interfaces(zbx_uint64_t hostid, zbx_uint64_t interfaceid, zbx_uint64_t main_,
+		zbx_uint64_t type, zbx_uint64_t useip, const char *ip, const char *dns, zbx_uint64_t port);
 void	zbx_audit_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type);
 void	zbx_audit_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
 void	zbx_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
@@ -94,10 +96,9 @@ void	zbx_audit_groups_add(zbx_uint64_t hostid, zbx_uint64_t hostgroupid, zbx_uin
 void	zbx_audit_groups_delete(zbx_uint64_t hostid);
 void	zbx_audit_host_update_tls_and_psk(zbx_uint64_t hostid, int tls_connect, int tls_accept, const char *psk_identity,
 		const char *psk);
-void	zbx_audit_host_add(const char *recsetid_cuid, zbx_uint64_t hostid, zbx_uint64_t proxy_hostid, const char *host,
-		const char *name);
-void	zbx_audit_host_del(zbx_uint64_t hostid);
-void	zbx_audit_host_status(zbx_uint64_t hostid, int status);
-void	zbx_audit_host_inventory(zbx_uint64_t hostid, int inventory_mode);
+void	zbx_audit_host_create_entry(zbx_uint64_t hostid, zbx_uint64_t proxy_hostid, const char *host, const char *name);
+void	zbx_audit_host_del(zbx_uint64_t hostid, const char *hostname);
+void	zbx_audit_host_status(zbx_uint64_t hostid, int status, const char *hostname);
+void	zbx_audit_host_inventory(zbx_uint64_t hostid, int inventory_mode, const char *hostname);
 
 #endif	/* ZABBIX_AUDIT_H */

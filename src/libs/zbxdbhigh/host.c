@@ -2286,8 +2286,7 @@ static void	get_templates_by_hostid(zbx_uint64_t hostid, zbx_vector_uint64_t *te
  * Comments: !!! Don't forget to sync the code with PHP !!!                   *
  *                                                                            *
  ******************************************************************************/
-int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_templateids, char **error,
-		char *recsetid_cuid)
+int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_templateids, char **error)
 {
 	char			*sql = NULL, err[MAX_STRING_LEN];
 	size_t			sql_alloc = 128, sql_offset = 0;
@@ -2295,8 +2294,6 @@ int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_tem
 	int			i, index, res = SUCCEED;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
-
-	zbx_audit_init();
 
 	zbx_vector_uint64_create(&templateids);
 
@@ -2344,8 +2341,6 @@ int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_tem
 	DBexecute("%s", sql);
 
 	zbx_free(sql);
-
-	zbx_audit_flush(recsetid_cuid);
 clean:
 	zbx_vector_uint64_destroy(&templateids);
 
@@ -5610,7 +5605,7 @@ static void	DBcopy_template_httptests(zbx_uint64_t hostid, const zbx_vector_uint
  * Return value: upon successful completion return SUCCEED                    *
  *                                                                            *
  ******************************************************************************/
-int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templateids, char **error, char *recsetid_cuid)
+int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templateids, char **error)
 {
 	zbx_vector_uint64_t	templateids;
 	zbx_uint64_t		hosttemplateid;
@@ -5618,8 +5613,6 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 	char			*template_names, err[MAX_STRING_LEN];
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
-
-	zbx_audit_init();
 
 	zbx_vector_uint64_create(&templateids);
 
@@ -5679,8 +5672,6 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 		DBcopy_template_graphs(hostid, lnk_templateids);
 		DBcopy_template_httptests(hostid, lnk_templateids);
 	}
-
-	zbx_audit_flush(recsetid_cuid);
 clean:
 	zbx_vector_uint64_destroy(&templateids);
 
@@ -5787,15 +5778,13 @@ out:
  * Parameters: hostids - [IN] host identificators from database               *
  *                                                                            *
  ******************************************************************************/
-void	DBdelete_hosts_with_prototypes(zbx_vector_uint64_t *hostids, char *recsetid_cuid)
+void	DBdelete_hosts_with_prototypes(zbx_vector_uint64_t *hostids)
 {
 	zbx_vector_uint64_t	host_prototypeids;
 	char			*sql = NULL;
 	size_t			sql_alloc = 0, sql_offset = 0;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
-
-	zbx_audit_init();
 
 	zbx_vector_uint64_create(&host_prototypeids);
 
@@ -5814,8 +5803,6 @@ void	DBdelete_hosts_with_prototypes(zbx_vector_uint64_t *hostids, char *recsetid
 	zbx_vector_uint64_destroy(&host_prototypeids);
 
 	DBdelete_hosts(hostids);
-
-	zbx_audit_flush(recsetid_cuid);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -5952,6 +5939,7 @@ zbx_uint64_t	DBadd_interface(zbx_uint64_t hostid, unsigned char type, unsigned c
 			" (" ZBX_FS_UI64 "," ZBX_FS_UI64 ",%d,%d,%d,'%s','%s',%d)",
 		interfaceid, hostid, (int)main_, (int)type, (int)useip, ip_esc, dns_esc, (int)port);
 
+	zbx_audit_host_update_interfaces(hostid, interfaceid, main_, type, useip, ip_esc, dns_esc, port);
 	zbx_free(dns_esc);
 	zbx_free(ip_esc);
 out:

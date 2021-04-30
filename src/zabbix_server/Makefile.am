@@ -89,6 +89,7 @@ zabbix_server_LDADD = \
 	$(top_builddir)/src/libs/zbxsys/libzbxsys.a \
 	$(top_builddir)/src/libs/zbxconf/libzbxconf.a \
 	$(top_builddir)/src/libs/zbxmedia/libzbxmedia.a \
+	$(top_builddir)/src/libs/zbxaudit/libzbxaudit.a \
 	$(top_builddir)/src/libs/zbxcommon/libzbxcommon.a \
 	$(top_builddir)/src/libs/zbxcrypto/libzbxcrypto.a \
 	$(top_builddir)/src/libs/zbxcomms/libzbxcomms.a \
@@ -108,8 +109,7 @@ zabbix_server_LDADD = \
 	$(top_builddir)/src/libs/zbxtrends/libzbxtrends.a \
 	$(top_builddir)/src/libs/zbxserver/libzbxserver_server.a \
 	$(top_builddir)/src/libs/zbxvault/libzbxvault.a \
-	$(top_builddir)/src/libs/zbxavailability/libzbxavailability.a \
-	$(top_builddir)/src/libs/zbxaudit/libzbxaudit.a
+	$(top_builddir)/src/libs/zbxavailability/libzbxavailability.a
 
 if HAVE_IPMI
 zabbix_server_LDADD += ipmi/libipmi.a
