@@ -87,18 +87,13 @@ void	zbx_audit_discovery_rule_overrides_operations_opinventory_update(int overri
 		zbx_uint64_t itemid, zbx_uint64_t inventory_mode);
 void	zbx_audit_host_update_interfaces(zbx_uint64_t hostid, zbx_uint64_t interfaceid, zbx_uint64_t main_,
 		zbx_uint64_t type, zbx_uint64_t useip, const char *ip, const char *dns, zbx_uint64_t port);
-void	zbx_audit_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type);
 void	zbx_audit_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
 void	zbx_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
-int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, const char* resourcename,
-		const int resourcetype, const char *recsetid, const char *details);
-void	zbx_audit_groups_add(zbx_uint64_t hostid, zbx_uint64_t hostgroupid, zbx_uint64_t groupid);
-void	zbx_audit_groups_delete(zbx_uint64_t hostid);
+void	zbx_audit_host_update_groups(zbx_uint64_t hostid, zbx_uint64_t groupid);
+void	zbx_audit_groups_delete(zbx_uint64_t hostid, zbx_vector_uint64_t *groupids);
 void	zbx_audit_host_update_tls_and_psk(zbx_uint64_t hostid, int tls_connect, int tls_accept, const char *psk_identity,
 		const char *psk);
-void	zbx_audit_host_create_entry(zbx_uint64_t hostid, zbx_uint64_t proxy_hostid, const char *host, const char *name);
+void	zbx_audit_host_create_entry(int audit_action, zbx_uint64_t hostid, const char *name);
 void	zbx_audit_host_del(zbx_uint64_t hostid, const char *hostname);
-void	zbx_audit_host_status(zbx_uint64_t hostid, int status, const char *hostname);
-void	zbx_audit_host_inventory(zbx_uint64_t hostid, int inventory_mode, const char *hostname);
 
 #endif	/* ZABBIX_AUDIT_H */
