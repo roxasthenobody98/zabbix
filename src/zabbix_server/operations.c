@@ -190,7 +190,6 @@ static void	add_discovered_host_groups(zbx_uint64_t hostid, zbx_vector_uint64_t 
 		for (i = 0; i < groupids->values_num; i++)
 		{
 			zbx_db_insert_add_values(&db_insert, hostgroupid, hostid, groupids->values[i]);
-			zabbix_log(LOG_LEVEL_INFORMATION, "updating host group, hostid: %lu, value; %lu",hostid, groupids->values[i]);
 			zbx_audit_host_update_groups(hostid, groupids->values[i]);
 			hostgroupid++;
 		}
@@ -449,7 +448,6 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char **hostname)
 				zbx_db_insert_execute(&db_insert);
 				zbx_db_insert_clean(&db_insert);
 
-				zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host 84y02yr");
 				zbx_audit_host_create_entry(AUDIT_ACTION_ADD, hostid, host_visible_unique);
 				zbx_audit_update_json_uint64(hostid, "host.proxy_hostid", proxy_hostid);
 				zbx_audit_update_json_string(hostid, "host.host", host_unique);
@@ -467,7 +465,6 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char **hostname)
 			}
 			else
 			{
-				zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host STRATA 001");
 				zbx_audit_host_create_entry(AUDIT_ACTION_UPDATE, hostid, already_existing_hostname);
 				interfaceid = DBadd_interface(hostid, interface_type, 1, row[2], row[3], port,
 						ZBX_CONN_DEFAULT);
@@ -496,8 +493,6 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char **hostname)
 	}
 	else if (EVENT_OBJECT_ZABBIX_ACTIVE == event->object)
 	{
-		zabbix_log(LOG_LEVEL_INFORMATION, "add_discovered_host 2222222");
-
 		result = DBselect(
 				"select proxy_hostid,host,listen_ip,listen_dns,listen_port,flags,tls_accepted"
 				" from autoreg_host"
@@ -604,8 +599,6 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char **hostname)
 				zbx_db_insert_execute(&db_insert);
 				zbx_db_insert_clean(&db_insert);
 
-				zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host");
-
 				if (HOST_INVENTORY_DISABLED != cfg.default_inventory_mode)
 					DBadd_host_inventory(hostid, cfg.default_inventory_mode);
 
@@ -615,8 +608,6 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char **hostname)
 			}
 			else
 			{
-				zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT add_discovered_host KRONEG25253");
-
 				ZBX_STR2UINT64(hostid, row2[0]);
 				ZBX_DBROW2UINT64(host_proxy_hostid, row2[1]);
 
@@ -739,7 +730,6 @@ void	op_host_del(const DB_EVENT *event)
 
 	zbx_vector_uint64_destroy(&hostids);
 
-	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_host_del");
 	zbx_audit_host_del(hostid, hostname);
 	zbx_audit_flush();
 out:
@@ -779,7 +769,6 @@ void	op_host_enable(const DB_EVENT *event)
 			HOST_STATUS_MONITORED,
 			hostid);
 
-	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_host_enable");
 	zbx_audit_update_json_uint64(hostid, "host.status", HOST_STATUS_MONITORED);
 	zbx_audit_flush();
 out:
@@ -819,7 +808,6 @@ void	op_host_disable(const DB_EVENT *event)
 			HOST_STATUS_NOT_MONITORED,
 			hostid);
 
-	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_host_disable");
 	zbx_audit_update_json_uint64(hostid, "host.status", HOST_STATUS_NOT_MONITORED);
 	zbx_audit_flush();
 out:
@@ -858,8 +846,6 @@ void	op_host_inventory_mode(const DB_EVENT *event, int inventory_mode)
 
 	DBset_host_inventory(hostid, inventory_mode);
 
-	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_host_inventory_mode");
-	zbx_audit_update_json_uint64(hostid, "host.inventory_mode", inventory_mode);
 	zbx_audit_flush();
 out:
 	zbx_free(hostname);
@@ -963,7 +949,6 @@ void	op_groups_del(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 
 	zbx_free(sql);
 
-	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_groups_del");
 	zbx_audit_groups_delete(hostid, groupids);
 out:
 	zbx_free(hostname);
@@ -1046,7 +1031,6 @@ void	op_template_del(const DB_EVENT *event, zbx_vector_uint64_t *del_templateids
 	zbx_audit_flush();
 out:
 	zbx_free(hostname);
-	zabbix_log(LOG_LEVEL_INFORMATION, "AUDIT op_template_del");
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }

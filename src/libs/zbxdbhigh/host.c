@@ -5351,7 +5351,6 @@ static void	DBsave_httptests(zbx_uint64_t hostid, zbx_vector_ptr_t *httptests)
 
 			for (j = 0; j < httptest->httpsteps.values_num; j++)
 			{
-
 				httpstep = (httpstep_t *)httptest->httpsteps.values[j];
 
 				zbx_db_insert_add_values(&db_insert_hstep, httpstepid, httptest->httptestid,
@@ -5421,7 +5420,6 @@ static void	DBsave_httptests(zbx_uint64_t hostid, zbx_vector_ptr_t *httptests)
 
 			zbx_audit_httptests_create_entry_update(httptest->httptestid, httptest->name,
 					httptest->templateid);
-
 		}
 	}
 
@@ -5663,6 +5661,7 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 		DBexecute("insert into hosts_templates (hosttemplateid,hostid,templateid)"
 				" values (" ZBX_FS_UI64 "," ZBX_FS_UI64 "," ZBX_FS_UI64 ")",
 				hosttemplateid++, hostid, lnk_templateids->values[i]);
+		zbx_audit_host_update_parent_templates(hostid, lnk_templateids->values[i]);
 	}
 
 	DBcopy_template_items(hostid, lnk_templateids);
@@ -6284,10 +6283,12 @@ void	DBadd_host_inventory(zbx_uint64_t hostid, int inventory_mode)
 	zbx_db_insert_add_values(&db_insert, hostid, inventory_mode);
 	zbx_db_insert_execute(&db_insert);
 	zbx_db_insert_clean(&db_insert);
+
+	zbx_audit_update_json_uint64(hostid, "host.inventory_mode", inventory_mode);
 }
 
 /******************************************************************************
- *                                                                            *
+ *                                                                             *
  * Function: DBset_host_inventory                                             *
  *                                                                            *
  * Purpose: sets host inventory mode for the specified host                   *
@@ -6316,6 +6317,7 @@ void	DBset_host_inventory(zbx_uint64_t hostid, int inventory_mode)
 	{
 		DBexecute("update host_inventory set inventory_mode=%d where hostid=" ZBX_FS_UI64, inventory_mode,
 				hostid);
+		zbx_audit_update_json_uint64(hostid, "host.inventory_mode", inventory_mode);
 	}
 
 	DBfree_result(result);

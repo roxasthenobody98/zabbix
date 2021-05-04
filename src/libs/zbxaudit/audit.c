@@ -138,19 +138,13 @@ void	DBselect_delete_for_graph(const char *sql, zbx_vector_uint64_t *ids)
 	while (NULL != (row = DBfetch(result)))
 	{
 		ZBX_STR2UINT64(id, row[0]);
-
 		zbx_vector_uint64_append(ids, id);
-
 		ZBX_STR2UINT64(flags, row[2]);
 
 		if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
-		{
 			zbx_audit_create_entry_for_delete(id, row[1], AUDIT_RESOURCE_GRAPH);
-		}
 		else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
-		{
 			zbx_audit_create_entry_for_delete(id, row[1], AUDIT_RESOURCE_GRAPH_PROTOTYPE);
-		}
 	}
 	DBfree_result(result);
 
@@ -294,6 +288,14 @@ void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uin
 	}
 
 	zbx_hashset_insert(&zbx_audit, &local_audit_items_entry, sizeof(local_audit_items_entry));
+}
+
+void	zbx_audit_host_update_parent_templates(zbx_uint64_t hostid, zbx_uint64_t templateid)
+{
+	char	audit_key_parent_templates[AUDIT_DETAILS_KEY_LEN];
+
+	zbx_snprintf(audit_key_parent_templates, AUDIT_DETAILS_KEY_LEN, "host.parentTemplates[%lu]", templateid);
+	zbx_audit_update_json_string(hostid, audit_key_parent_templates, "");
 }
 
 void	zbx_audit_host_prototypes_create_entry(const int audit_action, zbx_uint64_t hostid, char *name,
@@ -653,10 +655,12 @@ void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, c
 	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "httptest.status", status);
 	zbx_json_addstring(&local_audit_http_test_entry->details_json, "httptest.agent", agent, ZBX_JSON_TYPE_STRING);
 	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "httptest.authentication", authentication);
-	zbx_json_addstring(&local_audit_http_test_entry->details_json, "httptest.http_user", http_user, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_http_test_entry->details_json, "httptest.http_user", http_user,
+			ZBX_JSON_TYPE_STRING);
 	zbx_json_addstring(&local_audit_http_test_entry->details_json, "httptest.http_password", http_password,
 			ZBX_JSON_TYPE_STRING);
-	zbx_json_addstring(&local_audit_http_test_entry->details_json, "httptest.http_proxy", http_proxy, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_http_test_entry->details_json, "httptest.http_proxy", http_proxy,
+			ZBX_JSON_TYPE_STRING);
 	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "httptest.retries", retries);
 	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "httptest.hostid", hostid);
 	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "httptest.templateid", templateid);
@@ -1072,6 +1076,7 @@ void	zbx_audit_update_json_uint64(const zbx_uint64_t id, const char *key, const 
 {
 	zbx_audit_entry_t	local_audit_entry, **found_audit_entry;
 	zbx_audit_entry_t	*local_audit_entry_x = &local_audit_entry;
+
 	local_audit_entry.id = id;
 
 	found_audit_entry = (zbx_audit_entry_t**)zbx_hashset_search(&zbx_audit,
@@ -1109,9 +1114,7 @@ void	zbx_audit_groups_delete(zbx_uint64_t hostid, zbx_vector_uint64_t *groupids)
 	int i;
 
 	for (i = 0; i < groupids->values_num; i++)
-	{
 		zbx_audit_host_update_groups(hostid, groupids->values[i]);
-	}
 }
 
 void	zbx_audit_host_update_tls_and_psk(zbx_uint64_t hostid, int tls_connect, int tls_accept,

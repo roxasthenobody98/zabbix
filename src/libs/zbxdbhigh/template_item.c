@@ -808,7 +808,6 @@ static void	save_template_lld_rules(zbx_vector_ptr_t *items, zbx_vector_ptr_t *r
 
 			for (j = 0; j < rule->conditions.values_num; j++)
 			{
-
 				condition = (zbx_lld_rule_condition_t *)rule->conditions.values[j];
 
 				zbx_db_insert_add_values(&db_insert, rule->conditionid++, item->itemid,
