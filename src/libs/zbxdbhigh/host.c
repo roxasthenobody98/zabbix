@@ -5970,7 +5970,7 @@ out:
 void	DBadd_interface_snmp(const zbx_uint64_t interfaceid, const unsigned char version, const unsigned char bulk,
 		const char *community, const char *securityname, const unsigned char securitylevel,
 		const char *authpassphrase, const char *privpassphrase, const unsigned char authprotocol,
-		const unsigned char privprotocol, const char *contextname)
+		const unsigned char privprotocol, const char *contextname, const zbx_uint64_t hostid)
 {
 	char		*community_esc, *securityname_esc, *authpassphrase_esc, *privpassphrase_esc, *contextname_esc;
 	DB_RESULT	result;
@@ -6065,6 +6065,10 @@ void	DBadd_interface_snmp(const zbx_uint64_t interfaceid, const unsigned char ve
 			authpassphrase_esc, privpassphrase_esc, (int)authprotocol, (int)privprotocol, contextname_esc,
 			interfaceid);
 	}
+
+	zbx_audit_host_update_snmp_interfaces(hostid, version, bulk, community_esc, securityname_esc, securitylevel,
+			authpassphrase_esc, privpassphrase_esc, authprotocol, privprotocol, contextname_esc,
+			interfaceid);
 
 	zbx_free(community_esc);
 	zbx_free(securityname_esc);

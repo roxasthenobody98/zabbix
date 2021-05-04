@@ -87,6 +87,10 @@ void	zbx_audit_discovery_rule_overrides_operations_opinventory_update(int overri
 		zbx_uint64_t itemid, zbx_uint64_t inventory_mode);
 void	zbx_audit_host_update_interfaces(zbx_uint64_t hostid, zbx_uint64_t interfaceid, zbx_uint64_t main_,
 		zbx_uint64_t type, zbx_uint64_t useip, const char *ip, const char *dns, zbx_uint64_t port);
+void	zbx_audit_host_update_snmp_interfaces(zbx_uint64_t hostid, zbx_uint64_t version, zbx_uint64_t bulk,
+		const char *community, const char *securityname, zbx_uint64_t securitylevel, const char *authpassphrase,
+		const char *privpassphrase, zbx_uint64_t authprotocol, zbx_uint64_t privprotocol,
+		const char *contextname, zbx_uint64_t interfaceid);
 void	zbx_audit_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
 void	zbx_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
 void	zbx_audit_host_update_groups(zbx_uint64_t hostid, zbx_uint64_t groupid);

@@ -488,7 +488,8 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char **hostname)
 					version = ZBX_IF_SNMP_VERSION_3;
 
 				DBadd_interface_snmp(interfaceid, version, SNMP_BULK_ENABLED, row[9], row[10],
-						securitylevel, row[12], row[13], authprotocol, privprotocol, row[16]);
+						securitylevel, row[12], row[13], authprotocol, privprotocol,
+						row[16], hostid);
 			}
 		}
 		DBfree_result(result);
@@ -627,7 +628,7 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char **hostname)
 							" set proxy_hostid=%s"
 							" where hostid=" ZBX_FS_UI64,
 							DBsql_id_ins(proxy_hostid), hostid);
-					zbx_audit_update_json_string(hostid, "host.proxy_hostid", proxy_hostid);
+					zbx_audit_update_json_uint64(hostid, "host.proxy_hostid", proxy_hostid);
 				}
 				DBadd_interface(hostid, INTERFACE_TYPE_AGENT, useip, row[2], row[3], port, flags);
 			}
