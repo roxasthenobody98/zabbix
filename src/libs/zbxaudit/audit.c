@@ -1109,10 +1109,20 @@ int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, cons
 	return res;
 }
 
-void	zbx_audit_groups_delete(zbx_uint64_t hostid, zbx_vector_uint64_t *groupids)
+void	zbx_audit_host_groups_delete_create_entry(zbx_uint64_t hostid, char *hostname, zbx_vector_uint64_t *groupids)
 {
-	int i;
+	int			i;
+	zbx_audit_entry_t	*local_audit_host_groups_entry;
 
+	local_audit_host_groups_entry = (zbx_audit_entry_t*)zbx_malloc(NULL, sizeof(zbx_audit_entry_t));
+	local_audit_host_groups_entry->id = hostid;
+	local_audit_host_groups_entry->name = zbx_strdup(NULL, hostname);
+	local_audit_host_groups_entry->audit_action = AUDIT_ACTION_DELETE;
+	local_audit_host_groups_entry->resource_type = AUDIT_RESOURCE_HOST_GROUP;
+
+	zbx_json_init(&(local_audit_host_groups_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
+
+	zbx_hashset_insert(&zbx_audit, &local_audit_host_groups_entry, sizeof(local_audit_host_groups_entry));
 	for (i = 0; i < groupids->values_num; i++)
 		zbx_audit_host_update_groups(hostid, groupids->values[i]);
 }
@@ -1150,9 +1160,7 @@ void	zbx_audit_host_update_groups(zbx_uint64_t hostid, zbx_uint64_t groupid)
 void	zbx_audit_host_del(zbx_uint64_t hostid, const char *hostname)
 {
 	char		recsetid_cuid[CUID_LEN];
-	struct zbx_json	details_json;
 
 	zbx_new_cuid(recsetid_cuid);
 	zbx_audit_create_entry(AUDIT_ACTION_DELETE, hostid, hostname, AUDIT_RESOURCE_HOST, recsetid_cuid, "");
-	zbx_json_free(&details_json);
 }

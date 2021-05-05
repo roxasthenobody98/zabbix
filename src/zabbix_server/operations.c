@@ -909,6 +909,8 @@ void	op_groups_del(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
+	zbx_audit_init();
+
 	if (FAIL == is_discovery_or_autoregistration(event))
 		goto out;
 
@@ -949,7 +951,8 @@ void	op_groups_del(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 
 	zbx_free(sql);
 
-	zbx_audit_groups_delete(hostid, groupids);
+	zbx_audit_host_groups_delete_create_entry(hostid, hostname, groupids);
+	zbx_audit_flush();
 out:
 	zbx_free(hostname);
 

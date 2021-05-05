@@ -96,6 +96,7 @@ void	zbx_audit_update_json_string(const zbx_uint64_t itemid, const char *key, co
 void	zbx_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
 void	zbx_audit_host_update_groups(zbx_uint64_t hostid, zbx_uint64_t groupid);
 void	zbx_audit_groups_delete(zbx_uint64_t hostid, zbx_vector_uint64_t *groupids);
+void	zbx_audit_host_groups_delete_create_entry(zbx_uint64_t hostid, char *hostname, zbx_vector_uint64_t *groupids);
 void	zbx_audit_host_update_tls_and_psk(zbx_uint64_t hostid, int tls_connect, int tls_accept, const char *psk_identity,
 		const char *psk);
 void	zbx_audit_host_create_entry(int audit_action, zbx_uint64_t hostid, const char *name);
