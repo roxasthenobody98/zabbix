@@ -1129,14 +1129,15 @@ void	zbx_audit_host_groups_delete_create_entry(zbx_uint64_t hostid, char *hostna
 	local_audit_host_groups_entry = (zbx_audit_entry_t*)zbx_malloc(NULL, sizeof(zbx_audit_entry_t));
 	local_audit_host_groups_entry->id = hostid;
 	local_audit_host_groups_entry->name = zbx_strdup(NULL, hostname);
-	local_audit_host_groups_entry->audit_action = AUDIT_ACTION_DELETE;
+	local_audit_host_groups_entry->audit_action = AUDIT_ACTION_UPDATE;
 	local_audit_host_groups_entry->resource_type = AUDIT_RESOURCE_HOST_GROUP;
 
 	zbx_json_init(&(local_audit_host_groups_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
 
 	zbx_hashset_insert(&zbx_audit, &local_audit_host_groups_entry, sizeof(local_audit_host_groups_entry));
+
 	for (i = 0; i < groupids->values_num; i++)
-		zbx_audit_host_update_groups(hostid, groupids->values[i]);
+		zbx_audit_host_update_groups(AUDIT_DETAILS_ACTION_DELETE, hostid, groupids->values[i]);
 }
 
 void	zbx_audit_host_update_tls_and_psk(zbx_uint64_t hostid, int tls_connect, int tls_accept,
@@ -1161,12 +1162,12 @@ void	zbx_audit_host_create_entry(int audit_action, zbx_uint64_t hostid, const ch
 	zbx_hashset_insert(&zbx_audit, &local_audit_host_entry, sizeof(local_audit_host_entry));
 }
 
-void	zbx_audit_host_update_groups(zbx_uint64_t hostid, zbx_uint64_t groupid)
+void	zbx_audit_host_update_groups(const char *audit_details_action, zbx_uint64_t hostid, zbx_uint64_t groupid)
 {
 	char	audit_key_groupid[AUDIT_DETAILS_KEY_LEN];
 
 	zbx_snprintf(audit_key_groupid, AUDIT_DETAILS_KEY_LEN, "host.groups[%lu]", groupid);
-	zbx_audit_update_json_string(hostid, audit_key_groupid, "");
+	zbx_audit_update_json_string(hostid, audit_key_groupid, audit_details_action);
 }
 
 void	zbx_audit_host_del(zbx_uint64_t hostid, const char *hostname)

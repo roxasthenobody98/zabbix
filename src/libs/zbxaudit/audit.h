@@ -103,7 +103,7 @@ void	zbx_audit_host_groups_delete_create_entry(zbx_uint64_t hostid, char *hostna
 void	zbx_audit_host_update_tls_and_psk(zbx_uint64_t hostid, int tls_connect, int tls_accept, const char *psk_identity,
 		const char *psk);
 void	zbx_audit_host_create_entry(int audit_action, zbx_uint64_t hostid, const char *name);
-void	zbx_audit_host_update_groups(zbx_uint64_t hostid, zbx_uint64_t groupid);
+void	zbx_audit_host_update_groups(const char *audit_details_action, zbx_uint64_t hostid, zbx_uint64_t groupid);
 void	zbx_audit_host_del(zbx_uint64_t hostid, const char *hostname);
 
 #endif	/* ZABBIX_AUDIT_H */

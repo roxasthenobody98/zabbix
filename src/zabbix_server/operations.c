@@ -190,7 +190,7 @@ static void	add_discovered_host_groups(zbx_uint64_t hostid, zbx_vector_uint64_t 
 		for (i = 0; i < groupids->values_num; i++)
 		{
 			zbx_db_insert_add_values(&db_insert, hostgroupid, hostid, groupids->values[i]);
-			zbx_audit_host_update_groups(hostid, groupids->values[i]);
+			zbx_audit_host_update_groups(AUDIT_DETAILS_ACTION_ADD, hostid, groupids->values[i]);
 			hostgroupid++;
 		}
 
@@ -946,12 +946,11 @@ void	op_groups_del(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 		DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "groupid", groupids->values, groupids->values_num);
 
 		DBexecute("%s", sql);
+		zbx_audit_host_groups_delete_create_entry(hostid, hostname, groupids);
 	}
 	DBfree_result(result);
 
 	zbx_free(sql);
-
-	zbx_audit_host_groups_delete_create_entry(hostid, hostname, groupids);
 	zbx_audit_flush();
 out:
 	zbx_free(hostname);
