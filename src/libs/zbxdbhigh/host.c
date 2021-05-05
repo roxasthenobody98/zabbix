@@ -5361,8 +5361,8 @@ static void	DBsave_httptests(zbx_uint64_t hostid, zbx_vector_ptr_t *httptests)
 
 				zbx_audit_httptests_steps_update(httpstepid, httptest->httptestid, httpstep->no,
 						httpstep->name, httpstep->url, httpstep->timeout, httpstep->posts,
-						httpstep->required, httpstep->status_codes, httpstep->follow_redirects,
-						httpstep->retrieve_mode);
+						httpstep->required, httpstep->status_codes,
+						(zbx_uint64_t)httpstep->follow_redirects, (zbx_uint64_t)httpstep->retrieve_mode);
 
 				for (k = 0; k < httpstep->fields.values_num; k++)
 				{
@@ -6284,7 +6284,7 @@ void	DBadd_host_inventory(zbx_uint64_t hostid, int inventory_mode)
 	zbx_db_insert_execute(&db_insert);
 	zbx_db_insert_clean(&db_insert);
 
-	zbx_audit_update_json_uint64(hostid, "host.inventory_mode", inventory_mode);
+	zbx_audit_update_json_uint64(hostid, "host.inventory_mode", (zbx_uint64_t)inventory_mode);
 }
 
 /******************************************************************************
@@ -6317,7 +6317,7 @@ void	DBset_host_inventory(zbx_uint64_t hostid, int inventory_mode)
 	{
 		DBexecute("update host_inventory set inventory_mode=%d where hostid=" ZBX_FS_UI64, inventory_mode,
 				hostid);
-		zbx_audit_update_json_uint64(hostid, "host.inventory_mode", inventory_mode);
+		zbx_audit_update_json_uint64(hostid, "host.inventory_mode", (zbx_uint64_t)inventory_mode);
 	}
 
 	DBfree_result(result);

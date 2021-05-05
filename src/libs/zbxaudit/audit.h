@@ -29,7 +29,7 @@ void	zbx_audit_init(void);
 void	zbx_audit_flush(void);
 void	DBselect_delete_for_item(const char *sql, zbx_vector_uint64_t *ids, int resource_type_type);
 void	DBselect_delete_for_graph(const char *sql, zbx_vector_uint64_t *ids);
-char	*zbx_audit_items_get_type_json_identifier(int flag);
+const char	*zbx_audit_items_get_type_json_identifier(int flag);
 void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid,
 		const int action);
 void	zbx_audit_host_update_parent_templates(zbx_uint64_t hostid, zbx_uint64_t templateid);
@@ -94,12 +94,13 @@ void	zbx_audit_host_update_snmp_interfaces(zbx_uint64_t hostid, zbx_uint64_t ver
 		const char *contextname, zbx_uint64_t interfaceid);
 void	zbx_audit_update_json_string(const zbx_uint64_t itemid, const char *key, const char *value);
 void	zbx_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
-void	zbx_audit_host_update_groups(zbx_uint64_t hostid, zbx_uint64_t groupid);
-void	zbx_audit_groups_delete(zbx_uint64_t hostid, zbx_vector_uint64_t *groupids);
+int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, const char* resourcename,
+		const int resourcetype, const char *recsetid, const char *details);
 void	zbx_audit_host_groups_delete_create_entry(zbx_uint64_t hostid, char *hostname, zbx_vector_uint64_t *groupids);
 void	zbx_audit_host_update_tls_and_psk(zbx_uint64_t hostid, int tls_connect, int tls_accept, const char *psk_identity,
 		const char *psk);
 void	zbx_audit_host_create_entry(int audit_action, zbx_uint64_t hostid, const char *name);
+void	zbx_audit_host_update_groups(zbx_uint64_t hostid, zbx_uint64_t groupid);
 void	zbx_audit_host_del(zbx_uint64_t hostid, const char *hostname);
 
 #endif	/* ZABBIX_AUDIT_H */

@@ -222,7 +222,7 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char **hostname)
 	DB_ROW			row2;
 	zbx_uint64_t		dhostid, hostid = 0, proxy_hostid, druleid;
 	char			*host, *host_esc, *host_unique, *host_visible, *host_visible_unique,
-				*already_existing_hostname;
+				*already_existing_hostname = NULL;
 	unsigned short		port;
 	zbx_vector_uint64_t	groupids;
 	unsigned char		svc_type, interface_type;

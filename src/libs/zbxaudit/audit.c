@@ -18,7 +18,7 @@ typedef struct zbx_audit_entry
 
 static unsigned	zbx_audit_hash_func(const void *data)
 {
-	const zbx_audit_entry_t	**audit_entry = (const zbx_audit_entry_t **)data;
+	const zbx_audit_entry_t	* const *audit_entry = (const zbx_audit_entry_t * const *)data;
 
 	return ZBX_DEFAULT_UINT64_HASH_ALGO(&((*audit_entry)->id), sizeof((*audit_entry)->id),
 			ZBX_DEFAULT_HASH_SEED);
@@ -26,8 +26,8 @@ static unsigned	zbx_audit_hash_func(const void *data)
 
 static int	zbx_audit_compare_func(const void *d1, const void *d2)
 {
-	const zbx_audit_entry_t	**audit_entry_1 = (const zbx_audit_entry_t **)d1;
-	const zbx_audit_entry_t	**audit_entry_2 = (const zbx_audit_entry_t **)d2;
+	const zbx_audit_entry_t	* const *audit_entry_1 = (const zbx_audit_entry_t * const *)d1;
+	const zbx_audit_entry_t	* const *audit_entry_2 = (const zbx_audit_entry_t * const *)d2;
 
 	ZBX_RETURN_IF_NOT_EQUAL((*audit_entry_1)->id, (*audit_entry_2)->id);
 
@@ -173,7 +173,7 @@ static int	item_flag_to_resource_type(int flag)
 	}
 }
 
-char	*zbx_audit_items_get_type_json_identifier(int flag)
+const char	*zbx_audit_items_get_type_json_identifier(int flag)
 {
 	if (ZBX_FLAG_DISCOVERY_NORMAL == flag || ZBX_FLAG_DISCOVERY_CREATED == flag)
 	{
@@ -410,8 +410,8 @@ void	zbx_audit_graphs_create_entry(const int audit_action, zbx_uint64_t hst_grap
 
 	zbx_json_init(&(local_audit_graph_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
 
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_width, width);
-	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_height, height);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_width, (zbx_uint64_t)width);
+	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_height, (zbx_uint64_t)height);
 	zbx_json_addfloat(&local_audit_graph_entry->details_json, audit_key_yaxismin, yaxismin);
 	zbx_json_addfloat(&local_audit_graph_entry->details_json, audit_key_yaxismax, yaxismax);
 	zbx_json_adduint64(&local_audit_graph_entry->details_json, audit_key_show_work_period, show_work_period);
@@ -462,12 +462,12 @@ void	zbx_audit_graphs_update_gitems(zbx_uint64_t hst_graphid, int flags, zbx_uin
 
 	if (ZBX_FLAG_DISCOVERY_NORMAL == flags || ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
 	{
-		zbx_audit_update_json_uint64(hst_graphid, audit_key_drawtype, drawtype);
-		zbx_audit_update_json_uint64(hst_graphid, audit_key_sortorder, sortorder);
+		zbx_audit_update_json_uint64(hst_graphid, audit_key_drawtype, (zbx_uint64_t)drawtype);
+		zbx_audit_update_json_uint64(hst_graphid, audit_key_sortorder, (zbx_uint64_t)sortorder);
 		zbx_audit_update_json_string(hst_graphid, audit_key_color, color);
-		zbx_audit_update_json_uint64(hst_graphid, audit_key_yaxisside, yaxisside);
-		zbx_audit_update_json_uint64(hst_graphid, audit_key_calc_fnc, calc_fnc);
-		zbx_audit_update_json_uint64(hst_graphid, audit_key_type, type);
+		zbx_audit_update_json_uint64(hst_graphid, audit_key_yaxisside, (zbx_uint64_t)yaxisside);
+		zbx_audit_update_json_uint64(hst_graphid, audit_key_calc_fnc, (zbx_uint64_t)calc_fnc);
+		zbx_audit_update_json_uint64(hst_graphid, audit_key_type, (zbx_uint64_t)type);
 	}
 }
 
@@ -661,7 +661,7 @@ void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, c
 			ZBX_JSON_TYPE_STRING);
 	zbx_json_addstring(&local_audit_http_test_entry->details_json, "httptest.http_proxy", http_proxy,
 			ZBX_JSON_TYPE_STRING);
-	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "httptest.retries", retries);
+	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "httptest.retries", (zbx_uint64_t)retries);
 	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "httptest.hostid", hostid);
 	zbx_json_adduint64(&local_audit_http_test_entry->details_json, "httptest.templateid", templateid);
 
@@ -1130,8 +1130,8 @@ void	zbx_audit_host_groups_delete_create_entry(zbx_uint64_t hostid, char *hostna
 void	zbx_audit_host_update_tls_and_psk(zbx_uint64_t hostid, int tls_connect, int tls_accept,
 		const char *psk_identity, const char *psk)
 {
-	zbx_audit_update_json_uint64(hostid, "host.tls_connect", tls_connect);
-	zbx_audit_update_json_uint64(hostid, "host.tls_accept", tls_accept);
+	zbx_audit_update_json_uint64(hostid, "host.tls_connect", (zbx_uint64_t)tls_connect);
+	zbx_audit_update_json_uint64(hostid, "host.tls_accept", (zbx_uint64_t)tls_accept);
 	zbx_audit_update_json_string(hostid, "host.psk_identity", psk_identity);
 	zbx_audit_update_json_string(hostid, "host.psk", psk);
 }
