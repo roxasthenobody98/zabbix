@@ -1774,6 +1774,9 @@ void	zbx_new_cuid(char *cuid);
 #define AUDIT_ACTION_LOGOUT		4
 #define AUDIT_ACTION_EXECUTE		7
 
+#define AUDIT_DETAILS_ACTION_ADD	"Added"
+#define AUDIT_DETAILS_ACTION_DELETE	"Deleted"
+
 /* report scheduling */
 
 #define ZBX_REPORT_CYCLE_DAILY		0

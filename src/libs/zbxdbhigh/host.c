@@ -2286,7 +2286,8 @@ static void	get_templates_by_hostid(zbx_uint64_t hostid, zbx_vector_uint64_t *te
  * Comments: !!! Don't forget to sync the code with PHP !!!                   *
  *                                                                            *
  ******************************************************************************/
-int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_templateids, char **error)
+int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_templateids, const char *hostname,
+		char **error)
 {
 	char			*sql = NULL, err[MAX_STRING_LEN];
 	size_t			sql_alloc = 128, sql_offset = 0;
@@ -2341,6 +2342,7 @@ int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_tem
 	DBexecute("%s", sql);
 
 	zbx_free(sql);
+	zbx_audit_host_delete_parent_templates(hostid, hostname, del_templateids);
 clean:
 	zbx_vector_uint64_destroy(&templateids);
 
@@ -5661,7 +5663,7 @@ int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templ
 		DBexecute("insert into hosts_templates (hosttemplateid,hostid,templateid)"
 				" values (" ZBX_FS_UI64 "," ZBX_FS_UI64 "," ZBX_FS_UI64 ")",
 				hosttemplateid++, hostid, lnk_templateids->values[i]);
-		zbx_audit_host_update_parent_templates(hostid, lnk_templateids->values[i]);
+		zbx_audit_host_update_parent_template(AUDIT_DETAILS_ACTION_ADD, hostid, lnk_templateids->values[i]);
 	}
 
 	DBcopy_template_items(hostid, lnk_templateids);

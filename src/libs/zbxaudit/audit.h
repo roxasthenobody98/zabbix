@@ -32,7 +32,10 @@ void	DBselect_delete_for_graph(const char *sql, zbx_vector_uint64_t *ids);
 const char	*zbx_audit_items_get_type_json_identifier(int flag);
 void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid,
 		const int action);
-void	zbx_audit_host_update_parent_templates(zbx_uint64_t hostid, zbx_uint64_t templateid);
+void	zbx_audit_host_update_parent_template(const char *audit_details_action, zbx_uint64_t hostid,
+		zbx_uint64_t templateid);
+void	zbx_audit_host_delete_parent_templates(zbx_uint64_t hostid, const char *hostname,
+		zbx_vector_uint64_t *del_templateids);
 void	zbx_audit_host_prototypes_create_entry(const int audit_action, zbx_uint64_t hostid, char *name,
 		unsigned char status, zbx_uint64_t templateid, unsigned char discover, unsigned char custom_interfaces);
 void	zbx_audit_host_prototypes_update_details(zbx_uint64_t hostid, const char *name, zbx_uint64_t groupid,

@@ -290,12 +290,24 @@ void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uin
 	zbx_hashset_insert(&zbx_audit, &local_audit_items_entry, sizeof(local_audit_items_entry));
 }
 
-void	zbx_audit_host_update_parent_templates(zbx_uint64_t hostid, zbx_uint64_t templateid)
+void	zbx_audit_host_update_parent_template(const char *audit_details_action, zbx_uint64_t hostid,
+		zbx_uint64_t templateid)
 {
 	char	audit_key_parent_templates[AUDIT_DETAILS_KEY_LEN];
 
 	zbx_snprintf(audit_key_parent_templates, AUDIT_DETAILS_KEY_LEN, "host.parentTemplates[%lu]", templateid);
-	zbx_audit_update_json_string(hostid, audit_key_parent_templates, "");
+	zbx_audit_update_json_string(hostid, audit_key_parent_templates, audit_details_action);
+}
+
+void	zbx_audit_host_delete_parent_templates(zbx_uint64_t hostid, const char *hostname,
+		zbx_vector_uint64_t *del_templateids)
+{
+	int	i;
+
+	zbx_audit_host_create_entry(AUDIT_ACTION_UPDATE, hostid, hostname);
+
+	for (i = 0; i < del_templateids->values_num; i++)
+		zbx_audit_host_update_parent_template(AUDIT_DETAILS_ACTION_DELETE, hostid, del_templateids->values[i]);
 }
 
 void	zbx_audit_host_prototypes_create_entry(const int audit_action, zbx_uint64_t hostid, char *name,

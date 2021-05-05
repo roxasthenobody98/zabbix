@@ -594,7 +594,8 @@ void	DBdelete_sysmaps_hosts_by_hostid(zbx_uint64_t hostid);
 int	DBadd_graph_item_to_linked_hosts(int gitemid, int hostid);
 
 int	DBcopy_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *lnk_templateids, char **error);
-int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_templateids, char **error);
+int	DBdelete_template_elements(zbx_uint64_t hostid, zbx_vector_uint64_t *del_templateids, const char *hostname,
+		char **error);
 
 void	DBdelete_items(zbx_vector_uint64_t *itemids, int resource_type);
 void	DBdelete_graphs(zbx_vector_uint64_t *graphids);
