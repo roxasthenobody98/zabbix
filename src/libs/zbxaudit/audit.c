@@ -854,18 +854,18 @@ void	zbx_audit_item_parameters_update(int audit_index, zbx_uint64_t itemid, cons
 	if (AUDIT_RESOURCE_ITEM == resource_type)
 	{
 		zbx_snprintf(audit_key_name, AUDIT_DETAILS_KEY_LEN, "item.parameters[%d].name", audit_index);
-		zbx_snprintf(audit_key_name, AUDIT_DETAILS_KEY_LEN, "item.parameters[%d].value", audit_index);
+		zbx_snprintf(audit_key_value, AUDIT_DETAILS_KEY_LEN, "item.parameters[%d].value", audit_index);
 	}
 	else if (AUDIT_RESOURCE_ITEM_PROTOTYPE == resource_type)
 	{
 		zbx_snprintf(audit_key_name, AUDIT_DETAILS_KEY_LEN, "itemprototype.parameters[%d].name", audit_index);
-		zbx_snprintf(audit_key_name, AUDIT_DETAILS_KEY_LEN, "itemprototype.parameters[%d].value", audit_index);
+		zbx_snprintf(audit_key_value, AUDIT_DETAILS_KEY_LEN, "itemprototype.parameters[%d].value", audit_index);
 
 	}
 	else if (AUDIT_RESOURCE_DISCOVERY_RULE == resource_type)
 	{
 		zbx_snprintf(audit_key_name, AUDIT_DETAILS_KEY_LEN, "discoveryrule.parameters[%d].name", audit_index);
-		zbx_snprintf(audit_key_name, AUDIT_DETAILS_KEY_LEN, "discoveryrule.parameters[%d].value", audit_index);
+		zbx_snprintf(audit_key_value, AUDIT_DETAILS_KEY_LEN, "discoveryrule.parameters[%d].value", audit_index);
 	}
 	else
 		THIS_SHOULD_NEVER_HAPPEN;
