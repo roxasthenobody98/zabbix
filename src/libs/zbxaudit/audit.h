@@ -28,6 +28,7 @@
 void	zbx_audit_init(void);
 void	zbx_audit_flush(void);
 void	DBselect_delete_for_item(const char *sql, zbx_vector_uint64_t *ids, int resource_type_type);
+void	DBselect_delete_for_trigger(const char *sql, zbx_vector_uint64_t *ids);
 void	DBselect_delete_for_graph(const char *sql, zbx_vector_uint64_t *ids);
 const char	*zbx_audit_items_get_type_json_identifier(int flag);
 void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uint64_t hostid,

@@ -1068,18 +1068,21 @@ static void	DBdelete_trigger_hierarchy(zbx_vector_uint64_t *triggerids)
 	size_t			sql_alloc = 256, sql_offset = 0;
 	zbx_vector_uint64_t	children_triggerids;
 
+	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
 	if (0 == triggerids->values_num)
-		return;
+		goto out;
 
 	sql = (char *)zbx_malloc(sql, sql_alloc);
 
 	zbx_vector_uint64_create(&children_triggerids);
 
-	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, "select distinct triggerid from trigger_discovery where");
+	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, "select distinct td.triggerid,t.description,t.flags from "
+			"trigger_discovery td, triggers t where td.triggerid=t.triggerid and");
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "parent_triggerid", triggerids->values,
 			triggerids->values_num);
 
-	DBselect_uint64(sql, &children_triggerids);
+	DBselect_delete_for_trigger(sql, &children_triggerids);
 	zbx_vector_uint64_setdiff(triggerids, &children_triggerids, ZBX_DEFAULT_UINT64_COMPARE_FUNC);
 
 	DBdelete_triggers(&children_triggerids);
@@ -1088,6 +1091,8 @@ static void	DBdelete_trigger_hierarchy(zbx_vector_uint64_t *triggerids)
 	zbx_vector_uint64_destroy(&children_triggerids);
 
 	zbx_free(sql);
+out:
+	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
 /******************************************************************************
@@ -1480,8 +1485,10 @@ static void	DBdelete_host_prototypes(zbx_vector_uint64_t *host_prototypeids)
 	size_t			sql_alloc = 0, sql_offset;
 	zbx_vector_uint64_t	hostids, group_prototypeids;
 
+	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
+
 	if (0 == host_prototypeids->values_num)
-		return;
+		goto out;
 
 	/* delete discovered hosts */
 
@@ -1521,6 +1528,8 @@ static void	DBdelete_host_prototypes(zbx_vector_uint64_t *host_prototypeids)
 	zbx_vector_uint64_destroy(&group_prototypeids);
 	zbx_vector_uint64_destroy(&hostids);
 	zbx_free(sql);
+out:
+	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
 /******************************************************************************
@@ -1633,17 +1642,17 @@ static void	DBdelete_template_triggers(zbx_uint64_t hostid, const zbx_vector_uin
 	zbx_vector_uint64_create(&triggerids);
 
 	zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset,
-			"select distinct f.triggerid"
-			" from functions f,items i,items ti"
+			"select distinct f.triggerid,t.description,t.flags"
+			" from functions f,items i,items ti,triggers t"
 			" where f.itemid=i.itemid"
 				" and i.templateid=ti.itemid"
+				" and t.triggerid=f.triggerid"
 				" and i.hostid=" ZBX_FS_UI64
 				" and",
 			hostid);
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "ti.hostid", templateids->values, templateids->values_num);
 
-	DBselect_uint64(sql, &triggerids);
-
+	DBselect_delete_for_trigger(sql, &triggerids);
 	DBdelete_trigger_hierarchy(&triggerids);
 	zbx_vector_uint64_destroy(&triggerids);
 	zbx_free(sql);
@@ -1788,6 +1797,8 @@ static int	DBcopy_trigger_to_host(zbx_uint64_t *new_triggerid, zbx_uint64_t *cur
 			*correlation_tag_esc,
 			*opdata_esc, *event_name_esc;
 	int		res = FAIL;
+
+	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
 	sql = (char *)zbx_malloc(sql, sql_alloc);
 
@@ -1963,6 +1974,8 @@ static int	DBcopy_trigger_to_host(zbx_uint64_t *new_triggerid, zbx_uint64_t *cur
 	zbx_free(opdata_esc);
 	zbx_free(description_esc);
 
+	zabbix_log(LOG_LEVEL_DEBUG, "End of %s():%s", __func__, zbx_result_string(res));
+
 	return res;
 }
 
@@ -1993,6 +2006,8 @@ static void	DBresolve_template_trigger_dependencies(zbx_uint64_t hostid, const z
 					triggerid_down, triggerid_up,
 					hst_triggerid, tpl_triggerid;
 	int				i, j;
+
+	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
 	zbx_vector_uint64_create(&all_templ_ids);
 	zbx_vector_uint64_pair_create(&dep_list_ids);
@@ -2036,7 +2051,7 @@ static void	DBresolve_template_trigger_dependencies(zbx_uint64_t hostid, const z
 		zbx_vector_uint64_destroy(&all_templ_ids);
 		zbx_vector_uint64_pair_destroy(&dep_list_ids);
 		zbx_free(sql);
-		return;
+		goto out;
 	}
 
 	zbx_vector_uint64_pair_create(&map_ids);
@@ -2102,6 +2117,8 @@ static void	DBresolve_template_trigger_dependencies(zbx_uint64_t hostid, const z
 
 	zbx_vector_uint64_pair_destroy(&map_ids);
 	zbx_vector_uint64_pair_destroy(&dep_list_ids);
+out:
+	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
 /******************************************************************************

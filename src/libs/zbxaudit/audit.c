@@ -118,9 +118,32 @@ void	DBselect_delete_for_item(const char *sql, zbx_vector_uint64_t *ids, int res
 	while (NULL != (row = DBfetch(result)))
 	{
 		ZBX_STR2UINT64(id, row[0]);
-
 		zbx_vector_uint64_append(ids, id);
 		zbx_audit_create_entry_for_delete(id, row[1], resource_type);
+	}
+	DBfree_result(result);
+
+	zbx_vector_uint64_sort(ids, ZBX_DEFAULT_UINT64_COMPARE_FUNC);
+}
+
+void	DBselect_delete_for_trigger(const char *sql, zbx_vector_uint64_t *ids)
+{
+	DB_RESULT	result;
+	DB_ROW		row;
+	zbx_uint64_t	id, flags;
+
+	result = DBselect("%s", sql);
+
+	while (NULL != (row = DBfetch(result)))
+	{
+		ZBX_STR2UINT64(id, row[0]);
+		zbx_vector_uint64_append(ids, id);
+		ZBX_STR2UINT64(flags, row[2]);
+
+		if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
+			zbx_audit_create_entry_for_delete(id, row[1], AUDIT_RESOURCE_TRIGGER);
+		else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
+			zbx_audit_create_entry_for_delete(id, row[1], AUDIT_RESOURCE_TRIGGER_PROTOTYPE);
 	}
 	DBfree_result(result);
 
