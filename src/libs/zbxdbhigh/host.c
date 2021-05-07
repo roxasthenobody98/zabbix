@@ -1301,7 +1301,7 @@ out:
  * Parameters: itemids - [IN] array of item identificators from database      *
  *                                                                            *
  ******************************************************************************/
-void	DBdelete_items(zbx_vector_uint64_t *itemids, int resource_type)
+void	DBdelete_items(zbx_vector_uint64_t *itemids)
 {
 	char			*sql = NULL;
 	size_t			sql_alloc = 256, sql_offset;
@@ -1329,7 +1329,7 @@ void	DBdelete_items(zbx_vector_uint64_t *itemids, int resource_type)
 		DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "parent_itemid",
 				itemids->values, itemids->values_num);
 
-		DBselect_delete_for_item(sql, itemids, resource_type);
+		DBselect_delete_for_item(sql, itemids);
 		zbx_vector_uint64_uniq(itemids, ZBX_DEFAULT_UINT64_COMPARE_FUNC);
 	}
 	while (num != itemids->values_num);
@@ -1416,8 +1416,8 @@ static void	DBdelete_httptests(zbx_vector_uint64_t *httptestids)
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "httptestid",
 			httptestids->values, httptestids->values_num);
 
-	DBselect_delete_for_item(sql, &itemids, AUDIT_RESOURCE_SCENARIO);
-	DBdelete_items(&itemids, AUDIT_RESOURCE_SCENARIO);
+	DBselect_delete_for_item(sql, &itemids);
+	DBdelete_items(&itemids);
 
 	sql_offset = 0;
 	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset, "delete from httptest where");
@@ -1553,7 +1553,7 @@ static void	DBdelete_template_httptests(zbx_uint64_t hostid, const zbx_vector_ui
 	zbx_vector_uint64_create(&httptestids);
 
 	zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset,
-			"select h.httptestid"
+			"select h.httptestid,h.name"
 			" from httptest h"
 				" join httptest t"
 					" on");
@@ -1562,7 +1562,8 @@ static void	DBdelete_template_httptests(zbx_uint64_t hostid, const zbx_vector_ui
 						" and t.httptestid=h.templateid"
 			" where h.hostid=" ZBX_FS_UI64, hostid);
 
-	DBselect_uint64(sql, &httptestids);
+	DBselect_delete_for_http_test(sql, &httptestids);
+	//DBselect_uint64(sql, &httptestids);
 
 	DBdelete_httptests(&httptestids);
 
@@ -1736,8 +1737,8 @@ static void	DBdelete_template_items(zbx_uint64_t hostid, const zbx_vector_uint64
 			hostid);
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "ti.hostid", templateids->values, templateids->values_num);
 
-	DBselect_delete_for_item(sql, &itemids, AUDIT_RESOURCE_ITEM);
-	DBdelete_items(&itemids, AUDIT_RESOURCE_ITEM);
+	DBselect_delete_for_item(sql, &itemids);
+	DBdelete_items(&itemids);
 
 	zbx_vector_uint64_destroy(&itemids);
 	zbx_free(sql);
@@ -5743,13 +5744,13 @@ void	DBdelete_hosts(zbx_vector_uint64_t *hostids)
 
 	sql_offset = 0;
 	zbx_strcpy_alloc(&sql, &sql_alloc, &sql_offset,
-			"select itemid"
+			"select itemid,name,flags"
 			" from items"
 			" where");
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, "hostid", hostids->values, hostids->values_num);
 
-	DBselect_delete_for_item(sql, &itemids, AUDIT_RESOURCE_ITEM);
-	DBdelete_items(&itemids, AUDIT_RESOURCE_ITEM);
+	DBselect_delete_for_item(sql, &itemids);
+	DBdelete_items(&itemids);
 
 	zbx_vector_uint64_destroy(&itemids);
 

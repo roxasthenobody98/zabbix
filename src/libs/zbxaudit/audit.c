@@ -84,6 +84,29 @@ void	zbx_audit_flush(void)
 
 	zbx_audit_clean();
 }
+
+static int	item_flag_to_resource_type(int flag)
+{
+	if (ZBX_FLAG_DISCOVERY_NORMAL == flag || ZBX_FLAG_DISCOVERY_CREATED == flag)
+	{
+		return AUDIT_RESOURCE_ITEM;
+	}
+	else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flag)
+	{
+		return AUDIT_RESOURCE_ITEM_PROTOTYPE;
+	}
+	else if (ZBX_FLAG_DISCOVERY_RULE == flag)
+	{
+		return AUDIT_RESOURCE_DISCOVERY_RULE;
+	}
+	else
+	{
+		zabbix_log(LOG_LEVEL_DEBUG, "unexpected audit detected: ->%d<-", flag);
+		THIS_SHOULD_NEVER_HAPPEN;
+		exit(EXIT_FAILURE);
+	}
+}
+
 static void	zbx_audit_create_entry_for_delete(zbx_uint64_t id, char *name, int resource_type)
 {
 	zbx_audit_entry_t	*local_audit_entry = (zbx_audit_entry_t*)zbx_malloc(NULL,
@@ -107,7 +130,27 @@ static void	zbx_audit_create_entry_for_delete(zbx_uint64_t id, char *name, int r
  *             ids - [OUT] sorted list of selected uint64 values              *
  *                                                                            *
  ******************************************************************************/
-void	DBselect_delete_for_item(const char *sql, zbx_vector_uint64_t *ids, int resource_type)
+void	DBselect_delete_for_item(const char *sql, zbx_vector_uint64_t *ids)
+{
+	DB_RESULT	result;
+	DB_ROW		row;
+	zbx_uint64_t	id, flags;
+
+	result = DBselect("%s", sql);
+
+	while (NULL != (row = DBfetch(result)))
+	{
+		ZBX_STR2UINT64(id, row[0]);
+		zbx_vector_uint64_append(ids, id);
+		ZBX_STR2UINT64(flags, row[2]);
+		zbx_audit_create_entry_for_delete(id, row[1], item_flag_to_resource_type(flags));
+	}
+	DBfree_result(result);
+
+	zbx_vector_uint64_sort(ids, ZBX_DEFAULT_UINT64_COMPARE_FUNC);
+}
+
+void	DBselect_delete_for_http_test(const char *sql, zbx_vector_uint64_t *ids)
 {
 	DB_RESULT	result;
 	DB_ROW		row;
@@ -119,7 +162,7 @@ void	DBselect_delete_for_item(const char *sql, zbx_vector_uint64_t *ids, int res
 	{
 		ZBX_STR2UINT64(id, row[0]);
 		zbx_vector_uint64_append(ids, id);
-		zbx_audit_create_entry_for_delete(id, row[1], resource_type);
+		zbx_audit_create_entry_for_delete(id, row[1], AUDIT_RESOURCE_SCENARIO);
 	}
 	DBfree_result(result);
 
@@ -172,28 +215,6 @@ void	DBselect_delete_for_graph(const char *sql, zbx_vector_uint64_t *ids)
 	DBfree_result(result);
 
 	zbx_vector_uint64_sort(ids, ZBX_DEFAULT_UINT64_COMPARE_FUNC);
-}
-
-static int	item_flag_to_resource_type(int flag)
-{
-	if (ZBX_FLAG_DISCOVERY_NORMAL == flag || ZBX_FLAG_DISCOVERY_CREATED == flag)
-	{
-		return AUDIT_RESOURCE_ITEM;
-	}
-	else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flag)
-	{
-		return AUDIT_RESOURCE_ITEM_PROTOTYPE;
-	}
-	else if (ZBX_FLAG_DISCOVERY_RULE == flag)
-	{
-		return AUDIT_RESOURCE_DISCOVERY_RULE;
-	}
-	else
-	{
-		zabbix_log(LOG_LEVEL_DEBUG, "unexpected audit detected: ->%d<-", flag);
-		THIS_SHOULD_NEVER_HAPPEN;
-		exit(EXIT_FAILURE);
-	}
 }
 
 const char	*zbx_audit_items_get_type_json_identifier(int flag)
