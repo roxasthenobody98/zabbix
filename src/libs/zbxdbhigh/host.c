@@ -1563,7 +1563,6 @@ static void	DBdelete_template_httptests(zbx_uint64_t hostid, const zbx_vector_ui
 			" where h.hostid=" ZBX_FS_UI64, hostid);
 
 	DBselect_delete_for_http_test(sql, &httptestids);
-	//DBselect_uint64(sql, &httptestids);
 
 	DBdelete_httptests(&httptestids);
 

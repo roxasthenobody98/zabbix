@@ -119,7 +119,17 @@ static void	zbx_audit_create_entry_for_delete(zbx_uint64_t id, char *name, int r
 
 	zbx_json_init(&(local_audit_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
 
-	zbx_hashset_insert(&zbx_audit, &local_audit_entry, sizeof(local_audit_entry));
+	/* trigger prototypes may overlap in 2 selects - regular and templates, code there handles this by filtering */
+	/* unique entries in place, but here we can simply check if an entry is already present in the hashset */
+	if (NULL == zbx_hashset_search(&zbx_audit, &local_audit_entry))
+	{
+		zbx_hashset_insert(&zbx_audit, &local_audit_entry, sizeof(local_audit_entry));
+	}
+	else
+	{
+		zbx_free(local_audit_entry->name);
+		zbx_free(local_audit_entry);
+	}
 }
 
 /******************************************************************************
