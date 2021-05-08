@@ -845,7 +845,6 @@ void	op_host_inventory_mode(const DB_EVENT *event, int inventory_mode)
 		goto out;
 
 	DBset_host_inventory(hostid, inventory_mode);
-
 out:
 	zbx_audit_flush();
 	zbx_free(hostname);
@@ -1029,7 +1028,6 @@ void	op_template_del(const DB_EVENT *event, zbx_vector_uint64_t *del_templateids
 		zabbix_log(LOG_LEVEL_WARNING, "cannot unlink template: %s", error);
 		zbx_free(error);
 	}
-
 out:
 	zbx_audit_flush();
 	zbx_free(hostname);

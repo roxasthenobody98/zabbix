@@ -1955,7 +1955,6 @@ static int	DBcopy_trigger_to_host(zbx_uint64_t *new_triggerid, zbx_uint64_t *cur
 			zbx_free(esc);
 			zbx_free(new_expression);
 
-
 			if (TRIGGER_RECOVERY_MODE_RECOVERY_EXPRESSION == recovery_mode)
 			{
 				zbx_eval_compose_expression(&ctx_r, &new_expression);
@@ -6326,7 +6325,7 @@ void	DBadd_host_inventory(zbx_uint64_t hostid, int inventory_mode)
 }
 
 /******************************************************************************
- *                                                                             *
+ *                                                                            *
  * Function: DBset_host_inventory                                             *
  *                                                                            *
  * Purpose: sets host inventory mode for the specified host                   *
