@@ -246,7 +246,6 @@ static zbx_uint64_t	add_discovered_host(const DB_EVENT *event, char **hostname)
 
 	if (EVENT_OBJECT_DHOST == event->object || EVENT_OBJECT_DSERVICE == event->object)
 	{
-		zabbix_log(LOG_LEVEL_INFORMATION, "add_discovered_host 111111");
 		if (EVENT_OBJECT_DHOST == event->object)
 		{
 			result = DBselect(
@@ -690,8 +689,8 @@ void	op_host_add(const DB_EVENT *event)
 		goto out;
 
 	add_discovered_host(event, &hostname);
-	zbx_audit_flush();
 out:
+	zbx_audit_flush();
 	zbx_free(hostname);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
@@ -731,8 +730,8 @@ void	op_host_del(const DB_EVENT *event)
 	zbx_vector_uint64_destroy(&hostids);
 
 	zbx_audit_host_del(hostid, hostname);
-	zbx_audit_flush();
 out:
+	zbx_audit_flush();
 	zbx_free(hostname);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
@@ -770,8 +769,8 @@ void	op_host_enable(const DB_EVENT *event)
 			hostid);
 
 	zbx_audit_update_json_uint64(hostid, "host.status", HOST_STATUS_MONITORED);
-	zbx_audit_flush();
 out:
+	zbx_audit_flush();
 	zbx_free(hostname);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
@@ -809,9 +808,10 @@ void	op_host_disable(const DB_EVENT *event)
 			hostid);
 
 	zbx_audit_update_json_uint64(hostid, "host.status", HOST_STATUS_NOT_MONITORED);
-	zbx_audit_flush();
 out:
+	zbx_audit_flush();
 	zbx_free(hostname);
+
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -846,8 +846,8 @@ void	op_host_inventory_mode(const DB_EVENT *event, int inventory_mode)
 
 	DBset_host_inventory(hostid, inventory_mode);
 
-	zbx_audit_flush();
 out:
+	zbx_audit_flush();
 	zbx_free(hostname);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
@@ -881,8 +881,8 @@ void	op_groups_add(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 		goto out;
 
 	add_discovered_host_groups(hostid, groupids);
-	zbx_audit_flush();
 out:
+	zbx_audit_flush();
 	zbx_free(hostname);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
@@ -951,8 +951,8 @@ void	op_groups_del(const DB_EVENT *event, zbx_vector_uint64_t *groupids)
 	DBfree_result(result);
 
 	zbx_free(sql);
-	zbx_audit_flush();
 out:
+	zbx_audit_flush();
 	zbx_free(hostname);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
@@ -990,10 +990,10 @@ void	op_template_add(const DB_EVENT *event, zbx_vector_uint64_t *lnk_templateids
 		zabbix_log(LOG_LEVEL_WARNING, "cannot link template(s) %s", error);
 		zbx_free(error);
 	}
-
-	zbx_audit_flush();
 out:
+	zbx_audit_flush();
 	zbx_free(hostname);
+
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
@@ -1030,8 +1030,8 @@ void	op_template_del(const DB_EVENT *event, zbx_vector_uint64_t *del_templateids
 		zbx_free(error);
 	}
 
-	zbx_audit_flush();
 out:
+	zbx_audit_flush();
 	zbx_free(hostname);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);

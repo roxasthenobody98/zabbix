@@ -73,10 +73,14 @@ void	zbx_audit_flush(void)
 	{
 		zbx_new_cuid(audit_cuid);
 
-		zbx_db_insert_add_values(&db_insert_audit, audit_cuid, USER_TYPE_SUPER_ADMIN,
-				(int)time(NULL), (*audit_entry)->audit_action, "",  (*audit_entry)->id,
-				(*audit_entry)->name, (*audit_entry)->resource_type,
-				recsetid_cuid, (*audit_entry)->details_json.buffer);
+		if (AUDIT_ACTION_UPDATE != (*audit_entry)->audit_action ||
+				0 != strcmp((*audit_entry)->details_json.buffer, "{}"))
+		{
+			zbx_db_insert_add_values(&db_insert_audit, audit_cuid, USER_TYPE_SUPER_ADMIN,
+					(int)time(NULL), (*audit_entry)->audit_action, "", (*audit_entry)->id,
+					(*audit_entry)->name, (*audit_entry)->resource_type,
+					recsetid_cuid, (*audit_entry)->details_json.buffer);
+		}
 	}
 
 	zbx_db_insert_execute(&db_insert_audit);
