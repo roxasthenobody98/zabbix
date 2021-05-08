@@ -7,9 +7,7 @@ SERVER_tests = \
 	dc_check_maintenance_period \
 	is_item_processed_by_server \
 	dc_item_poller_type_update \
-	dc_expand_user_macros_in_expression \
 	dc_expand_user_macros_in_func_params \
-	dc_expand_user_macros_in_calcitem \
 	dc_function_calculate_nextcheck
 endif
 
@@ -46,6 +44,7 @@ CACHE_LIBS = \
 	$(top_srcdir)/src/libs/zbxtrends/libzbxtrends.a \
 	$(top_srcdir)/src/zabbix_server/libzbxserver.a \
 	$(top_srcdir)/src/libs/zbxserver/libzbxserver.a \
+	$(top_srcdir)/src/libs/zbxeval/libzbxeval.a \
 	$(top_srcdir)/src/libs/zbxsysinfo/libzbxserversysinfo.a \
 	$(top_srcdir)/src/libs/zbxsysinfo/common/libcommonsysinfo.a \
 	$(top_srcdir)/src/libs/zbxsysinfo/simple/libsimplesysinfo.a \
@@ -85,6 +84,8 @@ COMMON_WRAP_FUNCS = \
 	-Wl,--wrap=zbx_history_add_values \
 	-Wl,--wrap=zbx_history_sql_init \
 	-Wl,--wrap=zbx_history_elastic_init \
+	-Wl,--wrap=zbx_elastic_version_extract \
+	-Wl,--wrap=zbx_elastic_version_get \
 	-Wl,--wrap=time
 
 zbx_vc_get_values_SOURCES = \

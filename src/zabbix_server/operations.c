@@ -973,7 +973,7 @@ out:
 void	op_template_add(const DB_EVENT *event, zbx_vector_uint64_t *lnk_templateids)
 {
 	zbx_uint64_t	hostid;
-	char		*error, *hostname = NULL;
+	char		*error = NULL, *hostname = NULL;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
