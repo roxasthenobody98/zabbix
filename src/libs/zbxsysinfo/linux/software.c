@@ -187,6 +187,8 @@ int	SYSTEM_SW_PACKAGES(AGENT_REQUEST *request, AGENT_RESULT *result)
 				*package;
 	zbx_vector_str_t	packages;
 	ZBX_PACKAGE_MANAGER	*mng;
+	zbx_regexp_t		*regx = NULL;
+	char			*err_msg = NULL;
 
 	if (3 < request->nparam)
 	{
@@ -208,6 +210,14 @@ int	SYSTEM_SW_PACKAGES(AGENT_REQUEST *request, AGENT_RESULT *result)
 	else
 	{
 		SET_MSG_RESULT(result, zbx_strdup(NULL, "Invalid third parameter."));
+		return ret;
+	}
+
+	if (1 == check_regex && SUCCEED != zbx_regexp_compile(regex, &regx, &err_msg))
+	{
+		SET_MSG_RESULT(result, zbx_dsprintf(NULL, "Invalid regular expression in the first parameter: %s",
+				err_msg));
+		zbx_free(err_msg);
 		return ret;
 	}
 
@@ -245,8 +255,29 @@ int	SYSTEM_SW_PACKAGES(AGENT_REQUEST *request, AGENT_RESULT *result)
 						goto next;
 				}
 
-				if (1 == check_regex && NULL == zbx_regexp_match(package, regex, NULL))
-					goto next;
+				if (1 == check_regex)
+				{
+					int	res;
+
+					if (ZBX_REGEXP_NO_MATCH == (res = zbx_regexp_match_precompiled(package, regx,
+							&err_msg)))
+					{
+						goto next;
+					}
+
+					if (ZBX_REGEXP_RUNTIME_FAIL == res)
+					{
+						SET_MSG_RESULT(result, zbx_dsprintf(NULL, "Error occurred while"
+								" matching regular expression in the first parameter:"
+								" %s", err_msg));
+						zbx_free(err_msg);
+						zbx_free(buf);
+						zbx_vector_str_clear_ext(&packages, zbx_str_free);
+						zbx_vector_str_destroy(&packages);
+						zbx_regexp_free(regx);
+						return SYSINFO_RET_FAIL;
+					}
+				}
 
 				zbx_vector_str_append(&packages, zbx_strdup(NULL, package));
 next:
@@ -275,6 +306,9 @@ next:
 		buffer[--offset] = '\0';
 
 	zbx_vector_str_destroy(&packages);
+
+	if (NULL != regx)
+		zbx_regexp_free(regx);
 
 	if (SYSINFO_RET_OK == ret)
 		SET_TEXT_RESULT(result, zbx_strdup(NULL, buffer));

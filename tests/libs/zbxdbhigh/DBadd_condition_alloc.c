@@ -40,10 +40,11 @@ void	zbx_mock_test_entry(void **state)
 #endif
 	const char		*sql_where, *sql_rgx, *field_name;
 	zbx_vector_uint64_t	in_ids;
-	int			i, count1, count2, shift, repeat;
+	int			i, count1, count2, shift, repeat, res;
 	uint64_t		value_id, value;
 	char			*sql;
 	size_t			sql_alloc = 4 * ZBX_KIBIBYTE, sql_offset = 0;
+	char			*err_msg = NULL;
 
 	ZBX_UNUSED(state);
 
@@ -82,21 +83,35 @@ void	zbx_mock_test_entry(void **state)
 	DBadd_condition_alloc(&sql, &sql_alloc, &sql_offset, field_name, in_ids.values, in_ids.values_num);
 	zbx_vector_uint64_destroy(&in_ids);
 
-	if (NULL == zbx_regexp_match(sql, sql_rgx, NULL))
+	switch (res = zbx_regexp_match2(sql, sql_rgx, NULL, NULL, &err_msg))
 	{
-		unsigned int len;
+		unsigned int	len;
+		char		buf[MAX_STRING_LEN];
 
-		if (sql_offset > (len = 4 * ZBX_KIBIBYTE) * 2)
-		{
-			printf("Start of prepared sql (total=%zu): \"%.*s\"\n", sql_offset, len, sql);
-			printf("End of prepared sql: \"%s\"\n", &sql[sql_offset - len]);
-		}
-		else
-			printf("Prepared sql (total=%zu): \"%s\"\n", sql_offset, sql);
+		case ZBX_REGEXP_MATCH:
+			zbx_free(sql);
+			break;
+		case ZBX_REGEXP_NO_MATCH:
+			if (sql_offset > (len = 4 * ZBX_KIBIBYTE) * 2)
+			{
+				printf("Start of prepared sql (total=%zu): \"%.*s\"\n", sql_offset, (int)len, sql);
+				printf("End of prepared sql: \"%s\"\n", &sql[sql_offset - len]);
+			}
+			else
+				printf("Prepared sql (total=%zu): \"%s\"\n", sql_offset, sql);
 
-		zbx_free(sql);
-		fail_msg("Regular expression %s=\"%s\" does not much sql", RESULT, sql_rgx);
+			zbx_free(sql);
+			fail_msg("Regular expression %s=\"%s\" does not much sql", RESULT, sql_rgx);
+			break;
+		case ZBX_REGEXP_COMPILE_FAIL:
+		case ZBX_REGEXP_RUNTIME_FAIL:
+			/* Copy dynamically allocated 'err_msg' and release it */
+			/* before calling fail_msg() to avoid memory leak. */
+			zbx_strlcpy(buf, err_msg, sizeof(buf));
+			zbx_free(err_msg);
+			zbx_free(sql);
+			fail_msg("%s regular expression \"%s\": %s", (ZBX_REGEXP_COMPILE_FAIL == res) ?
+					"Invalid" : "Error occurred when matching", sql_rgx, buf);
+			break;
 	}
-	else
-		zbx_free(sql);
 }

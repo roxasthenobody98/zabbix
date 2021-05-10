@@ -523,6 +523,7 @@ int     SYSTEM_HW_MACADDR(AGENT_REQUEST *request, AGENT_RESULT *result)
 	struct ifreq		*ifr;
 	struct ifconf		ifc;
 	zbx_vector_str_t	addresses;
+	char			*err_msg = NULL;
 
 	if (2 < request->nparam)
 	{
@@ -566,8 +567,35 @@ int     SYSTEM_HW_MACADDR(AGENT_REQUEST *request, AGENT_RESULT *result)
 	/* go through the list */
 	for (i = ifc.ifc_len / sizeof(struct ifreq); 0 < i--; ifr++)
 	{
-		if (NULL != regex && '\0' != *regex && NULL == zbx_regexp_match(ifr->ifr_name, regex, NULL))
-			continue;
+		if (NULL != regex && '\0' != *regex)
+		{
+			int	res;
+
+			if (ZBX_REGEXP_NO_MATCH == (res = zbx_regexp_match2(ifr->ifr_name, regex, NULL, NULL,
+					&err_msg)))
+			{
+				continue;
+			}
+
+			if (ZBX_REGEXP_COMPILE_FAIL == res || ZBX_REGEXP_RUNTIME_FAIL == res)
+			{
+				int	j;
+
+				SET_MSG_RESULT(result, zbx_dsprintf(NULL, (ZBX_REGEXP_COMPILE_FAIL == res) ?
+						"Invalid regular expression in the first parameter: %s" :
+						"Error occurred while matching regular expression in the first"
+						" parameter: %s", err_msg));
+				zbx_free(err_msg);
+				close(s);
+
+				for (j = 0; j < addresses.values_num; j++)
+					zbx_free(addresses.values[j]);
+
+				zbx_vector_str_destroy(&addresses);
+
+				return SYSINFO_RET_FAIL;
+			}
+		}
 
 		if (-1 != ioctl(s, SIOCGIFFLAGS, ifr) &&		/* get the interface */
 				0 == (ifr->ifr_flags & IFF_LOOPBACK) &&	/* skip loopback interface */

@@ -1466,31 +1466,48 @@ void	destroy_logfile_list(struct st_logfile **logfiles, int *logfiles_alloc, int
  *     logfiles       - [IN/OUT] pointer to the list of logfiles              *
  *     logfiles_alloc - [IN/OUT] number of logfiles memory was allocated for  *
  *     logfiles_num   - [IN/OUT] number of already inserted logfiles          *
+ *     err_msg        - [OUT] error message. Deallocate in caller.            *
+ *                                                                            *
+ * Return value: SUCCEED or FAIL                                              *
  *                                                                            *
  * Comments: This is a helper function for pick_logfiles()                    *
  *                                                                            *
  ******************************************************************************/
-static void	pick_logfile(const char *directory, const char *filename, int mtime, const zbx_regexp_t *re,
-		struct st_logfile **logfiles, int *logfiles_alloc, int *logfiles_num)
+static int	pick_logfile(const char *directory, const char *filename, int mtime, const zbx_regexp_t *re,
+		struct st_logfile **logfiles, int *logfiles_alloc, int *logfiles_num, char **err_msg)
 {
 	char		*logfile_candidate;
 	zbx_stat_t	file_buf;
+	int		ret = SUCCEED;
 
 	logfile_candidate = zbx_dsprintf(NULL, "%s%s", directory, filename);
 
 	if (0 == zbx_stat(logfile_candidate, &file_buf))
 	{
-		if (S_ISREG(file_buf.st_mode) &&
-				mtime <= file_buf.st_mtime &&
-				0 == zbx_regexp_match_precompiled(filename, re))
+		if (S_ISREG(file_buf.st_mode) && mtime <= file_buf.st_mtime)
 		{
-			add_logfile(logfiles, logfiles_alloc, logfiles_num, logfile_candidate, &file_buf);
+			char	*error = NULL;
+			int	res;
+
+			if (ZBX_REGEXP_MATCH == (res = zbx_regexp_match_precompiled(filename, re, &error)))
+			{
+				add_logfile(logfiles, logfiles_alloc, logfiles_num, logfile_candidate, &file_buf);
+			}
+			else if (ZBX_REGEXP_RUNTIME_FAIL == res)
+			{
+				*err_msg = zbx_dsprintf(*err_msg, "error occurred while matching file name pattern"
+						" regular expression: %s", error);
+				zbx_free(error);
+				ret = FAIL;
+			}
 		}
 	}
 	else
 		zabbix_log(LOG_LEVEL_DEBUG, "cannot process entry '%s': %s", logfile_candidate, zbx_strerror(errno));
 
 	zbx_free(logfile_candidate);
+
+	return ret;
 }
 
 /******************************************************************************
@@ -1526,7 +1543,7 @@ static int	pick_logfiles(const char *directory, int mtime, const zbx_regexp_t *r
 		struct st_logfile **logfiles, int *logfiles_alloc, int *logfiles_num, char **err_msg)
 {
 #if defined(_WINDOWS) || defined(__MINGW32__)
-	int			ret = FAIL;
+	int			ret = SUCCEED;
 	char			*find_path = NULL, *file_name_utf8;
 	wchar_t			*find_wpath = NULL;
 	intptr_t		find_handle;
@@ -1546,21 +1563,35 @@ static int	pick_logfiles(const char *directory, int mtime, const zbx_regexp_t *r
 	}
 
 	if (SUCCEED != set_use_ino_by_fs_type(find_path, use_ino, err_msg))
+	{
+		ret = FAIL;
 		goto clean;
+	}
 
 	do
 	{
 		file_name_utf8 = zbx_unicode_to_utf8(find_data.name);
-		pick_logfile(directory, file_name_utf8, mtime, re, logfiles, logfiles_alloc, logfiles_num);
+
+		if (SUCCEED != pick_logfile(directory, file_name_utf8, mtime, re, logfiles, logfiles_alloc,
+				logfiles_num, err_msg))
+		{
+			zbx_free(file_name_utf8);
+			ret = FAIL;
+			break;
+		}
+
 		zbx_free(file_name_utf8);
 	}
 	while (0 == _wfindnext(find_handle, &find_data));
-
-	ret = SUCCEED;
 clean:
 	if (-1 == _findclose(find_handle))
 	{
-		*err_msg = zbx_dsprintf(*err_msg, "Cannot close directory \"%s\": %s", directory, zbx_strerror(errno));
+		if (NULL == *err_msg)
+		{
+			*err_msg = zbx_dsprintf(NULL, "Cannot close directory \"%s\": %s", directory,
+					zbx_strerror(errno));
+		}
+
 		ret = FAIL;
 	}
 
@@ -1571,6 +1602,7 @@ clean:
 #else
 	DIR		*dir = NULL;
 	struct dirent	*d_ent = NULL;
+	int		ret = SUCCEED;
 
 	if (NULL == (dir = opendir(directory)))
 	{
@@ -1584,16 +1616,26 @@ clean:
 
 	while (NULL != (d_ent = readdir(dir)))
 	{
-		pick_logfile(directory, d_ent->d_name, mtime, re, logfiles, logfiles_alloc, logfiles_num);
+		if (SUCCEED != pick_logfile(directory, d_ent->d_name, mtime, re, logfiles, logfiles_alloc, logfiles_num,
+				err_msg))
+		{
+			ret = FAIL;
+			break;
+		}
 	}
 
 	if (-1 == closedir(dir))
 	{
-		*err_msg = zbx_dsprintf(*err_msg, "Cannot close directory \"%s\": %s", directory, zbx_strerror(errno));
+		if (NULL == *err_msg)
+		{
+			*err_msg = zbx_dsprintf(NULL, "Cannot close directory \"%s\": %s", directory,
+					zbx_strerror(errno));
+		}
+
 		return FAIL;
 	}
 
-	return SUCCEED;
+	return ret;
 #endif
 }
 
@@ -1614,12 +1656,13 @@ clean:
  ******************************************************************************/
 static int	compile_filename_regexp(const char *filename_regexp, zbx_regexp_t **re, char **err_msg)
 {
-	const char	*regexp_err;
+	char	*regexp_err = NULL;
 
 	if (SUCCEED != zbx_regexp_compile(filename_regexp, re, &regexp_err))
 	{
 		*err_msg = zbx_dsprintf(*err_msg, "Cannot compile a regular expression describing filename pattern: %s",
 				regexp_err);
+		zbx_free(regexp_err);
 		return FAIL;
 	}
 
@@ -1996,7 +2039,7 @@ static int	zbx_read2(int fd, unsigned char flags, zbx_uint64_t *lastlogsize, int
 					{
 						if (ZBX_REGEXP_MATCH == (regexp_ret = regexp_sub_ex(regexps, value,
 								pattern, ZBX_CASE_SENSITIVE, output_template,
-								&item_value)))
+								&item_value, err_msg)))
 						{
 							if (SUCCEED == (send_err = process_value(server, port,
 									hostname, key, item_value, ITEM_STATE_NORMAL,
@@ -2024,7 +2067,7 @@ static int	zbx_read2(int fd, unsigned char flags, zbx_uint64_t *lastlogsize, int
 					else	/* log.count[] or logrt.count[] */
 					{
 						if (ZBX_REGEXP_MATCH == (regexp_ret = regexp_sub_ex(regexps, value,
-								pattern, ZBX_CASE_SENSITIVE, NULL, NULL)))
+								pattern, ZBX_CASE_SENSITIVE, NULL, NULL, err_msg)))
 						{
 							(*s_count)--;
 						}
@@ -2033,9 +2076,9 @@ static int	zbx_read2(int fd, unsigned char flags, zbx_uint64_t *lastlogsize, int
 					if ('\0' != *encoding)
 						zbx_free(value);
 
-					if (FAIL == regexp_ret)
+					if (ZBX_REGEXP_COMPILE_FAIL == regexp_ret ||
+							ZBX_REGEXP_RUNTIME_FAIL == regexp_ret)
 					{
-						*err_msg = zbx_dsprintf(*err_msg, "cannot compile regular expression");
 						ret = FAIL;
 						goto out;
 					}
@@ -2090,7 +2133,7 @@ static int	zbx_read2(int fd, unsigned char flags, zbx_uint64_t *lastlogsize, int
 					{
 						if (ZBX_REGEXP_MATCH == (regexp_ret = regexp_sub_ex(regexps, value,
 								pattern, ZBX_CASE_SENSITIVE, output_template,
-								&item_value)))
+								&item_value, err_msg)))
 						{
 							if (SUCCEED == (send_err = process_value(server, port,
 									hostname, key, item_value, ITEM_STATE_NORMAL,
@@ -2118,7 +2161,7 @@ static int	zbx_read2(int fd, unsigned char flags, zbx_uint64_t *lastlogsize, int
 					else	/* log.count[] or logrt.count[] */
 					{
 						if (ZBX_REGEXP_MATCH == (regexp_ret = regexp_sub_ex(regexps, value,
-								pattern, ZBX_CASE_SENSITIVE, NULL, NULL)))
+								pattern, ZBX_CASE_SENSITIVE, NULL, NULL, err_msg)))
 						{
 							(*s_count)--;
 						}
@@ -2127,9 +2170,9 @@ static int	zbx_read2(int fd, unsigned char flags, zbx_uint64_t *lastlogsize, int
 					if ('\0' != *encoding)
 						zbx_free(value);
 
-					if (FAIL == regexp_ret)
+					if (ZBX_REGEXP_COMPILE_FAIL == regexp_ret ||
+							ZBX_REGEXP_RUNTIME_FAIL == regexp_ret)
 					{
-						*err_msg = zbx_dsprintf(*err_msg, "cannot compile regular expression");
 						ret = FAIL;
 						goto out;
 					}

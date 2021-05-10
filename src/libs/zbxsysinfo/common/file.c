@@ -396,10 +396,11 @@ err:
 int	VFS_FILE_REGEXP(AGENT_REQUEST *request, AGENT_RESULT *result)
 {
 	char		*filename, *regexp, encoding[32], *output, *start_line_str, *end_line_str;
-	char		buf[MAX_BUFFER_LEN], *utf8, *tmp, *ptr = NULL;
+	char		*utf8, *tmp, *ptr = NULL, *err_msg = NULL;
 	int		nbytes, f = -1, ret = SYSINFO_RET_FAIL;
 	zbx_uint32_t	start_line, end_line, current_line = 0;
 	double		ts;
+	char		buf[MAX_BUFFER_LEN];
 
 	ts = zbx_time();
 
@@ -469,6 +470,8 @@ int	VFS_FILE_REGEXP(AGENT_REQUEST *request, AGENT_RESULT *result)
 
 	while (0 < (nbytes = zbx_read(f, buf, sizeof(buf), encoding)))
 	{
+		int	res;
+
 		if (CONFIG_TIMEOUT < zbx_time() - ts)
 		{
 			SET_MSG_RESULT(result, zbx_strdup(NULL, "Timeout while processing item."));
@@ -478,15 +481,24 @@ int	VFS_FILE_REGEXP(AGENT_REQUEST *request, AGENT_RESULT *result)
 		if (++current_line < start_line)
 			continue;
 
-		utf8 = convert_to_utf8(buf, nbytes, encoding);
+		utf8 = convert_to_utf8(buf, (size_t)nbytes, encoding);
 		zbx_rtrim(utf8, "\r\n");
-		zbx_regexp_sub(utf8, regexp, output, &ptr);
+		res = zbx_regexp_sub2(utf8, regexp, output, &ptr, &err_msg);
 		zbx_free(utf8);
 
-		if (NULL != ptr)
+		if (ZBX_REGEXP_MATCH == res && NULL != ptr)
 		{
 			SET_STR_RESULT(result, ptr);
 			break;
+		}
+
+		if (ZBX_REGEXP_COMPILE_FAIL == res || ZBX_REGEXP_RUNTIME_FAIL == res)
+		{
+			SET_MSG_RESULT(result, zbx_dsprintf(NULL, "%s regular expression in the second parameter: %s",
+					(ZBX_REGEXP_COMPILE_FAIL == res) ? "Invalid" : "Error occurred while matching",
+					err_msg));
+			zbx_free(err_msg);
+			goto err;
 		}
 
 		if (current_line >= end_line)
@@ -517,10 +529,11 @@ err:
 int	VFS_FILE_REGMATCH(AGENT_REQUEST *request, AGENT_RESULT *result)
 {
 	char		*filename, *regexp, *tmp, encoding[32];
-	char		buf[MAX_BUFFER_LEN], *utf8, *start_line_str, *end_line_str;
+	char		buf[MAX_BUFFER_LEN], *utf8, *start_line_str, *end_line_str, *err_msg = NULL;
 	int		nbytes, res, f = -1, ret = SYSINFO_RET_FAIL;
 	zbx_uint32_t	start_line, end_line, current_line = 0;
 	double		ts;
+	zbx_regexp_t	*regx = NULL;
 
 	ts = zbx_time();
 
@@ -591,6 +604,8 @@ int	VFS_FILE_REGMATCH(AGENT_REQUEST *request, AGENT_RESULT *result)
 
 	while (0 == res && 0 < (nbytes = zbx_read(f, buf, sizeof(buf), encoding)))
 	{
+		int	rc;
+
 		if (CONFIG_TIMEOUT < zbx_time() - ts)
 		{
 			SET_MSG_RESULT(result, zbx_strdup(NULL, "Timeout while processing item."));
@@ -600,10 +615,30 @@ int	VFS_FILE_REGMATCH(AGENT_REQUEST *request, AGENT_RESULT *result)
 		if (++current_line < start_line)
 			continue;
 
-		utf8 = convert_to_utf8(buf, nbytes, encoding);
+		utf8 = convert_to_utf8(buf, (size_t)nbytes, encoding);
 		zbx_rtrim(utf8, "\r\n");
-		if (NULL != zbx_regexp_match(utf8, regexp, NULL))
+
+		if (NULL == regx && SUCCEED != zbx_regexp_compile(regexp, &regx, &err_msg))
+		{
+			SET_MSG_RESULT(result, zbx_dsprintf(NULL, "invalid regular expression in the second"
+						" parameter: %s", err_msg));
+			zbx_free(err_msg);
+			zbx_free(utf8);
+			goto err;
+		}
+
+		if (ZBX_REGEXP_RUNTIME_FAIL == (rc = zbx_regexp_match_precompiled(utf8, regx, &err_msg)))
+		{
+			SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while matching regular expression:"
+						" %s", err_msg));
+			zbx_free(err_msg);
+			zbx_free(utf8);
+			goto err;
+		}
+
+		if (ZBX_REGEXP_MATCH == rc)
 			res = 1;
+
 		zbx_free(utf8);
 
 		if (current_line >= end_line)
@@ -620,6 +655,9 @@ int	VFS_FILE_REGMATCH(AGENT_REQUEST *request, AGENT_RESULT *result)
 
 	ret = SYSINFO_RET_OK;
 err:
+	if (NULL != regx)
+		zbx_regexp_free(regx);
+
 	if (-1 != f)
 		close(f);
 

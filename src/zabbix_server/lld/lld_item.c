@@ -1308,7 +1308,7 @@ static int	lld_items_preproc_step_validate(const zbx_lld_item_preproc_t * pp, zb
 	zbx_token_t	token;
 	char		err[MAX_STRING_LEN], *errmsg = NULL;
 	char		param1[ITEM_PREPROC_PARAMS_LEN * ZBX_MAX_BYTES_IN_UTF8_CHAR + 1], *param2;
-	const char	*regexp_err = NULL;
+	char		*regexp_err = NULL;
 	zbx_uint64_t	value_ui64;
 	zbx_jsonpath_t	jsonpath;
 
@@ -1338,7 +1338,8 @@ static int	lld_items_preproc_step_validate(const zbx_lld_item_preproc_t * pp, zb
 
 			if (FAIL == (ret = zbx_regexp_compile(param1, NULL, &regexp_err)))
 			{
-				zbx_strlcpy(err, regexp_err, sizeof(err));
+				zbx_snprintf(err, sizeof(err), "invalid regular expression: %s", regexp_err);
+				zbx_free(regexp_err);
 			}
 			break;
 		case ZBX_PREPROC_JSONPATH:
@@ -1409,7 +1410,10 @@ static int	lld_items_preproc_step_validate(const zbx_lld_item_preproc_t * pp, zb
 			/* break; is not missing here */
 		case ZBX_PREPROC_VALIDATE_NOT_REGEX:
 			if (FAIL == (ret = zbx_regexp_compile(pp->params, NULL, &regexp_err)))
-				zbx_strlcpy(err, regexp_err, sizeof(err));
+			{
+				zbx_snprintf(err, sizeof(err), "invalid regular expression: %s", regexp_err);
+				zbx_free(regexp_err);
+			}
 			break;
 		case ZBX_PREPROC_THROTTLE_TIMED_VALUE:
 			if (SUCCEED != str2uint64(pp->params, "smhdw", &value_ui64) || 0 == value_ui64)

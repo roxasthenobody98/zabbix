@@ -926,11 +926,29 @@ static void	process_httptest(DC_HOST *host, zbx_httptest_t *httptest)
 			}
 
 			/* required pattern */
-			if (NULL == err_str && '\0' != *db_httpstep.required &&
-					NULL == zbx_regexp_match(page.data, db_httpstep.required, NULL))
+			if (NULL == err_str && '\0' != *db_httpstep.required)
 			{
-				err_str = zbx_dsprintf(err_str, "required pattern \"%s\" was not found on %s",
-						db_httpstep.required, httpstep.url);
+				char	*err_msg = NULL;
+
+				switch (zbx_regexp_match2(page.data, db_httpstep.required, NULL, NULL, &err_msg))
+				{
+					case ZBX_REGEXP_MATCH:
+						break;
+					case ZBX_REGEXP_NO_MATCH:
+						err_str = zbx_dsprintf(err_str, "required pattern \"%s\" was not found"
+								" on %s", db_httpstep.required, httpstep.url);
+						break;
+					case ZBX_REGEXP_COMPILE_FAIL:
+						err_str = zbx_dsprintf(err_str, "invalid pattern \"%s\": %s",
+								db_httpstep.required, err_msg);
+						zbx_free(err_msg);
+						break;
+					case ZBX_REGEXP_RUNTIME_FAIL:
+						err_str = zbx_dsprintf(err_str, "error occurred while matching"
+								" pattern \"%s\": %s", db_httpstep.required, err_msg);
+						zbx_free(err_msg);
+						break;
+				}
 			}
 
 			/* variables defined in scenario */

@@ -173,30 +173,45 @@ static int	check_user(FILE *f_stat, struct passwd *usrinfo)
 	return FAIL;
 }
 
-static int	check_proccomm(FILE *f_cmd, const char *proccomm)
+/******************************************************************************
+ *                                                                            *
+ * Function: check_proccomm                                                   *
+ *                                                                            *
+ * Purpose: reads commandline from an opened file and checks if it matches    *
+ *          a precompiled regular expression                                  *
+ *                                                                            *
+ * Parameters: f_cmd  - [IN] opened file to read from                         *
+ *             regexp - [IN] precompiled regular expression                   *
+ *            err_msg - [OUT] error message. Deallocate in caller.            *
+ *                                                                            *
+ * Return value: ZBX_REGEXP_MATCH        - successful match                   *
+ *               ZBX_REGEXP_NO_MATCH     - no match or error when reading     *
+ *                                         from the opened file               *
+ *               ZBX_REGEXP_RUNTIME_FAIL - regular expression runtime error   *
+ *                                         occurred                           *
+ *                                                                            *
+ ******************************************************************************/
+static int	check_proccomm(FILE *f_cmd, const zbx_regexp_t *regexp, char **err_msg)
 {
 	char	*tmp = NULL;
-	size_t	i, l;
-	int	ret = SUCCEED;
-
-	if (NULL == proccomm || '\0' == *proccomm)
-		return SUCCEED;
+	size_t	l;
 
 	if (SUCCEED == get_cmdline(f_cmd, &tmp, &l))
 	{
+		size_t	i;
+		int	res;
+
 		for (i = 0, l -= 2; i < l; i++)
 			if ('\0' == tmp[i])
 				tmp[i] = ' ';
 
-		if (NULL != zbx_regexp_match(tmp, proccomm, NULL))
-			goto clean;
+		res = zbx_regexp_match_precompiled(tmp, regexp, err_msg);
+		zbx_free(tmp);
+
+		return res;
 	}
 
-	ret = FAIL;
-clean:
-	zbx_free(tmp);
-
-	return ret;
+	return ZBX_REGEXP_NO_MATCH;
 }
 
 static int	check_procstate(FILE *f_stat, int zbx_proc_stat)
@@ -369,8 +384,9 @@ int	PROC_MEM(AGENT_REQUEST *request, AGENT_RESULT *result)
 	double		pct_size = 0.0, pct_value = 0.0;
 	int		do_task, res, proccount = 0, invalid_user = 0, invalid_read = 0;
 	int		mem_type_tried = 0, mem_type_code;
-	char		*mem_type = NULL;
+	char		*mem_type = NULL, *err_msg = NULL;
 	const char	*mem_type_search = NULL;
+	zbx_regexp_t	*regx = NULL;
 
 	if (5 < request->nparam)
 	{
@@ -523,6 +539,15 @@ int	PROC_MEM(AGENT_REQUEST *request, AGENT_RESULT *result)
 		return SYSINFO_RET_FAIL;
 	}
 
+	if (NULL != proccomm && '\0' != *proccomm && SUCCEED != zbx_regexp_compile(proccomm, &regx, &err_msg))
+	{
+		SET_MSG_RESULT(result, zbx_dsprintf(NULL, "invalid regular expression in the fourth parameter: %s",
+				err_msg));
+		zbx_free(err_msg);
+		closedir(dir);
+		return SYSINFO_RET_FAIL;
+	}
+
 	while (NULL != (entries = readdir(dir)))
 	{
 		zbx_fclose(f_cmd);
@@ -547,8 +572,25 @@ int	PROC_MEM(AGENT_REQUEST *request, AGENT_RESULT *result)
 		if (FAIL == check_user(f_stat, usrinfo))
 			continue;
 
-		if (FAIL == check_proccomm(f_cmd, proccomm))
-			continue;
+		if (NULL != regx)
+		{
+			int	rc;
+
+			if (ZBX_REGEXP_NO_MATCH == (rc = check_proccomm(f_cmd, regx, &err_msg)))
+				continue;
+
+			if (ZBX_REGEXP_RUNTIME_FAIL == rc)
+			{
+				SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while matching regular"
+						" expression in the fourth parameter: %s", err_msg));
+				zbx_free(err_msg);
+				zbx_fclose(f_cmd);
+				zbx_fclose(f_stat);
+				zbx_regexp_free(regx);
+				closedir(dir);
+				return SYSINFO_RET_FAIL;
+			}
+		}
 
 		rewind(f_stat);
 
@@ -676,6 +718,10 @@ int	PROC_MEM(AGENT_REQUEST *request, AGENT_RESULT *result)
 clean:
 	zbx_fclose(f_cmd);
 	zbx_fclose(f_stat);
+
+	if (NULL != regx)
+		zbx_regexp_free(regx);
+
 	closedir(dir);
 
 	if ((0 == proccount && 0 != mem_type_tried) || 0 != invalid_read)
@@ -724,12 +770,13 @@ out:
 
 int	PROC_NUM(AGENT_REQUEST *request, AGENT_RESULT *result)
 {
-	char		tmp[MAX_STRING_LEN], *procname, *proccomm, *param;
+	char		tmp[MAX_STRING_LEN], *procname, *proccomm, *param, *err_msg = NULL;
 	DIR		*dir;
 	struct dirent	*entries;
 	struct passwd	*usrinfo;
 	FILE		*f_cmd = NULL, *f_stat = NULL;
 	int		proccount = 0, invalid_user = 0, zbx_proc_stat;
+	zbx_regexp_t	*regx = NULL;
 
 	if (4 < request->nparam)
 	{
@@ -790,6 +837,15 @@ int	PROC_NUM(AGENT_REQUEST *request, AGENT_RESULT *result)
 		return SYSINFO_RET_FAIL;
 	}
 
+	if (NULL != proccomm && '\0' != *proccomm && SUCCEED != zbx_regexp_compile(proccomm, &regx, &err_msg))
+	{
+		SET_MSG_RESULT(result, zbx_dsprintf(NULL, "invalid regular expression in the fourth parameter: %s",
+				err_msg));
+		zbx_free(err_msg);
+		closedir(dir);
+		return SYSINFO_RET_FAIL;
+	}
+
 	while (NULL != (entries = readdir(dir)))
 	{
 		zbx_fclose(f_cmd);
@@ -814,8 +870,25 @@ int	PROC_NUM(AGENT_REQUEST *request, AGENT_RESULT *result)
 		if (FAIL == check_user(f_stat, usrinfo))
 			continue;
 
-		if (FAIL == check_proccomm(f_cmd, proccomm))
-			continue;
+		if (NULL != regx)
+		{
+			int	rc;
+
+			if (ZBX_REGEXP_NO_MATCH == (rc = check_proccomm(f_cmd, regx, &err_msg)))
+				continue;
+
+			if (ZBX_REGEXP_RUNTIME_FAIL == rc)
+			{
+				SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while matching regular"
+						" expression in the fourth parameter: %s", err_msg));
+				zbx_free(err_msg);
+				zbx_fclose(f_cmd);
+				zbx_fclose(f_stat);
+				zbx_regexp_free(regx);
+				closedir(dir);
+				return SYSINFO_RET_FAIL;
+			}
+		}
 
 		if (FAIL == check_procstate(f_stat, zbx_proc_stat))
 			continue;
@@ -824,6 +897,10 @@ int	PROC_NUM(AGENT_REQUEST *request, AGENT_RESULT *result)
 	}
 	zbx_fclose(f_cmd);
 	zbx_fclose(f_stat);
+
+	if (NULL != regx)
+		zbx_regexp_free(regx);
+
 	closedir(dir);
 out:
 	SET_UI64_RESULT(result, proccount);
@@ -1377,6 +1454,8 @@ int	PROC_CPU_UTIL(AGENT_REQUEST *request, AGENT_RESULT *result)
 	if (NULL != (username = get_rparam(request, 1)) && '\0' == *username)
 		username = NULL;
 
+	/* if the number of 'cmdline' parameter is changed from 3 to other value */
+	/* adjust error message in zbx_procstat_get_util() */
 	if (NULL != (cmdline = get_rparam(request, 3)) && '\0' == *cmdline)
 		cmdline = NULL;
 

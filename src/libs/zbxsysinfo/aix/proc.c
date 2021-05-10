@@ -39,13 +39,31 @@ static int	check_procstate(struct procentry64 *procentry, int zbx_proc_stat)
 	return FAIL;
 }
 
-static int	check_procargs(struct procentry64 *procentry, const char *proccomm)
+/******************************************************************************
+ *                                                                            *
+ * Function: check_procargs                                                   *
+ *                                                                            *
+ * Purpose: reads commandline from a 'procentry' and checks if it matches     *
+ *          a precompiled regular expression                                  *
+ *                                                                            *
+ * Parameters: procentry - [IN] structure with commandline arguments          *
+ *                regexp - [IN] precompiled regular expression                *
+ *               err_msg - [OUT] error message. Deallocate in caller.         *
+ *                                                                            *
+ * Return value: ZBX_REGEXP_MATCH        - successful match                   *
+ *               ZBX_REGEXP_NO_MATCH     - no match or error when getting     *
+ *                                         commandline arguments              *
+ *               ZBX_REGEXP_RUNTIME_FAIL - regular expression runtime error   *
+ *                                         occurred                           *
+ *                                                                            *
+ ******************************************************************************/
+static int	check_procargs(struct procentry64 *procentry, const zbx_regexp_t *regexp, char **err_msg)
 {
 	int	i;
 	char	procargs[MAX_BUFFER_LEN];
 
 	if (0 != getargs(procentry, (int)sizeof(*procentry), procargs, (int)sizeof(procargs)))
-		return FAIL;
+		return ZBX_REGEXP_NO_MATCH;
 
 	for (i = 0; i < sizeof(procargs) - 1; i++)
 	{
@@ -61,7 +79,7 @@ static int	check_procargs(struct procentry64 *procentry, const char *proccomm)
 	if (i == sizeof(procargs) - 1)
 		procargs[i] = '\0';
 
-	return NULL != zbx_regexp_match(procargs, proccomm, NULL) ? SUCCEED : FAIL;
+	return zbx_regexp_match_precompiled(procargs, regexp, err_msg);
 }
 
 int	PROC_MEM(AGENT_REQUEST *request, AGENT_RESULT *result)
@@ -85,13 +103,14 @@ int	PROC_MEM(AGENT_REQUEST *request, AGENT_RESULT *result)
 #	define ZBX_L2PSIZE(field)	12
 #endif
 
-	char			*param, *procname, *proccomm, *mem_type = NULL;
+	char			*param, *procname, *proccomm, *mem_type = NULL, *err_msg = NULL;
 	struct passwd		*usrinfo;
 	struct procentry64	procentry;
 	pid_t			pid = 0;
 	int			do_task, mem_type_code, proccount = 0, invalid_user = 0;
 	zbx_uint64_t		mem_size = 0, byte_value = 0;
 	double			pct_size = 0.0, pct_value = 0.0;
+	zbx_regexp_t		*regx = NULL;
 
 	if (5 < request->nparam)
 	{
@@ -174,6 +193,14 @@ int	PROC_MEM(AGENT_REQUEST *request, AGENT_RESULT *result)
 	if (1 == invalid_user)	/* handle 0 for non-existent user after all parameters have been parsed and validated */
 		goto out;
 
+	if (NULL != proccomm && '\0' != *proccomm && SUCCEED != zbx_regexp_compile(proccomm, &regx, &err_msg))
+	{
+		SET_MSG_RESULT(result, zbx_dsprintf(NULL, "invalid regular expression in the fourth parameter: %s",
+				err_msg));
+		zbx_free(err_msg);
+		return SYSINFO_RET_FAIL;
+	}
+
 	while (0 < getprocs64(&procentry, (int)sizeof(struct procentry64), NULL, 0, &pid, 1))
 	{
 		if (NULL != procname && '\0' != *procname && 0 != strcmp(procname, procentry.pi_comm))
@@ -182,8 +209,22 @@ int	PROC_MEM(AGENT_REQUEST *request, AGENT_RESULT *result)
 		if (NULL != usrinfo && usrinfo->pw_uid != procentry.pi_uid)
 			continue;
 
-		if (NULL != proccomm && '\0' != *proccomm && SUCCEED != check_procargs(&procentry, proccomm))
-			continue;
+		if (NULL != regx)
+		{
+			int	rc;
+
+			if (ZBX_REGEXP_NO_MATCH == (rc = check_procargs(&procentry, regx, &err_msg)))
+				continue;
+
+			if (ZBX_REGEXP_RUNTIME_FAIL == rc)
+			{
+				SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while matching regular"
+						" expression in the fourth parameter: %s", err_msg));
+				zbx_free(err_msg);
+				zbx_regexp_free(regx);
+				return SYSINFO_RET_FAIL;
+			}
+		}
 
 		switch (mem_type_code)
 		{
@@ -251,6 +292,9 @@ int	PROC_MEM(AGENT_REQUEST *request, AGENT_RESULT *result)
 				pct_size = pct_value;
 		}
 	}
+
+	if (NULL != regx)
+		zbx_regexp_free(regx);
 out:
 	if (ZBX_PMEM != mem_type_code)
 	{
@@ -284,11 +328,12 @@ out:
 
 int	PROC_NUM(AGENT_REQUEST *request, AGENT_RESULT *result)
 {
-	char			*param, *procname, *proccomm;
+	char			*param, *procname, *proccomm, *err_msg = NULL;
 	struct passwd		*usrinfo;
 	struct procentry64	procentry;
 	pid_t			pid = 0;
 	int			proccount = 0, invalid_user = 0, zbx_proc_stat;
+	zbx_regexp_t		*regx = NULL;
 
 	if (4 < request->nparam)
 	{
@@ -328,6 +373,14 @@ int	PROC_NUM(AGENT_REQUEST *request, AGENT_RESULT *result)
 	if (1 == invalid_user)	/* handle 0 for non-existent user after all parameters have been parsed and validated */
 		goto out;
 
+	if (NULL != proccomm && '\0' != *proccomm && SUCCEED != zbx_regexp_compile(proccomm, &regx, &err_msg))
+	{
+		SET_MSG_RESULT(result, zbx_dsprintf(NULL, "invalid regular expression in the fourth parameter: %s",
+				err_msg));
+		zbx_free(err_msg);
+		return SYSINFO_RET_FAIL;
+	}
+
 	while (0 < getprocs64(&procentry, (int)sizeof(struct procentry64), NULL, 0, &pid, 1))
 	{
 		if (NULL != procname && '\0' != *procname && 0 != strcmp(procname, procentry.pi_comm))
@@ -339,11 +392,28 @@ int	PROC_NUM(AGENT_REQUEST *request, AGENT_RESULT *result)
 		if (SUCCEED != check_procstate(&procentry, zbx_proc_stat))
 			continue;
 
-		if (NULL != proccomm && '\0' != *proccomm && SUCCEED != check_procargs(&procentry, proccomm))
-			continue;
+		if (NULL != regx)
+		{
+			int	rc;
+
+			if (ZBX_REGEXP_NO_MATCH == (rc = check_procargs(&procentry, regx, &err_msg)))
+				continue;
+
+			if (ZBX_REGEXP_RUNTIME_FAIL == rc)
+			{
+				SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while matching regular"
+						" expression in the fourth parameter: %s", err_msg));
+				zbx_free(err_msg);
+				zbx_regexp_free(regx);
+				return SYSINFO_RET_FAIL;
+			}
+		}
 
 		proccount++;
 	}
+
+	if (NULL != regx)
+		zbx_regexp_free(regx);
 out:
 	SET_UI64_RESULT(result, proccount);
 

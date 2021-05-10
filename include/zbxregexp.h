@@ -23,6 +23,8 @@
 
 #define ZBX_REGEXP_NO_MATCH	0
 #define ZBX_REGEXP_MATCH	1
+#define ZBX_REGEXP_COMPILE_FAIL	-1
+#define ZBX_REGEXP_RUNTIME_FAIL	-2	/* a regexp compiled successfully but an error occurred during matching */
 
 typedef struct zbx_regexp zbx_regexp_t;
 
@@ -37,16 +39,20 @@ typedef struct
 zbx_expression_t;
 
 /* regular expressions */
-int	zbx_regexp_compile(const char *pattern, zbx_regexp_t **regexp, const char **err_msg_static);
-int	zbx_regexp_compile_ext(const char *pattern, zbx_regexp_t **regexp, int flags, const char **err_msg_static);
+int	zbx_regexp_compile(const char *pattern, zbx_regexp_t **regexp, char **err_msg);
+int	zbx_regexp_compile_ext(const char *pattern, zbx_regexp_t **regexp, int flags, char **err_msg);
 void	zbx_regexp_free(zbx_regexp_t *regexp);
-int	zbx_regexp_match_precompiled(const char *string, const zbx_regexp_t *regexp);
+int	zbx_regexp_match_precompiled(const char *string, const zbx_regexp_t *regexp, char **err_msg);
 char	*zbx_regexp_match(const char *string, const char *pattern, int *len);
+int	zbx_regexp_match2(const char *string, const char *pattern, char **matched_pos, int *len, char **err_msg);
 int	zbx_regexp_sub(const char *string, const char *pattern, const char *output_template, char **out);
-int	zbx_mregexp_sub(const char *string, const char *pattern, const char *output_template, char **out);
+int	zbx_regexp_sub2(const char *string, const char *pattern, const char *output_template, char **out,
+		char **err_msg);
+int	zbx_mregexp_sub(const char *string, const char *pattern, const char *output_template, char **out,
+		char **err_msg);
 int	zbx_iregexp_sub(const char *string, const char *pattern, const char *output_template, char **out);
 int	zbx_mregexp_sub_precompiled(const char *string, const zbx_regexp_t *regexp, const char *output_template,
-		size_t limit, char **out);
+		size_t limit, char **out, char **err_msg);
 
 void	zbx_regexp_clean_expressions(zbx_vector_ptr_t *expressions);
 
@@ -54,7 +60,7 @@ void	add_regexp_ex(zbx_vector_ptr_t *regexps, const char *name, const char *expr
 		char exp_delimiter, int case_sensitive);
 int	regexp_match_ex(const zbx_vector_ptr_t *regexps, const char *string, const char *pattern, int case_sensitive);
 int	regexp_sub_ex(const zbx_vector_ptr_t *regexps, const char *string, const char *pattern, int case_sensitive,
-		const char *output_template, char **output);
+		const char *output_template, char **output, char **err_msg);
 int	zbx_global_regexp_exists(const char *name, const zbx_vector_ptr_t *regexps);
 void	zbx_regexp_escape(char **string);
 

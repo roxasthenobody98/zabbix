@@ -774,8 +774,9 @@ static int	item_preproc_regsub_op(zbx_variant_t *value, const char *params, char
 {
 	char		pattern[ITEM_PREPROC_PARAMS_LEN * ZBX_MAX_BYTES_IN_UTF8_CHAR + 1];
 	char		*output, *new_value = NULL;
-	const char	*regex_error;
+	char		*regex_error = NULL;
 	zbx_regexp_t	*regex = NULL;
+	int		res;
 
 	if (FAIL == item_preproc_convert_value(value, ZBX_VARIANT_STR, errmsg))
 		return FAIL;
@@ -793,12 +794,22 @@ static int	item_preproc_regsub_op(zbx_variant_t *value, const char *params, char
 	if (FAIL == zbx_regexp_compile_ext(pattern, &regex, 0, &regex_error))	/* PCRE_MULTILINE is not used here */
 	{
 		*errmsg = zbx_dsprintf(*errmsg, "invalid regular expression: %s", regex_error);
+		zbx_free(regex_error);
 		return FAIL;
 	}
 
-	if (FAIL == zbx_mregexp_sub_precompiled(value->data.str, regex, output, ZBX_MAX_RECV_DATA_SIZE, &new_value))
+	if (ZBX_REGEXP_NO_MATCH == (res = zbx_mregexp_sub_precompiled(value->data.str, regex, output,
+			ZBX_MAX_RECV_DATA_SIZE, &new_value, &regex_error)))
 	{
-		*errmsg = zbx_strdup(*errmsg, "pattern does not match");
+		*errmsg = zbx_strdup(*errmsg, "pattern does not match or substitution failed");
+		zbx_regexp_free(regex);
+		return FAIL;
+	}
+
+	if (ZBX_REGEXP_RUNTIME_FAIL == res)
+	{
+		*errmsg = zbx_dsprintf(*errmsg, "error occurred while matching regular expression: %s", regex_error);
+		zbx_free(regex_error);
 		zbx_regexp_free(regex);
 		return FAIL;
 	}
@@ -1138,19 +1149,19 @@ out:
  * Parameters: value_type - [IN] the item type                                *
  *             value      - [IN/OUT] the value to process                     *
  *             params     - [IN] the operation parameters                     *
- *             errmsg     - [OUT] error message                               *
+ *             error      - [OUT] error message                               *
  *                                                                            *
  * Return value: SUCCEED - the preprocessing step finished successfully       *
- *               FAIL - otherwise, errmsg contains the error message          *
+ *               FAIL - otherwise, 'error' contains the error message         *
  *                                                                            *
  ******************************************************************************/
 static int	item_preproc_validate_regex(const zbx_variant_t *value, const char *params, char **error)
 {
 	zbx_variant_t	value_str;
-	int		ret = FAIL;
+	int		rc, ret = FAIL;
 	zbx_regexp_t	*regex;
-	const char	*errptr = NULL;
-	char		*errmsg;
+	char		*regex_err = NULL;
+	char		*errmsg = NULL;
 
 	zbx_variant_copy(&value_str, value);
 
@@ -1160,16 +1171,26 @@ static int	item_preproc_validate_regex(const zbx_variant_t *value, const char *p
 		goto out;
 	}
 
-	if (FAIL == zbx_regexp_compile(params, &regex, &errptr))
+	if (FAIL == zbx_regexp_compile(params, &regex, &regex_err))
 	{
-		errmsg = zbx_dsprintf(NULL, "invalid regular expression pattern: %s", errptr);
+		errmsg = zbx_dsprintf(NULL, "invalid regular expression pattern: %s", regex_err);
+		zbx_free(regex_err);
 		goto out;
 	}
 
-	if (0 != zbx_regexp_match_precompiled(value_str.data.str, regex))
-		errmsg = zbx_strdup(NULL, "value does not match regular expression");
-	else
+	if (ZBX_REGEXP_MATCH == (rc = zbx_regexp_match_precompiled(value_str.data.str, regex, &regex_err)))
+	{
 		ret = SUCCEED;
+	}
+	else if (ZBX_REGEXP_NO_MATCH == rc)
+	{
+		errmsg = zbx_strdup(NULL, "value does not match regular expression");
+	}
+	else if (ZBX_REGEXP_RUNTIME_FAIL == rc)
+	{
+		errmsg = zbx_dsprintf(NULL, "error occurred while matching regular expression: %s", regex_err);
+		zbx_free(regex_err);
+	}
 
 	zbx_regexp_free(regex);
 out:
@@ -1179,7 +1200,7 @@ out:
 	{
 		*error = zbx_dsprintf(*error, "cannot perform regular expression \"%s\" validation"
 				" for value of type \"%s\": %s",
-				params, zbx_variant_type_desc(value), errmsg);
+				params, zbx_variant_type_desc(value), ZBX_NULL2STR(errmsg));
 		zbx_free(errmsg);
 	}
 
@@ -1194,19 +1215,19 @@ out:
  * Parameters: value_type - [IN] the item type                                *
  *             value      - [IN/OUT] the value to process                     *
  *             params     - [IN] the operation parameters                     *
- *             errmsg     - [OUT] error message                               *
+ *             error      - [OUT] error message                               *
  *                                                                            *
  * Return value: SUCCEED - the preprocessing step finished successfully       *
- *               FAIL - otherwise, errmsg contains the error message          *
+ *               FAIL - otherwise, 'error' contains the error message         *
  *                                                                            *
  ******************************************************************************/
 static int	item_preproc_validate_not_regex(const zbx_variant_t *value, const char *params, char **error)
 {
 	zbx_variant_t	value_str;
-	int		ret = FAIL;
+	int		rc, ret = FAIL;
 	zbx_regexp_t	*regex;
-	const char	*errptr = NULL;
-	char		*errmsg;
+	char		*regex_err = NULL;
+	char		*errmsg = NULL;
 
 	zbx_variant_copy(&value_str, value);
 
@@ -1216,18 +1237,26 @@ static int	item_preproc_validate_not_regex(const zbx_variant_t *value, const cha
 		goto out;
 	}
 
-	if (FAIL == zbx_regexp_compile(params, &regex, &errptr))
+	if (FAIL == zbx_regexp_compile(params, &regex, &regex_err))
 	{
-		errmsg = zbx_dsprintf(NULL, "invalid regular expression pattern: %s", errptr);
+		errmsg = zbx_dsprintf(NULL, "invalid regular expression pattern: %s", regex_err);
+		zbx_free(regex_err);
 		goto out;
 	}
 
-	if (0 == zbx_regexp_match_precompiled(value_str.data.str, regex))
+	if (ZBX_REGEXP_NO_MATCH == (rc = zbx_regexp_match_precompiled(value_str.data.str, regex, &regex_err)))
+	{
+		ret = SUCCEED;
+	}
+	else if (ZBX_REGEXP_MATCH == rc)
 	{
 		errmsg = zbx_strdup(NULL, "value matches regular expression");
 	}
-	else
-		ret = SUCCEED;
+	else if (ZBX_REGEXP_RUNTIME_FAIL == rc)
+	{
+		errmsg = zbx_dsprintf(NULL, "error occurred while matching regular expression: %s", regex_err);
+		zbx_free(regex_err);
+	}
 
 	zbx_regexp_free(regex);
 out:
@@ -1237,7 +1266,7 @@ out:
 	{
 		*error = zbx_dsprintf(*error, "cannot perform regular expression \"%s\" validation"
 				" for value of type \"%s\": %s",
-				params, zbx_variant_type_desc(value), errmsg);
+				params, zbx_variant_type_desc(value), ZBX_NULL2STR(errmsg));
 		zbx_free(errmsg);
 	}
 
@@ -1428,7 +1457,8 @@ out:
 static int	item_preproc_get_error_from_regex(const zbx_variant_t *value, const char *params, char **error)
 {
 	zbx_variant_t	value_str;
-	int		ret;
+	int		ret, rc;
+	char		*err_msg = NULL;
 	char		pattern[ITEM_PREPROC_PARAMS_LEN * ZBX_MAX_BYTES_IN_UTF8_CHAR + 1], *output;
 
 	zbx_variant_copy(&value_str, value);
@@ -1449,9 +1479,14 @@ static int	item_preproc_get_error_from_regex(const zbx_variant_t *value, const c
 
 	*output++ = '\0';
 
-	if (FAIL == zbx_mregexp_sub(value_str.data.str, pattern, output, error))
+	rc = zbx_mregexp_sub(value_str.data.str, pattern, output, error, &err_msg);
+
+	if (ZBX_REGEXP_COMPILE_FAIL == rc || ZBX_REGEXP_RUNTIME_FAIL == rc)
 	{
-		*error = zbx_dsprintf(*error, "invalid regular expression \"%s\"", pattern);
+		*error = zbx_dsprintf(*error, (ZBX_REGEXP_COMPILE_FAIL == rc) ?
+				"invalid regular expression \"%s\": %s" :
+				"error occurred while matching regular expression \"%s\": %s", pattern, err_msg);
+		zbx_free(err_msg);
 		ret = FAIL;
 		goto out;
 	}

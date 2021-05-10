@@ -117,15 +117,33 @@ static int	httpmacro_append_pair(zbx_httptest_t *httptest, const char *pkey, siz
 	zbx_strncpy_alloc(&value_str, &value_size, &value_offset, pvalue, nvalue);
 	if (0 == strncmp(REGEXP_PREFIX, value_str, REGEXP_PREFIX_SIZE))
 	{
+		char	*err_msg = NULL;
 		int	rc;
+
 		/* The value contains regexp pattern, retrieve the first captured group or fail.  */
 		/* The \@ sequence is a special construct to fail if the pattern matches but does */
 		/* not contain groups to capture.                                                 */
 
-		rc = zbx_mregexp_sub(data, value_str + REGEXP_PREFIX_SIZE, "\\@", (char **)&pair.second);
+		rc = zbx_mregexp_sub(data, value_str + REGEXP_PREFIX_SIZE, "\\@", (char **)&pair.second, &err_msg);
+
+		if (ZBX_REGEXP_COMPILE_FAIL == rc || ZBX_REGEXP_RUNTIME_FAIL == rc)
+		{
+			if (NULL != err_str && NULL == *err_str)
+			{
+				*err_str = zbx_dsprintf(*err_str, (ZBX_REGEXP_COMPILE_FAIL == rc) ?
+						"invalid regular expression \"%s\": %s" :
+						"error occurred while matching regular expression \"%s\": %s",
+						value_str + REGEXP_PREFIX_SIZE, err_msg);
+			}
+
+			zbx_free(err_msg);
+			zbx_free(value_str);
+			goto out;
+		}
+
 		zbx_free(value_str);
 
-		if (SUCCEED != rc || NULL == pair.second)
+		if (NULL == pair.second)
 		{
 			zabbix_log(LOG_LEVEL_DEBUG, "%s() cannot extract the value of \"%.*s\" from response",
 					__func__, (int)nkey, pkey);

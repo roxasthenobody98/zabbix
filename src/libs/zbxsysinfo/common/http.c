@@ -518,11 +518,12 @@ int	WEB_PAGE_REGEXP(AGENT_REQUEST *request, AGENT_RESULT *result)
 
 	if (SYSINFO_RET_OK == (ret = get_http_page(hostname, path_str, port_str, &buffer, &error)))
 	{
-		char	*ptr = NULL, *str;
+		char	*str, *ptr = NULL, *err_msg = NULL;
 
 		for (str = buffer; ;)
 		{
 			char	*newline;
+			int	res;
 
 			if (NULL != (newline = strchr(str, '\n')))
 			{
@@ -532,8 +533,20 @@ int	WEB_PAGE_REGEXP(AGENT_REQUEST *request, AGENT_RESULT *result)
 					*newline = '\0';
 			}
 
-			if (SUCCEED == zbx_regexp_sub(str, regexp, output, &ptr) && NULL != ptr)
+			res = zbx_regexp_sub2(str, regexp, output, &ptr, &err_msg);
+
+			if (ZBX_REGEXP_MATCH == res && NULL != ptr)
 				break;
+
+			if (ZBX_REGEXP_COMPILE_FAIL == res || ZBX_REGEXP_RUNTIME_FAIL == res)
+			{
+				SET_MSG_RESULT(result, zbx_dsprintf(NULL, "%s regular expression in the fourth"
+						" parameter: %s", (ZBX_REGEXP_COMPILE_FAIL == res) ?
+						"Invalid" : "Error occurred while matching", err_msg));
+				zbx_free(err_msg);
+				zbx_free(buffer);
+				return SYSINFO_RET_FAIL;
+			}
 
 			if (NULL != newline)
 				str = newline + 1;

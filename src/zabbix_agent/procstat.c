@@ -23,6 +23,7 @@
 #include "stats.h"
 #include "ipc.h"
 #include "procstat.h"
+#include "zbxregexp.h"
 
 #ifdef ZBX_PROCSTAT_COLLECTOR
 
@@ -1031,7 +1032,8 @@ void	zbx_procstat_destroy(void)
  *     SUCCEED - the utime value was retrieved successfully                   *
  *     FAIL    - either collector does not have at least two data samples     *
  *               required to calculate the statistics, or an error occurred   *
- *               during the collection process. In the second case the errmsg *
+ *               during the collection process (e.g. invalid regular          *
+ *               expression was specified). In the second case the errmsg     *
  *               will contain an error message.                               *
  *     This function calls exit() on shared memory errors.                    *
  *                                                                            *
@@ -1050,9 +1052,23 @@ int	zbx_procstat_get_util(const char *procname, const char *username, const char
 	if (NULL == (query = procstat_get_query(procstat_ref.addr, procname, username, cmdline, flags)))
 	{
 		if (procstat_queries_num(procstat_ref.addr) == PROCSTAT_MAX_QUERIES)
+		{
 			*errmsg = zbx_strdup(*errmsg, "Maximum number of queries reached.");
+		}
 		else
+		{
+			char	*errmsg_local = NULL;
+
+			if (NULL != cmdline && FAIL == zbx_regexp_compile(cmdline, NULL, &errmsg_local))
+			{
+				*errmsg = zbx_dsprintf(*errmsg, "Invalid regular expression in the fourth parameter:"
+						" %s", errmsg_local);
+				zbx_free(errmsg_local);
+				goto out;
+			}
+
 			procstat_add(procname, username, cmdline, flags);
+		}
 
 		goto out;
 	}

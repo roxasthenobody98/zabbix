@@ -214,10 +214,30 @@ void	__zbx_mock_assert_json_eq(const char *file, int line, const char *prefix_ms
 		if ('/' == *(char *)pair_expected->second)
 		{
 			char	*pattern = (char *)pair_expected->second + 1;
-			if (NULL == zbx_regexp_match(pair_returned->second, pattern, NULL))
+			char	*err_msg = NULL;
+			int	res;
+
+			switch (res = zbx_regexp_match2(pair_returned->second, pattern, NULL, NULL, &err_msg))
 			{
-				_FAIL(file, line, prefix_msg, "Key \"%s\" value \"%s\" does not match pattern \"%s\"",
-						pair_returned->first, pair_returned->second, pattern);
+				char	buf[MAX_STRING_LEN];
+
+				case ZBX_REGEXP_MATCH:
+					break;
+				case ZBX_REGEXP_NO_MATCH:
+					_FAIL(file, line, prefix_msg, "Key \"%s\" value \"%s\" does not match pattern"
+							" \"%s\"", pair_returned->first, pair_returned->second,
+							pattern);
+					break;
+				case ZBX_REGEXP_COMPILE_FAIL:
+				case ZBX_REGEXP_RUNTIME_FAIL:
+					/* Copy dynamically allocated 'err_msg' and release it */
+					/* before calling _FAIL() to avoid memory leak. */
+					zbx_strlcpy(buf, err_msg, sizeof(buf));
+					zbx_free(err_msg);
+					_FAIL(file, line, prefix_msg, "%s regular expression \"%s\": %s",
+							(ZBX_REGEXP_COMPILE_FAIL == res) ?
+							"Invalid" : "Error occurred when matching", pattern, buf);
+					break;
 			}
 		}
 		else

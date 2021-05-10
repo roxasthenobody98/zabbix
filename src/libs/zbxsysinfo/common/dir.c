@@ -27,6 +27,11 @@
 #	include "disk.h"
 #endif
 
+#define ZBX_FILENAME_MATCH	0
+#define ZBX_FILENAME_NO_MATCH	1
+#define ZBX_FILENAME_INCL_FAIL	2
+#define ZBX_FILENAME_EXCL_FAIL	3
+
 /******************************************************************************
  *                                                                            *
  * Function: filename_matches                                                 *
@@ -39,15 +44,43 @@
  *                               include any file)                            *
  *             regex_excl - [IN] regexp for filenames to exclude (NULL means  *
  *                               exclude none)                                *
+ *                err_msg - [OUT] error message. Deallocate in caller.        *
  *                                                                            *
- * Return value: If filename passes both checks, nonzero value is returned.   *
- *               If filename fails to pass, 0 is returned.                    *
+ * Return value: ZBX_FILENAME_MATCH - filename passed both checks             *
+ *               ZBX_FILENAME_NO_MATCH - filename did not pass checks         *
+ *               ZBX_FILENAME_INCL_FAIL - regex_incl runtime error occurred   *
+ *               ZBX_FILENAME_EXCL_FAIL - regex_excl runtime error occurred   *
+ *               If runtime error occurred then 'err_msg' contains            *
+ *               a dynamically allocated error message.                       *
  *                                                                            *
  ******************************************************************************/
-static int	filename_matches(const char *fname, const zbx_regexp_t *regex_incl, const zbx_regexp_t *regex_excl)
+static int	filename_matches(const char *fname, const zbx_regexp_t *regex_incl, const zbx_regexp_t *regex_excl,
+		char **err_msg)
 {
-	return ((NULL == regex_incl || 0 == zbx_regexp_match_precompiled(fname, regex_incl)) &&
-			(NULL == regex_excl || 0 != zbx_regexp_match_precompiled(fname, regex_excl)));
+	int	res;
+
+	if (NULL != regex_incl)
+	{
+		if (ZBX_REGEXP_MATCH != (res = zbx_regexp_match_precompiled(fname, regex_incl, err_msg)))
+		{
+			if (ZBX_REGEXP_NO_MATCH == res)
+				return ZBX_FILENAME_NO_MATCH;
+
+			/* ZBX_REGEXP_RUNTIME_FAIL */
+			return ZBX_FILENAME_INCL_FAIL;
+		}
+	}
+
+	if (NULL != regex_excl)
+	{
+		if (ZBX_REGEXP_MATCH == (res = zbx_regexp_match_precompiled(fname, regex_excl, err_msg)))
+			return ZBX_FILENAME_NO_MATCH;
+
+		if (ZBX_REGEXP_RUNTIME_FAIL == res)
+			return ZBX_FILENAME_EXCL_FAIL;
+	}
+
+	return ZBX_FILENAME_MATCH;
 }
 
 /******************************************************************************
@@ -115,7 +148,7 @@ static int	prepare_common_parameters(const AGENT_REQUEST *request, AGENT_RESULT 
 		zbx_stat_t *status, int depth_param, int excl_dir_param, int param_count)
 {
 	char	*dir_param, *regex_incl_str, *regex_excl_str, *regex_excl_dir_str, *max_depth_str;
-	const char	*error = NULL;
+	char	*error = NULL;
 
 	if (param_count < request->nparam)
 	{
@@ -141,6 +174,7 @@ static int	prepare_common_parameters(const AGENT_REQUEST *request, AGENT_RESULT 
 		{
 			SET_MSG_RESULT(result, zbx_dsprintf(NULL,
 					"Invalid regular expression in second parameter: %s", error));
+			zbx_free(error);
 			return FAIL;
 		}
 	}
@@ -151,6 +185,7 @@ static int	prepare_common_parameters(const AGENT_REQUEST *request, AGENT_RESULT 
 		{
 			SET_MSG_RESULT(result, zbx_dsprintf(NULL,
 					"Invalid regular expression in third parameter: %s", error));
+			zbx_free(error);
 			return FAIL;
 		}
 	}
@@ -161,6 +196,7 @@ static int	prepare_common_parameters(const AGENT_REQUEST *request, AGENT_RESULT 
 		{
 			SET_MSG_RESULT(result, zbx_dsprintf(NULL, "Invalid regular expression in %s parameter: %s",
 					(5 == excl_dir_param ? "sixth" : "eleventh"), error));
+			zbx_free(error);
 			return FAIL;
 		}
 	}
@@ -595,12 +631,20 @@ static int	vfs_dir_size(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE tim
 		{
 			SET_MSG_RESULT(result, error);
 			list.values_num++;
+
+			if (0 == FindClose(handle))
+			{
+				zabbix_log(LOG_LEVEL_DEBUG, "%s() cannot close directory listing '%s': %s",
+						__function_name, item->path, zbx_strerror(errno));
+			}
+
 			goto err2;
 		}
 
 		do
 		{
 			char	*path;
+			int	res;
 
 			if (0 == wcscmp(data.cFileName, L".") || 0 == wcscmp(data.cFileName, L".."))
 				continue;
@@ -612,12 +656,35 @@ static int	vfs_dir_size(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE tim
 			if (NULL != regex_excl_dir && 0 != (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
 				/* consider only path relative to path given in first parameter */
-				if (0 == zbx_regexp_match_precompiled(path + dir_len + 1, regex_excl_dir))
+				if (ZBX_REGEXP_MATCH == (res = zbx_regexp_match_precompiled(path + dir_len + 1,
+								regex_excl_dir, &error)))
 				{
 					zbx_free(wpath);
 					zbx_free(path);
 					zbx_free(name);
 					continue;
+				}
+
+				/* ZBX_REGEXP_NO_MATCH or ZBX_REGEXP_RUNTIME_FAIL */
+				if (ZBX_REGEXP_RUNTIME_FAIL == res)
+				{
+					SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while"
+							" matching exclude directory regular expression: %s", error));
+					zbx_free(error);
+					zbx_free(wpath);
+					zbx_free(path);
+					zbx_free(name);
+					zbx_free(item->path);
+					zbx_free(item);
+
+					if (0 == FindClose(handle))
+					{
+						zabbix_log(LOG_LEVEL_DEBUG, "%s() cannot close directory listing '%s':"
+								" %s", __function_name, item->path,
+								zbx_strerror(errno));
+					}
+
+					goto err2;
 				}
 			}
 
@@ -631,7 +698,8 @@ static int	vfs_dir_size(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE tim
 
 			if (0 == (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))	/* not a directory */
 			{
-				if (0 != filename_matches(name, regex_incl, regex_excl))
+				if (ZBX_FILENAME_MATCH == (res = filename_matches(name, regex_incl, regex_excl,
+						&error)))
 				{
 					DWORD	size_high, size_low;
 
@@ -651,6 +719,29 @@ static int	vfs_dir_size(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE tim
 						size += file_size;
 					}
 				}
+				else if (ZBX_FILENAME_INCL_FAIL == res || ZBX_FILENAME_EXCL_FAIL == res)
+				{
+					SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while matching %s"
+							" regular expression: %s",
+							(ZBX_FILENAME_INCL_FAIL == res) ? "include" : "exclude",
+							error));
+					zbx_free(error);
+					zbx_free(wpath);
+					zbx_free(path);
+					zbx_free(name);
+					zbx_free(item->path);
+					zbx_free(item);
+
+					if (0 == FindClose(handle))
+					{
+						zabbix_log(LOG_LEVEL_DEBUG, "%s() cannot close directory listing '%s':"
+								" %s", __function_name, item->path,
+								zbx_strerror(errno));
+					}
+
+					goto err2;
+				}
+
 				zbx_free(path);
 			}
 			else if (SUCCEED != queue_directory(&list, path, item->depth, max_depth))
@@ -692,8 +783,8 @@ err1:
 #else /* not _WINDOWS or __MINGW32__ */
 static int	vfs_dir_size(AGENT_REQUEST *request, AGENT_RESULT *result)
 {
-	char			*dir = NULL;
-	int			mode, max_depth, ret = SYSINFO_RET_FAIL;
+	char			*dir = NULL, *error = NULL;
+	int			mode, max_depth, ret = SYSINFO_RET_FAIL, res;
 	zbx_uint64_t		size = 0;
 	zbx_vector_ptr_t	list, descriptors;
 	zbx_stat_t		status;
@@ -720,14 +811,21 @@ static int	vfs_dir_size(AGENT_REQUEST *request, AGENT_RESULT *result)
 		goto err2;
 	}
 
-	/* on UNIX count top directory size */
+	/* on UNIX count the size of top directory */
 
-	if (0 != filename_matches(dir, regex_incl, regex_excl))
+	if (ZBX_FILENAME_MATCH == (res = filename_matches(dir, regex_incl, regex_excl, &error)))
 	{
 		if (SIZE_MODE_APPARENT == mode)
 			size += (zbx_uint64_t)status.st_size;
 		else	/* must be SIZE_MODE_DISK */
 			size += (zbx_uint64_t)status.st_blocks * DISK_BLOCK_SIZE;
+	}
+	else if (ZBX_FILENAME_INCL_FAIL == res || ZBX_FILENAME_EXCL_FAIL == res)
+	{
+		SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while matching %s regular expression: %s",
+				(ZBX_FILENAME_INCL_FAIL == res) ? "include" : "exclude", error));
+		zbx_free(error);
+		goto err2;
 	}
 
 	while (0 < list.values_num)
@@ -768,43 +866,75 @@ static int	vfs_dir_size(AGENT_REQUEST *request, AGENT_RESULT *result)
 				if (NULL != regex_excl_dir && 0 != S_ISDIR(status.st_mode))
 				{
 					/* consider only path relative to path given in first parameter */
-					if (0 == zbx_regexp_match_precompiled(path + dir_len + 1, regex_excl_dir))
+					if (ZBX_REGEXP_MATCH == (res = zbx_regexp_match_precompiled(path + dir_len + 1,
+							regex_excl_dir, &error)))
 					{
 						zbx_free(path);
 						continue;
 					}
+
+					/* ZBX_REGEXP_NO_MATCH or ZBX_REGEXP_RUNTIME_FAIL */
+					if (ZBX_REGEXP_RUNTIME_FAIL == res)
+					{
+						SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while"
+								" matching exclude directory regular expression: %s",
+								error));
+						zbx_free(error);
+						zbx_free(path);
+						zbx_free(item->path);
+						zbx_free(item);
+						closedir(directory);
+						goto err2;
+					}
 				}
 
-				if ((0 != S_ISREG(status.st_mode) || 0 != S_ISLNK(status.st_mode) ||
-						0 != S_ISDIR(status.st_mode)) &&
-						0 != filename_matches(entry->d_name, regex_incl, regex_excl))
+				if (0 != S_ISREG(status.st_mode) || 0 != S_ISLNK(status.st_mode) ||
+						0 != S_ISDIR(status.st_mode))
 				{
-					if (0 != S_ISREG(status.st_mode) && 1 < status.st_nlink)
+					if (ZBX_FILENAME_MATCH == (res = filename_matches(entry->d_name, regex_incl,
+							regex_excl, &error)))
 					{
-						zbx_file_descriptor_t	*file;
-
-						/* skip file if inode was already processed (multiple hardlinks) */
-						file = (zbx_file_descriptor_t*)zbx_malloc(NULL,
-								sizeof(zbx_file_descriptor_t));
-
-						file->st_dev = status.st_dev;
-						file->st_ino = status.st_ino;
-
-						if (FAIL != zbx_vector_ptr_search(&descriptors, file,
-								compare_descriptors))
+						if (0 != S_ISREG(status.st_mode) && 1 < status.st_nlink)
 						{
-							zbx_free(file);
-							zbx_free(path);
-							continue;
+							zbx_file_descriptor_t	*file;
+
+							/* skip file if inode was already processed (multiple */
+							/* hardlinks) */
+							file = (zbx_file_descriptor_t*)zbx_malloc(NULL,
+									sizeof(zbx_file_descriptor_t));
+
+							file->st_dev = status.st_dev;
+							file->st_ino = status.st_ino;
+
+							if (FAIL != zbx_vector_ptr_search(&descriptors, file,
+									compare_descriptors))
+							{
+								zbx_free(file);
+								zbx_free(path);
+								continue;
+							}
+
+							zbx_vector_ptr_append(&descriptors, file);
 						}
 
-						zbx_vector_ptr_append(&descriptors, file);
+						if (SIZE_MODE_APPARENT == mode)
+							size += (zbx_uint64_t)status.st_size;
+						else	/* must be SIZE_MODE_DISK */
+							size += (zbx_uint64_t)status.st_blocks * DISK_BLOCK_SIZE;
 					}
-
-					if (SIZE_MODE_APPARENT == mode)
-						size += (zbx_uint64_t)status.st_size;
-					else	/* must be SIZE_MODE_DISK */
-						size += (zbx_uint64_t)status.st_blocks * DISK_BLOCK_SIZE;
+					else if (ZBX_FILENAME_INCL_FAIL == res || ZBX_FILENAME_EXCL_FAIL == res)
+					{
+						SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while"
+								" matching %s regular expression: %s",
+								(ZBX_FILENAME_INCL_FAIL == res) ? "include" : "exclude",
+								error));
+						zbx_free(error);
+						zbx_free(path);
+						zbx_free(item->path);
+						zbx_free(item);
+						closedir(directory);
+						goto err2;
+					}
 				}
 
 				if (!(0 != S_ISDIR(status.st_mode) && SUCCEED == queue_directory(&list, path,
@@ -853,13 +983,13 @@ int	VFS_DIR_SIZE(AGENT_REQUEST *request, AGENT_RESULT *result)
  *                                                                            *
  * Return value: boolean failure flag                                         *
  *                                                                            *
- * Comments: under Widows we only support entry types "file" and "dir"        *
+ * Comments: on MS Windows we only support entry types "file" and "dir"       *
  *                                                                            *
  *****************************************************************************/
 #if defined(_WINDOWS) || defined(__MINGW32__)
 static int	vfs_dir_count(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE timeout_event)
 {
-	char			*dir = NULL;
+	char			*dir = NULL, *error = NULL;
 	int			types, max_depth, ret = SYSINFO_RET_FAIL;
 	zbx_uint64_t		count = 0;
 	zbx_vector_ptr_t	list, descriptors;
@@ -939,7 +1069,7 @@ static int	vfs_dir_count(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE ti
 		do
 		{
 			char	*path;
-			int	match;
+			int	match = 0, res;
 
 			if (0 == wcscmp(data.cFileName, L".") || 0 == wcscmp(data.cFileName, L".."))
 				continue;
@@ -950,27 +1080,69 @@ static int	vfs_dir_count(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE ti
 			if (NULL != regex_excl_dir && 0 != (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
 				/* consider only path relative to path given in first parameter */
-				if (0 == zbx_regexp_match_precompiled(path + dir_len + 1, regex_excl_dir))
+				if (ZBX_REGEXP_MATCH == (res = zbx_regexp_match_precompiled(path + dir_len + 1,
+						regex_excl_dir, &error)))
 				{
 					zbx_free(path);
 					zbx_free(name);
 					continue;
 				}
+
+				/* ZBX_REGEXP_NO_MATCH or ZBX_REGEXP_RUNTIME_FAIL */
+				if (ZBX_REGEXP_RUNTIME_FAIL == res)
+				{
+					SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while"
+							" matching exclude directory regular expression: %s", error));
+					zbx_free(error);
+					zbx_free(path);
+					zbx_free(name);
+					zbx_free(item->path);
+					zbx_free(item);
+
+					if (0 == FindClose(handle))
+					{
+						zabbix_log(LOG_LEVEL_DEBUG, "%s() cannot close directory listing '%s':"
+								" %s", __function_name, item->path,
+								zbx_strerror(errno));
+					}
+
+					goto err2;
+				}
 			}
 
-			match = filename_matches(name, regex_incl, regex_excl);
+			if (ZBX_FILENAME_MATCH == (res = filename_matches(name, regex_incl, regex_excl, &error)))
+			{
+				match = 1;
 
-			if (min_size > DW2UI64(data.nFileSizeHigh, data.nFileSizeLow))
-				match = 0;
+				if ((min_size > DW2UI64(data.nFileSizeHigh, data.nFileSizeLow)) ||
+						(max_size < DW2UI64(data.nFileSizeHigh, data.nFileSizeLow)) ||
+						(min_time >= FT2UT(data.ftLastWriteTime)) ||
+						(max_time < FT2UT(data.ftLastWriteTime)))
+				{
+					match = 0;
+				}
+			}
+			else if (ZBX_FILENAME_INCL_FAIL == res || ZBX_FILENAME_EXCL_FAIL == res)
+			{
+				SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while matching %s"
+							" regular expression: %s",
+							(ZBX_FILENAME_INCL_FAIL == res) ? "include" : "exclude",
+							error));
+					zbx_free(error);
+					zbx_free(path);
+					zbx_free(name);
+					zbx_free(item->path);
+					zbx_free(item);
 
-			if (max_size < DW2UI64(data.nFileSizeHigh, data.nFileSizeLow))
-				match = 0;
+					if (0 == FindClose(handle))
+					{
+						zabbix_log(LOG_LEVEL_DEBUG, "%s() cannot close directory listing '%s':"
+								" %s", __function_name, item->path,
+								zbx_strerror(errno));
+					}
 
-			if (min_time >= FT2UT(data.ftLastWriteTime))
-				match = 0;
-
-			if (max_time < FT2UT(data.ftLastWriteTime))
-				match = 0;
+					goto err2;
+			}
 
 			switch (data.dwFileAttributes & (FILE_ATTRIBUTE_REPARSE_POINT | FILE_ATTRIBUTE_DIRECTORY))
 			{
@@ -1101,30 +1273,64 @@ static int	vfs_dir_count(AGENT_REQUEST *request, AGENT_RESULT *result)
 
 			if (0 == lstat(path, &status))
 			{
+				char	*error = NULL;
+				int	res;
+
 				if (NULL != regex_excl_dir && 0 != S_ISDIR(status.st_mode))
 				{
 					/* consider only path relative to path given in first parameter */
-					if (0 == zbx_regexp_match_precompiled(path + dir_len + 1, regex_excl_dir))
+					if (ZBX_REGEXP_MATCH == (res = zbx_regexp_match_precompiled(path + dir_len + 1,
+							regex_excl_dir, &error)))
 					{
 						zbx_free(path);
 						continue;
 					}
+
+					/* ZBX_REGEXP_NO_MATCH or ZBX_REGEXP_RUNTIME_FAIL */
+					if (ZBX_REGEXP_RUNTIME_FAIL == res)
+					{
+						SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while"
+								" matching exclude directory regular expression: %s",
+								error));
+						zbx_free(error);
+						zbx_free(path);
+						zbx_free(item->path);
+						zbx_free(item);
+						closedir(directory);
+						goto err2;
+					}
 				}
 
-				if (0 != filename_matches(entry->d_name, regex_incl, regex_excl) && (
-						(S_ISREG(status.st_mode)  && 0 != (types & ZBX_FT_FILE)) ||
-						(S_ISDIR(status.st_mode)  && 0 != (types & ZBX_FT_DIR)) ||
-						(S_ISLNK(status.st_mode)  && 0 != (types & ZBX_FT_SYM)) ||
-						(S_ISSOCK(status.st_mode) && 0 != (types & ZBX_FT_SOCK)) ||
-						(S_ISBLK(status.st_mode)  && 0 != (types & ZBX_FT_BDEV)) ||
-						(S_ISCHR(status.st_mode)  && 0 != (types & ZBX_FT_CDEV)) ||
-						(S_ISFIFO(status.st_mode) && 0 != (types & ZBX_FT_FIFO))) &&
-						(min_size <= (zbx_uint64_t)status.st_size
-								&& (zbx_uint64_t)status.st_size <= max_size) &&
-						(min_time < status.st_mtime &&
-								status.st_mtime <= max_time))
+				if (ZBX_FILENAME_MATCH == (res = filename_matches(entry->d_name, regex_incl, regex_excl,
+						&error)))
 				{
-					++count;
+					if (((S_ISREG(status.st_mode) && 0 != (types & ZBX_FT_FILE)) ||
+							(S_ISDIR(status.st_mode)  && 0 != (types & ZBX_FT_DIR)) ||
+							(S_ISLNK(status.st_mode)  && 0 != (types & ZBX_FT_SYM)) ||
+							(S_ISSOCK(status.st_mode) && 0 != (types & ZBX_FT_SOCK)) ||
+							(S_ISBLK(status.st_mode)  && 0 != (types & ZBX_FT_BDEV)) ||
+							(S_ISCHR(status.st_mode)  && 0 != (types & ZBX_FT_CDEV)) ||
+							(S_ISFIFO(status.st_mode) && 0 != (types & ZBX_FT_FIFO))) &&
+							(min_size <= (zbx_uint64_t)status.st_size
+									&& (zbx_uint64_t)status.st_size <= max_size) &&
+							(min_time < status.st_mtime &&
+									status.st_mtime <= max_time))
+					{
+						++count;
+					}
+				}
+				else if (ZBX_FILENAME_INCL_FAIL == res || ZBX_FILENAME_EXCL_FAIL == res)
+				{
+					SET_MSG_RESULT(result, zbx_dsprintf(NULL, "error occurred while matching %s"
+							" regular expression: %s",
+							(ZBX_FILENAME_INCL_FAIL == res) ? "include" : "exclude",
+							error));
+					zbx_free(error);
+					zbx_free(path);
+					zbx_free(item->path);
+					zbx_free(item);
+					closedir(directory);
+					goto err2;
 				}
 
 				if (!(0 != S_ISDIR(status.st_mode) && SUCCEED == queue_directory(&list, path,
