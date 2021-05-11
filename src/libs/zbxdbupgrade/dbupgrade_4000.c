@@ -304,6 +304,14 @@ static int	DBpatch_4000006(void)
 	return SUCCEED;
 }
 
+static int	DBpatch_4000007(void)
+{
+	if (ZBX_DB_OK <= DBexecute("update items set request_method=0 where type<>%i", ITEM_TYPE_HTTPAGENT))
+		return SUCCEED;
+
+	return FAIL;
+}
+
 #endif
 
 DBPATCH_START(4000)
@@ -317,5 +325,6 @@ DBPATCH_ADD(4000003, 0, 0)
 DBPATCH_ADD(4000004, 0, 0)
 DBPATCH_ADD(4000005, 0, 0)
 DBPATCH_ADD(4000006, 0, 0)
+DBPATCH_ADD(4000007, 0, 0)
 
 DBPATCH_END()
