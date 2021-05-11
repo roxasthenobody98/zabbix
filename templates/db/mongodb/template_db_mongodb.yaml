@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.2'
-  date: '2021-04-01T10:00:13Z'
+  date: '2021-05-11T14:09:15Z'
   groups:
     -
       name: Templates/Databases
@@ -2178,6 +2178,7 @@ zabbix_export:
                   type: JSONPATH
                   parameters:
                     - $.metrics.repl.preload.docs.totalMillis
+                  error_handler: DISCARD_VALUE
                 -
                   type: CHANGE_PER_SECOND
                   parameters:
@@ -2200,6 +2201,7 @@ zabbix_export:
                   type: JSONPATH
                   parameters:
                     - $.metrics.repl.preload.docs.num
+                  error_handler: DISCARD_VALUE
                 -
                   type: CHANGE_PER_SECOND
                   parameters:
@@ -2223,6 +2225,7 @@ zabbix_export:
                   type: JSONPATH
                   parameters:
                     - $.metrics.repl.preload.indexes.totalMillis
+                  error_handler: DISCARD_VALUE
                 -
                   type: CHANGE_PER_SECOND
                   parameters:
@@ -2245,6 +2248,7 @@ zabbix_export:
                   type: JSONPATH
                   parameters:
                     - $.metrics.repl.preload.indexes.num
+                  error_handler: DISCARD_VALUE
                 -
                   type: CHANGE_PER_SECOND
                   parameters:
@@ -2276,7 +2280,7 @@ zabbix_export:
                 key: 'mongodb.rs.status["{$MONGODB.CONNSTRING}","{$MONGODB.USER}","{$MONGODB.PASSWORD}"]'
               trigger_prototypes:
                 -
-                  expression: '{change()}=1'
+                  expression: '{diff()}=1'
                   recovery_mode: NONE
                   name: 'MongoDB: Node in ReplicaSet changed the state (new state: {ITEM.VALUE})'
                   priority: WARNING
@@ -2763,7 +2767,7 @@ zabbix_export:
               parameters:
                 - |
                   return JSON.stringify(JSON.parse(value).wiredTiger
-                    ? [{'{#SINGLETON}': ''}] : []);
+                  ? [{'{#SINGLETON}': ''}] : []);
             -
               type: DISCARD_UNCHANGED_HEARTBEAT
               parameters:
