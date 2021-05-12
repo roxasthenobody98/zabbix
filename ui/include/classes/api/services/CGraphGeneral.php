@@ -121,10 +121,10 @@ abstract class CGraphGeneral extends CApiService {
 					$graph['ymax_itemid'] = null;
 				}
 			}
-
-			$this->updateReal($graph, $dbGraphs[$graph['graphid']]);
-			$this->inherit($graph);
 		}
+
+		$this->updateReal($graphs);
+		$this->inherit($graphs);
 
 		return ['graphids' => $graphIds];
 	}
@@ -156,102 +156,113 @@ abstract class CGraphGeneral extends CApiService {
 
 		$this->validateCreate($graphs);
 
-		foreach ($graphs as $graph) {
-			$graph['graphid'] = $this->createReal($graph);
+		$graphids = $this->createReal($graphs);
 
-			$this->inherit($graph);
-
-			$graphids[] = $graph['graphid'];
+		foreach ($graphs as $key => $graph) {
+			$graph['graphid'] = $graphids[$key];
 		}
+
+		$this->inherit($graphs);
 
 		return ['graphids' => $graphids];
 	}
 
 	/**
-	 * Creates a new graph and returns it's ID.
+	 * Creates a new graphs and returns it's IDs.
 	 *
-	 * @param $graph
+	 * @param array $graphs
 	 *
-	 * @return mixed
+	 * @return array
 	 */
-	protected function createReal($graph) {
-		$graphids = DB::insert('graphs', [$graph]);
-		$graphid = reset($graphids);
-		$sort_order = 0;
+	protected function createReal(array $graphs) {
+		$graphids = DB::insert('graphs', $graphs);
+		$graph_items = [];
 
-		foreach ($graph['gitems'] as &$gitem) {
-			$gitem['graphid'] = $graphid;
+		foreach ($graphs as $key => &$graph) {
+			$sort_order = 0;
+			foreach ($graph['gitems'] as $graph_item) {
+				$graph_item['graphid'] = $graphids[$key];
 
-			if (!array_key_exists('sortorder', $gitem)) {
-				$gitem['sortorder'] = $sort_order;
+				if (!array_key_exists('sortorder', $graph_item)) {
+					$graph_item['sortorder'] = $sort_order;
+				}
+
+				$graph_items[] = $graph_item;
+
+				$sort_order++;
 			}
-
-			$sort_order++;
 		}
-		unset($gitem);
+		unset($graph);
 
-		DB::insert('graphs_items', $graph['gitems']);
+		DB::insert('graphs_items', $graph_items);
 
-		return $graphid;
+		return $graphids;
 	}
 
 	/**
-	 * Updates the graph if $graph differs from $dbGraph.
+	 * Updates the graphs.
 	 *
-	 * @param array $graph
-	 * @param array $dbGraph
+	 * @param array $graphs
 	 *
 	 * @return string
 	 */
-	protected function updateReal(array $graph, array $dbGraph) {
-		$dbGitems = zbx_toHash($dbGraph['gitems'], 'gitemid');
-		$dbGitemIds = zbx_toHash(zbx_objectValues($dbGitems, 'gitemid'));
+	protected function updateReal(array $graphs) {
+		$data = [];
+		$graph_itemids = [];
+		foreach ($graphs as $graph) {
+			$graph_itemids = array_merge($graph_itemids, array_column($graph['gitems'], 'gitemid'));
+			unset($graph['gitems']);
 
-		// update the graph if it's modified
-		if (DB::recordModified('graphs', $dbGraph, $graph)) {
-			DB::updateByPk($this->tableName(), $graph['graphid'], $graph);
+			$data[] = ['values' => $graph, 'where' => ['graphid' => $graph['graphid']]];
 		}
+		DB::update('graphs', $data);
 
-		// delete remaining items only if new items or items that require update are set
-		if ($graph['gitems']) {
-			$insertGitems = [];
-			$deleteGitemIds = $dbGitemIds;
+		$db_graphitems = API::GraphItem()->get([
+			'output' => API_OUTPUT_EXTEND,
+			'itemids' => $graph_itemids,
+			'preservekeys' => true,
+			'nopermissions' => true
+		]);
+
+		$ins_items = [];
+		$upd_items = [];
+		$del_items = array_flip(array_keys($db_graphitems));
+		foreach ($graphs as $graph) {
 			$sort_order = 0;
 
-			foreach ($graph['gitems'] as $gitem) {
-				// updating an existing item
-				if (!empty($gitem['gitemid']) && isset($dbGitemIds[$gitem['gitemid']])) {
-					if (DB::recordModified('graphs_items', $dbGitems[$gitem['gitemid']], $gitem)) {
-						DB::updateByPk('graphs_items', $gitem['gitemid'], $gitem);
-					}
+			foreach ($graph['gitems'] as $graph_item) {
+				// Update an existing item.
+				if (!$graph_item['gitemid'] && array_key_exists($graph_item['gitemid'], $db_graphitems)) {
+					$upd_items[] = ['values' => $graph_item, 'where' => ['gitemid' => $graph_item['gitemid']]];
 
-					// remove this graph item from the collection so it won't get deleted
-					unset($deleteGitemIds[$gitem['gitemid']]);
+					unset($del_items[$graph_item['gitemid']]);
 				}
-				// adding a new item
+				// Adding a new item.
 				else {
-					$gitem['graphid'] = $graph['graphid'];
+					$graph_item['graphid'] = $graph['graphid'];
 
-					if (!array_key_exists('sortorder', $gitem)) {
-						$gitem['sortorder'] = $sort_order;
+					if (!array_key_exists('sortorder', $graph_item)) {
+						$graph_item['sortorder'] = $sort_order;
 					}
+
+					$ins_items[] = $graph_item;
 
 					$sort_order++;
-
-					$insertGitems[] = $gitem;
 				}
-			}
-
-			if ($deleteGitemIds) {
-				DB::delete('graphs_items', ['gitemid' => $deleteGitemIds]);
-			}
-
-			if ($insertGitems) {
-				DB::insert('graphs_items', $insertGitems);
 			}
 		}
 
-		return $graph['graphid'];
+		if ($ins_items) {
+			DB::insert('graphs_items', $ins_items);
+		}
+
+		if ($upd_items) {
+			DB::update('graphs_items', $upd_items);
+		}
+
+		if ($del_items) {
+			DB::delete('graphs_items', ['gitemid' => $del_items]);
+		}
 	}
 
 	/**

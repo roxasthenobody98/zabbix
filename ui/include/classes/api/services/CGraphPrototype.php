@@ -578,11 +578,14 @@ class CGraphPrototype extends CGraphGeneral {
 		}
 	}
 
-	protected function createReal($graph) {
-		// mark the graph as a graph prototype
-		$graph['flags'] = ZBX_FLAG_DISCOVERY_PROTOTYPE;
+	protected function createReal($graphs) {
+		foreach ($graphs as &$graph) {
+			// mark the graph as a graph prototype
+			$graph['flags'] = ZBX_FLAG_DISCOVERY_PROTOTYPE;
+		}
+		unset($graph);
 
-		return parent::createReal($graph);
+		return parent::createReal($graphs);
 	}
 
 	protected function addRelatedObjects(array $options, array $result) {
