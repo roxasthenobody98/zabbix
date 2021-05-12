@@ -61,13 +61,12 @@ zbx_regmatch_t;
  ******************************************************************************/
 static int	regexp_compile(const char *pattern, int flags, zbx_regexp_t **regexp, char **err_msg)
 {
-	const char		*__function_name = "regexp_compile";
 	const char		*err_msg_static = NULL;
 	int			error_offset = -1, ret = SUCCEED;
 	pcre			*pcre_regexp;
 	struct pcre_extra	*extra;
 
-	zabbix_log(LOG_LEVEL_DEBUG, "In %s() pattern:'%s' flags:%d", __function_name, pattern, flags);
+	zabbix_log(LOG_LEVEL_DEBUG, "In %s() pattern:'%s' flags:%d", __func__, pattern, flags);
 
 #ifdef PCRE_NO_AUTO_CAPTURE
 	/* If PCRE_NO_AUTO_CAPTURE bit is set in 'flags' but regular expression contains references to numbered */
@@ -129,7 +128,7 @@ static int	regexp_compile(const char *pattern, int flags, zbx_regexp_t **regexp,
 	else
 		pcre_free(pcre_regexp);
 out:
-	zabbix_log(LOG_LEVEL_DEBUG, "End of %s():%s", __function_name, zbx_result_string(ret));
+	zabbix_log(LOG_LEVEL_DEBUG, "End of %s():%s", __func__, zbx_result_string(ret));
 
 	return ret;
 }

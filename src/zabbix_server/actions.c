@@ -2127,10 +2127,9 @@ static int	check_areg_proxy_condition(const zbx_vector_ptr_t *esc_events, zbx_co
  ******************************************************************************/
 static void	check_autoregistration_condition(const zbx_vector_ptr_t *esc_events, zbx_condition_t *condition)
 {
-	const char	*__function_name = "check_auto_registration_condition";
 	int		ret;
 
-	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __function_name);
+	zabbix_log(LOG_LEVEL_DEBUG, "In %s()", __func__);
 
 	switch (condition->conditiontype)
 	{
@@ -2153,7 +2152,7 @@ static void	check_autoregistration_condition(const zbx_vector_ptr_t *esc_events,
 				(int)condition->op, condition->conditionid);
 	}
 
-	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __function_name);
+	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
 
 /******************************************************************************
