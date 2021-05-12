@@ -7334,6 +7334,14 @@ out:
 #undef ZBX_FLAG_DISCOVERY_RULE
 #undef ZBX_FLAG_DISCOVERY_PROTOTYPE
 
+static int	DBpatch_5030202(void)
+{
+	if (ZBX_DB_OK <= DBexecute("update items set request_method=0 where type<>%i", ITEM_TYPE_HTTPAGENT))
+		return SUCCEED;
+
+	return FAIL;
+}
+
 #endif
 
 DBPATCH_START(5030)
@@ -7539,5 +7547,6 @@ DBPATCH_ADD(5030198, 0, 1)
 DBPATCH_ADD(5030199, 0, 1)
 DBPATCH_ADD(5030200, 0, 1)
 DBPATCH_ADD(5030201, 0, 1)
+DBPATCH_ADD(5030202, 0, 0)
 
 DBPATCH_END()
