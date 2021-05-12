@@ -635,7 +635,7 @@ static int	vfs_dir_size(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE tim
 			if (0 == FindClose(handle))
 			{
 				zabbix_log(LOG_LEVEL_DEBUG, "%s() cannot close directory listing '%s': %s",
-						__function_name, item->path, zbx_strerror(errno));
+						__func__, item->path, zbx_strerror(errno));
 			}
 
 			goto err2;
@@ -680,7 +680,7 @@ static int	vfs_dir_size(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE tim
 					if (0 == FindClose(handle))
 					{
 						zabbix_log(LOG_LEVEL_DEBUG, "%s() cannot close directory listing '%s':"
-								" %s", __function_name, item->path,
+								" %s", __func__, item->path,
 								zbx_strerror(errno));
 					}
 
@@ -735,7 +735,7 @@ static int	vfs_dir_size(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE tim
 					if (0 == FindClose(handle))
 					{
 						zabbix_log(LOG_LEVEL_DEBUG, "%s() cannot close directory listing '%s':"
-								" %s", __function_name, item->path,
+								" %s", __func__, item->path,
 								zbx_strerror(errno));
 					}
 
@@ -1102,7 +1102,7 @@ static int	vfs_dir_count(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE ti
 					if (0 == FindClose(handle))
 					{
 						zabbix_log(LOG_LEVEL_DEBUG, "%s() cannot close directory listing '%s':"
-								" %s", __function_name, item->path,
+								" %s", __func__, item->path,
 								zbx_strerror(errno));
 					}
 
@@ -1137,7 +1137,7 @@ static int	vfs_dir_count(AGENT_REQUEST *request, AGENT_RESULT *result, HANDLE ti
 					if (0 == FindClose(handle))
 					{
 						zabbix_log(LOG_LEVEL_DEBUG, "%s() cannot close directory listing '%s':"
-								" %s", __function_name, item->path,
+								" %s", __func__, item->path,
 								zbx_strerror(errno));
 					}
 
