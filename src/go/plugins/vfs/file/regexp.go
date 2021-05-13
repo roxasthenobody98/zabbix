@@ -77,7 +77,7 @@ func (p *Plugin) exportRegexp(params []string) (result interface{}, err error) {
 
 	var rx *regexp.Regexp
 	if rx, err = regexp.Compile(params[1]); err != nil {
-		return nil, errors.New("Invalid first parameter.")
+		return nil, errors.New("Invalid second parameter.")
 	}
 
 	file, err := stdOs.Open(params[0])
