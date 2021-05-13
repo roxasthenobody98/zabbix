@@ -100,7 +100,7 @@ func (p *Plugin) Export(key string, params []string, ctx plugin.ContextProvider)
 
 		rx, err := regexp.Compile(params[3])
 		if err != nil {
-			return nil, fmt.Errorf("Invalid forth parameter: %s", err)
+			return nil, fmt.Errorf("Invalid fourth parameter: %s", err)
 		}
 
 		if len(params) > 4 && params[4] != "" {
