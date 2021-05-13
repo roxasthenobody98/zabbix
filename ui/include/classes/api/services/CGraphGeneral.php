@@ -68,20 +68,20 @@ abstract class CGraphGeneral extends CApiService {
 			$this->checkPartialValidator($graph, $updateDiscoveredValidator, $dbGraphs[$graph['graphid']]);
 
 			// validate items on set or pass existing items from DB
-			if (isset($graph['gitems'])) {
-				foreach ($graph['gitems'] as $item) {
-					if (isset($item['gitemid']) && !$item['gitemid']) {
+			if (array_key_exists('gitems', $graph)) {
+				foreach ($graph['gitems'] as $graph_item) {
+					if (array_key_exists('gitemid', $graph_item) && !$graph_item['gitemid']) {
 						self::exception(ZBX_API_ERROR_PARAMETERS, _('Missing "gitemid" field for item.'));
 					}
 
-					if (isset($item['gitemid']) && $item['gitemid']) {
+					if (array_key_exists('gitemid', $graph_item) && $graph_item['gitemid']) {
 						$validGraphItemIds = [];
 
-						foreach ($dbGraphs[$graph['graphid']]['gitems'] as $dbItem) {
-							$validGraphItemIds[$dbItem['gitemid']] = $dbItem['gitemid'];
+						foreach ($dbGraphs[$graph['graphid']]['gitems'] as $db_graph_item) {
+							$validGraphItemIds[$db_graph_item['gitemid']] = $db_graph_item['gitemid'];
 						}
 
-						if (!in_array($item['gitemid'], $validGraphItemIds)) {
+						if (!in_array($graph_item['gitemid'], $validGraphItemIds)) {
 							self::exception(ZBX_API_ERROR_PARAMETERS,
 								_('No permissions to referred object or it does not exist!')
 							);
@@ -97,7 +97,7 @@ abstract class CGraphGeneral extends CApiService {
 
 		$this->validateUpdate($graphs, $dbGraphs);
 
-		foreach ($graphs as $graph) {
+		foreach ($graphs as &$graph) {
 			unset($graph['templateid']);
 
 			$graph['gitems'] = isset($graph['gitems']) ? $graph['gitems'] : $dbGraphs[$graph['graphid']]['gitems'];
@@ -122,6 +122,7 @@ abstract class CGraphGeneral extends CApiService {
 				}
 			}
 		}
+		unset($graph);
 
 		$this->updateReal($graphs);
 		$this->inherit($graphs);
@@ -156,15 +157,10 @@ abstract class CGraphGeneral extends CApiService {
 
 		$this->validateCreate($graphs);
 
-		$graphids = $this->createReal($graphs);
-
-		foreach ($graphs as $key => $graph) {
-			$graph['graphid'] = $graphids[$key];
-		}
-
+		$this->createReal($graphs);
 		$this->inherit($graphs);
 
-		return ['graphids' => $graphids];
+		return ['graphids' => array_column($graph, 'graphid')];
 	}
 
 	/**
@@ -174,12 +170,15 @@ abstract class CGraphGeneral extends CApiService {
 	 *
 	 * @return array
 	 */
-	protected function createReal(array $graphs) {
+	protected function createReal(array &$graphs) {
 		$graphids = DB::insert('graphs', $graphs);
 		$graph_items = [];
 
 		foreach ($graphs as $key => &$graph) {
 			$sort_order = 0;
+
+			$graph['graphid'] = $graphids[$key];
+
 			foreach ($graph['gitems'] as $graph_item) {
 				$graph_item['graphid'] = $graphids[$key];
 
@@ -195,8 +194,6 @@ abstract class CGraphGeneral extends CApiService {
 		unset($graph);
 
 		DB::insert('graphs_items', $graph_items);
-
-		return $graphids;
 	}
 
 	/**
@@ -217,25 +214,28 @@ abstract class CGraphGeneral extends CApiService {
 		}
 		DB::update('graphs', $data);
 
-		$db_graphitems = API::GraphItem()->get([
-			'output' => API_OUTPUT_EXTEND,
+		$db_graph_items = API::GraphItem()->get([
+			'output' => ['gitemid', 'graphid', 'itemid', 'drawtype', 'sortorder', 'color', 'yaxisside', 'calc_fnc',
+				'type'
+			],
 			'itemids' => $graph_itemids,
 			'preservekeys' => true,
 			'nopermissions' => true
 		]);
 
-		$ins_items = [];
-		$upd_items = [];
-		$del_items = array_flip(array_keys($db_graphitems));
+		$ins_graph_items = [];
+		$upd_graph_items = [];
+		$del_graph_items = array_flip(array_keys($db_graph_items));
 		foreach ($graphs as $graph) {
 			$sort_order = 0;
 
 			foreach ($graph['gitems'] as $graph_item) {
 				// Update an existing item.
-				if (!$graph_item['gitemid'] && array_key_exists($graph_item['gitemid'], $db_graphitems)) {
-					$upd_items[] = ['values' => $graph_item, 'where' => ['gitemid' => $graph_item['gitemid']]];
+				if (array_key_exists('gitemid', $graph_item)
+						&& array_key_exists($graph_item['gitemid'], $db_graph_items)) {
+					$upd_graph_items[] = ['values' => $graph_item, 'where' => ['gitemid' => $graph_item['gitemid']]];
 
-					unset($del_items[$graph_item['gitemid']]);
+					unset($del_graph_items[$graph_item['gitemid']]);
 				}
 				// Adding a new item.
 				else {
@@ -245,23 +245,23 @@ abstract class CGraphGeneral extends CApiService {
 						$graph_item['sortorder'] = $sort_order;
 					}
 
-					$ins_items[] = $graph_item;
+					$ins_graph_items[] = $graph_item;
 
 					$sort_order++;
 				}
 			}
 		}
 
-		if ($ins_items) {
-			DB::insert('graphs_items', $ins_items);
+		if ($ins_graph_items) {
+			DB::insert('graphs_items', $ins_graph_items);
 		}
 
-		if ($upd_items) {
-			DB::update('graphs_items', $upd_items);
+		if ($upd_graph_items) {
+			DB::update('graphs_items', $upd_graph_items);
 		}
 
-		if ($del_items) {
-			DB::delete('graphs_items', ['gitemid' => $del_items]);
+		if ($del_graph_items) {
+			DB::delete('graphs_items', ['gitemid' => $del_graph_items]);
 		}
 	}
 
