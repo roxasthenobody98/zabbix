@@ -4836,7 +4836,7 @@ static void	DBget_httptests(zbx_uint64_t hostid, const zbx_vector_uint64_t *temp
 	sql = (char *)zbx_malloc(sql, sql_alloc);
 
 	zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset,
-			"select t.httptestid,t.name,t.delay,t.status,t.agent,t.authentication,"
+			"select t.httptestid,h.name,t.delay,t.status,t.agent,t.authentication,"
 				"t.http_user,t.http_password,t.http_proxy,t.retries,h.httptestid"
 			" from httptest t"
 				" left join httptest h"
@@ -4854,6 +4854,7 @@ static void	DBget_httptests(zbx_uint64_t hostid, const zbx_vector_uint64_t *temp
 
 		ZBX_STR2UINT64(httptest->templateid, row[0]);
 		ZBX_DBROW2UINT64(httptest->httptestid, row[10]);
+		httptest->name = zbx_strdup(NULL, row[1]);
 		zbx_vector_ptr_create(&httptest->httpsteps);
 		zbx_vector_ptr_create(&httptest->httptestitems);
 		zbx_vector_ptr_create(&httptest->fields);
@@ -4863,7 +4864,6 @@ static void	DBget_httptests(zbx_uint64_t hostid, const zbx_vector_uint64_t *temp
 
 		if (0 == httptest->httptestid)
 		{
-			httptest->name = zbx_strdup(NULL, row[1]);
 			httptest->delay = zbx_strdup(NULL, row[2]);
 			httptest->status = (unsigned char)atoi(row[3]);
 			httptest->agent = zbx_strdup(NULL, row[4]);
