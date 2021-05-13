@@ -167,8 +167,6 @@ abstract class CGraphGeneral extends CApiService {
 	 * Creates a new graphs and returns it's IDs.
 	 *
 	 * @param array $graphs
-	 *
-	 * @return array
 	 */
 	protected function createReal(array &$graphs) {
 		$graphids = DB::insert('graphs', $graphs);
