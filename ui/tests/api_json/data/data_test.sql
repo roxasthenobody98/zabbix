@@ -1628,7 +1628,7 @@ INSERT INTO functions (functionid, triggerid, itemid, name, parameter) VALUES (5
 INSERT INTO triggers (triggerid, description, expression, comments) VALUES (50177, 'test-trigger-2', '{50237}=0', '');
 INSERT INTO functions (functionid, triggerid, itemid, name, parameter) VALUES (50237, 50177, 58737, 'last', '$');
 INSERT INTO triggers (triggerid, description, expression, comments) VALUES (50178, 'template-trigger', '{50238}=0', '');
-INSERT INTO functions (functionid, triggerid, itemid, name, parameter) VALUES (50238, 50178, 58738, 'last', '');
+INSERT INTO functions (functionid, triggerid, itemid, name, parameter) VALUES (50238, 50178, 58738, 'last', '$');
 
 -- reports api data
 INSERT INTO users (userid, username, name, surname, passwd, url, autologin, autologout, lang, refresh, theme, attempt_failed, attempt_ip, attempt_clock, rows_per_page, timezone, roleid) VALUES (15, 'Report user super admin', 'Report user super admin', '', '$2y$10$pUjKa4G5mcmCuOLKsk8HoeULBYIcJRClB5uXHX9EStq3szdwp10cS', '', 0, '0', 'default', '30s', 'default', 0, '', 0, 50, 'default', 3);
@@ -1666,4 +1666,3 @@ INSERT INTO report_usrgrp (reportusrgrpid, reportid, usrgrpid, access_userid) VA
 
 INSERT INTO report (reportid, userid, name, description, status, dashboardid, period, cycle, weekdays, start_time, active_since, active_till, state, lastsent, info) VALUES (21, 1, 'Test report one subscriptions', '', 0, 59, 0, 0, 0, 0, 0, 0, 0, 0, '');
 INSERT INTO report_user (reportuserid, reportid, userid, exclude, access_userid) VALUES (26, 21, 17, 0, 1);
-INSERT INTO functions (functionid, triggerid, itemid, name, parameter) VALUES (50238, 50178, 58738, 'last', '$');
