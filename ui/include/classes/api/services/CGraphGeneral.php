@@ -160,11 +160,11 @@ abstract class CGraphGeneral extends CApiService {
 		$this->createReal($graphs);
 		$this->inherit($graphs);
 
-		return ['graphids' => array_column($graph, 'graphid')];
+		return ['graphids' => array_column($graphs, 'graphid')];
 	}
 
 	/**
-	 * Creates a new graphs and returns it's IDs.
+	 * Creates new graphs and returns it's IDs.
 	 *
 	 * @param array $graphs
 	 */
