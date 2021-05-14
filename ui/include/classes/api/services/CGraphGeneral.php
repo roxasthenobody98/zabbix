@@ -172,10 +172,9 @@ abstract class CGraphGeneral extends CApiService {
 		$graphids = DB::insert('graphs', $graphs);
 		$graph_items = [];
 
-		foreach ($graphs as $key => &$graph) {
+		// Collect graph_items to insert.
+		foreach ($graphs as $key => $graph) {
 			$sort_order = 0;
-
-			$graph['graphid'] = $graphids[$key];
 
 			foreach ($graph['gitems'] as $graph_item) {
 				$graph_item['graphid'] = $graphids[$key];
@@ -189,9 +188,20 @@ abstract class CGraphGeneral extends CApiService {
 				$sort_order++;
 			}
 		}
-		unset($graph);
 
-		DB::insert('graphs_items', $graph_items);
+		$graphs_itemsid = DB::insert('graphs_items', $graph_items);
+
+		// Set id for graphs and graph items.
+		$i = 0;
+		foreach ($graphs as $key => &$graph) {
+			$graph['graphid'] = $graphids[$key];
+
+			foreach ($graph['gitems'] as &$graph_item) {
+				$graph_item['gitemid'] = $graphs_itemsid[$i++];
+			}
+			unset($graph_item);
+		}
+		unset($graph);
 	}
 
 	/**
