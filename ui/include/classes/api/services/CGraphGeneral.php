@@ -164,7 +164,7 @@ abstract class CGraphGeneral extends CApiService {
 	}
 
 	/**
-	 * Creates new graphs and returns it's IDs.
+	 * Creates new graphs.
 	 *
 	 * @param array $graphs
 	 */
@@ -189,7 +189,7 @@ abstract class CGraphGeneral extends CApiService {
 			}
 		}
 
-		$graphs_itemsid = DB::insert('graphs_items', $graph_items);
+		$graphs_itemsids = DB::insert('graphs_items', $graph_items);
 
 		// Set id for graphs and graph items.
 		$i = 0;
@@ -197,7 +197,7 @@ abstract class CGraphGeneral extends CApiService {
 			$graph['graphid'] = $graphids[$key];
 
 			foreach ($graph['gitems'] as &$graph_item) {
-				$graph_item['gitemid'] = $graphs_itemsid[$i++];
+				$graph_item['gitemid'] = $graphs_itemsids[$i++];
 			}
 			unset($graph_item);
 		}
