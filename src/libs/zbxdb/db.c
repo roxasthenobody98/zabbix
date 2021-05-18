@@ -131,8 +131,8 @@ static void	zbx_db_errlog(zbx_err_codes_t zbx_errno, int db_errno, const char *d
 #define POSSIBLY_CONFUSING_ERROR_CODE	9002
 			if (POSSIBLY_CONFUSING_ERROR_CODE == db_errno)
 			{
-				s = zbx_strdcat(s, "\nplease check <MySQL custom error codes> at Zabbix Known Issues"
-					" doc");
+				s = zbx_strdcat(s, "\nplease check \"MySQL custom error codes\" in \"Known Issues\""
+					" section of Zabbix documentation to get more details.");
 			}
 #endif
 			break;
