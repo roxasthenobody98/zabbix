@@ -127,6 +127,14 @@ static void	zbx_db_errlog(zbx_err_codes_t zbx_errno, int db_errno, const char *d
 		case ERR_Z3001:
 			s = zbx_dsprintf(NULL, "connection to database '%s' failed: [%d] %s", context, db_errno,
 					last_db_strerror);
+#if defined(HAVE_MYSQL)
+#define POSSIBLY_CONFUSING_ERROR_CODE	9002
+			if (POSSIBLY_CONFUSING_ERROR_CODE == db_errno)
+			{
+				s = zbx_strdcat(s, "\nplease check <MySQL custom error codes> at Zabbix Known Issues"
+					" doc");
+			}
+#endif
 			break;
 		case ERR_Z3002:
 			s = zbx_dsprintf(NULL, "cannot create database '%s': [%d] %s", context, db_errno,
