@@ -336,13 +336,23 @@ class CGraph extends CGraphGeneral {
 		$gitemids_graphids = [];
 
 		foreach ($graphs as $graphid => $graph) {
-			$graphs_itemids[] = array_column($graph['gitems'], 'itemid');
+			if ($graph['ymax_itemid'] > 0) {
+				$graphs_itemids[$graph['ymax_itemid']] = 1;
+			}
+
+			if ($graph['ymin_itemid'] > 0) {
+				$graphs_itemids[$graph['ymin_itemid']] = 1;
+			}
 
 			foreach ($graph['gitems'] as $gitem) {
+				$graphs_itemids[$gitem['itemid']] = 1;
+
 				$itemids_gitemids[$gitem['itemid']][] = $gitem['gitemid'];
 				$gitemids_graphids[$gitem['gitemid']] = $graphid;
 			}
 		}
+
+		$graphs_itemids = array_keys($graphs_itemids);
 
 		$items_templateids = [];
 		$templateids = [];
@@ -395,59 +405,68 @@ class CGraph extends CGraphGeneral {
 			$items_hostids[$item['key_']][$item['itemid']] = $item['hostid'];
 		}
 
+		$hosts_name = [];
+		$db_hosts = DBselect('SELECT h.hostid,h.host FROM hosts h WHERE '.dbConditionId('h.hostid', $hostids));
+
+		while ($host = DBfetch($db_hosts)) {
+			$hosts_name[$host['hostid']] = $host['host'];
+		}
+
 		foreach ($items_templateids as $key => $itemids_templateids) {
 			if (!array_key_exists($key, $items_hostids)) {
-				$hostid = reset($templateids_hostids[reset($itemids_templateids)]);
-				$host = get_host_by_hostid($hostid);
+				$host_name = $hosts_name[reset($templateids_hostids[reset($itemids_templateids)])];
 
 				$gitemid = reset($itemids_gitemids[key($itemids_templateids)]);
 				$graphid = $gitemids_graphids[$gitemid];
 
-				error(_s('Missing key "%1$s" for host "%2$s".', $key, $host['host']));
 				self::exception(ZBX_API_ERROR_PARAMETERS,
 					_s('Graph "%1$s" cannot inherit. No required items on "%2$s".', $graphs[$graphid]['name'],
-						$host['host']
+						$host_name
 					)
 				);
 			}
 
-			$t_itemids_h_itemids = [];
 			$_templateids_hostids = [];
-			foreach ($itemids_templateids as $t_itemid => $templateid) {
+			foreach ($itemids_templateids as $templateid) {
 				$_templateids_hostids[$templateid] = [];
 
-				foreach ($items_hostids[$key] as $h_itemid => $hostid) {
+				foreach ($items_hostids[$key] as $hostid) {
 					if (in_array($hostid, $templateids_hostids[$templateid])) {
-						$t_itemids_h_itemids[$t_itemid][] = $h_itemid;
 						$_templateids_hostids[$templateid][] = $hostid;
 					}
 				}
 			}
 
 			if (!$_templateids_hostids) {
-				// TODO
-				// error(_s('Missing key "%1$s" for host "%2$s".', $key, $host['host']));
-				// self::exception(ZBX_API_ERROR_PARAMETERS,
-				// 	_s('Graph "%1$s" cannot inherit. No required items on "%2$s".', $graphs[$graphid]['name'],
-				// 		$host['host']
-				// 	)
-				// );
+				$hostid = reset($templateids_hostids[reset($templateids_hostids)]);
+				$host_name = $hosts_name[$hostid];
+
+				$gitemid = reset($itemids_gitemids[key($itemids_templateids)]);
+				$graphid = $gitemids_graphids[$gitemid];
+
+				self::exception(ZBX_API_ERROR_PARAMETERS,
+					_s('Graph "%1$s" cannot inherit. No required items on "%2$s".', $graphs[$graphid]['name'],
+						$host_name
+					)
+				);
 			}
 
 			foreach ($_templateids_hostids as $_templateid => $_hostids) {
 				$no_item_hostid = reset(array_diff($templateids_hostids[$_templateid], $_hostids));
 
-				if  ($no_item_hostid !== false) {
-					// TODO
-					// error(_s('Missing key "%1$s" for host "%2$s".', $key, $host['host']));
-					// self::exception(ZBX_API_ERROR_PARAMETERS,
-					// 	_s('Graph "%1$s" cannot inherit. No required items on "%2$s".', $graphs[$graphid]['name'],
-					// 		$host['host']
-					// 	)
-					// );
+				if ($no_item_hostid !== false) {
+					$host_name = $hosts_name[$no_item_hostid];
+
+					$gitemid = reset($itemids_gitemids[key($itemids_templateids)]);
+					$graphid = $gitemids_graphids[$gitemid];
+
+					self::exception(ZBX_API_ERROR_PARAMETERS,
+						_s('Graph "%1$s" cannot inherit. No required items on "%2$s".', $graphs[$graphid]['name'],
+							$host_name
+						)
+					);
 				}
 			}
-
 		}
 
 
