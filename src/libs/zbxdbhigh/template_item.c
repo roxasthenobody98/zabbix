@@ -1163,7 +1163,7 @@ static void	copy_template_items_preproc(const zbx_vector_uint64_t *templateids, 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, atoi(row[1]), atoi(row[2]),
 				row[3], atoi(row[4]), row[5]);
 
-		zbx_audit_preprocessing_update((*pitem)->itemid, (*pitem)->flags, row[1], row[2], row[3], row[4],
+		zbx_audit_preprocessing_update((*pitem)->itemid, (*pitem)->flags, atoi(row[1]), atoi(row[2]), row[3], atoi(row[4]),
 				row[5]);
 	}
 	DBfree_result(result);
@@ -1338,7 +1338,7 @@ static void	copy_template_item_script_params(const zbx_vector_uint64_t *template
 		}
 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), (*pitem)->itemid, row[1], row[2]);
-		zbx_audit_item_parameters_update(audit_index++, (*pitem)->itemid, row[1], row[2], row[3]);
+		zbx_audit_item_parameters_update(audit_index++, (*pitem)->itemid, row[1], row[2], atoi(row[3]));
 	}
 
 	DBfree_result(result);

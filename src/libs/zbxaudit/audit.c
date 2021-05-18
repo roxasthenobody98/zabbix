@@ -346,6 +346,8 @@ void	zbx_audit_items_create_entry(const zbx_template_item_t *item, const zbx_uin
 	}
 
 	zbx_hashset_insert(&zbx_audit, &local_audit_items_entry, sizeof(local_audit_items_entry));
+#undef ADD_JSON_UI
+#undef ADD_JSON_S
 }
 
 void	zbx_audit_host_update_parent_template(const char *audit_details_action, zbx_uint64_t hostid,
@@ -657,39 +659,31 @@ void	zbx_audit_triggers_update_expression_and_recovery_expression(zbx_uint64_t n
 	}
 }
 
-void	zbx_audit_triggers_update_dependencies(const char *triggerid_up_str, const char *triggerid_str,
-		const char *flags_str, const char *triggerdepid_str)
+void	zbx_audit_triggers_update_dependencies(zbx_uint64_t triggerid_up, zbx_uint64_t triggerid,
+		int flags, zbx_uint64_t triggerdepid)
 {
-	int		flags;
-	zbx_uint64_t	triggerid;
 	char		audit_key_dependencies[AUDIT_DETAILS_KEY_LEN];
-
-	ZBX_STR2UINT64(flags, flags_str);
-	ZBX_STR2UINT64(triggerid, triggerid_str);
 
 	if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
 	{
-		zbx_snprintf(audit_key_dependencies, AUDIT_DETAILS_KEY_LEN, "trigger.dependencies[%s]",
-				triggerdepid_str);
-		zbx_audit_update_json_string(triggerid, audit_key_dependencies,
-				triggerid_up_str);
+		zbx_snprintf(audit_key_dependencies, AUDIT_DETAILS_KEY_LEN, "trigger.dependencies[" ZBX_FS_UI64 "]",
+				triggerdepid);
+		zbx_audit_update_json_uint64(triggerid, audit_key_dependencies,
+				triggerid_up);
 	}
 	else if (ZBX_FLAG_DISCOVERY_PROTOTYPE == flags)
 	{
-		zbx_snprintf(audit_key_dependencies, AUDIT_DETAILS_KEY_LEN, "triggerprototype.dependencies[%s]",
-				triggerdepid_str);
-		zbx_audit_update_json_string(triggerid, audit_key_dependencies,
-				triggerid_up_str);
+		zbx_snprintf(audit_key_dependencies, AUDIT_DETAILS_KEY_LEN,
+				"triggerprototype.dependencies[" ZBX_FS_UI64 "]", triggerdepid);
+		zbx_audit_update_json_uint64(triggerid, audit_key_dependencies,
+				triggerid_up);
 	}
 }
 
 void	zbx_audit_triggers_update_tags_and_values(zbx_uint64_t triggerid, const char *tag, const char *value,
-		const char *flags_str, const char *tagid_str)
+		int flags, const char *tagid_str)
 {
-	int	flags;
 	char	audit_key_tags_tag[AUDIT_DETAILS_KEY_LEN], audit_key_tags_value[AUDIT_DETAILS_KEY_LEN];
-
-	ZBX_STR2UINT64(flags, flags_str);
 
 	if (ZBX_FLAG_DISCOVERY_NORMAL == flags)
 	{
@@ -879,34 +873,33 @@ void	zbx_audit_discovery_rule_override_conditions_update(int audit_index, zbx_ui
 	zbx_audit_update_json_string(itemid, audit_key_value, value);
 }
 
-void	zbx_audit_preprocessing_update(zbx_uint64_t itemid, unsigned char flags, const char *step,
-		const char *type, const char *params, const char *error_handler, const char *error_handler_params)
+void	zbx_audit_preprocessing_update(zbx_uint64_t itemid, unsigned char flags, int step,
+		int type, const char *params, int error_handler, const char *error_handler_params)
 {
 	char	audit_key_type[AUDIT_DETAILS_KEY_LEN], audit_key_params[AUDIT_DETAILS_KEY_LEN],
 		audit_key_error_handler[AUDIT_DETAILS_KEY_LEN], audit_key_error_handler_params[AUDIT_DETAILS_KEY_LEN];
 
-	zbx_snprintf(audit_key_type, AUDIT_DETAILS_KEY_LEN, "%s.preprocessing[%s].type",
+	zbx_snprintf(audit_key_type, AUDIT_DETAILS_KEY_LEN, "%s.preprocessing[%d].type",
 			zbx_audit_items_get_type_json_identifier(flags), step);
-	zbx_snprintf(audit_key_params, AUDIT_DETAILS_KEY_LEN, "%s.preprocessing[%s].params",
+	zbx_snprintf(audit_key_params, AUDIT_DETAILS_KEY_LEN, "%s.preprocessing[%d].params",
 			zbx_audit_items_get_type_json_identifier(flags), step);
-	zbx_snprintf(audit_key_error_handler, AUDIT_DETAILS_KEY_LEN, "%s.preprocessing[%s].error_handler",
+	zbx_snprintf(audit_key_error_handler, AUDIT_DETAILS_KEY_LEN, "%s.preprocessing[%d].error_handler",
 			zbx_audit_items_get_type_json_identifier(flags), step);
-	zbx_snprintf(audit_key_error_handler_params, AUDIT_DETAILS_KEY_LEN, "%s.preprocessing[%s].error_handler_params",
+	zbx_snprintf(audit_key_error_handler_params, AUDIT_DETAILS_KEY_LEN, "%s.preprocessing[%d].error_handler_params",
 			zbx_audit_items_get_type_json_identifier(flags), step);
 
-	zbx_audit_update_json_string(itemid, audit_key_type, type);
+	zbx_audit_update_json_uint64(itemid, audit_key_type, type);
 	zbx_audit_update_json_string(itemid, audit_key_params, params);
-	zbx_audit_update_json_string(itemid, audit_key_error_handler, error_handler);
+	zbx_audit_update_json_uint64(itemid, audit_key_error_handler, error_handler);
 	zbx_audit_update_json_string(itemid, audit_key_error_handler_params, error_handler_params);
 }
 
 void	zbx_audit_item_parameters_update(int audit_index, zbx_uint64_t itemid, const char *name, const char *value,
-		const char *flags_str)
+		int flags)
 {
-	int	resource_type, flags;
+	int	resource_type;
 	char	audit_key_name[AUDIT_DETAILS_KEY_LEN], audit_key_value[AUDIT_DETAILS_KEY_LEN];
 
-	ZBX_STR2UINT64(flags, flags_str);
 	resource_type = item_flag_to_resource_type(flags);
 
 	if (AUDIT_RESOURCE_ITEM == resource_type)
@@ -929,6 +922,17 @@ void	zbx_audit_item_parameters_update(int audit_index, zbx_uint64_t itemid, cons
 		THIS_SHOULD_NEVER_HAPPEN;
 
 	zbx_audit_update_json_string(itemid, audit_key_name, name);
+	zbx_audit_update_json_string(itemid, audit_key_value, value);
+}
+
+void	zbx_audit_item_tags_update(int audit_index, zbx_uint64_t itemid, const char *tag, const char *value)
+{
+	char	audit_key_name[AUDIT_DETAILS_KEY_LEN], audit_key_value[AUDIT_DETAILS_KEY_LEN];
+
+	zbx_snprintf(audit_key_name, AUDIT_DETAILS_KEY_LEN, "item.tags[%d].name", audit_index);
+	zbx_snprintf(audit_key_value, AUDIT_DETAILS_KEY_LEN, "item.tags[%d].value", audit_index);
+
+	zbx_audit_update_json_string(itemid, audit_key_name, tag);
 	zbx_audit_update_json_string(itemid, audit_key_value, value);
 }
 
@@ -1179,6 +1183,14 @@ int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, cons
 	return res;
 }
 
+void	zbx_audit_host_update_groups(const char *audit_details_action, zbx_uint64_t hostid, zbx_uint64_t groupid)
+{
+	char	audit_key_groupid[AUDIT_DETAILS_KEY_LEN];
+
+	zbx_snprintf(audit_key_groupid, AUDIT_DETAILS_KEY_LEN, "host.groups[%lu]", groupid);
+	zbx_audit_update_json_string(hostid, audit_key_groupid, audit_details_action);
+}
+
 void	zbx_audit_host_groups_delete_create_entry(zbx_uint64_t hostid, char *hostname, zbx_vector_uint64_t *groupids)
 {
 	int			i;
@@ -1220,12 +1232,66 @@ void	zbx_audit_host_create_entry(int audit_action, zbx_uint64_t hostid, const ch
 	zbx_hashset_insert(&zbx_audit, &local_audit_host_entry, sizeof(local_audit_host_entry));
 }
 
-void	zbx_audit_host_update_groups(const char *audit_details_action, zbx_uint64_t hostid, zbx_uint64_t groupid)
+void	zbx_audit_lld_host_create_entry(int audit_action, zbx_uint64_t hostid, char *host, char *name,
+		zbx_uint64_t proxy_hostid, char ipmi_authtype, unsigned char ipmi_privilege, const char *ipmi_username,
+		const char *ipmi_password, unsigned char status, zbx_uint64_t flags, unsigned char tls_connect,
+		unsigned char tls_accept, const char *tls_issuer, const char *tls_subject,
+		const char *tls_psk_identity, const char *tls_psk)
 {
-	char	audit_key_groupid[AUDIT_DETAILS_KEY_LEN];
+	char	audit_key_host[AUDIT_DETAILS_KEY_LEN], audit_key_name[AUDIT_DETAILS_KEY_LEN],
+		audit_key_proxy_hostid[AUDIT_DETAILS_KEY_LEN], audit_key_ipmi_authtype[AUDIT_DETAILS_KEY_LEN],
+		audit_key_ipmi_privilege[AUDIT_DETAILS_KEY_LEN], audit_key_ipmi_username[AUDIT_DETAILS_KEY_LEN],
+		audit_key_ipmi_password[AUDIT_DETAILS_KEY_LEN], audit_key_status[AUDIT_DETAILS_KEY_LEN],
+		audit_key_flags[AUDIT_DETAILS_KEY_LEN], audit_key_tls_connect[AUDIT_DETAILS_KEY_LEN],
+		audit_key_tls_accept[AUDIT_DETAILS_KEY_LEN], audit_key_tls_issuer[AUDIT_DETAILS_KEY_LEN],
+		audit_key_tls_subject[AUDIT_DETAILS_KEY_LEN], audit_key_tls_psk_identity[AUDIT_DETAILS_KEY_LEN],
+		audit_key_tls_psk[AUDIT_DETAILS_KEY_LEN];
 
-	zbx_snprintf(audit_key_groupid, AUDIT_DETAILS_KEY_LEN, "host.groups[%lu]", groupid);
-	zbx_audit_update_json_string(hostid, audit_key_groupid, audit_details_action);
+	zbx_audit_entry_t	*local_audit_host_entry;
+
+	local_audit_host_entry = (zbx_audit_entry_t*)zbx_malloc(NULL, sizeof(zbx_audit_entry_t));
+	local_audit_host_entry->id = hostid;
+	local_audit_host_entry->name = zbx_strdup(NULL, name);
+	local_audit_host_entry->audit_action = audit_action;
+	local_audit_host_entry->resource_type = AUDIT_RESOURCE_HOST;
+
+	zbx_snprintf(audit_key_host,             AUDIT_DETAILS_KEY_LEN, "host.host");
+	zbx_snprintf(audit_key_name,             AUDIT_DETAILS_KEY_LEN, "host.name");
+	zbx_snprintf(audit_key_proxy_hostid,     AUDIT_DETAILS_KEY_LEN, "host.proxy_hostid");
+	zbx_snprintf(audit_key_ipmi_authtype,    AUDIT_DETAILS_KEY_LEN, "host.ipmi_authtype");
+	zbx_snprintf(audit_key_ipmi_privilege,   AUDIT_DETAILS_KEY_LEN, "host.ipmi_privilege");
+	zbx_snprintf(audit_key_ipmi_username,    AUDIT_DETAILS_KEY_LEN, "host.ipmi_username");
+	zbx_snprintf(audit_key_ipmi_password,    AUDIT_DETAILS_KEY_LEN, "host.ipmi_password");
+	zbx_snprintf(audit_key_status,           AUDIT_DETAILS_KEY_LEN, "host.status");
+	zbx_snprintf(audit_key_flags,            AUDIT_DETAILS_KEY_LEN, "host.flags");
+	zbx_snprintf(audit_key_tls_connect,      AUDIT_DETAILS_KEY_LEN, "host.tls_connect");
+	zbx_snprintf(audit_key_tls_accept,       AUDIT_DETAILS_KEY_LEN, "host.tls_accept");
+	zbx_snprintf(audit_key_tls_issuer,       AUDIT_DETAILS_KEY_LEN, "host.tls_issuer");
+	zbx_snprintf(audit_key_tls_subject,      AUDIT_DETAILS_KEY_LEN, "host.tls_subject");
+	zbx_snprintf(audit_key_tls_psk_identity, AUDIT_DETAILS_KEY_LEN, "host.tls_psk_identity");
+	zbx_snprintf(audit_key_tls_psk,          AUDIT_DETAILS_KEY_LEN, "host.tls_psk");
+
+	zbx_json_init(&(local_audit_host_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
+
+	zbx_json_addstring(&local_audit_host_entry->details_json, audit_key_host, host,
+			ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_host_entry->details_json, audit_key_name, name, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_audit_host_entry->details_json, audit_key_proxy_hostid, proxy_hostid);
+	zbx_json_adduint64(&local_audit_host_entry->details_json, audit_key_ipmi_authtype, ipmi_authtype);
+	zbx_json_adduint64(&local_audit_host_entry->details_json, audit_key_ipmi_privilege, ipmi_privilege);
+	zbx_json_addstring(&local_audit_host_entry->details_json, audit_key_ipmi_username, ipmi_username, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_host_entry->details_json, audit_key_ipmi_password, ipmi_password, ZBX_JSON_TYPE_STRING);
+	zbx_json_adduint64(&local_audit_host_entry->details_json, audit_key_status, status);
+	zbx_json_adduint64(&local_audit_host_entry->details_json, audit_key_flags, flags);
+	zbx_json_adduint64(&local_audit_host_entry->details_json, audit_key_tls_connect, tls_connect);
+	zbx_json_adduint64(&local_audit_host_entry->details_json, audit_key_tls_accept, tls_accept);
+	zbx_json_addstring(&local_audit_host_entry->details_json, audit_key_tls_issuer, tls_issuer, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_host_entry->details_json, audit_key_tls_subject, tls_subject, ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_host_entry->details_json, audit_key_tls_psk_identity, tls_psk_identity,
+			ZBX_JSON_TYPE_STRING);
+	zbx_json_addstring(&local_audit_host_entry->details_json, audit_key_tls_psk, tls_psk, ZBX_JSON_TYPE_STRING);
+
+	zbx_hashset_insert(&zbx_audit, &local_audit_host_entry, sizeof(local_audit_host_entry));
 }
 
 void	zbx_audit_host_del(zbx_uint64_t hostid, const char *hostname)
@@ -1234,4 +1300,70 @@ void	zbx_audit_host_del(zbx_uint64_t hostid, const char *hostname)
 
 	zbx_new_cuid(recsetid_cuid);
 	zbx_audit_create_entry(AUDIT_ACTION_DELETE, hostid, hostname, AUDIT_RESOURCE_HOST, recsetid_cuid, "");
+}
+
+void	zbx_audit_lld_items_create_entry(const zbx_audit_item_t *item, const zbx_uint64_t hostid, const int audit_action)
+{
+	zbx_audit_entry_t	*local_audit_items_entry;
+
+	local_audit_items_entry = (zbx_audit_entry_t*)zbx_malloc(NULL, sizeof(zbx_audit_entry_t));
+	local_audit_items_entry->id = item->itemid;
+	local_audit_items_entry->name = zbx_strdup(NULL, item->name);
+	local_audit_items_entry->audit_action = audit_action;
+	local_audit_items_entry->resource_type = item_flag_to_resource_type(item->flags);
+
+#define ADD_JSON_S(x)	zbx_json_addstring(&local_audit_items_entry->details_json, "item."#x, item->x, \
+	ZBX_JSON_TYPE_STRING)
+#define ADD_JSON_UI(x)	zbx_json_adduint64(&local_audit_items_entry->details_json, "item."#x, item->x)
+
+	zbx_json_init(&(local_audit_items_entry->details_json), ZBX_JSON_STAT_BUF_LEN);
+	ADD_JSON_UI(itemid);
+	ADD_JSON_S(delay);
+	zbx_json_adduint64(&local_audit_items_entry->details_json, "item.hostid", hostid);
+	ADD_JSON_S(key);
+	ADD_JSON_S(name);
+	ADD_JSON_UI(type);
+	ADD_JSON_S(url);
+	ADD_JSON_UI(value_type);
+	ADD_JSON_UI(allow_traps);
+	ADD_JSON_UI(authtype);
+	ADD_JSON_S(description);
+	ADD_JSON_UI(flags);
+	ADD_JSON_UI(follow_redirects);
+	ADD_JSON_S(headers);
+	ADD_JSON_S(history);
+	ADD_JSON_S(http_proxy);
+	ADD_JSON_S(ipmi_sensor);
+	ADD_JSON_S(jmx_endpoint);
+	ADD_JSON_S(logtimefmt);
+	ADD_JSON_UI(master_itemid);
+	ADD_JSON_UI(output_format);
+	ADD_JSON_S(params);
+	ADD_JSON_S(password);
+	ADD_JSON_UI(post_type);
+	ADD_JSON_S(posts);
+	ADD_JSON_S(privatekey);
+	ADD_JSON_S(publickey);
+	ADD_JSON_S(query_fields);
+	ADD_JSON_UI(request_method);
+	ADD_JSON_UI(retrieve_mode);
+	ADD_JSON_S(snmp_oid);
+	ADD_JSON_S(ssl_cert_file);
+	ADD_JSON_S(ssl_key_file);
+	ADD_JSON_S(ssl_key_password);
+	ADD_JSON_UI(status);
+	ADD_JSON_S(status_codes);
+	ADD_JSON_S(timeout);
+	ADD_JSON_S(trapper_hosts);
+	ADD_JSON_S(trends);
+	ADD_JSON_S(units);
+	ADD_JSON_S(username);
+	ADD_JSON_UI(valuemapid);
+	ADD_JSON_UI(verify_host);
+	ADD_JSON_UI(verify_peer);
+	ADD_JSON_S(formula);
+#undef ADD_JSON_UI
+#undef ADD_JSON_S
+
+	zbx_hashset_insert(&zbx_audit, &local_audit_items_entry, sizeof(local_audit_items_entry));
 }

@@ -2807,6 +2807,17 @@ static int	lld_triggers_save(zbx_uint64_t hostid, const zbx_vector_ptr_t *trigge
 
 			zbx_db_insert_add_values(&db_insert_tdiscovery, triggerid, trigger->parent_triggerid);
 
+			zbx_audit_triggers_create_entry(AUDIT_ACTION_ADD, triggerid, trigger->description, 0,
+					trigger_prototype->recovery_mode, trigger->status, trigger_prototype->type,
+					TRIGGER_VALUE_OK, TRIGGER_STATE_NORMAL, trigger->priority,
+					trigger->comments, trigger->url, ZBX_FLAG_DISCOVERY_NORMAL,
+					trigger_prototype->correlation_mode, trigger->correlation_tag,
+					trigger_prototype->manual_close, trigger->opdata, trigger_prototype->discover,
+					trigger->event_name);
+
+			zbx_audit_triggers_update_expression_and_recovery_expression(trigger->triggerid,
+					ZBX_FLAG_DISCOVERY_CREATED, trigger->expression, trigger->recovery_expression);
+
 			trigger->triggerid = triggerid++;
 		}
 		else if (0 != (trigger->flags & ZBX_FLAG_LLD_TRIGGER_UPDATE))
@@ -2919,6 +2930,17 @@ static int	lld_triggers_save(zbx_uint64_t hostid, const zbx_vector_ptr_t *trigge
 
 			zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset,
 					" where triggerid=" ZBX_FS_UI64 ";\n", trigger->triggerid);
+
+			zbx_audit_triggers_create_entry(AUDIT_ACTION_UPDATE, triggerid, trigger->description, 0,
+					trigger_prototype->recovery_mode, trigger->status, trigger_prototype->type,
+					TRIGGER_VALUE_OK, TRIGGER_STATE_NORMAL, trigger->priority,
+					trigger->comments, trigger->url, ZBX_FLAG_DISCOVERY_NORMAL,
+					trigger_prototype->correlation_mode, trigger->correlation_tag,
+					trigger_prototype->manual_close, trigger->opdata, trigger_prototype->discover,
+					trigger->event_name);
+
+			zbx_audit_triggers_update_expression_and_recovery_expression(trigger->triggerid,
+					ZBX_FLAG_DISCOVERY_CREATED, trigger->expression, trigger->recovery_expression);
 		}
 	}
 
@@ -2947,6 +2969,9 @@ static int	lld_triggers_save(zbx_uint64_t hostid, const zbx_vector_ptr_t *trigge
 				zbx_db_insert_add_values(&db_insert_tdepends, triggerdepid, trigger->triggerid,
 						triggerid_up);
 
+				zbx_audit_triggers_update_dependencies(trigger->triggerid,
+						triggerid_up, ZBX_FLAG_DISCOVERY_NORMAL, triggerdepid);
+
 				dependency->triggerdepid = triggerdepid++;
 			}
 		}
@@ -2962,7 +2987,7 @@ static int	lld_triggers_save(zbx_uint64_t hostid, const zbx_vector_ptr_t *trigge
 
 		for (j = 0; j < trigger->tags.values_num; j++)
 		{
-			char	*value_esc;
+			char	*value_esc, *tagid_str = NULL;
 
 			tag = (zbx_lld_tag_t *)trigger->tags.values[j];
 
@@ -3002,6 +3027,11 @@ static int	lld_triggers_save(zbx_uint64_t hostid, const zbx_vector_ptr_t *trigge
 				zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset,
 						" where triggertagid=" ZBX_FS_UI64 ";\n", tag->triggertagid);
 			}
+
+			tagid_str = zbx_dsprintf(tagid_str, ZBX_FS_UI64, tag->flags);
+			zbx_audit_triggers_update_tags_and_values(triggerid, tag->tag, tag->value,
+					ZBX_FLAG_DISCOVERY_NORMAL, tagid_str);
+			zbx_free(tagid_str);
 		}
 	}
 

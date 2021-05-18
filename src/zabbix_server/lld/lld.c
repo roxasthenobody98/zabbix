@@ -1206,6 +1206,8 @@ int	lld_process_discovery_rule(zbx_uint64_t lld_ruleid, const char *value, char 
 
 	now = time(NULL);
 
+	zbx_audit_init();
+
 	if (SUCCEED != lld_update_items(hostid, lld_ruleid, &lld_rows, &lld_macro_paths, error, lifetime, now))
 	{
 		zabbix_log(LOG_LEVEL_DEBUG, "cannot update/add items because parent host was removed while"
@@ -1235,6 +1237,7 @@ int	lld_process_discovery_rule(zbx_uint64_t lld_ruleid, const char *value, char 
 	if (NULL != info)
 		*error = zbx_strdcat(*error, info);
 out:
+	zbx_audit_flush();
 	DCconfig_clean_items(&item, &errcode, 1);
 	zbx_free(info);
 	zbx_free(discovery_key);

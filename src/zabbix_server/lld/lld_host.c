@@ -2703,6 +2703,11 @@ static void	lld_hosts_save(zbx_uint64_t parent_hostid, zbx_vector_ptr_t *hosts, 
 					(int)tls_accept, tls_issuer, tls_subject, tls_psk_identity, tls_psk,
 					host->custom_interfaces);
 
+			zbx_audit_lld_host_create_entry(AUDIT_ACTION_ADD, host->hostid, host->host, host->name, proxy_hostid,
+					ipmi_authtype, ipmi_privilege, ipmi_username, ipmi_password,
+					host->status, ZBX_FLAG_DISCOVERY_CREATED, tls_connect,
+					tls_accept, tls_issuer, tls_subject, tls_psk_identity, tls_psk);
+
 			zbx_db_insert_add_values(&db_insert_hdiscovery, host->hostid, parent_hostid, host_proto);
 
 			if (HOST_INVENTORY_DISABLED != host->inventory_mode)
@@ -2831,6 +2836,11 @@ static void	lld_hosts_save(zbx_uint64_t parent_hostid, zbx_vector_ptr_t *hosts, 
 				}
 				zbx_snprintf_alloc(&sql1, &sql1_alloc, &sql1_offset, " where hostid=" ZBX_FS_UI64 ";\n",
 						host->hostid);
+
+				zbx_audit_lld_host_create_entry(AUDIT_ACTION_UPDATE, host->hostid, host->host, host->name, proxy_hostid,
+						ipmi_authtype, ipmi_privilege, ipmi_username, ipmi_password,
+						host->status, ZBX_FLAG_DISCOVERY_CREATED, tls_connect,
+						tls_accept, tls_issuer, tls_subject, tls_psk_identity, tls_psk);
 			}
 
 			if (host->inventory_mode_orig != host->inventory_mode &&
@@ -2864,6 +2874,10 @@ static void	lld_hosts_save(zbx_uint64_t parent_hostid, zbx_vector_ptr_t *hosts, 
 				zbx_db_insert_add_values(&db_insert_interface, interface->interfaceid, host->hostid,
 						(int)interface->type, (int)interface->main, (int)interface->useip,
 						interface->ip, interface->dns, interface->port);
+
+				zbx_audit_host_update_interfaces(host->hostid, interface->interfaceid, interface->main,
+						interface->type, interface->useip, interface->ip, interface->dns,
+						atoi(interface->port));
 
 				zbx_db_insert_add_values(&db_insert_idiscovery, interface->interfaceid,
 						interface->parent_interfaceid);
@@ -2914,6 +2928,10 @@ static void	lld_hosts_save(zbx_uint64_t parent_hostid, zbx_vector_ptr_t *hosts, 
 				}
 				zbx_snprintf_alloc(&sql1, &sql1_alloc, &sql1_offset,
 						" where interfaceid=" ZBX_FS_UI64 ";\n", interface->interfaceid);
+
+				zbx_audit_host_update_interfaces(host->hostid, interface->interfaceid, interface->main,
+						interface->type, interface->useip, interface->ip, interface->dns,
+						atoi(interface->port));
 			}
 
 			if (0 != (interface->flags & ZBX_FLAG_LLD_INTERFACE_SNMP_DATA_EXISTS))

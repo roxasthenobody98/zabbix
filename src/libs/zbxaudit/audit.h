@@ -25,6 +25,57 @@
 #include "db.h"
 #include "../zbxdbhigh/template.h"
 
+typedef struct
+{
+	zbx_uint64_t		itemid;
+	char			*delay;
+	zbx_uint64_t		hostid;
+	zbx_uint64_t		interfaceid;
+	char			*key;
+	char			*name;
+	zbx_uint64_t		type;
+	char			*url;
+	zbx_uint64_t		value_type;
+	zbx_uint64_t		allow_traps;
+	zbx_uint64_t		authtype;
+	char			*description;
+	zbx_uint64_t		flags;
+	zbx_uint64_t		follow_redirects;
+	char			*headers;
+	char			*history;
+	char			*http_proxy;
+	char			*ipmi_sensor;
+	char			*jmx_endpoint;
+	char			*logtimefmt;
+	zbx_uint64_t		master_itemid;
+	zbx_uint64_t		output_format;
+	char			*params;
+	char			*password;
+	zbx_uint64_t		post_type;
+	char			*posts;
+	char			*privatekey;
+	char			*publickey;
+	char			*query_fields;
+	zbx_uint64_t		request_method;
+	zbx_uint64_t		retrieve_mode;
+	char			*snmp_oid;
+	char			*ssl_cert_file;
+	char			*ssl_key_file;
+	char			*ssl_key_password;
+	zbx_uint64_t		status;
+	char			*status_codes;
+	char			*timeout;
+	char			*trapper_hosts;
+	char			*trends;
+	char			*units;
+	char			*username;
+	zbx_uint64_t		valuemapid;
+	zbx_uint64_t		verify_host;
+	zbx_uint64_t		verify_peer;
+	char			*formula;
+}
+zbx_audit_item_t;
+
 void	zbx_audit_init(void);
 void	zbx_audit_flush(void);
 void	DBselect_delete_for_item(const char *sql, zbx_vector_uint64_t *ids);
@@ -56,10 +107,10 @@ void	zbx_audit_triggers_create_entry(const int audit_action, zbx_uint64_t new_tr
 		unsigned char manual_close, const char *opdata, unsigned char discover, const char *event_name);
 void	zbx_audit_triggers_update_expression_and_recovery_expression(zbx_uint64_t triggerid, int flags,
 		const char *new_expression, const char *new_recovery_expression);
-void	zbx_audit_triggers_update_dependencies(const char *triggerid_up_str, const char *triggerid_str,
-		const char *flags_str, const char *triggerdepid_str);
+void	zbx_audit_triggers_update_dependencies(zbx_uint64_t triggerid_up, zbx_uint64_t triggerid,
+		int flags, zbx_uint64_t triggerdepid);
 void	zbx_audit_triggers_update_tags_and_values(zbx_uint64_t triggerid, const char *tag, const char *value,
-		const char *flags_str, const char *tagid_str);
+		int flags, const char *tagid_str);
 void	zbx_audit_httptests_create_entry_add(zbx_uint64_t httptestid, char *name, char *delay,
 		unsigned char status, char *agent, unsigned char authentication, char *http_user, char *http_password,
 		char *http_proxy, int retries, uint64_t hostid, zbx_uint64_t templateid);
@@ -75,10 +126,10 @@ void	zbx_audit_discovery_rule_overrides_update(int item_no, int rule_condition_n
 		zbx_uint64_t op, const char *macro, const char *value);
 void	zbx_audit_discovery_rule_override_conditions_update(int audit_index, zbx_uint64_t itemid, zbx_uint64_t op,
 		const char *macro, const char *value);
-void	zbx_audit_preprocessing_update(zbx_uint64_t itemid, unsigned char flags, const char *step, const char *type,
-		const char *params, const char *error_handler, const char *error_handler_params);
+void	zbx_audit_preprocessing_update(zbx_uint64_t itemid, unsigned char flags, int step,
+		int type, const char *params, int error_handler, const char *error_handler_params);
 void	zbx_audit_item_parameters_update(int audit_index, zbx_uint64_t itemid, const char *name,
-		const char *value, const char *flags_str);
+		const char *value, int flags);
 void	zbx_audit_discovery_rule_lld_macro_paths_update(zbx_uint64_t no, zbx_uint64_t itemid, const char *lld_macro,
 		const char *path);
 void	zbx_audit_discovery_rule_overrides_operations_update(int override_no, int operation_no, zbx_uint64_t itemid,
@@ -101,11 +152,18 @@ void	zbx_audit_update_json_string(const zbx_uint64_t itemid, const char *key, co
 void	zbx_audit_update_json_uint64(const zbx_uint64_t itemid, const char *key, const uint64_t value);
 int	zbx_audit_create_entry(const int action, const zbx_uint64_t resourceid, const char* resourcename,
 		const int resourcetype, const char *recsetid, const char *details);
+void	zbx_audit_host_update_groups(const char *audit_details_action, zbx_uint64_t hostid, zbx_uint64_t groupid);
 void	zbx_audit_host_groups_delete_create_entry(zbx_uint64_t hostid, char *hostname, zbx_vector_uint64_t *groupids);
 void	zbx_audit_host_update_tls_and_psk(zbx_uint64_t hostid, int tls_connect, int tls_accept, const char *psk_identity,
 		const char *psk);
 void	zbx_audit_host_create_entry(int audit_action, zbx_uint64_t hostid, const char *name);
-void	zbx_audit_host_update_groups(const char *audit_details_action, zbx_uint64_t hostid, zbx_uint64_t groupid);
+void	zbx_audit_lld_host_create_entry(int audit_action, zbx_uint64_t hostid, char *host, char *name,
+		zbx_uint64_t proxy_hostid, char ipmi_authtype, unsigned char ipmi_privilege, const char *ipmi_username,
+		const char *ipmi_password, unsigned char status, zbx_uint64_t flags, unsigned char tls_connect,
+		unsigned char tls_accept, const char *tls_issuer, const char *tls_subject,
+		const char *tls_psk_identity, const char *tls_psk);
 void	zbx_audit_host_del(zbx_uint64_t hostid, const char *hostname);
-
+void	zbx_audit_lld_items_create_entry(const zbx_audit_item_t *item, const zbx_uint64_t hostid,
+		const int action);
+void	zbx_audit_item_tags_update(int audit_index, zbx_uint64_t itemid, const char *tag, const char *value);
 #endif	/* ZABBIX_AUDIT_H */

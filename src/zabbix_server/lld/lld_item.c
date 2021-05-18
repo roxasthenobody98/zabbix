@@ -3079,6 +3079,7 @@ static void	lld_item_save(zbx_uint64_t hostid, const zbx_vector_ptr_t *item_prot
 	if (0 == item->itemid)
 	{
 		const zbx_lld_item_prototype_t	*item_prototype;
+		zbx_audit_item_t		audit_item;
 
 		item_prototype = (zbx_lld_item_prototype_t *)item_prototypes->values[index];
 		item->itemid = (*itemid)++;
@@ -3103,6 +3104,57 @@ static void	lld_item_save(zbx_uint64_t hostid, const zbx_vector_ptr_t *item_prot
 				item->parent_itemid, item_prototype->key);
 
 		zbx_db_insert_add_values(db_insert_irtdata, item->itemid);
+
+		audit_item.itemid = item->itemid;
+		audit_item.key = item->key;
+		audit_item.name = item->name;
+		audit_item.delay = item->delay;
+		audit_item.history = item->history;
+		audit_item.trends = item->trends;
+		audit_item.status = item->status;
+		audit_item.units = item->units;
+		audit_item.params = item->params;
+		audit_item.ipmi_sensor = item->ipmi_sensor;
+		audit_item.snmp_oid = item->snmp_oid;
+		audit_item.username = item->username;
+		audit_item.password = item->password;
+		audit_item.description = item->description;
+		audit_item.jmx_endpoint = item->jmx_endpoint;
+		audit_item.master_itemid = item->master_itemid;
+		audit_item.timeout = item->timeout;
+		audit_item.url = item->url;
+		audit_item.query_fields = item->query_fields;
+		audit_item.posts = item->posts;
+		audit_item.status_codes = item->status_codes;
+		audit_item.http_proxy = item->http_proxy;
+		audit_item.headers = item->headers;
+		audit_item.ssl_cert_file = item->ssl_cert_file;
+		audit_item.ssl_key_file = item->ssl_key_file;
+		audit_item.ssl_key_password = item->ssl_key_password;
+
+		audit_item.type = item_prototype->type;
+		audit_item.value_type = item_prototype->value_type;
+		audit_item.trapper_hosts = item_prototype->trapper_hosts;
+		audit_item.formula = item_prototype->formula;
+		audit_item.logtimefmt = item_prototype->logtimefmt;
+		audit_item.valuemapid = item_prototype->valuemapid;
+		audit_item.authtype = item_prototype->authtype;
+		audit_item.privatekey = item_prototype->privatekey;
+		audit_item.publickey = item_prototype->publickey;
+		audit_item.interfaceid = item_prototype->interfaceid;
+		audit_item.follow_redirects = item_prototype->follow_redirects;
+		audit_item.post_type = item_prototype->post_type;
+		audit_item.retrieve_mode = item_prototype->retrieve_mode;
+		audit_item.request_method = item_prototype->request_method;
+		audit_item.output_format = item_prototype->output_format;
+		audit_item.verify_host = item_prototype->verify_host;
+		audit_item.verify_peer = item_prototype->verify_peer;
+		audit_item.allow_traps = item_prototype->allow_traps;
+
+		audit_item.hostid = hostid;
+		audit_item.flags = ZBX_FLAG_DISCOVERY_CREATED;
+
+		zbx_audit_lld_items_create_entry(&audit_item, hostid, AUDIT_ACTION_ADD);
 	}
 
 	for (index = 0; index < item->dependent_items.values_num; index++)
@@ -3133,10 +3185,11 @@ static void	lld_item_save(zbx_uint64_t hostid, const zbx_vector_ptr_t *item_prot
  *                                                                            *
  ******************************************************************************/
 static void	lld_item_prepare_update(const zbx_lld_item_prototype_t *item_prototype, const zbx_lld_item_t *item,
-		char **sql, size_t *sql_alloc, size_t *sql_offset)
+		zbx_uint64_t hostid, char **sql, size_t *sql_alloc, size_t *sql_offset)
 {
 	char				*value_esc;
 	const char			*d = "";
+	zbx_audit_item_t		audit_item;
 
 	zbx_strcpy_alloc(sql, sql_alloc, sql_offset, "update items set ");
 	if (0 != (item->flags & ZBX_FLAG_LLD_ITEM_UPDATE_NAME))
@@ -3416,6 +3469,57 @@ static void	lld_item_prepare_update(const zbx_lld_item_prototype_t *item_prototy
 	zbx_snprintf_alloc(sql, sql_alloc, sql_offset, " where itemid=" ZBX_FS_UI64 ";\n", item->itemid);
 
 	DBexecute_overflowed_sql(sql, sql_alloc, sql_offset);
+
+	audit_item.itemid = item->itemid;
+	audit_item.key = item->key;
+	audit_item.name = item->name;
+	audit_item.delay = item->delay;
+	audit_item.history = item->history;
+	audit_item.trends = item->trends;
+	audit_item.status = item->status;
+	audit_item.units = item->units;
+	audit_item.params = item->params;
+	audit_item.ipmi_sensor = item->ipmi_sensor;
+	audit_item.snmp_oid = item->snmp_oid;
+	audit_item.username = item->username;
+	audit_item.password = item->password;
+	audit_item.description = item->description;
+	audit_item.jmx_endpoint = item->jmx_endpoint;
+	audit_item.master_itemid = item->master_itemid;
+	audit_item.timeout = item->timeout;
+	audit_item.url = item->url;
+	audit_item.query_fields = item->query_fields;
+	audit_item.posts = item->posts;
+	audit_item.status_codes = item->status_codes;
+	audit_item.http_proxy = item->http_proxy;
+	audit_item.headers = item->headers;
+	audit_item.ssl_cert_file = item->ssl_cert_file;
+	audit_item.ssl_key_file = item->ssl_key_file;
+	audit_item.ssl_key_password = item->ssl_key_password;
+
+	audit_item.type = item_prototype->type;
+	audit_item.value_type = item_prototype->value_type;
+	audit_item.trapper_hosts = item_prototype->trapper_hosts;
+	audit_item.formula = item_prototype->formula;
+	audit_item.logtimefmt = item_prototype->logtimefmt;
+	audit_item.valuemapid = item_prototype->valuemapid;
+	audit_item.authtype = item_prototype->authtype;
+	audit_item.privatekey = item_prototype->privatekey;
+	audit_item.publickey = item_prototype->publickey;
+	audit_item.interfaceid = item_prototype->interfaceid;
+	audit_item.follow_redirects = item_prototype->follow_redirects;
+	audit_item.post_type = item_prototype->post_type;
+	audit_item.retrieve_mode = item_prototype->retrieve_mode;
+	audit_item.request_method = item_prototype->request_method;
+	audit_item.output_format = item_prototype->output_format;
+	audit_item.verify_host = item_prototype->verify_host;
+	audit_item.verify_peer = item_prototype->verify_peer;
+	audit_item.allow_traps = item_prototype->allow_traps;
+
+	audit_item.hostid = hostid;
+	audit_item.flags = ZBX_FLAG_DISCOVERY_CREATED;
+
+	zbx_audit_lld_items_create_entry(&audit_item, hostid, AUDIT_ACTION_UPDATE);
 }
 
 /******************************************************************************
@@ -3650,7 +3754,7 @@ static int	lld_items_save(zbx_uint64_t hostid, const zbx_vector_ptr_t *item_prot
 
 			item_prototype = item_prototypes->values[index];
 
-			lld_item_prepare_update(item_prototype, item, &sql, &sql_alloc, &sql_offset);
+			lld_item_prepare_update(item_prototype, item, hostid, &sql, &sql_alloc, &sql_offset);
 			lld_item_discovery_prepare_update(item_prototype, item, &sql, &sql_alloc, &sql_offset);
 		}
 
@@ -3757,6 +3861,10 @@ static int	lld_items_preproc_save(zbx_uint64_t hostid, zbx_vector_ptr_t *items, 
 			char	delim = ' ';
 
 			preproc_op = (zbx_lld_item_preproc_t *)item->preproc_ops.values[j];
+
+			zbx_audit_preprocessing_update(item->itemid, ZBX_FLAG_DISCOVERY_CREATED, preproc_op->step,
+					preproc_op->type, preproc_op->params, preproc_op->error_handler,
+					preproc_op->error_handler_params);
 
 			if (0 == preproc_op->item_preprocid)
 			{
@@ -3867,7 +3975,8 @@ out:
  ******************************************************************************/
 static int	lld_items_param_save(zbx_uint64_t hostid, zbx_vector_ptr_t *items, int *host_locked)
 {
-	int			ret = SUCCEED, i, j, new_param_num = 0, update_param_num = 0, delete_param_num = 0;
+	int			ret = SUCCEED, i, j, new_param_num = 0, update_param_num = 0, delete_param_num = 0,
+				audit_index = 0;
 	zbx_lld_item_t		*item;
 	zbx_lld_item_param_t	*item_param;
 	zbx_vector_uint64_t	deleteids;
@@ -3944,6 +4053,9 @@ static int	lld_items_param_save(zbx_uint64_t hostid, zbx_vector_ptr_t *items, in
 			char	delim = ' ';
 
 			item_param = (zbx_lld_item_param_t *)item->item_params.values[j];
+
+			zbx_audit_item_parameters_update(audit_index++, item->itemid, item_param->name,
+					item_param->value, ZBX_FLAG_DISCOVERY_CREATED);
 
 			if (0 == item_param->item_parameterid)
 			{
@@ -4033,7 +4145,8 @@ out:
  ******************************************************************************/
 static int	lld_items_tags_save(zbx_uint64_t hostid, zbx_vector_ptr_t *items, int *host_locked)
 {
-	int			ret = SUCCEED, i, j, new_tag_num = 0, update_tag_num = 0, delete_tag_num = 0;
+	int			ret = SUCCEED, i, j, new_tag_num = 0, update_tag_num = 0, delete_tag_num = 0,
+				audit_index = 0;
 	zbx_lld_item_t		*item;
 	zbx_lld_item_tag_t	*item_tag;
 	zbx_vector_uint64_t	deleteids;
@@ -4110,6 +4223,8 @@ static int	lld_items_tags_save(zbx_uint64_t hostid, zbx_vector_ptr_t *items, int
 			char	delim = ' ';
 
 			item_tag = (zbx_lld_item_tag_t *)item->item_tags.values[j];
+
+			zbx_audit_item_tags_update(audit_index++, item->itemid, item_tag->tag, item_tag->value);
 
 			if (0 == item_tag->item_tagid)
 			{

@@ -2038,7 +2038,8 @@ static void	DBresolve_template_trigger_dependencies(zbx_uint64_t hostid, const z
 
 	while (NULL != (row = DBfetch(result)))
 	{
-		int	iii;
+		int		iii;
+		zbx_uint64_t	triggerid, triggerdepip;
 
 		for (iii = 0; iii < dep_list_ids.values_num; iii++)
 		{
@@ -2054,7 +2055,11 @@ static void	DBresolve_template_trigger_dependencies(zbx_uint64_t hostid, const z
 			}
 		}
 
-		zbx_audit_triggers_update_dependencies(row[1], row[2], row[3], row[4]);
+		ZBX_STR2UINT64(triggerid_up, row[1]);
+		ZBX_STR2UINT64(triggerid, row[2]);
+		ZBX_STR2UINT64(triggerdepip, row[4]);
+
+		zbx_audit_triggers_update_dependencies(triggerid_up, triggerid, atoi(row[3]), triggerdepip);
 	}
 
 	DBfree_result(result);
@@ -2252,7 +2257,7 @@ static int	DBcopy_template_trigger_tags(const zbx_vector_uint64_t *new_triggerid
 
 		zbx_db_insert_add_values(&db_insert, __UINT64_C(0), triggerid, row[1], row[2]);
 
-		zbx_audit_triggers_update_tags_and_values(triggerid, row[1], row[2], row[3], row[4]);
+		zbx_audit_triggers_update_tags_and_values(triggerid, row[1], row[2], atoi(row[3]), row[4]);
 	}
 
 	DBfree_result(result);

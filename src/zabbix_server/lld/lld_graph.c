@@ -1041,6 +1041,12 @@ static int	lld_graphs_save(zbx_uint64_t hostid, zbx_uint64_t parent_graphid, zbx
 
 			zbx_db_insert_add_values(&db_insert_gdiscovery, graphid, parent_graphid);
 
+			zbx_audit_graphs_create_entry(AUDIT_ACTION_ADD, graphid, graph->name, width, height,
+					yaxismin, yaxismax, graphid, show_work_period, show_triggers, graphtype,
+					show_legend, show_3d, percent_left, percent_right, ymin_type, ymax_type,
+					graph->ymin_itemid, graph->ymax_itemid, graph->flags,
+					ZBX_FLAG_DISCOVERY_CREATED);
+
 			graph->graphid = graphid++;
 		}
 		else if (0 != (graph->flags & ZBX_FLAG_LLD_GRAPH_UPDATE))
@@ -1160,6 +1166,12 @@ static int	lld_graphs_save(zbx_uint64_t hostid, zbx_uint64_t parent_graphid, zbx
 
 			zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset, " where graphid=" ZBX_FS_UI64 ";\n",
 					graph->graphid);
+
+			zbx_audit_graphs_create_entry(AUDIT_ACTION_UPDATE, graphid, graph->name, width, height,
+					yaxismin, yaxismax, graphid, show_work_period, show_triggers, graphtype,
+					show_legend, show_3d, percent_left, percent_right, ymin_type, ymax_type,
+					graph->ymin_itemid, graph->ymax_itemid, graph->flags,
+					ZBX_FLAG_DISCOVERY_CREATED);
 		}
 
 		for (j = 0; j < graph->gitems.values_num; j++)
@@ -1177,6 +1189,10 @@ static int	lld_graphs_save(zbx_uint64_t hostid, zbx_uint64_t parent_graphid, zbx
 				zbx_db_insert_add_values(&db_insert_gitems, gitemid, graph->graphid, gitem->itemid,
 						(int)gitem->drawtype, gitem->sortorder, gitem->color,
 						(int)gitem->yaxisside, (int)gitem->calc_fnc, (int)gitem->type);
+
+				zbx_audit_graphs_update_gitems(gitem->itemid, ZBX_FLAG_DISCOVERY_NORMAL, gitem->gitemid,
+						gitem->drawtype, gitem->sortorder, gitem->color, gitem->yaxisside,
+						gitem->calc_fnc, gitem->type);
 
 				gitem->gitemid = gitemid++;
 			}
@@ -1235,6 +1251,10 @@ static int	lld_graphs_save(zbx_uint64_t hostid, zbx_uint64_t parent_graphid, zbx
 
 		zbx_snprintf_alloc(&sql, &sql_alloc, &sql_offset, " where gitemid=" ZBX_FS_UI64 ";\n",
 				gitem->gitemid);
+
+		zbx_audit_graphs_update_gitems(gitem->itemid, ZBX_FLAG_DISCOVERY_NORMAL, gitem->gitemid,
+				gitem->drawtype, gitem->sortorder, gitem->color, gitem->yaxisside, gitem->calc_fnc,
+				gitem->type);
 	}
 
 	if (0 != del_gitemids.values_num)

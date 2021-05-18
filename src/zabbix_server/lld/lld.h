@@ -25,6 +25,8 @@
 #include "zbxalgo.h"
 #include "db.h"
 
+#include "../../libs/zbxaudit/audit.h"
+
 typedef struct
 {
 	zbx_uint64_t	parent_itemid;
