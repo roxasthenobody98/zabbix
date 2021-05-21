@@ -438,6 +438,9 @@ class CGraph extends CGraphGeneral {
 			}
 		}
 
+		$child_graphs_to_add = [];
+		$child_graphs_to_update = [];
+
 		/*
 		 * Since the inherit() method called either when graphs are only created (called from create() or
 		 * syncTemplates() methods) or when only updated (called from update() method), the child graphs will be only
@@ -467,8 +470,6 @@ class CGraph extends CGraphGeneral {
 				$child_graphs_hostids[$child_graphid] = reset($child_graph['items'])['hostid'];
 			}
 
-			$child_graphs_to_add = [];
-			$child_graphs_to_update = [];
 			$graphs_changed_names_child_graphids = [];
 
 			foreach ($graphs as $graphid => $graph) {
@@ -499,7 +500,7 @@ class CGraph extends CGraphGeneral {
 					}
 					unset($gitem);
 
-					$child_graphs_to_update[] = $child_graph_to_update;
+					$child_graphs_to_update[$child_graphid] = $child_graph_to_update;
 				}
 			}
 
@@ -574,7 +575,7 @@ class CGraph extends CGraphGeneral {
 				'preservekeys' => true
 			]);
 
-			$rewrited_graphs = [];
+			$parent_graphids_updated_hosts = [];
 
 			foreach ($possible_same_name_hosts_graphs as $graphid => $graph) {
 				$graph_hostids = array_unique(array_column($graph['items'], 'hostid'));
@@ -634,6 +635,8 @@ class CGraph extends CGraphGeneral {
 					// $child_graph_to_update = ['graphid' => $child_graphid, 'templateid' => $graphid] + $graph;
 					// ...
 					// $child_graphs_to_update[] = $child_graph_to_update;
+
+					$parent_graphids_updated_hosts[$parent_graphid][$hostid] = true;
 				}
 				else {
 					self::exception(ZBX_API_ERROR_PARAMETERS,
@@ -644,32 +647,47 @@ class CGraph extends CGraphGeneral {
 				}
 			}
 
-			// TODO this block written incorrectly and this need to rewrite
-			foreach (array_diff_key($graphs, $rewrited_graphs) as $graphid => $graph) {
-				$gitem = reset($graph['gitems']);
-				$itemid = $gitem['itemid'];
+			foreach ($graphs as $graphid => $graph) {
+				$itemid = reset($graph['gitems'])['itemid'];
 				$templateid = $itemids_templateids[$itemid];
 
-				$child_graph_to_add = ['templateid' => $graph['graphid']] + array_diff_key($graph, ['graphid' => true]);
+				$hosts_to_create_graph = array_diff_key($templateids_hosts[$templateid],
+					$parent_graphids_updated_hosts[$graphid]
+				);
 
-				foreach ($child_graph_to_add['gitems'] as &$gitem) {
-					unset($gitem['gitemid']);
+				foreach (array_keys($hosts_to_create_graph) as $hostid) {
+					$child_graph_to_add = ['templateid' => $graphid] + array_diff_key($graph, ['graphid' => true]);
+
+					if ($graph['ymin_itemid'] != 0) {
+						$child_graph_to_add['ymin_itemid'] =
+							$template_itemids_hostids_itemids[$graph['ymin_itemid']][$hostid];
+					}
+
+					if ($graph['ymax_itemid'] != 0) {
+						$child_graph_to_add['ymax_itemid'] =
+							$template_itemids_hostids_itemids[$graph['ymax_itemid']][$hostid];
+					}
+
+					foreach ($child_graph_to_add['gitems'] as &$gitem) {
+						$gitem['itemid'] = $template_itemids_hostids_itemids[$gitem['itemid']][$hostid];
+					}
+					unset($gitem);
+
+					$child_graphs_to_add[] = $child_graph_to_add;
 				}
-				// TODO there also need to set correct itemid (from child host) to each gitem
-
-				// $child_graphs_to_add
 			}
 		}
 
 		if ($child_graphs_to_add) {
 			$this->createReal($child_graphs_to_add);
+			$child_graphs_to_add = zbx_toHash($child_graphs_to_add, 'graphid');
 		}
 
 		if ($child_graphs_to_update) {
 			$this->updateReal($child_graphs_to_update);
 		}
 
-		// TODO $this->inherit();
+		$this->inherit($child_graphs_to_add + $child_graphs_to_update);
 	}
 
 	/**
