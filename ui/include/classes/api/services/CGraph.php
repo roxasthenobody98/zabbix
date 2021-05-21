@@ -333,22 +333,23 @@ class CGraph extends CGraphGeneral {
 	 */
 	protected function inherit(array $graphs, array $hostids = null): void {
 		$graphs = zbx_toHash($graphs, 'graphid');
-		$graphids = [];
 		$itemids = [];
+		$graphids_items = [];
 
 		foreach ($graphs as $graphid => $graph) {
-			$graphids[] = $graphid;
-
 			if ($graph['ymin_itemid'] > 0) {
 				$itemids[$graph['ymin_itemid']] = true;
+				$graphids_items[$graphid][$graph['ymin_itemid']] = true;
 			}
 
 			if ($graph['ymax_itemid'] > 0) {
 				$itemids[$graph['ymax_itemid']] = true;
+				$graphids_items[$graphid][$graph['ymax_itemid']] = true;
 			}
 
 			foreach ($graph['gitems'] as $gitem) {
 				$itemids[$gitem['itemid']] = true;
+				$graphids_items[$graphid][$gitem['itemid']] = true;
 			}
 		}
 
@@ -366,13 +367,34 @@ class CGraph extends CGraphGeneral {
 				' AND h.status='.HOST_STATUS_TEMPLATE
 		);
 
+		$itemids = [];
+
 		while ($data = DBfetch($db_templates)) {
 			$items_templateids[$data['key_']][$data['itemid']] = $data['templateid'];
 			$itemids_templateids[$data['itemid']] = $data['templateid'];
 			$templateids[$data['templateid']] = true;
+			$itemids[] = $data['itemid'];
 		}
 
 		if (!$items_templateids) {
+			return;
+		}
+
+		$graphids = [];
+		$same_name_graphs = [];
+
+		// Cleaning non-template graphs and collect data of template graphs.
+		foreach ($graphids_items as $graphid => $items) {
+			if (array_diff(array_keys($items), $itemids)) {
+				unset($graphs[$graphid]);
+			}
+			else {
+				$graphids[] = $graphid;
+				$same_name_graphs[$graphs[$graphid]['name']][$graphid] = true;
+			}
+		}
+
+		if (!$graphs) {
 			return;
 		}
 
@@ -398,6 +420,45 @@ class CGraph extends CGraphGeneral {
 
 		if (!$templateids_hosts) {
 			return;
+		}
+
+		foreach ($same_name_graphs as $name => $_graphs) {
+			if (count($_graphs) > 1) {
+				$_graphids = [];
+				$_templateids =[];
+
+				foreach (array_keys($_graphs) as $graphid) {
+					$itemid = reset($graphs[$graphid]['gitems'])['itemid'];
+					$templateid = $itemids_templateids[$itemid];
+					$_graphids[] = $templateid;
+					$_templateids[] = $templateid;
+				}
+
+				$_templateids_count = count($_templateids);
+				for ($i = 0; $i < ($_templateids_count - 1); $i++) {
+					for ($j = $i + 1; $j < $_templateids_count; $j++) {
+						$same_hosts = array_intersect_key($templateids_hosts[$_templateids[$i]],
+							$templateids_hosts[$_templateids[$j]]
+						);
+
+						if ($same_hosts) {
+							$hosts = API::Host()->get([
+								'output' => ['host'],
+								'hostids' => key($same_hosts),
+								'nopermissions' => true,
+								'preservekeys' => true,
+								'templated_hosts' => true
+							]);
+
+							self::exception(ZBX_API_ERROR_PARAMETERS,
+								_s('Unable to inherit graph with duplicate name "%1$s" in data to host "%2$s".', $name,
+									$hosts[key($same_hosts)]['host']
+								)
+							);
+						}
+					}
+				}
+			}
 		}
 
 		$hostids = array_keys($hostids);
