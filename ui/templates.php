@@ -382,37 +382,33 @@ elseif (hasRequest('action') && getRequest('action') === 'template.massupdate' &
 			if (array_key_exists('macros', $visible)) {
 				switch ($mass_update_macros) {
 					case ZBX_ACTION_ADD:
-						if ($macros) {
-							$update_existing = getRequest('macros_add', 0);
-							$template['macros'] = zbx_toHash($template['macros'], 'hostmacroid');
-							$template_macros_by_macro = zbx_toHash($template['macros'], 'macro');
+						$update_existing = getRequest('macros_add', 0);
+						$template['macros'] = array_column($template['macros'], null, 'hostmacroid');
+						$template_macros_by_macro = array_column($template['macros'], null, 'macro');
 
-							foreach ($macros as $macro) {
-								if ($update_existing && array_key_exists($macro['macro'], $template_macros_by_macro)) {
-									$hostmacroid = $template_macros_by_macro[$macro['macro']]['hostmacroid'];
-									$template['macros'][$hostmacroid] = ['hostmacroid' => $hostmacroid] + $macro;
-								}
-								else {
-									$template['macros'][] = $macro;
-								}
+						foreach ($macros as $macro) {
+							if (!array_key_exists($macro['macro'], $template_macros_by_macro)) {
+								$template['macros'][] = $macro;
+							}
+							elseif ($update_existing) {
+								$hostmacroid = $template_macros_by_macro[$macro['macro']]['hostmacroid'];
+								$template['macros'][$hostmacroid] = ['hostmacroid' => $hostmacroid] + $macro;
 							}
 						}
 						break;
 
 					case ZBX_ACTION_REPLACE: // In Macros its update.
-						if ($macros) {
-							$add_missing = getRequest('macros_update', 0);
-							$template['macros'] = zbx_toHash($template['macros'], 'hostmacroid');
-							$template_macros_by_macro = zbx_toHash($template['macros'], 'macro');
+						$add_missing = getRequest('macros_update', 0);
+						$template['macros'] = array_column($template['macros'], null, 'hostmacroid');
+						$template_macros_by_macro = array_column($template['macros'], null, 'macro');
 
-							foreach ($macros as $macro) {
-								if ($add_missing && !array_key_exists($macro['macro'], $template_macros_by_macro)) {
-									$template['macros'][] = $macro;
-								}
-								else if (array_key_exists($macro['macro'], $template_macros_by_macro)) {
-									$hostmacroid = $template_macros_by_macro[$macro['macro']]['hostmacroid'];
-									$template['macros'][$hostmacroid] = ['hostmacroid' => $hostmacroid] + $macro;
-								}
+						foreach ($macros as $macro) {
+							if (array_key_exists($macro['macro'], $template_macros_by_macro)) {
+								$hostmacroid = $template_macros_by_macro[$macro['macro']]['hostmacroid'];
+								$template['macros'][$hostmacroid] = ['hostmacroid' => $hostmacroid] + $macro;
+							}
+							elseif ($add_missing) {
+								$template['macros'][] = $macro;
 							}
 						}
 						break;
@@ -420,19 +416,12 @@ elseif (hasRequest('action') && getRequest('action') === 'template.massupdate' &
 					case ZBX_ACTION_REMOVE:
 						if ($macros) {
 							$except_selected = getRequest('macros_remove', 0);
-							$template_macros_by_macro = zbx_toHash($template['macros'], 'macro');
-							$macros_by_macro =  zbx_toHash($macros, 'macro');
+							$template_macros_by_macro = array_column($template['macros'], null, 'macro');
+							$macros_by_macro = array_column($macros, null, 'macro');
 
-							if ($except_selected) {
-								$template['macros'] = array_values(
-									array_intersect_key($template_macros_by_macro, $macros_by_macro)
-								);
-							}
-							else {
-								$template['macros'] = array_values(
-									array_diff_key($template_macros_by_macro, $macros_by_macro)
-								);
-							}
+							$template['macros'] = $except_selected
+								? array_intersect_key($template_macros_by_macro, $macros_by_macro)
+								: array_diff_key($template_macros_by_macro, $macros_by_macro);
 						}
 						break;
 
@@ -444,6 +433,8 @@ elseif (hasRequest('action') && getRequest('action') === 'template.massupdate' &
 						$template['macros'] = [];
 						break;
 				}
+
+				$template['macros'] = array_values($template['macros']);
 			}
 
 			unset($template['parentTemplates']);
