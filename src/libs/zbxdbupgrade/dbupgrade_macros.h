@@ -17,15 +17,10 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **/
 
-#include "common.h"
-#include "sysinfo.h"
-#include "zbxlld.h"
+#ifndef ZABBIX_DBUPGRADE_MACROS_H
+#define ZABBIX_DBUPGRADE_MACROS_H
 
-void	zbx_lld_process_agent_result(zbx_uint64_t itemid, zbx_uint64_t hostid, AGENT_RESULT *result, zbx_timespec_t *ts, char *error)
-{
-	ZBX_UNUSED(itemid);
-	ZBX_UNUSED(hostid);
-	ZBX_UNUSED(result);
-	ZBX_UNUSED(ts);
-	ZBX_UNUSED(error);
-}
+int	db_rename_macro(DB_RESULT result, const char *table, const char *pkey, const char **fields, int fields_num,
+		const char *oldmacro, const char *newmacro);
+
+#endif
