@@ -462,9 +462,7 @@ class CGraph extends CGraphGeneral {
 							]);
 
 							self::exception(ZBX_API_ERROR_PARAMETERS,
-								_s('Unable to inherit graph with duplicate name "%1$s" in data to host "%2$s".', $name,
-									$hosts[key($same_hosts)]['host']
-								)
+								_s('Graph "%1$s" already exists on "%2$s".', $name, $hosts[key($same_hosts)]['host'])
 							);
 						}
 					}
@@ -797,29 +795,8 @@ class CGraph extends CGraphGeneral {
 			'preservekeys' => true
 		]);
 
-		$inherit_graphs = [];
-
-		foreach ($graphs as $graph) {
-			$templateid = reset($graph['hosts'])['hostid'];
-
-			// We don't need to inherit the graphs for templates without graphs.
-			if (!array_key_exists($templateid, $linkage)) {
-				continue;
-			}
-
-			/*
-			 * We don't allow to inherit graphs to not linked hosts. This check provides the protection from the
-			 * external API method call.
-			 */
-			if (array_diff($data['hostids'], array_keys($linkage[$templateid]))) {
-				return true;
-			}
-
-			$inherit_graphs[] = $graph;
-		}
-
-		if ($inherit_graphs) {
-			$this->inherit($inherit_graphs, $data['hostids']);
+		if ($graphs) {
+			$this->inherit($graphs, $data['hostids']);
 		}
 
 		return true;
