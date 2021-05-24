@@ -29,25 +29,27 @@ class CApiUserMacroHelper {
 	 *
 	 * @static
 	 *
-	 * @param array $hosts_macros  Array of host macro objects.
+	 * @param array $hostmacros  Array of host macro objects.
 	 *
 	 * @throws APIException
 	 */
-	public static function checkHostsMacrosFields(array $hosts_macros) {
-		foreach ($hosts_macros as $macro) {
-			self::checkMacro($macro);
+	public static function checkHostsMacrosFields(array $hostmacros) {
+		foreach ($hostmacros as $hostmacro) {
+			self::checkMacro($hostmacro);
 
-			foreach ($macro as $field => $value) {
+			foreach ($hostmacro as $field => $value) {
 				if (!DB::hasField('hostmacro', $field)) {
-					throw new APIException(ZBX_API_ERROR_PARAMETERS, $macro['macro']);
+					throw new APIException(ZBX_API_ERROR_PARAMETERS,
+						_s('Wrong fields for macro "%1$s".', $hostmacro['macro'])
+					);
 				}
 			}
 
-			self::checkMacroType($macro);
+			self::checkMacroType($hostmacro);
 		}
 
-		self::checkDuplicateMacros($hosts_macros);
-		self::checkIfHostMacrosDontRepeat($hosts_macros);
+		self::checkDuplicateMacros($hostmacros);
+		self::checkIfHostMacrosDontRepeat($hostmacros);
 	}
 
 	/**
@@ -55,13 +57,13 @@ class CApiUserMacroHelper {
 	 *
 	 * @static
 	 *
-	 * @param array $macro
-	 * @param string $macro['macro']
+	 * @param array  $hostmacro
+	 * @param string $hostmacro['macro']
 	 *
 	 * @throws APIException if the field is not valid.
 	 */
-	private static function checkMacro(array $macro) {
-		$missing_keys = array_diff(['macro'], array_keys($macro));
+	private static function checkMacro(array $hostmacro) {
+		$missing_keys = array_diff(['macro'], array_keys($hostmacro));
 
 		if ($missing_keys) {
 			throw new APIException(ZBX_API_ERROR_PARAMETERS,
@@ -71,9 +73,9 @@ class CApiUserMacroHelper {
 
 		$user_macro_parser = new CUserMacroParser();
 
-		if ($user_macro_parser->parse($macro['macro']) != CParser::PARSE_SUCCESS) {
+		if ($user_macro_parser->parse($hostmacro['macro']) != CParser::PARSE_SUCCESS) {
 			throw new APIException(ZBX_API_ERROR_PARAMETERS,
-				_s('Invalid macro "%1$s": %2$s.', $macro['macro'], $user_macro_parser->getError())
+				_s('Invalid macro "%1$s": %2$s.', $hostmacro['macro'], $user_macro_parser->getError())
 			);
 		}
 	}
@@ -83,14 +85,14 @@ class CApiUserMacroHelper {
 	 *
 	 * @static
 	 *
-	 * @param array $macro
+	 * @param array $hostmacro
 	 *
 	 * @throws APIException
 	 */
-	private static function checkMacroType(array $macro) {
-		if (array_key_exists('type', $macro) && $macro['type'] != ZBX_MACRO_TYPE_TEXT
-				&& $macro['type'] != ZBX_MACRO_TYPE_SECRET) {
-			throw new APIException(ZBX_API_ERROR_PARAMETERS, _s('Invalid type for macro "%1$s".', $macro['macro']));
+	private static function checkMacroType(array $hostmacro) {
+		if (array_key_exists('type', $hostmacro) && $hostmacro['type'] != ZBX_MACRO_TYPE_TEXT
+				&& $hostmacro['type'] != ZBX_MACRO_TYPE_SECRET) {
+			throw new APIException(ZBX_API_ERROR_PARAMETERS, _s('Invalid type for macro "%1$s".', $hostmacro['macro']));
 		}
 	}
 
@@ -99,23 +101,24 @@ class CApiUserMacroHelper {
 	 *
 	 * @static
 	 *
-	 * @param array $macros
+	 * @param array  $hostmacros
+	 * @param int    $hostmacros[]['hostid']
+	 * @param string $hostmacros[]['macro']
 	 *
 	 * @throws APIException if the given macros contain duplicates.
 	 */
-	private static function checkDuplicateMacros(array $macros) {
-		if (count($macros) <= 1) {
+	private static function checkDuplicateMacros(array $hostmacros) {
+		if (count($hostmacros) <= 1) {
 			return;
 		}
 
 		$existing_macros = [];
 		$user_macro_parser = new CUserMacroParser();
 
-		foreach ($macros as $macro) {
-			// Global macros don't have a 'hostid'.
-			$hostid = array_key_exists('hostid', $macro) ? $macro['hostid'] : 1;
+		foreach ($hostmacros as $hostmacro) {
+			$hostid = $hostmacro['hostid'];
 
-			$user_macro_parser->parse($macro['macro']);
+			$user_macro_parser->parse($hostmacro['macro']);
 
 			$macro_name = $user_macro_parser->getMacro();
 			$context = $user_macro_parser->getContext();
@@ -137,8 +140,10 @@ class CApiUserMacroHelper {
 
 				$is_macro_without_context = ($context === null && $regex === null);
 
-				if (($is_macro_without_context && $has_context && $has_regex) || ($context_exists || $regex_exists)) {
-					throw new APIException(ZBX_API_ERROR_PARAMETERS,_s('Macro "%1$s" is not unique.', $macro['macro']));
+				if (($is_macro_without_context && $has_context && $has_regex) || $context_exists || $regex_exists) {
+					throw new APIException(ZBX_API_ERROR_PARAMETERS,
+						_s('Macro "%1$s" is not unique.', $hostmacro['macro'])
+					);
 				}
 			}
 
