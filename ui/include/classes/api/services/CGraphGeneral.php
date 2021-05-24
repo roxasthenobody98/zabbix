@@ -1105,6 +1105,10 @@ abstract class CGraphGeneral extends CApiService {
 				$itemid = reset($graph['gitems'])['itemid'];
 				$templateid = $itemids_templateids[$itemid];
 
+				if (!array_key_exists($graph['name'], $graphs_names_required_hosts)) {
+					$graphs_names_required_hosts[$graph['name']] = [];
+				}
+
 				$graphs_names_required_hosts[$graph['name']] += $templateids_hosts[$templateid];
 
 				foreach (array_keys($templateids_hosts[$templateid]) as $hostid) {

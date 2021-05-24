@@ -376,7 +376,7 @@ class CGraphPrototype extends CGraphGeneral {
 		}
 	}
 
-	protected function createReal($graphs) {
+	protected function createReal(array &$graphs) {
 		foreach ($graphs as &$graph) {
 			// mark the graph as a graph prototype
 			$graph['flags'] = ZBX_FLAG_DISCOVERY_PROTOTYPE;
