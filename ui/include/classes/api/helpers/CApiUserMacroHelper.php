@@ -166,6 +166,7 @@ class CApiUserMacroHelper {
 		}
 
 		$macro_names = [];
+		$existing_macros = [];
 		$user_macro_parser = new CUserMacroParser();
 
 		// Parse each macro, get unique names and, if context exists, narrow down the search.
@@ -183,21 +184,22 @@ class CApiUserMacroHelper {
 				// Narrow down the search for macros with contexts.
 				$macro_names['{$'.$macro_name.':'] = true;
 			}
+
+			$existing_macros[$hostmacro['hostid']] = [];
 		}
 
-		// When updating with empty array, don't select any data from database.
-		$db_hostmacros = API::UserMacro()->get([
+		$options = [
 			'output' => ['hostmacroid', 'hostid', 'macro'],
-			'filter' => ['hostid' => array_unique(array_column($hostmacros, 'hostid'))],
+			'filter' => ['hostid' => array_keys($existing_macros)],
 			'search' => ['macro' => array_keys($macro_names)],
 			'searchByAny' => true,
-			'nopermissions' => true
-		]);
+			'startSearch' => true
+		];
 
-		$existing_macros = [];
+		$db_hostmacros = DBselect(DB::makeSql('hostmacro', $options));
 
 		// Collect existing unique macro names and their contexts for each host.
-		foreach ($db_hostmacros as $db_hostmacro) {
+		while ($db_hostmacro = DBfetch($db_hostmacros)) {
 			$user_macro_parser->parse($db_hostmacro['macro']);
 
 			$macro_name = $user_macro_parser->getMacro();
@@ -218,8 +220,7 @@ class CApiUserMacroHelper {
 			$context = $user_macro_parser->getContext();
 			$regex = $user_macro_parser->getRegex();
 
-			if (array_key_exists($hostid, $existing_macros)
-					&& array_key_exists($macro_name, $existing_macros[$hostid])) {
+			if (array_key_exists($macro_name, $existing_macros[$hostid])) {
 				$has_context = ($context !== null && in_array($context,
 					array_column($existing_macros[$hostid][$macro_name], 'context'), true
 				));
@@ -233,10 +234,9 @@ class CApiUserMacroHelper {
 						if ((!array_key_exists('hostmacroid', $hostmacro)
 									|| bccomp($hostmacro['hostmacroid'], $hostmacroid) != 0)
 								&& $context === $macro_details['context'] && $regex === $macro_details['regex']) {
-							$hosts = API::Host()->get([
+							$hosts = DB::select('hosts', [
 								'output' => ['name'],
-								'hostids' => $hostid,
-								'nopermissions' => true
+								'hostids' => $hostid
 							]);
 
 							throw new APIException(ZBX_API_ERROR_PARAMETERS,
