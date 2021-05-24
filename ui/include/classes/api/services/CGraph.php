@@ -333,23 +333,63 @@ class CGraph extends CGraphGeneral {
 	 */
 	protected function inherit(array $graphs, array $hostids = null): void {
 		$graphs = zbx_toHash($graphs, 'graphid');
+
+		if ($hostids === null) {
+			/*
+			 * Since the graph of template can have items only of this template, it's enough to find template of the
+			 * graph by one of the graph items. Therefore we collect here only first items of graphs.
+			 */
+			$graphids_first_itemids = [];
+
+			foreach ($graphs as $graphid => $graph) {
+				$graphids_first_itemids[$graphid] = reset($graph['gitems'])['itemid'];
+			}
+
+			/*
+			 * From the passed graphs we are able to inherit only those, which are template graphs and templates of
+			 * which are linked at least to one host. There we try to find the graphs items which meet these conditions.
+			 */
+			$itemids_of_templates_linked_to_hosts = DBfetchColumn(
+				DBselect(
+					'SELECT i.itemid'.
+					' FROM items i,hosts h,hosts_templates ht'.
+					' WHERE h.hostid=i.hostid'.
+						' AND ht.templateid=i.hostid'.
+						' AND '.dbConditionId('i.itemid', $graphids_first_itemids).
+						' AND h.status='.HOST_STATUS_TEMPLATE.
+					' GROUP BY i.itemid'
+				),
+				'itemid'
+			);
+
+			// Based on the found items, we leave only graphs that is possible to inherit.
+			$graphs = array_intersect_key($graphs,
+				array_intersect($graphids_first_itemids, $itemids_of_templates_linked_to_hosts)
+			);
+
+			if (!$graphs) {
+				return;
+			}
+		}
+
+		$graphids = [];
+		$same_name_graphs = [];
 		$itemids = [];
-		$graphids_items = [];
 
 		foreach ($graphs as $graphid => $graph) {
+			$graphids[] = $graphid;
+			$same_name_graphs[$graph['name']][$graphid] = true;
+
 			if ($graph['ymin_itemid'] > 0) {
 				$itemids[$graph['ymin_itemid']] = true;
-				$graphids_items[$graphid][$graph['ymin_itemid']] = true;
 			}
 
 			if ($graph['ymax_itemid'] > 0) {
 				$itemids[$graph['ymax_itemid']] = true;
-				$graphids_items[$graphid][$graph['ymax_itemid']] = true;
 			}
 
 			foreach ($graph['gitems'] as $gitem) {
 				$itemids[$gitem['itemid']] = true;
-				$graphids_items[$graphid][$gitem['itemid']] = true;
 			}
 		}
 
@@ -361,10 +401,8 @@ class CGraph extends CGraphGeneral {
 
 		$db_templates = DBselect(
 			'SELECT i.hostid AS templateid,i.itemid,i.key_'.
-			' FROM items i,hosts h'.
-			' WHERE i.hostid=h.hostid'.
-				' AND '.dbConditionId('i.itemid', $itemids).
-				' AND h.status='.HOST_STATUS_TEMPLATE
+			' FROM items i'.
+			' WHERE '.dbConditionId('i.itemid', $itemids)
 		);
 
 		$itemids = [];
@@ -374,28 +412,6 @@ class CGraph extends CGraphGeneral {
 			$itemids_templateids[$data['itemid']] = $data['templateid'];
 			$templateids[$data['templateid']] = true;
 			$itemids[] = $data['itemid'];
-		}
-
-		if (!$items_templateids) {
-			return;
-		}
-
-		$graphids = [];
-		$same_name_graphs = [];
-
-		// Cleaning non-template graphs and collect data of template graphs.
-		foreach ($graphids_items as $graphid => $items) {
-			if (array_diff(array_keys($items), $itemids)) {
-				unset($graphs[$graphid]);
-			}
-			else {
-				$graphids[] = $graphid;
-				$same_name_graphs[$graphs[$graphid]['name']][$graphid] = true;
-			}
-		}
-
-		if (!$graphs) {
-			return;
 		}
 
 		$templateids = array_keys($templateids);
@@ -409,17 +425,12 @@ class CGraph extends CGraphGeneral {
 			' FROM hosts_templates ht,hosts h'.
 			' WHERE ht.hostid=h.hostid'.
 				' AND '.dbConditionId('ht.templateid', $templateids).
-				' AND '.dbConditionInt('h.flags', [ZBX_FLAG_DISCOVERY_NORMAL, ZBX_FLAG_DISCOVERY_CREATED]).
 				$hostids_condition
 		);
 
 		while ($data = DBfetch($db_hosts)) {
 			$templateids_hosts[$data['templateid']][$data['hostid']] = true;
 			$hostids[$data['hostid']] = true;
-		}
-
-		if (!$templateids_hosts) {
-			return;
 		}
 
 		foreach ($same_name_graphs as $name => $_graphs) {
@@ -525,9 +536,9 @@ class CGraph extends CGraphGeneral {
 				$graphs_child_graphs[$child_graph['templateid']][$child_graphid] = $child_graph;
 
 				/*
-				* Since graph on template can have only items of this template, the hostid also will be the same for all
-				* child graph items.
-				*/
+				 * Since graph on template can have only items of this template, the hostid also will be the same for
+				 * all child graph items.
+				 */
 				$child_graphs_hostids[$child_graphid] = reset($child_graph['items'])['hostid'];
 			}
 
@@ -536,9 +547,9 @@ class CGraph extends CGraphGeneral {
 			foreach ($graphs as $graphid => $graph) {
 				foreach ($graphs_child_graphs[$graphid] as $child_graphid => $child_graph) {
 					/*
-					* If template graph name was changed, we collect all that names to check whether graphs with the
-					* same name already exists on child hosts/templates.
-					*/
+					 * If template graph name was changed, we collect all that names to check whether graphs with the
+					 * same name already exists on child hosts/templates.
+					 */
 					if ($graph['name'] !== $child_graph['name']) {
 						$graphs_changed_names_child_graphids[$graph['name']][] = $child_graphid;
 					}
@@ -770,9 +781,6 @@ class CGraph extends CGraphGeneral {
 		);
 		$linkage = [];
 		while ($link = DBfetch($dbLinks)) {
-			if (!isset($linkage[$link['templateid']])) {
-				$linkage[$link['templateid']] = [];
-			}
 			$linkage[$link['templateid']][$link['hostid']] = 1;
 		}
 
@@ -790,13 +798,24 @@ class CGraph extends CGraphGeneral {
 		]);
 
 		$inherit_graphs = [];
+
 		foreach ($graphs as $graph) {
-			foreach ($data['hostids'] as $hostid) {
-				if (array_key_exists($graph['hosts'][0]['hostid'], $linkage)
-						&& array_key_exists($hostid, $linkage[$graph['hosts'][0]['hostid']])) {
-					$inherit_graphs[] = $graph;
-				}
+			$templateid = reset($graph['hosts'])['hostid'];
+
+			// We don't need to inherit the graphs for templates without graphs.
+			if (!array_key_exists($templateid, $linkage)) {
+				continue;
 			}
+
+			/*
+			 * We don't allow to inherit graphs to not linked hosts. This check provides the protection from the
+			 * external API method call.
+			 */
+			if (array_diff($data['hostids'], array_keys($linkage[$templateid]))) {
+				return true;
+			}
+
+			$inherit_graphs[] = $graph;
 		}
 
 		if ($inherit_graphs) {
