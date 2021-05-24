@@ -992,84 +992,75 @@ abstract class CHostGeneral extends CHostBase {
 	/**
 	 * Replace hosts/templates macros.
 	 *
-	 * @param array  $hosts_macros                                       An array with hosts/templates macros to
-	 *                                                                   replace.
-	 * @param string $hosts_macros[]['hostmacroid']                      Host macro ID (required for macros to update).
-	 * @param string $hosts_macros[]['hostid']                           Host ID.
-	 * @param string $hosts_macros[]['macro']                            Host macro name (required for macros to add).
-	 * @param string $hosts_macros[]['value']                            Host macro value (required for macros to add).
-	 * @param string $hosts_macros[]['description']                      Host macro description (optional).
-	 * @param string $hosts_macros[]['type']                             Host macro type (optional).
-	 * @param array  $db_hosts_macros                                    Array of existing hosts/templates macros before
-	 *                                                                   replacement (optional).
-	 * @param string $db_hosts_macros[<hostid>][<hostmacroid>]['macro']  Host macro name.
-	 * @param string $db_hosts_macros[<hostid>][<hostmacroid>]['type']   Host macro type.
+	 * @param array  $hostmacros                                       An array with hosts/templates macros to replace.
+	 * @param string $hostmacros[]['hostmacroid']                      Host macro ID (required for macros to update).
+	 * @param string $hostmacros[]['hostid']                           Host ID.
+	 * @param string $hostmacros[]['macro']                            Host macro name (required for macros to add).
+	 * @param string $hostmacros[]['value']                            Host macro value (optional).
+	 * @param string $hostmacros[]['description']                      Host macro description (optional).
+	 * @param string $hostmacros[]['type']                             Host macro type (optional).
+	 * @param array  $db_hostmacros                                    Array of existing hosts/templates macros before
+	 *                                                                 replacement (required for host update).
+	 * @param string $db_hostmacros[<hostid>][<hostmacroid>]['macro']  Host macro name.
+	 * @param string $db_hostmacros[<hostid>][<hostmacroid>]['type']   Host macro type.
 	 *
 	 * @throws APIException
 	 */
-	protected function replaceMacros(array $hosts_macros, array $db_hosts_macros = []) {
-		$hosts_macros_to_add = [];
-		$hosts_macros_to_update = [];
-		$hosts_macros_to_delete = [];
+	protected function replaceMacros(array $hostmacros, array $db_hostmacros = []) {
+		$chk_hostmacros = [];
 
-		$hosts_hostmacroids = [];
+		$ins_hostmacros = [];
+		$upd_hostmacros = [];
+		$del_hostmacroids = [];
 
-		foreach ($hosts_macros as $macro) {
-			if (array_key_exists('hostmacroid', $macro)
-					&& array_key_exists($macro['hostid'], $db_hosts_macros)
-					&& array_key_exists($macro['hostmacroid'], $db_hosts_macros[$macro['hostid']])) {
-				$db_host_macro = $db_hosts_macros[$macro['hostid']][$macro['hostmacroid']];
+		foreach ($hostmacros as $hostmacro) {
+			if (array_key_exists('hostmacroid', $hostmacro)
+					&& array_key_exists($hostmacro['hostid'], $db_hostmacros)
+					&& array_key_exists($hostmacro['hostmacroid'], $db_hostmacros[$hostmacro['hostid']])) {
+				$db_hostmacro = $db_hostmacros[$hostmacro['hostid']][$hostmacro['hostmacroid']];
+				unset($db_hostmacros[$hostmacro['hostid']][$hostmacro['hostmacroid']]);
 
-				if (array_key_exists('type', $macro) && $macro['type'] != $db_host_macro['type']
-						&& $db_host_macro['type'] == ZBX_MACRO_TYPE_SECRET) {
-					$macro += ['value' => ''];
+				if (array_key_exists('type', $hostmacro) && $hostmacro['type'] != $db_hostmacro['type']
+						&& $db_hostmacro['type'] == ZBX_MACRO_TYPE_SECRET) {
+					$hostmacro += ['value' => ''];
 				}
 
-				$hosts_macros_to_update[] = $macro + ['macro' => $db_host_macro['macro']];
-				$hosts_hostmacroids[$macro['hostid']][$macro['hostmacroid']] = true;
+				$chk_hostmacros[] = $hostmacro + ['macro' => $db_hostmacro['macro']];
+
+				unset($hostmacro['hostid']);
+				$upd_hostmacro = DB::getUpdatedValues('hostmacro', $hostmacro, $db_hostmacro);
+
+				if ($upd_hostmacro) {
+					$upd_hostmacros[] = [
+						'values' => $upd_hostmacro,
+						'where' => ['hostmacroid' => $hostmacro['hostmacroid']]
+					];
+				}
 			}
 			else {
-				$hosts_macros_to_add[] = $macro;
+				$ins_hostmacros[] = $hostmacro;
+				$chk_hostmacros[] = $hostmacro;
 			}
 		}
 
-		foreach ($db_hosts_macros as $hostid => $db_host_macros) {
-			$hosts_macros_to_delete += array_key_exists($hostid, $hosts_hostmacroids)
-				? array_diff_key($db_host_macros, $hosts_hostmacroids[$hostid])
-				: $db_host_macros;
+		if ($chk_hostmacros) {
+			CApiUserMacroHelper::checkHostsMacrosFields($chk_hostmacros);
 		}
 
-		if ($hosts_macros_to_delete) {
-			DB::delete('hostmacro', ['hostmacroid' => array_keys($hosts_macros_to_delete)]);
+		foreach ($db_hostmacros as $hostid => $db_hostmacros) {
+			$del_hostmacroids += $db_hostmacros;
 		}
 
-		if ($hosts_macros_to_add) {
-			CApiUserMacroHelper::checkHostsMacrosFields($hosts_macros_to_add);
-
-			DB::insert('hostmacro', $hosts_macros_to_add);
+		if ($del_hostmacroids) {
+			DB::delete('hostmacro', ['hostmacroid' => array_keys($del_hostmacroids)]);
 		}
 
-		if ($hosts_macros_to_update) {
-			CApiUserMacroHelper::checkHostsMacrosFields($hosts_macros_to_update);
+		if ($ins_hostmacros) {
+			DB::insert('hostmacro', $ins_hostmacros);
+		}
 
-			while ($hosts_macros_to_update) {
-				$macro_params = array_diff_key(reset($hosts_macros_to_update), ['hostid' => true]);
-				$hostmacroids = [$macro_params['hostmacroid']];
-				unset($macro_params['hostmacroid']);
-				unset($hosts_macros_to_update[key($hosts_macros_to_update)]);
-
-				foreach ($hosts_macros_to_update as $index => $macro) {
-					if ($macro_params === array_diff_key($macro, ['hostmacroid' => true, 'hostid' => true])) {
-						$hostmacroids[] = $macro['hostmacroid'];
-						unset($hosts_macros_to_update[$index]);
-					}
-				}
-
-				DB::update('hostmacro', [
-					'values' => $macro_params,
-					'where' => ['hostmacroid' => $hostmacroids]
-				]);
-			}
+		if ($upd_hostmacros) {
+			DB::update('hostmacro', $upd_hostmacros);
 		}
 	}
 }

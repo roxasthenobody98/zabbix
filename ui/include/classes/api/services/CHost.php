@@ -872,7 +872,7 @@ class CHost extends CHostGeneral {
 		}
 
 		if ($replace_macros) {
-			$options['selectMacros'] = ['hostmacroid', 'macro', 'type'];
+			$options['selectMacros'] = ['hostmacroid', 'macro', 'type', 'value', 'description'];
 		}
 
 		if ($replace_groups) {
