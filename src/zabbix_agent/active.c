@@ -30,6 +30,8 @@
 #include "zbxjson.h"
 #include "alias.h"
 #include "metrics.h"
+#include "logfiles/persistent_state.h"
+#include "../libs/zbxalgo/vectorimpl.h"
 
 extern unsigned char			program_type;
 extern ZBX_THREAD_LOCAL unsigned char	process_type;
@@ -48,6 +50,15 @@ static ZBX_THREAD_LOCAL zbx_vector_ptr_t	active_metrics;
 static ZBX_THREAD_LOCAL zbx_vector_ptr_t	regexps;
 static ZBX_THREAD_LOCAL char			*session_token;
 static ZBX_THREAD_LOCAL zbx_uint64_t		last_valueid = 0;
+static ZBX_THREAD_LOCAL zbx_vector_pre_persistent_t	pre_persistent_vec;	/* used for staging of data going */
+										/* into persistent files */
+
+int	zbx_pre_persistent_compare_func(const void *d1, const void *d2)
+{
+	return strcmp(((const zbx_pre_persistent_t *)d1)->key_orig, ((const zbx_pre_persistent_t *)d2)->key_orig);
+}
+
+ZBX_VECTOR_IMPL(pre_persistent, zbx_pre_persistent_t)
 
 static void	init_active_metrics(void)
 {
@@ -69,6 +80,7 @@ static void	init_active_metrics(void)
 
 	zbx_vector_ptr_create(&active_metrics);
 	zbx_vector_ptr_create(&regexps);
+	zbx_vector_pre_persistent_create(&pre_persistent_vec);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -84,6 +96,9 @@ static void	free_active_metric(ZBX_ACTIVE_METRIC *metric)
 		zbx_free(metric->logfiles[i].filename);
 
 	zbx_free(metric->logfiles);
+#if !defined(_WINDOWS)
+	zbx_free(metric->persistent_file_name);
+#endif
 	zbx_free(metric);
 }
 
@@ -169,6 +184,27 @@ static void	add_check(const char *key, const char *key_orig, int refresh, zbx_ui
 			metric->logfiles_num = 0;
 			metric->start_time = 0.0;
 			metric->processed_bytes = 0;
+#if !defined(_WINDOWS)
+			if (NULL != metric->persistent_file_name)
+			{
+				char	*error = NULL;
+
+				zabbix_log(LOG_LEVEL_DEBUG, "%s() removing persistent file '%s'",
+						__func__, metric->persistent_file_name);
+
+				if (SUCCEED != remove_persistent_file(metric->persistent_file_name, &error))
+				{
+					/* log error and continue operation */
+					zabbix_log(LOG_LEVEL_WARNING, "cannot remove peristent file \"%s\": %s",
+							metric->persistent_file_name, error);
+					zbx_free(error);
+				}
+
+				zbx_free(metric->persistent_file_name);
+			}
+
+			// TODO: perhaps we should check for empty server directory here and remove it
+#endif
 		}
 
 		/* replace metric */
@@ -226,6 +262,7 @@ static void	add_check(const char *key, const char *key_orig, int refresh, zbx_ui
 
 	metric->start_time = 0.0;
 	metric->processed_bytes = 0;
+	metric->persistent_file_name = NULL;	/* initialized but not used on Microsoft Windows */
 
 	zbx_vector_ptr_append(&active_metrics, metric);
 out:
