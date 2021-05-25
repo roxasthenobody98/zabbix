@@ -158,15 +158,156 @@ class testUserRolesPermissions extends CWebTest {
 
 
 	/**
-	 * Check creation/edit for dashboard, map, screen, maintenanceю
+	 * Check creation/edit for dashboard, map, screen, maintenance.
 	 *
 	 * @dataProvider getPageActionsData
 	 */
 	public function testUserRolesPermissions_PageActions($data) {
-		$this->checkAction($data['buttons'], $data['button_selector'], $data['list_page'], $data['action_page'], $data['action']);
+		$this->page->login();
+		$this->page->userLogin('user_for_role', 'zabbix');
+		foreach ([true, false] as $action_status) {
+			$this->page->open($data['list_page']);
+			foreach ($data['buttons'] as $button) {
+				if ($button === 'Delete') {
+					$table = $this->query('class:list-table')->asTable()->waitUntilReady()->one();
+					$table->getRow(0)->select();
+				}
+				$this->assertTrue($this->query('button', $button)->one()->isEnabled($action_status));
+			}
+			$this->page->open($data['action_page']);
+			foreach ($data['button_selector'] as $button) {
+				$this->assertTrue($this->query($data['button_selector'])->one()->isEnabled($action_status));
+				if ($data['action_page'] === 'zabbix.php?action=dashboard.view&dashboardid=122') {
+					$new_widget = ($action_status === true) ? 'Add a new widget' : 'You do not have permissions to edit dashboard';
+					$this->assertEquals($new_widget, $this->query('class:dashbrd-grid-new-widget-label')->one()->getText());
+				}
+				elseif ($data['action_page'] === 'maintenance.php?form=update&maintenanceid=5') {
+					$this->assertTrue($this->query('button:Cancel')->one()->isEnabled());
+				}
+
+			}
+			if ($action_status === true) {
+				$this->changeAction($data['action']);
+			}
+		}
 		$this->checkLinks($data['check_links']);
 		if (array_key_exists('return_status', $data)) {
 			$this->changeAction(['Create and edit dashboards and screens' => true]);
+		}
+	}
+
+	public static function getProblemActionsData() {
+		return [
+			// Comment.
+			[
+				[
+					'activity_id' => [
+						'message'
+					],
+					'disabled_action' => [
+						'Add problem comments' => false
+					],
+					'enabled_action' => [
+						'Add problem comments' => true
+					]
+				]
+			],
+			// Severity.
+			[
+				[
+					'activity_id' => [
+						'change_severity'
+					],
+					'disabled_action' => [
+						'Change severity' => false
+					],
+					'enabled_action' => [
+						'Change severity' => true
+					]
+				]
+			],
+			// Acknowledge problem.
+			[
+				[
+					'activity_id' => [
+						'acknowledge_problem'
+					],
+					'disabled_action' => [
+						'Acknowledge problems' => false
+					],
+					'enabled_action' => [
+						'Acknowledge problems' => true
+					]
+				]
+			],
+			// Close problem.
+			[
+				[
+					'activity_id' => [
+						'close_problem'
+					],
+					'disabled_action' => [
+						'Close problems' => false
+					],
+					'enabled_action' => [
+						'Close problems' => true
+					]
+				]
+			],
+			// Disable all problems.
+			[
+				[
+					'all_activities' => true,
+					'activity_id' => [
+						'message',
+						'change_severity',
+						'close_problem',
+						'acknowledge_problem'
+					],
+					'disabled_action' => [
+						'Add problem comments' => false,
+						'Change severity' => false,
+						'Acknowledge problems' => false,
+						'Close problems' => false
+					],
+					'enabled_action' => [
+						'Close problems' => true
+					]
+				]
+			]
+		];
+	}
+
+	/**
+	 * Check problem activities.
+	 *
+	 * @dataProvider getProblemActionsData
+	 */
+	public function testUserRolesPermissions_ProblemActions($data) {
+		$this->page->login();
+		$this->page->userLogin('user_for_role', 'zabbix');
+		foreach ([true, false] as $action_status) {
+			$this->page->open('zabbix.php?action=problem.view')->waitUntilReady();
+			$row = $this->query('class:list-table')->asTable()->one()->findRow('Problem', 'Test trigger with tag');
+
+			// All actions for problem disabled.
+			if (array_key_exists('all_activities', $data) && $action_status === false) {
+				$this->assertTrue($row->query('xpath://span[@class="red" and text()="No"]')->exists());
+				$this->checkLinks(['zabbix.php?action=popup&popup_action=acknowledge.edit&eventids%5B%5D=93']);
+			}
+			else {
+				$row->query('link', 'No')->one()->click();
+				$dialog = COverlayDialogElement::find()->waitUntilVisible()->one();
+				foreach ($data['activity_id'] as $id) {
+					$this->assertTrue($dialog->query('id', $id)->one()->isEnabled($action_status));
+				}
+				if ($action_status === true) {
+					$this->changeAction($data['disabled_action']);
+				}
+				else {
+					$this->changeAction($data['enabled_action']);
+				}
+			}
 		}
 	}
 
@@ -182,44 +323,6 @@ class testUserRolesPermissions extends CWebTest {
 					'You have no permissions to access this page.');
 			$this->query('button:Go to "Dashboard"')->one()->waitUntilClickable()->click();
 			$this->assertContains('zabbix.php?action=dashboard', $this->page->getCurrentUrl());
-		}
-	}
-
-	/**
-	 *
-	 * @param type $buttons
-	 * @param type $buttons_selector
-	 * @param type $list_page
-	 * @param type $action_page
-	 * @param type $action
-	 */
-	private function checkAction($buttons, $buttons_selector, $list_page, $action_page, $action) {
-		$this->page->login();
-		$this->page->userLogin('user_for_role', 'zabbix');
-		foreach ([true, false] as $action_status) {
-			$this->page->open($list_page);
-			foreach ($buttons as $button) {
-				if ($button === 'Delete') {
-					$table = $this->query('class:list-table')->asTable()->waitUntilReady()->one();
-					$table->getRow(0)->select();
-				}
-				$this->assertTrue($this->query('button', $button)->one()->isEnabled($action_status));
-			}
-			$this->page->open($action_page);
-			foreach ($buttons_selector as $button) {
-				$this->assertTrue($this->query($buttons_selector)->one()->isEnabled($action_status));
-				if ($action_page === 'zabbix.php?action=dashboard.view&dashboardid=122') {
-					$new_widget = ($action_status === true) ? 'Add a new widget' : 'You do not have permissions to edit dashboard';
-					$this->assertEquals($new_widget, $this->query('class:dashbrd-grid-new-widget-label')->one()->getText());
-				}
-				elseif ($action_page === 'maintenance.php?form=update&maintenanceid=5') {
-					$this->assertTrue($this->query('button:Cancel')->one()->isEnabled());
-				}
-
-			}
-			if ($action_status === true) {
-				$this->changeAction($action);
-			}
 		}
 	}
 
