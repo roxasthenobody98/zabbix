@@ -21,6 +21,7 @@
 #include "logfiles.h"
 #include "log.h"
 #include "sysinfo.h"
+#include "persistent_state.h"
 
 #if defined(_WINDOWS) || defined(__MINGW32__)
 #	include "symbols.h"
@@ -3372,9 +3373,9 @@ static int	check_number_of_parameters(unsigned char flags, const AGENT_REQUEST *
 	}
 
 	if (0 != (ZBX_METRIC_FLAG_LOG_COUNT & flags))
-		max_parameter_num = 7;	/* log.count or logrt.count */
+		max_parameter_num = 8;	/* log.count or logrt.count */
 	else
-		max_parameter_num = 8;	/* log or logrt */
+		max_parameter_num = 9;	/* log or logrt */
 
 	if (max_parameter_num < parameter_num)
 	{
@@ -3501,6 +3502,46 @@ err:
 	return FAIL;
 }
 
+static int	init_persistent_dir_parameter(const char *server, unsigned short port, const char *item_key,
+		int is_count_item, const AGENT_REQUEST *request, char **persistent_file_name, char **error)
+{
+	/* <persistent_dir> is parameter 8 for log[], logrt[], but parameter 7 for log.count[], logrt.count[] */
+	/* (here counting starts from 0) */
+
+	const int	persistent_dir_param_nr = (0 == is_count_item) ? 8 : 7;
+	char		*persistent_dir, *persistent_serv_dir;
+
+	if (NULL == (persistent_dir = get_rparam(request, persistent_dir_param_nr)) || '\0' == *persistent_dir)
+		return SUCCEED;
+
+#if defined(_WINDOWS)
+	*error = zbx_dsprintf(*error, "The %s parameter (persistent directory) is not supported on Microsoft Windows.",
+			(8 == persistent_dir_param_nr) ? "ninth" : "eighth");
+	return FAIL;
+#else
+	if (NULL != *persistent_file_name)	/* name is set, so all preparation has been done earlier */
+		return SUCCEED;
+
+	/* set up directory for persistent file */
+
+	if (SUCCEED != is_ascii_string(persistent_dir))		/* reject non-ASCII directory name */
+	{
+		*error = zbx_dsprintf(*error, "Invalid %s parameter. It contains non-ASCII characters.",
+				(8 == persistent_dir_param_nr) ? "ninth" : "eighth");
+		return FAIL;
+	}
+
+	if (NULL == (persistent_serv_dir = create_persistent_server_directory(persistent_dir, server, port, error)))
+		return FAIL;
+
+	*persistent_file_name = make_persistent_file_name(persistent_serv_dir, item_key);
+
+	zabbix_log(LOG_LEVEL_DEBUG, "%s(): set persistent_file_name:[%s]", __func__, *persistent_file_name);
+
+	return SUCCEED;
+#endif
+}
+
 /******************************************************************************
  *                                                                            *
  * Function: process_log_check                                                *
@@ -3514,7 +3555,7 @@ err:
  ******************************************************************************/
 int	process_log_check(char *server, unsigned short port, zbx_vector_ptr_t *regexps, ZBX_ACTIVE_METRIC *metric,
 		zbx_process_value_func_t process_value_cb, zbx_uint64_t *lastlogsize_sent, int *mtime_sent,
-		char **error)
+		char **error, zbx_vector_pre_persistent_t *prep_vec)
 {
 	AGENT_REQUEST			request;
 	const char			*filename, *regexp, *encoding, *skip, *output_template;
@@ -3534,10 +3575,10 @@ int	process_log_check(char *server, unsigned short port, zbx_vector_ptr_t *regex
 	init_request(&request);
 
 	/* Expected parameters by item: */
-	/* log        [file,       <regexp>,<encoding>,<maxlines>,    <mode>,<output>,<maxdelay>, <options>] 8 params */
-	/* log.count  [file,       <regexp>,<encoding>,<maxproclines>,<mode>,         <maxdelay>, <options>] 7 params */
-	/* logrt      [file_regexp,<regexp>,<encoding>,<maxlines>,    <mode>,<output>,<maxdelay>, <options>] 8 params */
-	/* logrt.count[file_regexp,<regexp>,<encoding>,<maxproclines>,<mode>,         <maxdelay>, <options>] 7 params */
+	/* log        [file,       <regexp>,<encoding>,<maxlines>,    <mode>,<output>,<maxdelay>, <options>,<persistent_dir>] 9 params */
+	/* log.count  [file,       <regexp>,<encoding>,<maxproclines>,<mode>,         <maxdelay>, <options>,<persistent_dir>] 8 params */
+	/* logrt      [file_regexp,<regexp>,<encoding>,<maxlines>,    <mode>,<output>,<maxdelay>, <options>,<persistent_dir>] 9 params */
+	/* logrt.count[file_regexp,<regexp>,<encoding>,<maxproclines>,<mode>,         <maxdelay>, <options>,<persistent_dir>] 8 params */
 
 	if (SUCCEED != parse_item_key(metric->key, &request))
 	{
@@ -3608,6 +3649,13 @@ int	process_log_check(char *server, unsigned short port, zbx_vector_ptr_t *regex
 	/* parameter 'options' */
 	if (SUCCEED != init_rotation_type(metric->flags, &request, &rotation_type, error))
 		goto out;
+
+	/* parameter 'persistent_dir' */
+	if (SUCCEED != init_persistent_dir_parameter(server, port, metric->key, is_count_item, &request,
+			&metric->persistent_file_name, error))
+	{
+		goto out;
+	}
 
 	/* jumping over fast growing log files is not supported with 'copytruncate' */
 	if (ZBX_LOG_ROTATION_LOGCPT == rotation_type && 0.0f != max_delay)

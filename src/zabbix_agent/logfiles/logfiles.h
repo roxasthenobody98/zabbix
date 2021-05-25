@@ -23,6 +23,7 @@
 #include "zbxregexp.h"
 #include "md5.h"
 #include "../metrics.h"
+#include "../active.h"
 
 typedef enum
 {
@@ -70,6 +71,5 @@ int	process_logrt(unsigned char flags, const char *filename, zbx_uint64_t *lastl
 
 int	process_log_check(char *server, unsigned short port, zbx_vector_ptr_t *regexps, ZBX_ACTIVE_METRIC *metric,
 		zbx_process_value_func_t process_value_cb, zbx_uint64_t *lastlogsize_sent, int *mtime_sent,
-		char **error);
-
+		char **error, zbx_vector_pre_persistent_t *prep_vec);
 #endif

@@ -1229,7 +1229,7 @@ static void	process_active_checks(char *server, unsigned short port)
 		else if (0 != ((ZBX_METRIC_FLAG_LOG_LOG | ZBX_METRIC_FLAG_LOG_LOGRT) & metric->flags))
 		{
 			ret = process_log_check(server, port, &regexps, metric, process_value, &lastlogsize_sent,
-					&mtime_sent, &error);
+					&mtime_sent, &error, &pre_persistent_vec);
 		}
 		else if (0 != (ZBX_METRIC_FLAG_LOG_EVENTLOG & metric->flags))
 			ret = process_eventlog_check(server, port, &regexps, metric, process_value, &lastlogsize_sent, &error);
