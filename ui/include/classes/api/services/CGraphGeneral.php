@@ -1166,7 +1166,7 @@ abstract class CGraphGeneral extends CApiService {
 				}
 
 				if (count($graph['gitems']) === count($parent_graph['gitems'])) {
-					$gitems_itemids = array_column($graphs['gitems'], 'itemid');
+					$gitems_itemids = array_column($graph['gitems'], 'itemid');
 					$child_graph_to_update = [];
 
 					foreach ($parent_graph['gitems'] as $parent_gitem) {
@@ -1188,16 +1188,18 @@ abstract class CGraphGeneral extends CApiService {
 						$child_graph_to_update['gitems'][] = $parent_gitem;
 					}
 
-					$child_graph_to_update = ['graphid' => $graphid, 'templateid' => $parent_graphid] + $graph;
+					$child_graph_to_update = ['graphid' => $graphid, 'templateid' => $parent_graphid,
+						'gitems' => $child_graph_to_update['gitems']
+					] + $parent_graph;
 
-					if ($graph['ymin_itemid'] != 0) {
+					if ($parent_graph['ymin_itemid'] != 0) {
 						$child_graph_to_update['ymin_itemid'] =
-							$template_itemids_hostids_itemids[$graph['ymin_itemid']][$hostid];
+							$template_itemids_hostids_itemids[$parent_graph['ymin_itemid']][$hostid];
 					}
 
-					if ($graph['ymax_itemid'] != 0) {
+					if ($parent_graph['ymax_itemid'] != 0) {
 						$child_graph_to_update['ymax_itemid'] =
-							$template_itemids_hostids_itemids[$graph['ymax_itemid']][$hostid];
+							$template_itemids_hostids_itemids[$parent_graph['ymax_itemid']][$hostid];
 					}
 
 					$child_graphs_to_update[] = $child_graph_to_update;
@@ -1218,7 +1220,9 @@ abstract class CGraphGeneral extends CApiService {
 				$templateid = $itemids_templateids[$itemid];
 
 				$hosts_to_create_graph = array_diff_key($templateids_hosts[$templateid],
-					$parent_graphids_updated_hosts[$graphid]
+					array_key_exists($graphid, $parent_graphids_updated_hosts)
+						? $parent_graphids_updated_hosts[$graphid]
+						: []
 				);
 
 				foreach (array_keys($hosts_to_create_graph) as $hostid) {
