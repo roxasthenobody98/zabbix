@@ -3063,7 +3063,7 @@ static int	update_new_list_from_old(zbx_log_rotation_options_t rotation_type, st
  * Comments: Supposed to be thread-safe, see pick_logfiles() comments.        *
  *                                                                            *
  ******************************************************************************/
-int	process_logrt(unsigned char flags, const char *filename, zbx_uint64_t *lastlogsize, int *mtime,
+static int	process_logrt(unsigned char flags, const char *filename, zbx_uint64_t *lastlogsize, int *mtime,
 		zbx_uint64_t *lastlogsize_sent, int *mtime_sent, unsigned char *skip_old_data, int *big_rec,
 		int *use_ino, char **err_msg, struct st_logfile **logfiles_old, const int *logfiles_num_old,
 		struct st_logfile **logfiles_new, int *logfiles_num_new, const char *encoding,
