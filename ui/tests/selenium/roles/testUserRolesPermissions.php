@@ -427,6 +427,45 @@ class testUserRolesPermissions extends CWebTest {
 	}
 
 	/**
+	 * Module enable/disable.
+	 */
+	public function testUserRolesPermissions_Module() {
+		$pages_before = [
+			'Monitoring',
+			'Inventory',
+			'Reports',
+			'Configuration',
+			'Administration',
+			'Module 5 menu'
+		];
+		$this->page->login();
+		$this->page->userLogin('user_for_role', 'zabbix');
+		$this->page->open('zabbix.php?action=module.list')->waitUntilReady();
+		$this->query('button:Scan directory')->one()->click();
+		$table = $this->query('class:list-table')->asTable()->one();
+		$table->findRows(['Name' => '5th Module'])->select();
+		$this->query('button:Enable')->one()->click();
+		$this->page->acceptAlert();
+		$this->page->waitUntilReady();
+		foreach ([true, false] as $action_status) {
+			$page_number = $this->query('xpath://ul[@class="menu-main"]/li/a')->count();
+			for ($i = 1; $i <= $page_number; ++$i) {
+				$all_pages[] = $this->query('xpath:(//ul[@class="menu-main"]/li/a)['.$i.']')->one()->getText();
+			}
+			if ($action_status === true) {
+				$this->assertEquals($pages_before, $all_pages);
+				$this->changeAction(['5th Module' => false]);
+				$all_pages = [];
+			}
+			else {
+				$pages_after = array_values(array_diff($pages_before, ['Module 5 menu']));
+				$this->assertEquals($pages_after, $all_pages);
+				$this->changeAction(['5th Module' => true]);
+			}
+		}
+	}
+
+	/**
 	 * Check disabled actions with links.
 	 *
 	 * @param array $links	checked links after disabling action
