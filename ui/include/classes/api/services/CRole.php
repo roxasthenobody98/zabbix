@@ -442,12 +442,29 @@ class CRole extends CApiService {
 	private function checkRules(array $roles, array $db_roles = []): void {
 		$moduleids = [];
 
+		$roleids = array_column($roles, 'roleid');
+		if (sizeof($roleids) > 0 && sizeof($db_roles) === 0){
+			$db_roles = $this->get([
+				'output' => ['roleid', 'name', 'type', 'readonly'],
+				'roleids' => $roleids,
+				'selectRules' => [CRoleHelper::SECTION_UI, CRoleHelper::UI_DEFAULT_ACCESS],
+				'preservekeys' => true
+			]);
+		}
+
 		foreach ($roles as $role) {
+			$roleid = array_key_exists('roleid', $role) ? $role['roleid'] : null;
+			$ui_rule_required = (array_key_exists($roleid, $db_roles) && array_key_exists('type', $role)
+					&& $role['type'] !== $db_roles[$roleid]['type']);
+
 			if (!array_key_exists('rules', $role)) {
+				if ($ui_rule_required){
+					self::exception(ZBX_API_ERROR_PARAMETERS, _('At least one UI element must be checked.'));
+				}
 				continue;
 			}
 
-			if (array_key_exists(CRoleHelper::UI_DEFAULT_ACCESS, $role['rules'])
+			if ($ui_rule_required || array_key_exists(CRoleHelper::UI_DEFAULT_ACCESS, $role['rules'])
 					|| array_key_exists(CRoleHelper::SECTION_UI, $role['rules'])) {
 				$ui_rules = [];
 				$default_access = CRoleHelper::DEFAULT_ACCESS_ENABLED;

@@ -47,6 +47,7 @@ require_once dirname(__FILE__).'/testTaskCreate.php';
 require_once dirname(__FILE__).'/testTemplateImport.php';
 require_once dirname(__FILE__).'/testUserGroup.php';
 require_once dirname(__FILE__).'/testUserMacro.php';
+require_once dirname(__FILE__).'/testUserRole.php';
 require_once dirname(__FILE__).'/testUsers.php';
 require_once dirname(__FILE__).'/testValuemap.php';
 require_once dirname(__FILE__).'/testWebScenario.php';
@@ -87,6 +88,7 @@ class ApiJsonTests {
 		$suite->addTestSuite('testTemplateImport');
 		$suite->addTestSuite('testUserGroup');
 		$suite->addTestSuite('testUserMacro');
+		$suite->addTestSuite('testUserRole');
 		$suite->addTestSuite('testUsers');
 		$suite->addTestSuite('testValuemap');
 		$suite->addTestSuite('testWebScenario');

@@ -100,6 +100,9 @@ INSERT INTO opmessage_grp (opmessage_grpid, operationid, usrgrpid) VALUES (21, 3
 INSERT INTO scripts (scriptid, name, command, host_access, usrgrpid, groupid, description) VALUES (5,'API script','test',2,21,NULL,'api script description');
 UPDATE config SET alert_usrgrpid = 22 WHERE configid = 1;
 
+-- user roles
+INSERT INTO role (roleid, name) VALUES (21, 'No UI rule user');
+
 -- users
 INSERT INTO users (userid, alias, passwd, autologin, autologout, lang, refresh, roleid, theme, attempt_failed, attempt_clock, rows_per_page) VALUES (9, 'api-user-for-update', '5fce1b3e34b520afeffb37ce08c7cd66', 0, '15m', 'en_GB', '30s', 2, 'default', 0, 0, 50);
 INSERT INTO users (userid, alias, passwd, autologin, autologout, lang, refresh, roleid, theme, attempt_failed, attempt_clock, rows_per_page) VALUES (10, 'api-user-delete', '5fce1b3e34b520afeffb37ce08c7cd66', 0, '15m', 'en_GB', '30s', 2, 'default', 0, 0, 50);
