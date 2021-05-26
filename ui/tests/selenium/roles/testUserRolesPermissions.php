@@ -365,6 +365,13 @@ class testUserRolesPermissions extends CWebTest {
 					'link' => 'tr_events.php?triggerid=99251&eventid=93',
 					'selector' => 'xpath:(//*[@class="list-table"])[1]//*[text()="ЗАББИКС Сервер"]'
 				]
+			],
+			// Monitoring maps page.
+			[
+				[
+					'link' => 'zabbix.php?action=map.view&sysmapid=1',
+					'selector' => 'xpath://*[name()="g"][@class="map-elements"]/*[name()="image"]'
+				]
 			]
 		];
 	}
