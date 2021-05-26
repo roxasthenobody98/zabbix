@@ -253,33 +253,12 @@ class testUserRolesPermissions extends CWebTest {
 						'Close problems' => true
 					]
 				]
-			],
-			// Disable all problems.
-			[
-				[
-					'all_activities' => true,
-					'activity_id' => [
-						'message',
-						'change_severity',
-						'close_problem',
-						'acknowledge_problem'
-					],
-					'disabled_action' => [
-						'Add problem comments' => false,
-						'Change severity' => false,
-						'Acknowledge problems' => false,
-						'Close problems' => false
-					],
-					'enabled_action' => [
-						'Close problems' => true
-					]
-				]
 			]
 		];
 	}
 
 	/**
-	 * Check problem activities.
+	 * Check problem actions.
 	 *
 	 * @dataProvider getProblemActionsData
 	 */
@@ -289,25 +268,68 @@ class testUserRolesPermissions extends CWebTest {
 		foreach ([true, false] as $action_status) {
 			$this->page->open('zabbix.php?action=problem.view')->waitUntilReady();
 			$row = $this->query('class:list-table')->asTable()->one()->findRow('Problem', 'Test trigger with tag');
-
-			// All actions for problem disabled.
-			if (array_key_exists('all_activities', $data) && $action_status === false) {
-				$this->assertTrue($row->query('xpath://span[@class="red" and text()="No"]')->exists());
-				$this->checkLinks(['zabbix.php?action=popup&popup_action=acknowledge.edit&eventids%5B%5D=93']);
+			$row->query('link', 'No')->one()->click();
+			$dialog = COverlayDialogElement::find()->waitUntilVisible()->one();
+			foreach ($data['activity_id'] as $id) {
+				$this->assertTrue($dialog->query('id', $id)->one()->isEnabled($action_status));
+			}
+			if ($action_status === true) {
+				$this->changeAction($data['disabled_action']);
 			}
 			else {
-				$row->query('link', 'No')->one()->click();
-				$dialog = COverlayDialogElement::find()->waitUntilVisible()->one();
-				foreach ($data['activity_id'] as $id) {
-					$this->assertTrue($dialog->query('id', $id)->one()->isEnabled($action_status));
-				}
-				if ($action_status === true) {
-					$this->changeAction($data['disabled_action']);
-				}
-				else {
-					$this->changeAction($data['enabled_action']);
-				}
+				$this->changeAction($data['enabled_action']);
 			}
+		}
+	}
+
+	/**
+	 * Check that Acknowledge link is disabled after all problem actions is disabled.
+	 */
+	public function testUserRolesPermissions_ProblemActionsAll() {
+		$context_before = ['Problems', 'Acknowledge', 'Configuration', 'Webhook url for all', '1_item'];
+		$actions = [
+				'Add problem comments' => false,
+				'Change severity' => false,
+				'Acknowledge problems' => false,
+				'Close problems' => false
+		];
+		$this->page->login();
+		$this->page->userLogin('user_for_role', 'zabbix');
+		foreach ([true, false] as $action_status) {
+			// Problem page.
+			$this->page->open('zabbix.php?action=problem.view')->waitUntilReady();
+			$problem_row = $this->query('class:list-table')->asTable()->one()->findRow('Time', '2020-10-23 18:23:48');
+			$this->assertTrue($problem_row->query('xpath://*[text()="No"]')->one()->isClickable($action_status));
+
+			// Event details page.
+			$this->page->open('tr_events.php?triggerid=99251&eventid=93')->waitUntilReady();
+			foreach (['2', '5'] as $table_number) {
+				$table = $this->query('xpath:(//*[@class="list-table"])['.$table_number.']')->asTable()->one();
+				$this->assertTrue($table->query('xpath://*[text()="No"]')->one()->isClickable($action_status));
+			}
+
+			// Overview page.
+			$this->page->open('overview.php?type=0')->waitUntilReady();
+			$overview_table = $this->query('class:list-table')->asTable()->one();
+			$overview_table->query('xpath://td[@class="disaster-bg cursor-pointer"]')->one()->click();
+			$this->page->waitUntilReady();
+			$popup = CPopupMenuElement::find()->waitUntilVisible()->one();
+			if ($action_status === true) {
+				$this->assertTrue($popup->hasItems($context_before));
+				$this->changeAction($actions);
+			}
+			if ($action_status === false) {
+				$context_after = array_values(array_diff($context_before, ['Acknowledge']));
+				$this->assertTrue($popup->hasItems($context_after));
+			}
+		}
+	}
+
+	public function testUserRolesPermissions_ScriptAction() {
+		$this->page->login();
+		$this->page->userLogin('user_for_role', 'zabbix');
+		foreach ([true, false] as $action_status) {
+
 		}
 	}
 
