@@ -2192,7 +2192,7 @@ out:
  * Parameters:                                                                *
  *     flags           - [IN] bit flags with item type: log, logrt, log.count *
  *                       or logrt.count                                       *
- *     filename        - [IN] logfile name                                    *
+ *     logfile         - [IN/OUT] logfile attributes                          *
  *     lastlogsize     - [IN/OUT] offset from the beginning of the file       *
  *     mtime           - [IN/OUT] file modification time for reporting to     *
  *                       server                                               *
@@ -2224,6 +2224,8 @@ out:
  *     key             - [IN] item key the data belongs to                    *
  *     processed_bytes - [OUT] number of processed bytes in logfile           *
  *     seek_offset     - [IN] position to seek in file                        *
+ *     persistent_file_name - [IN] name of file for saving persistent data    *
+ *     prep_vec        - [IN/OUT] vector with data for writing into           *
  *                                                                            *
  * Return value: returns SUCCEED on successful reading,                       *
  *               FAIL on other cases                                          *
@@ -2236,19 +2238,21 @@ out:
  *           Thread-safe                                                      *
  *                                                                            *
  ******************************************************************************/
-static int	process_log(unsigned char flags, const char *filename, zbx_uint64_t *lastlogsize, int *mtime,
+static int	process_log(unsigned char flags, struct st_logfile *logfile, zbx_uint64_t *lastlogsize, int *mtime,
 		zbx_uint64_t *lastlogsize_sent, int *mtime_sent, unsigned char *skip_old_data, int *big_rec,
-		int *incomplete, char **err_msg, const char *encoding, zbx_vector_ptr_t *regexps, const char *pattern,
+		char **err_msg, const char *encoding, zbx_vector_ptr_t *regexps, const char *pattern,
 		const char *output_template, int *p_count, int *s_count, zbx_process_value_func_t process_value,
 		const char *server, unsigned short port, const char *hostname, const char *key,
-		zbx_uint64_t *processed_bytes, zbx_uint64_t seek_offset)
+		zbx_uint64_t *processed_bytes, zbx_uint64_t seek_offset, const char *persistent_file_name,
+		zbx_vector_pre_persistent_t *prep_vec)
 {
 	int	f, ret = FAIL;
 
 	zabbix_log(LOG_LEVEL_DEBUG, "In %s() filename:'%s' lastlogsize:" ZBX_FS_UI64 " mtime:%d seek_offset:"
-			ZBX_FS_UI64, __func__, filename, *lastlogsize, NULL != mtime ? *mtime : 0, seek_offset);
+			ZBX_FS_UI64, __func__, logfile->filename, *lastlogsize, NULL != mtime ? *mtime : 0,
+			seek_offset);
 
-	if (-1 == (f = open_file_helper(filename, err_msg)))
+	if (-1 == (f = open_file_helper(logfile->filename, err_msg)))
 		goto out;
 
 	if ((zbx_offset_t)-1 != zbx_lseek(f, seek_offset, SEEK_SET))
@@ -2256,9 +2260,9 @@ static int	process_log(unsigned char flags, const char *filename, zbx_uint64_t *
 		*lastlogsize = seek_offset;
 		*skip_old_data = 0;
 
-		if (SUCCEED == (ret = zbx_read2(f, flags, lastlogsize, mtime, big_rec, incomplete, err_msg, encoding,
-				regexps, pattern, output_template, p_count, s_count, process_value, server, port,
-				hostname, key, lastlogsize_sent, mtime_sent)))
+		if (SUCCEED == (ret = zbx_read2(f, flags, lastlogsize, mtime, big_rec, &logfile->incomplete, err_msg,
+				encoding, regexps, pattern, output_template, p_count, s_count, process_value, server,
+				port, hostname, key, lastlogsize_sent, mtime_sent)))
 		{
 			*processed_bytes = *lastlogsize - seek_offset;
 		}
@@ -2266,14 +2270,14 @@ static int	process_log(unsigned char flags, const char *filename, zbx_uint64_t *
 	else
 	{
 		*err_msg = zbx_dsprintf(*err_msg, "Cannot set position to " ZBX_FS_UI64 " in file \"%s\": %s",
-				seek_offset, filename, zbx_strerror(errno));
+				seek_offset, logfile->filename, zbx_strerror(errno));
 	}
 
-	if (SUCCEED != close_file_helper(f, filename, err_msg))
+	if (SUCCEED != close_file_helper(f, logfile->filename, err_msg))
 		ret = FAIL;
 out:
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s() filename:'%s' lastlogsize:" ZBX_FS_UI64 " mtime:%d ret:%s"
-			" processed_bytes:" ZBX_FS_UI64, __func__, filename, *lastlogsize,
+			" processed_bytes:" ZBX_FS_UI64, __func__, logfile->filename, *lastlogsize,
 			NULL != mtime ? *mtime : 0, zbx_result_string(ret),
 			SUCCEED == ret ? *processed_bytes : (zbx_uint64_t)0);
 
@@ -3276,11 +3280,11 @@ static int	process_logrt(unsigned char flags, const char *filename, zbx_uint64_t
 
 			if (0 != process_this_file)
 			{
-				ret = process_log(flags, logfiles[i].filename, lastlogsize, mtime, lastlogsize_sent,
-						mtime_sent, skip_old_data, big_rec, &logfiles[i].incomplete, err_msg,
-						encoding, regexps, pattern, output_template, p_count, s_count,
-						process_value, server, port, hostname, key, &processed_bytes_tmp,
-						seek_offset);
+				ret = process_log(flags, logfiles + i, lastlogsize, mtime, lastlogsize_sent,
+						mtime_sent, skip_old_data, big_rec, err_msg, encoding, regexps, pattern,
+						output_template, p_count, s_count, process_value, server, port,
+						hostname, key, &processed_bytes_tmp, seek_offset, persistent_file_name,
+						prep_vec);
 
 				/* process_log() advances 'lastlogsize' only on success therefore */
 				/* we do not check for errors here */
