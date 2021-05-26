@@ -329,18 +329,93 @@ class testUserRolesPermissions extends CWebTest {
 				$this->assertTrue($popup->hasItems($context_before));
 				$this->changeAction($actions);
 			}
-			if ($action_status === false) {
+			else {
 				$context_after = array_values(array_diff($context_before, ['Acknowledge']));
 				$this->assertTrue($popup->hasItems($context_after));
 			}
 		}
 	}
 
-	public function testUserRolesPermissions_ScriptAction() {
+	public static function getScriptActionData() {
+		return [
+			// Monitoring problems page.
+			[
+				[
+					'link' => 'zabbix.php?action=problem.view',
+					'selector' => 'xpath:(//a[@class="link-action" and text()="ЗАББИКС Сервер"])[1]'
+				]
+			],
+			// Dashboard problem widget.
+			[
+				[
+					'link' => 'zabbix.php?action=dashboard.view&dashboardid=1',
+					'selector' => 'link:ЗАББИКС Сервер'
+				]
+			],
+			// Monitoring hosts page.
+			[
+				[
+					'link' => 'zabbix.php?action=host.view',
+					'selector' => 'link:3_Host_to_check_Monitoring_Overview'
+				]
+			],
+			// Event detail page.
+			[
+				[
+					'link' => 'tr_events.php?triggerid=99251&eventid=93',
+					'selector' => 'xpath:(//*[@class="list-table"])[1]//*[text()="ЗАББИКС Сервер"]'
+				]
+			]
+		];
+	}
+
+	/**
+	 * Check script actions.
+	 *
+	 * @dataProvider getScriptActionData
+	 */
+	public function testUserRolesPermissions_ScriptAction($data) {
+		$context_before = [
+			'Inventory',
+			'Latest data',
+			'Problems',
+			'Graphs',
+			'Dashboards',
+			'Web',
+			'Configuration',
+			'Detect operating system',
+			'Ping',
+			'Script for Clone',
+			'Script for Delete',
+			'Script for Update',
+			'Selenium script',
+			'Traceroute'
+		];
+		$context_after = [
+			'Inventory',
+			'Latest data',
+			'Problems',
+			'Graphs',
+			'Dashboards',
+			'Web',
+			'Configuration'
+		];
 		$this->page->login();
 		$this->page->userLogin('user_for_role', 'zabbix');
 		foreach ([true, false] as $action_status) {
-
+			$this->page->open($data['link'])->waitUntilReady();
+			$this->query($data['selector'])->one()->click();
+			$popup = CPopupMenuElement::find()->waitUntilVisible()->one();
+			if ($action_status === true) {
+				$this->assertTrue($popup->hasItems($context_before));
+				$this->assertEquals(['HOST', 'SCRIPTS'], $popup->getTitles()->asText());
+				$this->changeAction(['Execute scripts' => false]);
+			}
+			else {
+				$this->assertTrue($popup->hasItems($context_after));
+				$this->assertEquals(['HOST'], $popup->getTitles()->asText());
+				$this->changeAction(['Execute scripts' => true]);
+			}
 		}
 	}
 
