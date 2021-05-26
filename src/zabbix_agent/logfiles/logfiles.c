@@ -2226,6 +2226,7 @@ out:
  *     seek_offset     - [IN] position to seek in file                        *
  *     persistent_file_name - [IN] name of file for saving persistent data    *
  *     prep_vec        - [IN/OUT] vector with data for writing into           *
+ *                                persistent files                            *
  *                                                                            *
  * Return value: returns SUCCEED on successful reading,                       *
  *               FAIL on other cases                                          *
