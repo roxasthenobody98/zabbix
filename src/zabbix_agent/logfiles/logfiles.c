@@ -3056,6 +3056,9 @@ static int	update_new_list_from_old(zbx_log_rotation_options_t rotation_type, st
  *     start_time       - [IN/OUT] start time of check                        *
  *     processed_bytes  - [IN/OUT] number of bytes processed                  *
  *     rotation_type    - [IN] simple rotation or copy/truncate rotation      *
+ *     persistent_file_name - [IN] name of file for saving persistent data    *
+ *     prep_vec         - [IN/OUT] vector with data for writing into          *
+ *                                 persistent files                           *
  *                                                                            *
  * Return value: returns SUCCEED on successful reading,                       *
  *               FAIL on other cases                                          *
@@ -3070,7 +3073,8 @@ static int	process_logrt(unsigned char flags, const char *filename, zbx_uint64_t
 		zbx_vector_ptr_t *regexps, const char *pattern, const char *output_template, int *p_count, int *s_count,
 		zbx_process_value_func_t process_value, const char *server, unsigned short port, const char *hostname,
 		const char *key, int *jumped, float max_delay, double *start_time, zbx_uint64_t *processed_bytes,
-		zbx_log_rotation_options_t rotation_type)
+		zbx_log_rotation_options_t rotation_type, const char *persistent_file_name,
+		zbx_vector_pre_persistent_t *prep_vec)
 {
 	int			i, start_idx, ret = FAIL, logfiles_num = 0, logfiles_alloc = 0, seq = 1,
 				from_first_file = 1, last_processed, limit_reached = 0, res;
@@ -3698,7 +3702,7 @@ int	process_log_check(char *server, unsigned short port, zbx_vector_ptr_t *regex
 			metric->logfiles_num, &logfiles_new, &logfiles_num_new, encoding, regexps, regexp,
 			output_template, &p_count, &s_count, process_value_cb, server, port, CONFIG_HOSTNAME,
 			metric->key_orig, &jumped, max_delay, &metric->start_time, &metric->processed_bytes,
-			rotation_type);
+			rotation_type, metric->persistent_file_name, prep_vec);
 
 	if (0 == is_count_item && NULL != logfiles_new)
 	{
