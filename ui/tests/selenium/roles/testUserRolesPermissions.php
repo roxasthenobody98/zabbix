@@ -286,12 +286,18 @@ class testUserRolesPermissions extends CWebTest {
 	 * Check that Acknowledge link is disabled after all problem actions is disabled.
 	 */
 	public function testUserRolesPermissions_ProblemActionsAll() {
-		$context_before = ['Problems', 'Acknowledge', 'Configuration', 'Webhook url for all', '1_item'];
+		$context_before = [
+			'Problems',
+			'Acknowledge',
+			'Configuration',
+			'Webhook url for all',
+			'1_item'
+		];
 		$actions = [
-				'Add problem comments' => false,
-				'Change severity' => false,
-				'Acknowledge problems' => false,
-				'Close problems' => false
+			'Add problem comments' => false,
+			'Change severity' => false,
+			'Acknowledge problems' => false,
+			'Close problems' => false
 		];
 		$this->page->login();
 		$this->page->userLogin('user_for_role', 'zabbix');
@@ -300,6 +306,11 @@ class testUserRolesPermissions extends CWebTest {
 			$this->page->open('zabbix.php?action=problem.view')->waitUntilReady();
 			$problem_row = $this->query('class:list-table')->asTable()->one()->findRow('Time', '2020-10-23 18:23:48');
 			$this->assertTrue($problem_row->query('xpath://*[text()="No"]')->one()->isClickable($action_status));
+
+			// Problem widget in dashboard.
+			$this->page->open('zabbix.php?action=dashboard.view&dashboardid=1')->waitUntilReady();
+			$widget_row = $this->query('xpath:(//table[@class="list-table"])[10]')->asTable()->one()->findRow('Time', '2020-10-23 18:23:48');
+			$this->assertTrue($widget_row->query('xpath://*[text()="No"]')->one()->isClickable($action_status));
 
 			// Event details page.
 			$this->page->open('tr_events.php?triggerid=99251&eventid=93')->waitUntilReady();
