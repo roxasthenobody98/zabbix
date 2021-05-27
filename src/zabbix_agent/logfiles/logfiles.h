@@ -54,7 +54,7 @@ struct	st_logfile
 };
 
 typedef int 	(*zbx_process_value_func_t)(const char *server, unsigned short port, const char *host,
-		const char *key, const char *value, unsigned char state, zbx_uint64_t *lastlogsize, int *mtime,
+		const char *key, const char *value, unsigned char state, zbx_uint64_t *lastlogsize, const int *mtime,
 		unsigned long *timestamp, const char *source, unsigned short *severity,
 		unsigned long *logeventid, unsigned char flags);
 

@@ -1887,11 +1887,11 @@ static char	*buf_find_newline(char *p, char **p_next, const char *p_end, const c
  * Comments: Thread-safe                                                      *
  *                                                                            *
  ******************************************************************************/
-static int	zbx_read2(int fd, unsigned char flags, zbx_uint64_t *lastlogsize, int *mtime, int *big_rec,
-		int *incomplete, char **err_msg, const char *encoding, zbx_vector_ptr_t *regexps, const char *pattern,
-		const char *output_template, int *p_count, int *s_count, zbx_process_value_func_t process_value,
-		const char *server, unsigned short port, const char *hostname, const char *key,
-		zbx_uint64_t *lastlogsize_sent, int *mtime_sent)
+static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zbx_uint64_t *lastlogsize,
+		const int *mtime, int *big_rec, char **err_msg, const char *encoding, zbx_vector_ptr_t *regexps,
+		const char *pattern, const char *output_template, int *p_count, int *s_count,
+		zbx_process_value_func_t process_value, const char *server, unsigned short port, const char *hostname,
+		const char *key, zbx_uint64_t *lastlogsize_sent, int *mtime_sent)
 {
 	static ZBX_THREAD_LOCAL char	*buf = NULL;
 
@@ -1954,7 +1954,7 @@ static int	zbx_read2(int fd, unsigned char flags, zbx_uint64_t *lastlogsize, int
 		if (NULL == (p_nl = buf_find_newline(p, &p_next, p_end, cr, lf, szbyte)))
 		{
 			if (p_end > p)
-				*incomplete = 1;
+				logfile->incomplete = 1;
 
 			if (BUF_SIZE > nbytes)
 			{
@@ -2062,7 +2062,7 @@ static int	zbx_read2(int fd, unsigned char flags, zbx_uint64_t *lastlogsize, int
 		{
 			/* the "newline" was found, so there is at least one complete record */
 			/* (or trailing part of a large record) in the buffer */
-			*incomplete = 0;
+			logfile->incomplete = 0;
 
 			for (;;)
 			{
@@ -2159,7 +2159,7 @@ static int	zbx_read2(int fd, unsigned char flags, zbx_uint64_t *lastlogsize, int
 					/* There are no complete records in the buffer. */
 					/* Try to read more data from this position if available. */
 					if (p_end > p)
-						*incomplete = 1;
+						logfile->incomplete = 1;
 
 					if ((zbx_offset_t)-1 == zbx_lseek(fd, *lastlogsize, SEEK_SET))
 					{
@@ -2172,7 +2172,7 @@ static int	zbx_read2(int fd, unsigned char flags, zbx_uint64_t *lastlogsize, int
 						break;
 				}
 				else
-					*incomplete = 0;
+					logfile->incomplete = 0;
 			}
 		}
 	}
@@ -2202,9 +2202,6 @@ out:
  *                       jump to the end                                      *
  *     big_rec         - [IN/OUT] state variable to remember whether a long   *
  *                       record is being processed                            *
- *     incomplete      - [OUT] 0 - the last record ended with a newline,      *
- *                       1 - there was no newline at the end of the last      *
- *                       record.                                              *
  *     err_msg         - [IN/OUT] error message why an item became            *
  *                       NOTSUPPORTED                                         *
  *     encoding        - [IN] text string describing encoding.                *
@@ -2261,9 +2258,9 @@ static int	process_log(unsigned char flags, struct st_logfile *logfile, zbx_uint
 		*lastlogsize = seek_offset;
 		*skip_old_data = 0;
 
-		if (SUCCEED == (ret = zbx_read2(f, flags, lastlogsize, mtime, big_rec, &logfile->incomplete, err_msg,
-				encoding, regexps, pattern, output_template, p_count, s_count, process_value, server,
-				port, hostname, key, lastlogsize_sent, mtime_sent)))
+		if (SUCCEED == (ret = zbx_read2(f, flags, logfile, lastlogsize, mtime, big_rec, err_msg, encoding,
+				regexps, pattern, output_template, p_count, s_count, process_value, server, port,
+				hostname, key, lastlogsize_sent, mtime_sent)))
 		{
 			*processed_bytes = *lastlogsize - seek_offset;
 		}
