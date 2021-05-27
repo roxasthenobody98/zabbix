@@ -885,6 +885,26 @@ class testUserRolesPermissions extends CWebTest {
 			],
 			[
 				[
+					'section' => 'Administration',
+					'user_roles' => true,
+					'page' => 'User roles',
+					'remove_ui' => [
+						'Administration' => [
+							'General',
+							'Proxies',
+							'Authentication',
+							'Queue',
+							'User groups',
+							'Users',
+							'Media types',
+							'Scripts'
+						]
+					],
+					'link' => ['zabbix.php?action=userrole.list']
+				]
+			],
+			[
+				[
 					'section' => 'Monitoring',
 					'page' => 'Problems',
 					'remove_ui' => [
@@ -1044,6 +1064,18 @@ class testUserRolesPermissions extends CWebTest {
 	 * @dataProvider getUIData
 	 */
 	public function testUserRolesPermissions_UI($data) {
+		$user_roles = [
+			'Administration' => [
+				'General',
+				'Proxies',
+				'Authentication',
+				'User roles',
+				'User groups',
+				'Users',
+				'Media types',
+				'Scripts'
+			]
+		];
 		$this->page->login();
 		$this->page->userLogin('user_for_role', 'zabbix');
 		foreach ([true, false] as $action_status) {
@@ -1058,11 +1090,25 @@ class testUserRolesPermissions extends CWebTest {
 			}
 			$this->assertEquals($action_status, $main_section->one()->parents('tag:li')->query('link', $data['page'])->exists());
 			if ($action_status === true) {
-				$this->changeAction($data['remove_ui']);
-				$this->page->open('zabbix.php?action=dashboard.view')->waitUntilReady();
+				if (array_key_exists('user_roles', $data)) {
+					$this->page->userLogin('Admin', 'zabbix');
+					$this->changeAction($data['remove_ui']);
+					$this->page->userLogin('user_for_role', 'zabbix');
+				}
+				else {
+					$this->changeAction($data['remove_ui']);
+					$this->page->open('zabbix.php?action=dashboard.view')->waitUntilReady();
+				}
 			}
 			else {
-				$this->checkLinks($data['link']);
+				if (array_key_exists('user_roles', $data)) {
+					$this->checkLinks($data['link']);
+					$this->page->userLogin('Admin', 'zabbix');
+					$this->changeAction($user_roles);
+				}
+				else {
+					$this->checkLinks($data['link']);
+				}
 			}
 		}
 	}
