@@ -411,7 +411,7 @@ class testUserRolesPermissions extends CWebTest {
 		$this->page->userLogin('user_for_role', 'zabbix');
 		foreach ([true, false] as $action_status) {
 			$this->page->open($data['link'])->waitUntilReady();
-			$this->query($data['selector'])->one()->click();
+			$this->query($data['selector'])->waitUntilPresent()->one()->click();
 			$popup = CPopupMenuElement::find()->waitUntilVisible()->one();
 			if ($action_status === true) {
 				$this->assertTrue($popup->hasItems($context_before));
@@ -461,6 +461,608 @@ class testUserRolesPermissions extends CWebTest {
 				$pages_after = array_values(array_diff($pages_before, ['Module 5 menu']));
 				$this->assertEquals($pages_after, $all_pages);
 				$this->changeAction(['5th Module' => true]);
+			}
+		}
+	}
+
+	public static function getUIData() {
+		return [
+			[
+				[
+					'section' => 'Inventory',
+					'page' => 'Overview',
+					'remove_ui' => [
+						'Inventory' => [
+							'Hosts'
+						]
+					],
+					'link' => ['hostinventoriesoverview.php']
+				]
+			],
+			[
+				[
+					'section' => 'Inventory',
+					'page' => 'Hosts',
+					'remove_ui' => [
+						'Inventory' => [
+							'Overview'
+						]
+					],
+					'link' => ['hostinventories.php']
+				]
+			],
+			[
+				[
+					'section' => 'Reports',
+					'page' => 'System information',
+					'remove_ui' => [
+						'Reports' => [
+							'Availability report',
+							'Triggers top 100',
+							'Audit',
+							'Action log',
+							'Notifications'
+						]
+					],
+					'link' => ['zabbix.php?action=report.status']
+				]
+			],
+			[
+				[
+					'section' => 'Reports',
+					'page' => 'Availability report',
+					'remove_ui' => [
+						'Reports' => [
+							'System information',
+							'Triggers top 100',
+							'Audit',
+							'Action log',
+							'Notifications'
+						]
+					],
+					'link' => ['report2.php']
+				]
+			],
+			[
+				[
+					'section' => 'Reports',
+					'page' => 'Triggers top 100',
+					'remove_ui' => [
+						'Reports' => [
+							'Availability report',
+							'System information',
+							'Audit',
+							'Action log',
+							'Notifications'
+						]
+					],
+					'link' => ['toptriggers.php']
+				]
+			],
+			[
+				[
+					'section' => 'Reports',
+					'page' => 'Audit',
+					'remove_ui' => [
+						'Reports' => [
+							'Availability report',
+							'System information',
+							'Triggers top 100',
+							'Action log',
+							'Notifications'
+						]
+					],
+					'link' => ['zabbix.php?action=auditlog.list']
+				]
+			],
+			[
+				[
+					'section' => 'Reports',
+					'page' => 'Action log',
+					'remove_ui' => [
+						'Reports' => [
+							'Availability report',
+							'System information',
+							'Triggers top 100',
+							'Audit',
+							'Notifications'
+						]
+					],
+					'link' => ['auditacts.php']
+				]
+			],
+			[
+				[
+					'section' => 'Reports',
+					'page' => 'Notifications',
+					'remove_ui' => [
+						'Reports' => [
+							'Availability report',
+							'System information',
+							'Triggers top 100',
+							'Audit',
+							'Action log'
+						]
+					],
+					'link' => ['report4.php']
+				]
+			],
+			[
+				[
+					'section' => 'Configuration',
+					'page' => 'Host groups',
+					'remove_ui' => [
+						'Configuration' => [
+							'Templates',
+							'Hosts',
+							'Maintenance',
+							'Actions',
+							'Event correlation',
+							'Discovery',
+							'Services'
+						]
+					],
+					'link' => ['hostgroups.php']
+				]
+			],
+			[
+				[
+					'section' => 'Configuration',
+					'page' => 'Templates',
+					'remove_ui' => [
+						'Configuration' => [
+							'Host groups',
+							'Hosts',
+							'Maintenance',
+							'Actions',
+							'Event correlation',
+							'Discovery',
+							'Services'
+						]
+					],
+					'link' => ['templates.php']
+				]
+			],
+			[
+				[
+					'section' => 'Configuration',
+					'page' => 'Hosts',
+					'remove_ui' => [
+						'Configuration' => [
+							'Host groups',
+							'Templates',
+							'Maintenance',
+							'Actions',
+							'Event correlation',
+							'Discovery',
+							'Services'
+						]
+					],
+					'link' => ['hosts.php']
+				]
+			],
+			[
+				[
+					'section' => 'Configuration',
+					'page' => 'Maintenance',
+					'remove_ui' => [
+						'Configuration' => [
+							'Host groups',
+							'Templates',
+							'Hosts',
+							'Actions',
+							'Event correlation',
+							'Discovery',
+							'Services'
+						]
+					],
+					'link' => ['maintenance.php']
+				]
+			],
+			[
+				[
+					'section' => 'Configuration',
+					'page' => 'Actions',
+					'remove_ui' => [
+						'Configuration' => [
+							'Host groups',
+							'Templates',
+							'Hosts',
+							'Maintenance',
+							'Event correlation',
+							'Discovery',
+							'Services'
+						]
+					],
+					'link' => ['actionconf.php']
+				]
+			],
+			[
+				[
+					'section' => 'Configuration',
+					'page' => 'Event correlation',
+					'remove_ui' => [
+						'Configuration' => [
+							'Host groups',
+							'Templates',
+							'Hosts',
+							'Maintenance',
+							'Actions',
+							'Discovery',
+							'Services'
+						]
+					],
+					'link' => ['correlation.php']
+				]
+			],
+			[
+				[
+					'section' => 'Configuration',
+					'page' => 'Discovery',
+					'remove_ui' => [
+						'Configuration' => [
+							'Host groups',
+							'Templates',
+							'Hosts',
+							'Maintenance',
+							'Actions',
+							'Event correlation',
+							'Services'
+						]
+					],
+					'link' => ['discoveryconf.php']
+				]
+			],
+			[
+				[
+					'section' => 'Configuration',
+					'page' => 'Services',
+					'remove_ui' => [
+						'Configuration' => [
+							'Host groups',
+							'Templates',
+							'Hosts',
+							'Maintenance',
+							'Actions',
+							'Event correlation',
+							'Discovery'
+						]
+					],
+					'link' => ['services.php']
+				]
+			],
+			[
+				[
+					'section' => 'Administration',
+					'page' => 'General',
+					'remove_ui' => [
+						'Administration' => [
+							'Proxies',
+							'Authentication',
+							'User groups',
+							'User roles',
+							'Users',
+							'Media types',
+							'Scripts',
+							'Queue'
+						]
+					],
+					'link' => ['zabbix.php?action=gui.edit']
+				]
+			],
+			[
+				[
+					'section' => 'Administration',
+					'page' => 'Proxies',
+					'remove_ui' => [
+						'Administration' => [
+							'General',
+							'Authentication',
+							'User groups',
+							'User roles',
+							'Users',
+							'Media types',
+							'Scripts',
+							'Queue'
+						]
+					],
+					'link' => ['zabbix.php?action=proxy.list']
+				]
+			],
+			[
+				[
+					'section' => 'Administration',
+					'page' => 'Authentication',
+					'remove_ui' => [
+						'Administration' => [
+							'General',
+							'Proxies',
+							'User groups',
+							'User roles',
+							'Users',
+							'Media types',
+							'Scripts',
+							'Queue'
+						]
+					],
+					'link' => ['zabbix.php?action=authentication.edit']
+				]
+			],
+			[
+				[
+					'section' => 'Administration',
+					'page' => 'User groups',
+					'remove_ui' => [
+						'Administration' => [
+							'General',
+							'Proxies',
+							'Authentication',
+							'User roles',
+							'Users',
+							'Media types',
+							'Scripts',
+							'Queue'
+						]
+					],
+					'link' => ['zabbix.php?action=usergroup.list']
+				]
+			],
+			[
+				[
+					'section' => 'Administration',
+					'page' => 'Users',
+					'remove_ui' => [
+						'Administration' => [
+							'General',
+							'Proxies',
+							'Authentication',
+							'User roles',
+							'User groups',
+							'Media types',
+							'Scripts',
+							'Queue'
+						]
+					],
+					'link' => ['zabbix.php?action=user.list']
+				]
+			],
+			[
+				[
+					'section' => 'Administration',
+					'page' => 'Media types',
+					'remove_ui' => [
+						'Administration' => [
+							'General',
+							'Proxies',
+							'Authentication',
+							'User roles',
+							'User groups',
+							'Users',
+							'Scripts',
+							'Queue'
+						]
+					],
+					'link' => ['zabbix.php?action=mediatype.list']
+				]
+			],
+			[
+				[
+					'section' => 'Administration',
+					'page' => 'Scripts',
+					'remove_ui' => [
+						'Administration' => [
+							'General',
+							'Proxies',
+							'Authentication',
+							'User roles',
+							'User groups',
+							'Users',
+							'Media types',
+							'Queue'
+						]
+					],
+					'link' => ['zabbix.php?action=script.list']
+				]
+			],
+			[
+				[
+					'section' => 'Administration',
+					'page' => 'Queue',
+					'remove_ui' => [
+						'Administration' => [
+							'General',
+							'Proxies',
+							'Authentication',
+							'User roles',
+							'User groups',
+							'Users',
+							'Media types',
+							'Scripts'
+						]
+					],
+					'link' => ['queue.php']
+				]
+			],
+			[
+				[
+					'section' => 'Dashboard',
+					'page' => 'Problems',
+					'remove_ui' => [
+						'Administration' => [
+							'Dashboard',
+							'Hosts',
+							'Overview',
+							'Latest data',
+							'Screens',
+							'Maps',
+							'Discovery',
+							'Services'
+						]
+					],
+					'link' => ['zabbix.php?action=problem.view']
+				]
+			],
+			[
+				[
+					'section' => 'Dashboard',
+					'page' => 'Hosts',
+					'remove_ui' => [
+						'Administration' => [
+							'Dashboard',
+							'Problems',
+							'Overview',
+							'Latest data',
+							'Screens',
+							'Maps',
+							'Discovery',
+							'Services'
+						]
+					],
+					'link' => ['zabbix.php?action=host.view']
+				]
+			],
+			[
+				[
+					'section' => 'Dashboard',
+					'page' => 'Overview',
+					'remove_ui' => [
+						'Administration' => [
+							'Dashboard',
+							'Problems',
+							'Hosts',
+							'Latest data',
+							'Screens',
+							'Maps',
+							'Discovery',
+							'Services'
+						]
+					],
+					'link' => ['overview.php']
+				]
+			],
+			[
+				[
+					'section' => 'Dashboard',
+					'page' => 'Latest data',
+					'remove_ui' => [
+						'Administration' => [
+							'Dashboard',
+							'Problems',
+							'Hosts',
+							'Overview',
+							'Screens',
+							'Maps',
+							'Discovery',
+							'Services'
+						]
+					],
+					'link' => ['zabbix.php?action=latest.view']
+				]
+			],
+			[
+				[
+					'section' => 'Dashboard',
+					'page' => 'Screens',
+					'remove_ui' => [
+						'Administration' => [
+							'Dashboard',
+							'Problems',
+							'Hosts',
+							'Overview',
+							'Latest data',
+							'Maps',
+							'Discovery',
+							'Services'
+						]
+					],
+					'link' => ['screenconf.php']
+				]
+			],
+			[
+				[
+					'section' => 'Dashboard',
+					'page' => 'Maps',
+					'remove_ui' => [
+						'Administration' => [
+							'Dashboard',
+							'Problems',
+							'Hosts',
+							'Overview',
+							'Latest data',
+							'Screens',
+							'Discovery',
+							'Services'
+						]
+					],
+					'link' => ['sysmaps.php']
+				]
+			],
+			[
+				[
+					'section' => 'Dashboard',
+					'page' => 'Discovery',
+					'remove_ui' => [
+						'Administration' => [
+							'Dashboard',
+							'Problems',
+							'Hosts',
+							'Overview',
+							'Latest data',
+							'Screens',
+							'Maps',
+							'Services'
+						]
+					],
+					'link' => ['zabbix.php?action=discovery.view']
+				]
+			],
+			[
+				[
+					'section' => 'Dashboard',
+					'page' => 'Services',
+					'remove_ui' => [
+						'Administration' => [
+							'Dashboard',
+							'Problems',
+							'Hosts',
+							'Overview',
+							'Latest data',
+							'Screens',
+							'Maps',
+							'Discovery'
+						]
+					],
+					'link' => ['srv_status.php']
+				]
+			]
+		];
+	}
+
+	/**
+	 * UI permission
+	 *
+	 * @dataProvider getUIData
+	 */
+	public function testUserRolesPermissions_UI($data) {
+		$this->page->login();
+		$this->page->userLogin('user_for_role', 'zabbix');
+		foreach ([true, false] as $action_status) {
+			$main_section = $this->query('xpath://ul[@class="menu-main"]')->query('link', $data['section']);
+			if ($data['section'] !== 'Monitoring') {
+				$main_section->waitUntilReady()->one()->click();
+				$element = $this->query('xpath://a[text()="'.$data['section'].'"]/../ul[@class="submenu"]')->one();
+				CElementQuery::wait()->until(function () use ($element) {
+				return CElementQuery::getDriver()->executeScript('return arguments[0].clientHeight ==='.
+						' parseInt(arguments[0].style.maxHeight, 10)', [$element]);
+				});
+			}
+			$this->assertEquals($action_status, $main_section->one()->parents('tag:li')->query('link', $data['page'])->exists());
+			if ($action_status === true) {
+				$this->changeAction($data['remove_ui']);
+				$this->page->open('zabbix.php?action=dashboard.view')->waitUntilReady();
+			}
+			else {
+				$this->checkLinks($data['link']);
 			}
 		}
 	}
