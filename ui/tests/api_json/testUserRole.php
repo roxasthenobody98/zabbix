@@ -119,7 +119,7 @@ class testUserRole extends CAPITest {
 					]
 				],
 				'expected_error' => null
-			]						
+			]
 		];
 	}
 
