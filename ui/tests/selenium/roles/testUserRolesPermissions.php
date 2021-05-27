@@ -885,10 +885,10 @@ class testUserRolesPermissions extends CWebTest {
 			],
 			[
 				[
-					'section' => 'Dashboard',
+					'section' => 'Monitoring',
 					'page' => 'Problems',
 					'remove_ui' => [
-						'Administration' => [
+						'Monitoring' => [
 							'Dashboard',
 							'Hosts',
 							'Overview',
@@ -904,10 +904,10 @@ class testUserRolesPermissions extends CWebTest {
 			],
 			[
 				[
-					'section' => 'Dashboard',
+					'section' => 'Monitoring',
 					'page' => 'Hosts',
 					'remove_ui' => [
-						'Administration' => [
+						'Monitoring' => [
 							'Dashboard',
 							'Problems',
 							'Overview',
@@ -923,10 +923,10 @@ class testUserRolesPermissions extends CWebTest {
 			],
 			[
 				[
-					'section' => 'Dashboard',
+					'section' => 'Monitoring',
 					'page' => 'Overview',
 					'remove_ui' => [
-						'Administration' => [
+						'Monitoring' => [
 							'Dashboard',
 							'Problems',
 							'Hosts',
@@ -942,10 +942,10 @@ class testUserRolesPermissions extends CWebTest {
 			],
 			[
 				[
-					'section' => 'Dashboard',
+					'section' => 'Monitoring',
 					'page' => 'Latest data',
 					'remove_ui' => [
-						'Administration' => [
+						'Monitoring' => [
 							'Dashboard',
 							'Problems',
 							'Hosts',
@@ -961,10 +961,10 @@ class testUserRolesPermissions extends CWebTest {
 			],
 			[
 				[
-					'section' => 'Dashboard',
+					'section' => 'Monitoring',
 					'page' => 'Screens',
 					'remove_ui' => [
-						'Administration' => [
+						'Monitoring' => [
 							'Dashboard',
 							'Problems',
 							'Hosts',
@@ -980,10 +980,10 @@ class testUserRolesPermissions extends CWebTest {
 			],
 			[
 				[
-					'section' => 'Dashboard',
+					'section' => 'Monitoring',
 					'page' => 'Maps',
 					'remove_ui' => [
-						'Administration' => [
+						'Monitoring' => [
 							'Dashboard',
 							'Problems',
 							'Hosts',
@@ -999,10 +999,10 @@ class testUserRolesPermissions extends CWebTest {
 			],
 			[
 				[
-					'section' => 'Dashboard',
+					'section' => 'Monitoring',
 					'page' => 'Discovery',
 					'remove_ui' => [
-						'Administration' => [
+						'Monitoring' => [
 							'Dashboard',
 							'Problems',
 							'Hosts',
@@ -1018,10 +1018,10 @@ class testUserRolesPermissions extends CWebTest {
 			],
 			[
 				[
-					'section' => 'Dashboard',
+					'section' => 'Monitoring',
 					'page' => 'Services',
 					'remove_ui' => [
-						'Administration' => [
+						'Monitoring' => [
 							'Dashboard',
 							'Problems',
 							'Hosts',
@@ -1067,18 +1067,110 @@ class testUserRolesPermissions extends CWebTest {
 		}
 	}
 
+	public static function getDashboardData() {
+		return [
+			[
+				[
+
+					'page' => 'Dashboard',
+					'button' => 'Problems',
+					'remove_ui' => [
+						'Monitoring' => [
+							'Problems',
+							'Hosts',
+							'Overview',
+							'Latest data',
+							'Screens',
+							'Maps',
+							'Discovery',
+							'Services'
+						]
+					]
+				]
+			],
+			[
+				[
+					'button' => 'Hosts',
+					'remove_ui' => [
+						'Monitoring' => [
+							'Hosts',
+							'Overview',
+							'Latest data',
+							'Screens',
+							'Maps',
+							'Discovery',
+							'Services'
+						]
+					]
+				]
+			],
+			[
+				[
+					'button' => 'Overview',
+					'remove_ui' => [
+						'Monitoring' => [
+							'Overview',
+							'Latest data',
+							'Screens',
+							'Maps',
+							'Discovery',
+							'Services'
+						]
+					]
+				]
+			]
+		];
+	}
+
+	/**
+	 * Disabling access to Dashboard. Check warning message text and button.
+	 *
+	 * @dataProvider getDashboardData
+	 */
+	public function testUserRolesPermissions_Dashboard($data) {
+		$enabled_ui = [
+			'Monitoring' => [
+				'Problems',
+				'Hosts',
+				'Overview',
+				'Latest data',
+				'Screens',
+				'Maps',
+				'Discovery',
+				'Services'
+			]
+		];
+		$this->page->login();
+		$this->page->userLogin('user_for_role', 'zabbix');
+		foreach ([true, false] as $action_status) {
+			$main_section = $this->query('xpath://ul[@class="menu-main"]')->query('link:Monitoring');
+			if (array_key_exists('page', $data)) {
+				$this->assertEquals($action_status, $main_section->one()->parents('tag:li')->query('link', $data['page'])->exists());
+			}
+			if ($action_status === true) {
+				$this->changeAction($data['remove_ui']);
+			}
+			else {
+				$this->checkLinks(['zabbix.php?action=dashboard.view'], $data['button']);
+				$this->changeAction($enabled_ui);
+			}
+		}
+	}
+
 	/**
 	 * Check disabled actions with links.
 	 *
 	 * @param array $links	checked links after disabling action
 	 */
-	private function checkLinks($links) {
+	private function checkLinks($links, $page = 'Dashboard') {
 		foreach ($links as $link) {
 			$this->page->open($link)->waitUntilReady();
 			$this->assertMessage(TEST_BAD, 'Access denied', 'You are logged in as "user_for_role". '.
 					'You have no permissions to access this page.');
-			$this->query('button:Go to "Dashboard"')->one()->waitUntilClickable()->click();
-			$this->assertContains('zabbix.php?action=dashboard', $this->page->getCurrentUrl());
+			$this->query('button:Go to "'.$page.'"')->one()->waitUntilClickable()->click();
+			if ($page === 'Dashboard') {
+				$this->assertContains('zabbix.php?action=dashboard', $this->page->getCurrentUrl());
+			}
 		}
 	}
 
