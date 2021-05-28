@@ -1217,7 +1217,7 @@ static int	zbx_snmp_walk(struct snmp_session *ss, const DC_ITEM *item, const cha
 			}
 			else if (SNMP_NOSUCHOBJECT != var->type && SNMP_NOSUCHINSTANCE != var->type)
 			{
-				int	print_suffix;
+				int	print_suffix = 0;
 
 				/* not an exception value */
 
@@ -1258,8 +1258,11 @@ static int	zbx_snmp_walk(struct snmp_session *ss, const DC_ITEM *item, const cha
 					break;
 				}
 
-				print_suffix = zbx_snmp_is_different_root(rootOID, rootOID_len, var->name,
-						var->name_length);
+				if (ZBX_SNMP_STR_STRING == val_type)
+				{
+					print_suffix = zbx_snmp_is_different_root(rootOID, rootOID_len, var->name,
+							var->name_length);
+				}
 
 				if (SUCCEED != zbx_snmp_choose_index(oid_index, sizeof(oid_index), var->name,
 						var->name_length, root_string_len, root_numeric_len, print_suffix))
