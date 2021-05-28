@@ -747,7 +747,19 @@ class testUserRolesPermissions extends CWebTest {
 							'Queue'
 						]
 					],
-					'link' => ['zabbix.php?action=gui.edit']
+					'link' => [
+						'zabbix.php?action=gui.edit',
+						'zabbix.php?action=autoreg.edit',
+						'zabbix.php?action=housekeeping.edit',
+						'zabbix.php?action=image.list',
+						'zabbix.php?action=iconmap.list',
+						'zabbix.php?action=regex.list',
+						'zabbix.php?action=macros.edit',
+						'zabbix.php?action=valuemap.list',
+						'zabbix.php?action=trigdisplay.edit',
+						'zabbix.php?action=module.list',
+						'zabbix.php?action=miscconfig.edit'
+					]
 				]
 			],
 			[
