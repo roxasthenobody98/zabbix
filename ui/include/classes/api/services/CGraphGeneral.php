@@ -213,9 +213,7 @@ abstract class CGraphGeneral extends CApiService {
 	 */
 	protected function updateReal(array $graphs) {
 		$data = [];
-		$graph_itemids = [];
 		foreach ($graphs as $graph) {
-			$graph_itemids = array_merge($graph_itemids, array_column($graph['gitems'], 'gitemid'));
 			unset($graph['gitems']);
 
 			$data[] = ['values' => $graph, 'where' => ['graphid' => $graph['graphid']]];
@@ -223,17 +221,15 @@ abstract class CGraphGeneral extends CApiService {
 		DB::update('graphs', $data);
 
 		$db_graph_items = API::GraphItem()->get([
-			'output' => ['gitemid', 'graphid', 'itemid', 'drawtype', 'sortorder', 'color', 'yaxisside', 'calc_fnc',
-				'type'
-			],
-			'itemids' => $graph_itemids,
+			'output' => ['gitemid'],
+			'graphids' => array_column($graphs, 'graphid'),
 			'preservekeys' => true,
 			'nopermissions' => true
 		]);
 
 		$ins_graph_items = [];
 		$upd_graph_items = [];
-		$del_graph_items = array_flip(array_keys($db_graph_items));
+		$del_graph_items = $db_graph_items;
 		foreach ($graphs as $graph) {
 			$sort_order = 0;
 
@@ -269,7 +265,7 @@ abstract class CGraphGeneral extends CApiService {
 		}
 
 		if ($del_graph_items) {
-			DB::delete('graphs_items', ['gitemid' => $del_graph_items]);
+			DB::delete('graphs_items', ['gitemid' => array_keys($del_graph_items)]);
 		}
 	}
 
