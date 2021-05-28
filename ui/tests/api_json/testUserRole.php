@@ -302,16 +302,6 @@ class testUserRole extends CAPITest {
 				],
 				'expected_error' => null
 			],
-			'Update on role with no UI rules' => [
-				'role' => [
-					[
-						'roleid' => 21,
-						'type' => USER_TYPE_ZABBIX_USER,
-						'rules' => []
-					],
-				],
-				'expected_error' => 'At least one UI element must be checked.'
-			],
 			'Update with rule on same type' => [
 				'role' => [
 					[
