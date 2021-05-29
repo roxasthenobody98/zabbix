@@ -1880,6 +1880,67 @@ static char	*buf_find_newline(char *p, char **p_next, const char *p_end, const c
 	}
 }
 
+#if !defined(_WINDOWS)
+static int	find_or_create_prep_vec_element(zbx_vector_pre_persistent_t *prep_vec, const char *key,
+		const char *persistent_file_name)
+{
+	zbx_pre_persistent_t	prep_element;
+	int			prep_vec_idx;
+
+	prep_element.key_orig = (char *)key;
+
+	if (FAIL == (prep_vec_idx = zbx_vector_pre_persistent_search(prep_vec, prep_element,
+			zbx_pre_persistent_compare_func)))
+	{
+		/* create and initialize a new vector element */
+		memset(&prep_element, 0, sizeof(prep_element));
+
+		zbx_vector_pre_persistent_append(prep_vec, prep_element);
+		prep_vec_idx = prep_vec->values_num - 1;
+
+		/* fill in 'key_orig' and 'persistent_file_name' values - they never change for the specified */
+		/* log*[] item (otherwise it is not the same item anymore) */
+		prep_vec->values[prep_vec_idx].key_orig = zbx_strdup(NULL, key);
+		prep_vec->values[prep_vec_idx].persistent_file_name = zbx_strdup(NULL, persistent_file_name);
+	}
+
+	return prep_vec_idx;
+}
+
+static void	zbx_fill_prep_vec_data(const struct st_logfile *logfile, const char *key, zbx_uint64_t processed_size,
+		const char *persistent_file_name, zbx_vector_pre_persistent_t *prep_vec, int *prep_vec_idx)
+{
+	/* insert or update an element in the persistent data vector */
+	if (-1 == *prep_vec_idx)
+	{
+		*prep_vec_idx = find_or_create_prep_vec_element(prep_vec, key, persistent_file_name);
+
+		/* copy attributes which are stable within one invocation of zbx_read2() but */
+		/* may change in the next invocation */
+
+		if (0 != strcmp(prep_vec->values[*prep_vec_idx].filename, logfile->filename))
+		{
+			prep_vec->values[*prep_vec_idx].filename = zbx_strdup(prep_vec->values[*prep_vec_idx].filename,
+					logfile->filename);
+		}
+
+		prep_vec->values[*prep_vec_idx].mtime = logfile->mtime;
+		prep_vec->values[*prep_vec_idx].size = logfile->size;
+		prep_vec->values[*prep_vec_idx].seq = logfile->seq;
+		prep_vec->values[*prep_vec_idx].copy_of = logfile->copy_of;
+		prep_vec->values[*prep_vec_idx].dev = logfile->dev;
+		prep_vec->values[*prep_vec_idx].ino_hi = logfile->ino_hi;
+		prep_vec->values[*prep_vec_idx].ino_lo = logfile->ino_lo;
+		prep_vec->values[*prep_vec_idx].md5size = logfile->md5size;
+		memcpy(prep_vec->values[*prep_vec_idx].md5buf, logfile->md5buf, sizeof(logfile->md5buf));
+	}
+
+	/* copy attributes specific to every log file record */
+	prep_vec->values[*prep_vec_idx].processed_size = processed_size;
+	prep_vec->values[*prep_vec_idx].incomplete = logfile->incomplete;
+}
+#endif	/* not WINDOWS */
+
 static int	zbx_match_log_rec(int is_count_item, const zbx_vector_ptr_t *regexps, const char *value,
 		const char *pattern, const char *output_template, char **output, char **err_msg)
 {
@@ -1905,7 +1966,8 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 		const int *mtime, int *big_rec, char **err_msg, const char *encoding, zbx_vector_ptr_t *regexps,
 		const char *pattern, const char *output_template, int *p_count, int *s_count,
 		zbx_process_value_func_t process_value, const char *server, unsigned short port, const char *hostname,
-		const char *key, zbx_uint64_t *lastlogsize_sent, int *mtime_sent)
+		const char *key, zbx_uint64_t *lastlogsize_sent, int *mtime_sent, const char *persistent_file_name,
+		zbx_vector_pre_persistent_t *prep_vec)
 {
 	static ZBX_THREAD_LOCAL char	*buf = NULL;
 
@@ -1914,14 +1976,12 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 	char				*p_start, *p, *p_nl, *p_next, *item_value = NULL;
 	size_t				szbyte;
 	zbx_offset_t			offset;
-	int				send_err;
-	zbx_uint64_t			lastlogsize1;
 	const int			is_count_item = (0 != (ZBX_METRIC_FLAG_LOG_COUNT & flags)) ? 1 : 0;
+	int				prep_vec_idx = -1;	/* index in 'prep_vec' vector */
 
 #define BUF_SIZE	(256 * ZBX_KIBIBYTE)	/* The longest encodings use 4 bytes for every character. To send */
 						/* up to 64 k characters to Zabbix server a 256 kB buffer might be */
 						/* required. */
-
 	if (NULL == buf)
 		buf = (char *)zbx_malloc(buf, (size_t)(BUF_SIZE + 1));
 
@@ -1978,7 +2038,9 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 					/* regexp now (our buffer length corresponds to what we can save in the */
 					/* database). */
 
-					char	*value;
+					char		*value;
+					zbx_uint64_t	lastlogsize1;
+					int		send_err;
 
 					buf[BUF_SIZE] = '\0';
 
@@ -1994,7 +2056,13 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 
 					lastlogsize1 = (size_t)offset + (size_t)nbytes;
 					send_err = FAIL;
-
+#if !defined(_WINDOWS)
+					if (NULL != persistent_file_name)
+					{
+						zbx_fill_prep_vec_data(logfile, key, lastlogsize1, persistent_file_name,
+								prep_vec, &prep_vec_idx);
+					}
+#endif	/* not WINDOWS */
 					if (ZBX_REGEXP_MATCH == (regexp_ret = zbx_match_log_rec(is_count_item, regexps,
 							value, pattern, output_template, &item_value, err_msg)))
 					{
@@ -2064,7 +2132,9 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 
 				if (0 == *big_rec)
 				{
-					char	*value;
+					char		*value;
+					zbx_uint64_t	lastlogsize1;
+					int		send_err;
 
 					*p_nl = '\0';
 
@@ -2075,7 +2145,13 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 
 					lastlogsize1 = (size_t)offset + (size_t)(p_next - buf);
 					send_err = FAIL;
-
+#if !defined(_WINDOWS)
+					if (NULL != persistent_file_name)
+					{
+						zbx_fill_prep_vec_data(logfile, key, lastlogsize1, persistent_file_name,
+								prep_vec, &prep_vec_idx);
+					}
+#endif	/* not WINDOWS */
 					if (ZBX_REGEXP_MATCH == (regexp_ret = zbx_match_log_rec(is_count_item, regexps,
 							value, pattern, output_template, &item_value, err_msg)))
 					{
@@ -2236,7 +2312,7 @@ static int	process_log(unsigned char flags, struct st_logfile *logfile, zbx_uint
 
 		if (SUCCEED == (ret = zbx_read2(f, flags, logfile, lastlogsize, mtime, big_rec, err_msg, encoding,
 				regexps, pattern, output_template, p_count, s_count, process_value, server, port,
-				hostname, key, lastlogsize_sent, mtime_sent)))
+				hostname, key, lastlogsize_sent, mtime_sent, persistent_file_name, prep_vec)))
 		{
 			*processed_bytes = *lastlogsize - seek_offset;
 		}
