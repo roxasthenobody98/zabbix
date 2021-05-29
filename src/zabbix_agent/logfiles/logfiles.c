@@ -1880,6 +1880,20 @@ static char	*buf_find_newline(char *p, char **p_next, const char *p_end, const c
 	}
 }
 
+static int	zbx_match_log_rec(int is_count_item, const zbx_vector_ptr_t *regexps, const char *value,
+		const char *pattern, const char *output_template, char **output, char **err_msg)
+{
+	int	ret;
+
+	if (FAIL == (ret = regexp_sub_ex(regexps, value, pattern, ZBX_CASE_SENSITIVE,
+			(0 == is_count_item) ? output_template : NULL, (0 == is_count_item) ? output: NULL)))
+	{
+		*err_msg = zbx_dsprintf(*err_msg, "cannot compile regular expression");
+	}
+
+	return ret;	/* ZBX_REGEXP_MATCH, ZBX_REGEXP_NO_MATCH or FAIL */
+}
+
 /******************************************************************************
  *                                                                            *
  * Function: zbx_read2                                                        *
@@ -1895,13 +1909,14 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 {
 	static ZBX_THREAD_LOCAL char	*buf = NULL;
 
-	int				ret, nbytes, regexp_ret;
+	int				nbytes, regexp_ret;
 	const char			*cr, *lf, *p_end;
 	char				*p_start, *p, *p_nl, *p_next, *item_value = NULL;
 	size_t				szbyte;
 	zbx_offset_t			offset;
 	int				send_err;
 	zbx_uint64_t			lastlogsize1;
+	const int			is_count_item = (0 != (ZBX_METRIC_FLAG_LOG_COUNT & flags)) ? 1 : 0;
 
 #define BUF_SIZE	(256 * ZBX_KIBIBYTE)	/* The longest encodings use 4 bytes for every character. To send */
 						/* up to 64 k characters to Zabbix server a 256 kB buffer might be */
@@ -1914,38 +1929,26 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 
 	for (;;)
 	{
-		if (0 >= *p_count || 0 >= *s_count)
-		{
-			/* limit on number of processed or sent-to-server lines reached */
-			ret = SUCCEED;
-			goto out;
-		}
+		if (0 >= *p_count || 0 >= *s_count)	/* limit on number of processed or */
+			return SUCCEED;			/* sent-to-server lines reached */
 
 		if ((zbx_offset_t)-1 == (offset = zbx_lseek(fd, 0, SEEK_CUR)))
 		{
 			*big_rec = 0;
 			*err_msg = zbx_dsprintf(*err_msg, "Cannot set position to 0 in file: %s", zbx_strerror(errno));
-			ret = FAIL;
-			goto out;
+			return FAIL;
 		}
 
-		nbytes = (int)read(fd, buf, (size_t)BUF_SIZE);
-
-		if (-1 == nbytes)
+		if (-1 == (nbytes = (int)read(fd, buf, (size_t)BUF_SIZE)))
 		{
 			/* error on read */
 			*big_rec = 0;
 			*err_msg = zbx_dsprintf(*err_msg, "Cannot read from file: %s", zbx_strerror(errno));
-			ret = FAIL;
-			goto out;
+			return FAIL;
 		}
 
-		if (0 == nbytes)
-		{
-			/* end of file reached */
-			ret = SUCCEED;
-			goto out;
-		}
+		if (0 == nbytes)	/* end of file reached */
+			return SUCCEED;
 
 		p_start = buf;			/* beginning of current line */
 		p = buf;			/* current byte */
@@ -1963,8 +1966,7 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 				/* maybe more data will come. */
 
 				*lastlogsize = (zbx_uint64_t)offset;
-				ret = SUCCEED;
-				goto out;
+				return SUCCEED;
 			}
 			else
 			{
@@ -1993,11 +1995,10 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 					lastlogsize1 = (size_t)offset + (size_t)nbytes;
 					send_err = FAIL;
 
-					if (0 == (ZBX_METRIC_FLAG_LOG_COUNT & flags))	/* log[] or logrt[] */
+					if (ZBX_REGEXP_MATCH == (regexp_ret = zbx_match_log_rec(is_count_item, regexps,
+							value, pattern, output_template, &item_value, err_msg)))
 					{
-						if (ZBX_REGEXP_MATCH == (regexp_ret = regexp_sub_ex(regexps, value,
-								pattern, ZBX_CASE_SENSITIVE, output_template,
-								&item_value)))
+						if (0 == is_count_item)		/* log[] or logrt[] */
 						{
 							if (SUCCEED == (send_err = process_value(server, port,
 									hostname, key, item_value, ITEM_STATE_NORMAL,
@@ -2015,35 +2016,27 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 							{
 								zbx_free(item_value);
 
+								if ('\0' != *encoding)
+									zbx_free(value);
+
 								/* Sending of buffer failed. */
 								/* Try to resend it in the next check. */
-								ret = SUCCEED;
-								goto out;
+								return SUCCEED;
 							}
 						}
-					}
-					else	/* log.count[] or logrt.count[] */
-					{
-						if (ZBX_REGEXP_MATCH == (regexp_ret = regexp_sub_ex(regexps, value,
-								pattern, ZBX_CASE_SENSITIVE, NULL, NULL)))
-						{
+						else	/* log.count[] or logrt.count[] */
 							(*s_count)--;
-						}
 					}
 
 					if ('\0' != *encoding)
 						zbx_free(value);
 
 					if (FAIL == regexp_ret)
-					{
-						*err_msg = zbx_dsprintf(*err_msg, "cannot compile regular expression");
-						ret = FAIL;
-						goto out;
-					}
+						return FAIL;
 
 					(*p_count)--;
 
-					if (0 != (ZBX_METRIC_FLAG_LOG_COUNT & flags) ||
+					if (0 != is_count_item ||
 							ZBX_REGEXP_NO_MATCH == regexp_ret || SUCCEED == send_err)
 					{
 						*lastlogsize = lastlogsize1;
@@ -2066,12 +2059,8 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 
 			for (;;)
 			{
-				if (0 >= *p_count || 0 >= *s_count)
-				{
-					/* limit on number of processed or sent-to-server lines reached */
-					ret = SUCCEED;
-					goto out;
-				}
+				if (0 >= *p_count || 0 >= *s_count)	/* limit on number of processed or */
+					return SUCCEED;			/*sent-to-server lines reached */
 
 				if (0 == *big_rec)
 				{
@@ -2087,11 +2076,10 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 					lastlogsize1 = (size_t)offset + (size_t)(p_next - buf);
 					send_err = FAIL;
 
-					if (0 == (ZBX_METRIC_FLAG_LOG_COUNT & flags))   /* log[] or logrt[] */
+					if (ZBX_REGEXP_MATCH == (regexp_ret = zbx_match_log_rec(is_count_item, regexps,
+							value, pattern, output_template, &item_value, err_msg)))
 					{
-						if (ZBX_REGEXP_MATCH == (regexp_ret = regexp_sub_ex(regexps, value,
-								pattern, ZBX_CASE_SENSITIVE, output_template,
-								&item_value)))
+						if (0 == is_count_item)		/* log[] or logrt[] */
 						{
 							if (SUCCEED == (send_err = process_value(server, port,
 									hostname, key, item_value, ITEM_STATE_NORMAL,
@@ -2109,35 +2097,27 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 							{
 								zbx_free(item_value);
 
+								if ('\0' != *encoding)
+									zbx_free(value);
+
 								/* Sending of buffer failed. */
 								/* Try to resend it in the next check. */
-								ret = SUCCEED;
-								goto out;
+								return SUCCEED;
 							}
 						}
-					}
-					else	/* log.count[] or logrt.count[] */
-					{
-						if (ZBX_REGEXP_MATCH == (regexp_ret = regexp_sub_ex(regexps, value,
-								pattern, ZBX_CASE_SENSITIVE, NULL, NULL)))
-						{
+						else	/* log.count[] or logrt.count[] */
 							(*s_count)--;
-						}
 					}
 
 					if ('\0' != *encoding)
 						zbx_free(value);
 
 					if (FAIL == regexp_ret)
-					{
-						*err_msg = zbx_dsprintf(*err_msg, "cannot compile regular expression");
-						ret = FAIL;
-						goto out;
-					}
+						return FAIL;
 
 					(*p_count)--;
 
-					if (0 != (ZBX_METRIC_FLAG_LOG_COUNT & flags) ||
+					if (0 != is_count_item ||
 							ZBX_REGEXP_NO_MATCH == regexp_ret || SUCCEED == send_err)
 					{
 						*lastlogsize = lastlogsize1;
@@ -2165,8 +2145,7 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 					{
 						*err_msg = zbx_dsprintf(*err_msg, "Cannot set position to " ZBX_FS_UI64
 								" in file: %s", *lastlogsize, zbx_strerror(errno));
-						ret = FAIL;
-						goto out;
+						return FAIL;
 					}
 					else
 						break;
@@ -2176,9 +2155,6 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 			}
 		}
 	}
-out:
-	return ret;
-
 #undef BUF_SIZE
 }
 
