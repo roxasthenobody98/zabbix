@@ -139,7 +139,6 @@ abstract class CGraphGeneral extends CApiService {
 	 */
 	public function create(array $graphs) {
 		$graphs = zbx_toArray($graphs);
-		$graphids = [];
 
 		// set default parameters
 		foreach ($graphs as &$graph) {
@@ -237,6 +236,7 @@ abstract class CGraphGeneral extends CApiService {
 				// Update an existing item.
 				if (array_key_exists('gitemid', $graph_item)
 						&& array_key_exists($graph_item['gitemid'], $db_graph_items)) {
+					unset($graph_item['graphid']);
 					$upd_graph_items[] = ['values' => $graph_item, 'where' => ['gitemid' => $graph_item['gitemid']]];
 
 					unset($del_graph_items[$graph_item['gitemid']]);
