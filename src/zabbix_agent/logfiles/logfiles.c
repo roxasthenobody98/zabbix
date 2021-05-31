@@ -1918,10 +1918,11 @@ static void	zbx_fill_prep_vec_data(const struct st_logfile *logfile, const char 
 		/* copy attributes which are stable within one invocation of zbx_read2() but */
 		/* may change in the next invocation */
 
-		if (0 != strcmp(prep_vec->values[*prep_vec_idx].filename, logfile->filename))
+		if (NULL == prep_vec->values[*prep_vec_idx].filename ||
+				0 != strcmp(prep_vec->values[*prep_vec_idx].filename, logfile->filename))
 		{
-			prep_vec->values[*prep_vec_idx].filename = zbx_strdup(prep_vec->values[*prep_vec_idx].filename,
-					logfile->filename);
+			prep_vec->values[*prep_vec_idx].filename =
+					zbx_strdup(prep_vec->values[*prep_vec_idx].filename, logfile->filename);
 		}
 
 		prep_vec->values[*prep_vec_idx].mtime = logfile->mtime;
@@ -3593,6 +3594,8 @@ static int	init_persistent_dir_parameter(const char *server, unsigned short port
 		return FAIL;
 
 	*persistent_file_name = make_persistent_file_name(persistent_serv_dir, item_key);
+
+	zbx_free(persistent_serv_dir);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "%s(): set persistent_file_name:[%s]", __func__, *persistent_file_name);
 
