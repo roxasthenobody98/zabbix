@@ -994,7 +994,7 @@ abstract class CGraphGeneral extends CApiService {
 			'output' => ['graphid', 'name', 'templateid'],
 			'selectItems' => ['hostid'],
 			'hostids' => $hostids,
-			'filter' => ['templateid' => $graphids, 'flags' => ZBX_FLAG_DISCOVERY_NORMAL],
+			'filter' => ['templateid' => $graphids],
 			'nopermissions' => true,
 			'preservekeys' => true
 		]);
@@ -1067,9 +1067,10 @@ abstract class CGraphGeneral extends CApiService {
 					foreach ($graphs_changed_names_child_graphids as $name => $child_graphids) {
 						if (array_key_exists($name, $possible_duplicate_name_hostids)) {
 							foreach ($child_graphids as $child_graphid) {
-								$duplicate_name_hostid = reset(array_intersect($possible_duplicate_name_hostids[$name],
+								$duplicate_name_hostid = array_intersect($possible_duplicate_name_hostids[$name],
 									[$child_graphs_hostids[$child_graphid]]
-								));
+								);
+								$duplicate_name_hostid = reset($duplicate_name_hostid);
 
 								if ($duplicate_name_hostid) {
 									self::exception(ZBX_API_ERROR_PARAMETERS,
