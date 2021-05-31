@@ -767,22 +767,96 @@ static int	check_response(char *response)
 	return ret;
 }
 
+#if !defined(_WINDOWS)
+static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
+{
+	int	i;
+
+	for (i = 0; i < prep_vec->values_num; i++)
+	{
+		char		*error = NULL;
+		struct zbx_json	json;
+		char		buf[33];	/* for MD5 sum representation with hex-digits: 2 * 16 bytes + '\0' */
+
+		/* prepare JSON */
+		zbx_json_init(&json, ZBX_JSON_STAT_BUF_LEN);
+		zbx_json_addstring(&json, ZBX_PERSIST_TAG_FILENAME, prep_vec->values[i].filename, ZBX_JSON_TYPE_STRING);
+		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_MTIME, (zbx_uint64_t)prep_vec->values[i].mtime);
+		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_SIZE, prep_vec->values[i].size);
+		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_PROCESSED_SIZE, prep_vec->values[i].processed_size);
+		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_SEQ, (zbx_uint64_t)prep_vec->values[i].seq);
+		zbx_json_addint64(&json, ZBX_PERSIST_TAG_COPY_OF, prep_vec->values[i].copy_of);
+		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INCOMPLETE, (zbx_uint64_t)prep_vec->values[i].incomplete);
+		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_DEVICE, prep_vec->values[i].dev);
+		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INODE_HI, prep_vec->values[i].ino_hi);
+		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INODE_LO, prep_vec->values[i].ino_lo);
+		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_MD5_SIZE, (zbx_uint64_t)prep_vec->values[i].md5size);
+
+		zbx_snprintf(buf, sizeof(buf), "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+				prep_vec->values[i].md5buf[0], prep_vec->values[i].md5buf[1],
+				prep_vec->values[i].md5buf[2], prep_vec->values[i].md5buf[3],
+				prep_vec->values[i].md5buf[4], prep_vec->values[i].md5buf[5],
+				prep_vec->values[i].md5buf[6], prep_vec->values[i].md5buf[7],
+				prep_vec->values[i].md5buf[8], prep_vec->values[i].md5buf[9],
+				prep_vec->values[i].md5buf[10], prep_vec->values[i].md5buf[11],
+				prep_vec->values[i].md5buf[12], prep_vec->values[i].md5buf[13],
+				prep_vec->values[i].md5buf[14], prep_vec->values[i].md5buf[15]);
+
+		zbx_json_addstring(&json, ZBX_PERSIST_TAG_MD5_BUF, buf, ZBX_JSON_TYPE_STRING);
+
+		zbx_json_close(&json);
+
+		write_persistent_file(prep_vec->values[i].persistent_file_name, json.buffer, &error);
+
+		if (NULL != error)
+		{
+			zabbix_log(LOG_LEVEL_WARNING, "cannot write persistent file \"%s\": %s",
+					prep_vec->values[i].persistent_file_name, error);
+			zbx_free(error);
+		}
+
+		zbx_json_free(&json);
+	}
+}
+
+static void	clean_pre_persistent_elements(zbx_vector_pre_persistent_t *prep_vec)
+{
+	int	i;
+
+	/* clean only element data and number of elements, do not reduce vector size */
+
+	for (i = 0; i < prep_vec->values_num; i++)
+	{
+		zbx_free(prep_vec->values[i].key_orig);
+		zbx_free(prep_vec->values[i].persistent_file_name);
+		zbx_free(prep_vec->values[i].filename);
+	}
+
+	zbx_vector_pre_persistent_clear(prep_vec);
+}
+#endif	/* not WINDOWS */
+
 /******************************************************************************
  *                                                                            *
  * Function: send_buffer                                                      *
  *                                                                            *
  * Purpose: Send value stored in the buffer to Zabbix server                  *
  *                                                                            *
- * Parameters: host - IP or Hostname of Zabbix server                         *
- *             port - port number                                             *
+ * Parameters: host     - [IN] IP or Hostname of Zabbix server                *
+ *             port     - [IN] port number                                    *
+ *             prep_vec - [IN/OUT] vector with data for writing into          *
+ *                                 persistent files                           *
  *                                                                            *
- * Return value: returns SUCCEED on successful sending,                       *
- *               FAIL on other cases                                          *
+ * Return value: SUCCEED if:                                                  *
+ *                    - no need to send data now (buffer empty or has enough  *
+ *                      free elements, or recently sent)                      *
+ *                    - data successfully sent to server (proxy)              *
+ *               FAIL - error when sending data                               *
  *                                                                            *
  * Author: Alexei Vladishev                                                   *
  *                                                                            *
  ******************************************************************************/
-static int	send_buffer(const char *host, unsigned short port)
+static int	send_buffer(const char *host, unsigned short port, zbx_vector_pre_persistent_t *prep_vec)
 {
 	ZBX_ACTIVE_BUFFER_ELEMENT	*el;
 	int				ret = SUCCEED, i, now;
@@ -918,6 +992,9 @@ out:
 
 	if (SUCCEED == ret)
 	{
+		write_persistent_files(prep_vec);
+		clean_pre_persistent_elements(prep_vec);
+
 		/* free buffer */
 		for (i = 0; i < buffer.count; i++)
 		{
@@ -1024,7 +1101,7 @@ static int	process_value(const char *server, unsigned short port, const char *ho
 				CONFIG_BUFFER_SIZE <= buffer.count ||
 				0 != strcmp(el->key, key) || 0 != strcmp(el->host, host))
 		{
-			send_buffer(server, port);
+			send_buffer(server, port, &pre_persistent_vec);
 		}
 	}
 
@@ -1284,7 +1361,7 @@ static void	process_active_checks(char *server, unsigned short port)
 			}
 		}
 
-		send_buffer(server, port);
+		send_buffer(server, port, &pre_persistent_vec);
 		metric->nextcheck = (int)time(NULL) + metric->refresh;
 	}
 
@@ -1351,7 +1428,7 @@ ZBX_THREAD_ENTRY(active_checks_thread, args)
 
 		if ((now = time(NULL)) >= nextsend)
 		{
-			send_buffer(activechk_args.host, activechk_args.port);
+			send_buffer(activechk_args.host, activechk_args.port, &pre_persistent_vec);
 			nextsend = time(NULL) + 1;
 		}
 
