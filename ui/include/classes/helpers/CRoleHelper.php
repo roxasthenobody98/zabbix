@@ -276,10 +276,12 @@ class CRoleHelper {
 	 * @static
 	 *
 	 * @param integer $user_type  User type.
+	 * @param bool $unprefixed  Whether to remove the "ui." prefix form rule names.
 	 *
 	 * @return array  Returns the array of rule names for specified user type.
 	 */
-	public static function getAllUiElements(int $user_type): array {
+
+	public static function getAllUiElements(int $user_type, bool $unprefixed = false): array {
 		$rules = [
 			self::UI_MONITORING_DASHBOARD, self::UI_MONITORING_PROBLEMS, self::UI_MONITORING_HOSTS,
 			self::UI_MONITORING_OVERVIEW, self::UI_MONITORING_LATEST_DATA, self::UI_MONITORING_SCREENS,
@@ -303,6 +305,13 @@ class CRoleHelper {
 				self::UI_ADMINISTRATION_USER_ROLES, self::UI_ADMINISTRATION_USERS, self::UI_ADMINISTRATION_MEDIA_TYPES,
 				self::UI_ADMINISTRATION_SCRIPTS, self::UI_ADMINISTRATION_QUEUE
 			]);
+		}
+
+		if ($unprefixed) {
+			$skip = strlen(CRoleHelper::SECTION_UI.'.');
+			foreach ($rules as $key => $rule) {
+				$rules[$key] = substr($rule, $skip);
+			}
 		}
 
 		return $rules;

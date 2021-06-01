@@ -379,7 +379,7 @@ class CRole extends CApiService {
 		$db_roles = $this->get([
 			'output' => ['roleid', 'name', 'type', 'readonly'],
 			'roleids' => array_column($roles, 'roleid'),
-			'selectRules' => [CRoleHelper::UI_DEFAULT_ACCESS],
+			'selectRules' => [CRoleHelper::SECTION_UI, CRoleHelper::UI_DEFAULT_ACCESS],
 			'preservekeys' => true
 		]);
 		$roles = $this->extendObjectsByKey($roles, $db_roles, 'roleid', ['name', 'type']);
@@ -442,62 +442,74 @@ class CRole extends CApiService {
 	private function checkRules(array $roles, array $db_roles = []): void {
 		$moduleids = [];
 
-		$roleids = array_column($roles, 'roleid');
-		if (sizeof($roleids) > 0 && sizeof($db_roles) === 0){
-			$db_roles = $this->get([
-				'output' => ['roleid', 'name', 'type', 'readonly'],
-				'roleids' => $roleids,
-				'selectRules' => [CRoleHelper::SECTION_UI, CRoleHelper::UI_DEFAULT_ACCESS],
-				'preservekeys' => true
-			]);
-		}
-
 		foreach ($roles as $role) {
-			$roleid = array_key_exists('roleid', $role) ? $role['roleid'] : null;
-			$ui_rule_required = (array_key_exists($roleid, $db_roles) && array_key_exists('type', $role)
-					&& $role['type'] !== $db_roles[$roleid]['type']);
+			$merged_ui_rules = [CRoleHelper::SECTION_UI => []];
 
-			if (!array_key_exists('rules', $role)) {
-				if ($ui_rule_required){
-					self::exception(ZBX_API_ERROR_PARAMETERS, _('At least one UI element must be checked.'));
+			if (array_key_exists('rules', $role)) {
+				if (array_key_exists(CRoleHelper::UI_DEFAULT_ACCESS, $role['rules'])) {
+					$merged_ui_rules[CRoleHelper::UI_DEFAULT_ACCESS] = $role['rules'][CRoleHelper::UI_DEFAULT_ACCESS];
 				}
-				continue;
+
+				if (array_key_exists(CRoleHelper::SECTION_UI, $role['rules'])) {
+					$merged_ui_rules[CRoleHelper::SECTION_UI] = $role['rules'][CRoleHelper::SECTION_UI];
+				}
 			}
 
-			if ($ui_rule_required || array_key_exists(CRoleHelper::UI_DEFAULT_ACCESS, $role['rules'])
-					|| array_key_exists(CRoleHelper::SECTION_UI, $role['rules'])) {
+			if (array_key_exists('roleid', $role) && array_key_exists('type', $role)) {
+				$db_rules = $db_roles[$role['roleid']]['rules'];
+
+				if (!array_key_exists(CRoleHelper::UI_DEFAULT_ACCESS, $merged_ui_rules)
+						&& array_key_exists(CRoleHelper::UI_DEFAULT_ACCESS, $db_rules)) {
+					$merged_ui_rules[CRoleHelper::UI_DEFAULT_ACCESS] = $db_rules[CRoleHelper::UI_DEFAULT_ACCESS];
+				}
+
+				if (array_key_exists(CRoleHelper::SECTION_UI, $db_rules)) {
+					$allowed_ui_rules = CRoleHelper::getAllUiElements((int) $role['type'], true);
+					$passed_ui_rules = array_column($merged_ui_rules[CRoleHelper::SECTION_UI], 'name');
+
+					$allowed_ui_rules = array_diff($allowed_ui_rules, $passed_ui_rules);
+					foreach ($db_rules[CRoleHelper::SECTION_UI] as $db_rule) {
+						if (!array_key_exists('name', $db_rule)) {
+							continue;
+						}
+
+						if (array_key_exists($db_rule['name'], $allowed_ui_rules)) {
+							$merged_ui_rules[CRoleHelper::SECTION_UI][] = $db_rule;
+						}
+					}
+				}
+			}
+
+			if (array_key_exists(CRoleHelper::UI_DEFAULT_ACCESS, $merged_ui_rules)
+					|| array_key_exists(CRoleHelper::SECTION_UI, $merged_ui_rules)) {
 				$ui_rules = [];
 				$default_access = CRoleHelper::DEFAULT_ACCESS_ENABLED;
 
-				if (array_key_exists(CRoleHelper::UI_DEFAULT_ACCESS, $role['rules'])) {
-					$default_access = $role['rules'][CRoleHelper::UI_DEFAULT_ACCESS];
-				}
-				elseif (array_key_exists('roleid', $role)) {
-					$default_access = $db_roles[$role['roleid']]['rules'][CRoleHelper::UI_DEFAULT_ACCESS];
+				if (array_key_exists(CRoleHelper::UI_DEFAULT_ACCESS, $merged_ui_rules)) {
+					$default_access = $merged_ui_rules[CRoleHelper::UI_DEFAULT_ACCESS];
 				}
 
-				$skip = strlen(CRoleHelper::SECTION_UI.'.');
-
-				foreach (CRoleHelper::getAllUiElements((int) $role['type']) as $rule) {
-					$index = substr($rule, $skip);
-					$ui_rules[$index] = $default_access;
+				foreach (CRoleHelper::getAllUiElements((int) $role['type'], true) as $rule) {
+					$ui_rules[$rule] = $default_access;
 				}
 
-				if (array_key_exists('rules', $role) && array_key_exists(CRoleHelper::SECTION_UI, $role['rules'])) {
-					foreach ($role['rules'][CRoleHelper::SECTION_UI] as $ui_rule) {
-						if (!array_key_exists($ui_rule['name'], $ui_rules)) {
-							self::exception(ZBX_API_ERROR_PARAMETERS,
-								_s('UI element "%1$s" is not available.', $ui_rule['name'])
-							);
-						}
-
-						$ui_rules[$ui_rule['name']] = $ui_rule['status'];
+				foreach ($merged_ui_rules[CRoleHelper::SECTION_UI] as $ui_rule) {
+					if (!array_key_exists($ui_rule['name'], $ui_rules)) {
+						self::exception(ZBX_API_ERROR_PARAMETERS,
+							_s('UI element "%1$s" is not available.', $ui_rule['name'])
+						);
 					}
+
+					$ui_rules[$ui_rule['name']] = $ui_rule['status'];
 				}
 
 				if (!in_array(1, $ui_rules)) {
 					self::exception(ZBX_API_ERROR_PARAMETERS, _('At least one UI element must be checked.'));
 				}
+			}
+
+			if (!array_key_exists('rules', $role)) {
+				continue;
 			}
 
 			if (array_key_exists(CRoleHelper::SECTION_MODULES, $role['rules'])) {

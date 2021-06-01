@@ -20,6 +20,7 @@
 
 
 require_once dirname(__FILE__).'/../include/CAPITest.php';
+require_once dirname(__FILE__).'/../../include/classes/helpers/CRoleHelper.php';
 
 /**
  * @backup role
@@ -27,7 +28,7 @@ require_once dirname(__FILE__).'/../include/CAPITest.php';
 class testUserRole extends CAPITest {
 
 	public static function getUserRoleCreateData() {
-		return [
+		$cases = [
 			'Missing type param' => [
 				'role' => [
 					[
@@ -127,8 +128,39 @@ class testUserRole extends CAPITest {
 					]
 				],
 				'expected_error' => null
+			],
+			'Create role with default UI access revoked' => [
+				'role' => [
+					[
+						'name' => 'All but default access checked',
+						'type' => USER_TYPE_ZABBIX_USER,
+						'rules' => [
+							'ui.default_access' => 0
+						]
+					],
+				],
+				'expected_error' => null
 			]
 		];
+
+		$role = [
+			'name' => 'All ui access revoked',
+			'type' => USER_TYPE_SUPER_ADMIN,
+			'rules' => [
+				'ui' => [],
+				'ui.default_access' => 0
+			]
+		];
+		$ui_rules = CRoleHelper::getAllUiElements(USER_TYPE_SUPER_ADMIN, true);
+		foreach($ui_rules as $rule){
+			$role['rules']['ui'][] = ['name'=>$rule, 'status' => 0];
+		}
+		$cases['User with all ui access disabled'] = [
+			'role' => $role,
+			'expected_error' => 'At least one UI element must be checked.'
+		];
+
+		return $cases;
 	}
 
 	/**
@@ -140,6 +172,7 @@ class testUserRole extends CAPITest {
 		if ($expected_error !== null) {
 			return;
 		}
+
 		foreach ($result['result']['roleids'] as $key => $id) {
 			$dbResult = DBSelect('SELECT * FROM role WHERE roleid='.zbx_dbstr($id));
 			$dbRow = DBFetch($dbResult);
@@ -147,6 +180,7 @@ class testUserRole extends CAPITest {
 			if (array_key_exists('name', $role[$key])) {
 				$this->assertEquals($dbRow['name'], $role[$key]['name']);
 			}
+
 			if (array_key_exists('type', $role[$key])) {
 				$this->assertEquals($dbRow['type'], $role[$key]['type']);
 			}
@@ -261,9 +295,28 @@ class testUserRole extends CAPITest {
 						'type' => USER_TYPE_ZABBIX_ADMIN
 					],
 				],
-				'expected_error' => 'At least one UI element must be checked.'
+				'expected_error' => null
+			],
+			'Type change, nonexist type' => [
+				'role' => [
+					[
+						'roleid' => '1',
+						'type' => 123
+					],
+				],
+				'expected_error' => 'Invalid parameter "/1/type": value must be one of 1, 2, 3.'
 			],
 			'Empty ruleset' => [
+				'role' => [
+					[
+						'roleid' => '1',
+						'type' => USER_TYPE_ZABBIX_ADMIN,
+						'rules' => ''
+					],
+				],
+				'expected_error' => 'Invalid parameter "/1/rules": an array is expected.'
+			],
+			'Null ruleset' => [
 				'role' => [
 					[
 						'roleid' => '1',
@@ -314,17 +367,78 @@ class testUserRole extends CAPITest {
 				],
 				'expected_error' => null
 			],
-			'Update with rule on type change' => [
+			'Revoke default UI access rule' => [
 				'role' => [
 					[
 						'roleid' => 1,
 						'type' => USER_TYPE_ZABBIX_ADMIN,
+						'rules' => [
+							'ui.default_access' => 0
+						]
+					],
+				],
+				'expected_error' => 'At least one UI element must be checked.'
+			],
+			'Revoke default UI access rule, add another' => [
+				'role' => [
+					[
+						'roleid' => 1,
+						'rules' => [
+							'ui' => [
+								[
+									"name" => "inventory.hosts",
+									"status" => 1
+								],
+							],
+							"ui.default_access" => 0,
+						]
+					],
+				],
+				'expected_error' => null
+			],
+			'Revoke only left UI access rule' => [
+				'role' => [
+					[
+						'roleid' => 1,
+						'rules' => [
+							'ui' => [
+								[
+									"name" => "inventory.hosts",
+									"status" => 0
+								],
+							]
+						]
+					],
+				],
+				'expected_error' => 'At least one UI element must be checked.'
+			],
+			'Update with UI rule and type change' => [
+				'role' => [
+					[
+						'roleid' => 1,
+						'type' => USER_TYPE_ZABBIX_USER,
 						'rules' => [
 							'ui.default_access' => 1
 						]
 					],
 				],
 				'expected_error' => null
+			],
+			'Nonexist UI rule' => [
+				'role' => [
+					[
+						'roleid' => 1,
+						'rules' => [
+							'ui' => [
+								[
+									'name' => '_nonexist',
+									'status' => 1
+								]
+							]
+						]
+					],
+				],
+				'expected_error' => 'UI element "_nonexist" is not available.'
 			],
 		];
 	}
@@ -338,6 +452,7 @@ class testUserRole extends CAPITest {
 		if ($expected_error !== null) {
 			return;
 		}
+
 		foreach ($result['result']['roleids'] as $key => $id) {
 			$dbResult = DBSelect('SELECT * FROM role WHERE roleid='.zbx_dbstr($id));
 			$dbRow = DBFetch($dbResult);
@@ -345,6 +460,7 @@ class testUserRole extends CAPITest {
 			if (array_key_exists('name', $role[$key])) {
 				$this->assertEquals($dbRow['name'], $role[$key]['name']);
 			}
+
 			if (array_key_exists('type', $role[$key])) {
 				$this->assertEquals($dbRow['type'], $role[$key]['type']);
 			}
