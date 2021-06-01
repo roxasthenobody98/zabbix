@@ -1,3 +1,36 @@
+Changes for 5.0.13rc1
+
+New features:
+.........T [ZBXNEXT-6643] added templates HPE ProLiant DL360 SNMP, HPE ProLiant DL380 SNMP, HPE ProLiant BL460 SNMP, HPE ProLiant BL920 SNMP (mchudinov)
+.........T [ZBXNEXT-6595] added Nginx Plus template (afayantsev)
+.........T [ZBXNEXT-6587] added template for Cisco UCS Manager (mchudinov)
+.........T [ZBXNEXT-6626] updated Zabbix Server according to the latest template guidelines (abakaldin)
+..F....... [ZBXNEXT-6662] increased field size to 2000 characters in web scenario variables and web scenario step variables and post fields (Ivo)
+.........T [ZBXNEXT-6590] added templates ZYXEL ISP switches and DSLAM (abakaldin)
+
+Bug fixes:
+.......PS. [ZBX-19358] fixed memory leak in case of duplicate vmware hv uuid (MVekslers)
+.......PS. [ZBX-19299] added more precise epsilon for float64 (dgoloscapov)
+...G...... [ZBX-19208] fixed imprecise logfile timestamps in Agent2 on Windows (dgoloscapov)
+A......... [ZBX-19248] fixed retrieving of all data from separate database tables inside of API methods when empty value for filter is passed (vmaksimovs)
+..F....... [ZBX-19320] fixed SAML advanced configuration ignores "baseurl" option; added custom option "use_proxy_headers" (agriscenko)
+..F....... [ZBX-19017] fixed massupdate form of discovered hosts with enabled inventory mode (Ivo)
+..F....... [ZBX-19300] updated jquery version (ashubin)
+.........T [ZBX-19344] changed regular expression for trunk active channels counting in template Asterisk by HTTP (mchudinov)
+...G...... [ZBX-19139] fixed memory errors in cmdline parsing on freebsd (dgoloscapov)
+.......PS. [ZBX-19359] fixed error in logsource function due to empty source (dgoloscapov)
+........S. [ZBX-19340] optimized history cache to reduce storage of metadata-only records (wiper)
+..F....... [ZBX-19373] fixed security vulnerability for links having target="_blank" (Ivo)
+.........T [ZBX-19354] fixed typo and added override for MongoDB templates (ychukina)
+.......PS. [ZBX-18524] improved preprocessing diagnostic information to include oldest values in queue and totals to include done, queued, processing and pending (vso)
+A......... [ZBX-8999] fixed exporting of images separately from other objects (Ivo)
+
+--------------------------------------------------------------------------------
+Changes for 5.0.12
+
+5.0.12rc1 was released as 5.0.12 without any changes
+
+--------------------------------------------------------------------------------
 Changes for 5.0.12rc1
 
 New features:
@@ -8,6 +41,14 @@ New features:
 .........T [ZBXNEXT-6589] added Job discovery, backup process items in Database discovery, macros, and value map in Template DB MSSQL by ODBC (mchudinov)
 
 Bug fixes:
+...G...... [ZBX-19065] fixed Zabbix agent 2 logging if the file is moved or removed (esneiders)
+....I..... [ZBX-19334] removed redundant ListenIP parameter in server's configuration file (dgoloscapov)
+........S. [ZBX-19307] improved performance of history syncers by reducing time spent in locks when syncing history and receiving new history from proxy (vso)
+.......PS. [ZBX-19038] fixed lld manager not to process lld rules on same host in parallel to avoid duplicated item keys being discovered; fixed crash when duplicated item key on same host exists (vso)
+.......P.. [ZBX-19324] fixed possible deadlocks between configuration and history syncers on proxy (wiper)
+...G...... [ZBX-19209] fixed panic in proc plugin for Zabbix agent 2 (esneiders)
+.......P.. [ZBX-19241] stopped proxy from overwriting local lastlogsize and mtime (dgoloscapov)
+........S. [ZBX-19321] fixed missing event tags in case of multiple problems (dgoloscapov)
 ...G...... [ZBX-19063] fixed logging for unsupported windows service command in Zabbix agent 2 (esneiders)
 ...G...... [ZBX-19099] fixed Zabbix agent 2 windows services plugin second parameter (esneiders)
 ...G...... [ZBX-18883] fixed logrt[] monitoring with copytruncate rotation (Andris)
@@ -2057,11 +2098,29 @@ A.F.I...S. [ZBXNEXT-4853,ZBXNEXT-517] added ability to send email messages in HT
 ..F.....S. [ZBXNEXT-1282,ZBXNEXT-4730] added changes to introduce regex based matching for auto-registration (vasilijs, viktors)
 
 --------------------------------------------------------------------------------
-Changes for 4.0.31rc1
+Changes for 4.0.32rc1
 
 New features:
+..F....... [ZBXNEXT-6662] increased field size to 2000 characters in web scenario variables and web scenario step variables and post fields (Ivo)
 
 Bug fixes:
+.......PS. [ZBX-19358] fixed memory leak in case of duplicate vmware hv uuid (MVekslers)
+A......... [ZBX-19248] fixed retrieving of all data from separate database tables inside of API methods when empty value for filter is passed (vmaksimovs)
+..F....... [ZBX-19300] updated jquery version (ashubin)
+...G...... [ZBX-19139] fixed memory errors in cmdline parsing on freebsd (dgoloscapov)
+.......PS. [ZBX-19359] fixed error in logsource function due to empty source (dgoloscapov)
+A......... [ZBX-8999] fixed exporting of images separately from other objects (Ivo)
+
+--------------------------------------------------------------------------------
+Changes for 4.0.31
+
+4.0.31rc1 was released as 4.0.31 without any changes
+
+--------------------------------------------------------------------------------
+Changes for 4.0.31rc1
+
+Bug fixes:
+....I..... [ZBX-19334] removed redundant ListenIP parameter in server's configuration file (dgoloscapov)
 .......PS. [ZBX-19233] fixed potential loss of original error when reading vmware events (MVekslers)
 ...G...... [ZBX-18883] fixed logrt[] monitoring with copytruncate rotation (Andris)
 ..F....... [ZBX-19210] fixed css file versioning for custom themes (ashubin)
