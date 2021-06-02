@@ -1650,4 +1650,5 @@ int	zbx_str_extract(const char *text, size_t len, char **value);
 #define AUDIT_ACTION_EXECUTE	7
 #define AUDIT_RESOURCE_SCRIPT	25
 
+void	md5buf2str(const md5_byte_t *md5, char *str);
 #endif

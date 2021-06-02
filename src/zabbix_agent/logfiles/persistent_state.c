@@ -23,26 +23,6 @@
 #include "persistent_state.h"
 
 #if !defined(_WINDOWS)
-
-/******************************************************************************
- *                                                                            *
- * Function: md5buf2str                                                       *
- *                                                                            *
- * Purpose: get a textual representation of md5 sum                           *
- *                                                                            *
- * Parameters:                                                                *
- *          md5 - [IN] buffer with md5 sum                                    *
- *          str - [OUT] preallocated string with a text representation of md5 *
- *                     sum. String size must be at least 33 bytes.            *
- *                                                                            *
- ******************************************************************************/
-static void	md5buf2str(const md5_byte_t *md5, char *str)
-{
-	zbx_snprintf(str, MD5_DIGEST_SIZE * 2 + 1, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-			md5[0], md5[1], md5[2], md5[3], md5[4], md5[5], md5[6], md5[7], md5[8], md5[9], md5[10],
-			md5[11], md5[12], md5[13], md5[14], md5[15]);
-}
-
 /******************************************************************************
  *                                                                            *
  * Function: str2file_name_part                                               *
