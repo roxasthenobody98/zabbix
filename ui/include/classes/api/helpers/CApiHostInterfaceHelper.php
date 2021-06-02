@@ -303,15 +303,10 @@ class CApiHostInterfaceHelper {
 			}
 
 			self::checkSnmpVersion($interface);
-
 			self::checkSnmpCommunity($interface);
-
 			self::checkSnmpBulk($interface);
-
 			self::checkSnmpSecurityLevel($interface);
-
 			self::checkSnmpAuthProtocol($interface);
-
 			self::checkSnmpPrivProtocol($interface);
 		}
 	}
