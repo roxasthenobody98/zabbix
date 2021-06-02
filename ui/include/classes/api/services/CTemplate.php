@@ -595,22 +595,6 @@ class CTemplate extends CHostGeneral {
 			}
 		}
 
-		if (array_column($templates, 'tags')) {
-			$db_tags = DB::select('host_tag', [
-				'output' => ['hosttagid', 'hostid', 'tag', 'value'],
-				'filter' => ['hostid' => $templateids]
-			]);
-
-			foreach ($db_templates as &$db_template) {
-				$db_template['tags'] = [];
-			}
-			unset($db_template);
-
-			foreach ($db_tags as $db_tag) {
-				$db_templates[$db_tag['hostid']]['tags'][] = $db_tag;
-			}
-		}
-
 		if ($replace_groups) {
 			$db_groups = DB::select('hosts_groups', [
 				'output' => ['hostgroupid', 'hostid', 'groupid'],
@@ -641,9 +625,6 @@ class CTemplate extends CHostGeneral {
 		$templates_unlink_hostids = [];
 		$templates_hostids = [];
 		$hosts_to_check_permissions = [];
-
-		$hosts_tags_to_add = [];
-		$hosttagids_to_delete = [];
 
 		$hosts_macros = [];
 		$db_hosts_macros = [];
@@ -710,27 +691,7 @@ class CTemplate extends CHostGeneral {
 			}
 
 			if (array_key_exists('tags', $template)) {
-				$template_db_tags = [];
-
-				foreach ($db_templates[$template['templateid']]['tags'] as $tag) {
-					$template_db_tags[$tag['tag'].'|'.$tag['value']] = $tag;
-				}
-
-				$existing_host_tags = [];
-
-				foreach (zbx_toArray($template['tags']) as $tag) {
-					$tag += ['value' => ''];
-
-					if (!array_key_exists($tag['tag'].'|'.$tag['value'], $template_db_tags)) {
-						$hosts_tags_to_add[] = ['hostid' => $template['templateid']] + $tag;
-					} else {
-						$existing_host_tags[$tag['tag'].'|'.$tag['value']] = true;
-					}
-				}
-
-				foreach (array_diff_key($template_db_tags, $existing_host_tags) as $tag) {
-					$hosttagids_to_delete[] = $tag['hosttagid'];
-				}
+				$template['tags'] = zbx_toArray($template['tags']);
 			}
 
 			if (array_key_exists('macros', $template)) {
@@ -818,14 +779,6 @@ class CTemplate extends CHostGeneral {
 			$this->link($link_templateids, $link_hostids);
 		}
 
-		if ($hosttagids_to_delete) {
-			DB::delete('host_tag', ['hosttagid' => $hosttagids_to_delete]);
-		}
-
-		if ($hosts_tags_to_add) {
-			DB::insert('host_tag', $hosts_tags_to_add);
-		}
-
 		if ($replace_macros) {
 			$this->replaceMacros($hosts_macros, $db_hosts_macros);
 		}
@@ -843,6 +796,8 @@ class CTemplate extends CHostGeneral {
 		if ($hosts_groups_to_add) {
 			DB::insertBatch('hosts_groups', $hosts_groups_to_add);
 		}
+
+		$this->updateTags($templates, 'templateid');
 
 		$this->addAuditBulk(AUDIT_ACTION_UPDATE, AUDIT_RESOURCE_TEMPLATE, $templates, $db_templates);
 

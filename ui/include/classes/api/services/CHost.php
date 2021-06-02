@@ -883,21 +883,6 @@ class CHost extends CHostGeneral {
 
 		$hosts = $this->validateUpdate($hosts, $db_hosts);
 
-		if (array_column($hosts, 'tags')) {
-			$db_tags = DB::select('host_tag', [
-				'output' => ['hosttagid', 'hostid', 'tag', 'value'],
-				'filter' => ['hostid' => $hostids]
-			]);
-
-			foreach ($db_hosts as &$db_host) {
-				$db_host['tags'] = [];
-			}
-
-			foreach ($db_tags as $db_tag) {
-				$db_hosts[$db_tag['hostid']]['tags'][] = $db_tag;
-			}
-		}
-
 		if ($replace_groups) {
 			$db_groups = DB::select('hosts_groups', [
 				'output' => ['hostgroupid', 'hostid', 'groupid'],
@@ -928,9 +913,6 @@ class CHost extends CHostGeneral {
 		$templates_clear_hostids = [];
 		$templates_unlink_hostids = [];
 		$templates_hostids = [];
-
-		$hosts_tags_to_add = [];
-		$hosttagids_to_delete = [];
 
 		$hosts_macros = [];
 		$db_hosts_macros = [];
@@ -1000,27 +982,7 @@ class CHost extends CHostGeneral {
 			}
 
 			if (array_key_exists('tags', $host)) {
-				$host_db_tags = [];
-
-				foreach ($db_hosts[$host['hostid']]['tags'] as $tag) {
-					$host_db_tags[$tag['tag'].'|'.$tag['value']] = $tag;
-				}
-
-				$existing_host_tags = [];
-
-				foreach (zbx_toArray($host['tags']) as $tag) {
-					$tag += ['value' => ''];
-
-					if (!array_key_exists($tag['tag'].'|'.$tag['value'], $host_db_tags)) {
-						$hosts_tags_to_add[] = ['hostid' => $host['hostid']] + $tag;
-					} else {
-						$existing_host_tags[$tag['tag'].'|'.$tag['value']] = true;
-					}
-				}
-
-				foreach (array_diff_key($host_db_tags, $existing_host_tags) as $tag) {
-					$hosttagids_to_delete[] = $tag['hosttagid'];
-				}
+				$host['tags'] = zbx_toArray($host['tags']);
 			}
 
 			if (array_key_exists('macros', $host)) {
@@ -1153,14 +1115,6 @@ class CHost extends CHostGeneral {
 			$this->link($link_templateids, $link_hostids);
 		}
 
-		if ($hosttagids_to_delete) {
-			DB::delete('host_tag', ['hosttagid' => $hosttagids_to_delete]);
-		}
-
-		if ($hosts_tags_to_add) {
-			DB::insert('host_tag', $hosts_tags_to_add);
-		}
-
 		if ($replace_macros) {
 			$this->replaceMacros($hosts_macros, $db_hosts_macros);
 		}
@@ -1233,6 +1187,8 @@ class CHost extends CHostGeneral {
 		foreach ($host_names_with_updated_status as $host) {
 			info(_s('Updated status of host "%1$s".', $host));
 		}
+
+		$this->updateTags($hosts, 'hostid');
 
 		$this->addAuditBulk(AUDIT_ACTION_UPDATE, AUDIT_RESOURCE_HOST, $hosts, $db_hosts);
 
