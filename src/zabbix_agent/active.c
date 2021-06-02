@@ -776,6 +776,8 @@ static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
 	{
 		char		*error = NULL;
 		struct zbx_json	json;
+		md5_state_t	state;
+		md5_byte_t	md5[MD5_DIGEST_SIZE];
 		char		buf[33];	/* for MD5 sum representation with hex-digits: 2 * 16 bytes + '\0' */
 
 		/* prepare JSON */
@@ -784,6 +786,18 @@ static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
 		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_MTIME, (zbx_uint64_t)prep_vec->values[i].mtime);
 		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_SIZE, prep_vec->values[i].size);
 		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_PROCESSED_SIZE, prep_vec->values[i].processed_size);
+
+		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_LAST_REC_SIZE,
+				(zbx_uint64_t)prep_vec->values[i].last_rec_size);
+
+		zbx_md5_init(&state);
+		zbx_md5_append(&state, (const md5_byte_t *)prep_vec->values[i].last_rec_part,
+				(int)MIN(ZBX_LAST_REC_COPY_MAX_LEN, prep_vec->values[i].last_rec_size));
+		zbx_md5_finish(&state, md5);
+
+		md5buf2str(md5, buf);
+		zbx_json_addstring(&json, ZBX_PERSIST_TAG_LAST_REC_MD5, buf, ZBX_JSON_TYPE_STRING);
+
 		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_SEQ, (zbx_uint64_t)prep_vec->values[i].seq);
 		zbx_json_addint64(&json, ZBX_PERSIST_TAG_COPY_OF, prep_vec->values[i].copy_of);
 		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INCOMPLETE, (zbx_uint64_t)prep_vec->values[i].incomplete);
@@ -792,16 +806,7 @@ static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
 		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INODE_LO, prep_vec->values[i].ino_lo);
 		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_MD5_SIZE, (zbx_uint64_t)prep_vec->values[i].md5size);
 
-		zbx_snprintf(buf, sizeof(buf), "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-				prep_vec->values[i].md5buf[0], prep_vec->values[i].md5buf[1],
-				prep_vec->values[i].md5buf[2], prep_vec->values[i].md5buf[3],
-				prep_vec->values[i].md5buf[4], prep_vec->values[i].md5buf[5],
-				prep_vec->values[i].md5buf[6], prep_vec->values[i].md5buf[7],
-				prep_vec->values[i].md5buf[8], prep_vec->values[i].md5buf[9],
-				prep_vec->values[i].md5buf[10], prep_vec->values[i].md5buf[11],
-				prep_vec->values[i].md5buf[12], prep_vec->values[i].md5buf[13],
-				prep_vec->values[i].md5buf[14], prep_vec->values[i].md5buf[15]);
-
+		md5buf2str(prep_vec->values[i].md5buf, buf);
 		zbx_json_addstring(&json, ZBX_PERSIST_TAG_MD5_BUF, buf, ZBX_JSON_TYPE_STRING);
 
 		zbx_json_close(&json);
