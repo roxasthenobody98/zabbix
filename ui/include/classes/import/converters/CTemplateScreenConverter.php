@@ -381,9 +381,18 @@ class CTemplateScreenConverter extends CConverter {
 			$height += self::SCREEN_LEGEND_HEIGHT;
 		}
 
+		if ($screen_item['resourcetype'] == SCREEN_RESOURCE_PLAIN_TEXT) {
+			// Constants are synchronised with the same algorithm in DB upgrade patch converter.
+			$show_lines = min($screen_item['elements'], 25);
+			$rows = 2 + $show_lines / 2.5;
+		}
+		else {
+			$rows = $height / self::WIDGET_ROW_HEIGHT;
+		}
+
 		return self::limitWidgetSize([
 			'width' => round($width / self::DISPLAY_WIDTH * DASHBOARD_MAX_COLUMNS),
-			'height' => round($height / self::WIDGET_ROW_HEIGHT)
+			'height' => round($rows)
 		]);
 	}
 
