@@ -403,12 +403,15 @@ abstract class CItemGeneral extends CApiService {
 
 				if ($itemInterfaceType !== false) {
 					if (!array_key_exists('interfaceid', $fullItem) || !$fullItem['interfaceid']) {
-						self::exception(ZBX_API_ERROR_PARAMETERS, _('No interface found.'));
+						if ($itemInterfaceType !== INTERFACE_TYPE_INHERITED) {
+							self::exception(ZBX_API_ERROR_PARAMETERS, _('No interface found.'));
+						}
 					}
 					elseif (!isset($interfaces[$fullItem['interfaceid']]) || bccomp($interfaces[$fullItem['interfaceid']]['hostid'], $fullItem['hostid']) != 0) {
 						self::exception(ZBX_API_ERROR_PARAMETERS, _('Item uses host interface from non-parent host.'));
 					}
-					elseif ($itemInterfaceType !== INTERFACE_TYPE_ANY && $interfaces[$fullItem['interfaceid']]['type'] != $itemInterfaceType) {
+					elseif (!($itemInterfaceType === INTERFACE_TYPE_ANY || $itemInterfaceType === INTERFACE_TYPE_INHERITED)
+							&& $interfaces[$fullItem['interfaceid']]['type'] != $itemInterfaceType) {
 						self::exception(ZBX_API_ERROR_PARAMETERS, _('Item uses incorrect interface type.'));
 					}
 				}

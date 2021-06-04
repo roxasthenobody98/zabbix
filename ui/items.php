@@ -989,7 +989,8 @@ elseif (hasRequest('del_history') && hasRequest('itemid')) {
 
 	show_messages($result, _('History cleared'), $error_message);
 }
-elseif (hasRequest('action') && str_in_array(getRequest('action'), ['item.massenable', 'item.massdisable']) && hasRequest('group_itemid')) {
+elseif (hasRequest('action') && str_in_array(getRequest('action'), ['item.massenable', 'item.massdisable'])
+		&& hasRequest('group_itemid')) {
 	$itemids = getRequest('group_itemid');
 	$status = (getRequest('action') == 'item.massenable') ? ITEM_STATUS_ACTIVE : ITEM_STATUS_DISABLED;
 

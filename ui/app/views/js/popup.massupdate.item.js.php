@@ -27,10 +27,10 @@
 <script type="text/javascript">
 // Item type and interface.
 (() => {
-	const item_interface_types = <?= json_encode(itemTypeInterface()) ?>;
-	const interface_ids_by_types = <?= json_encode($data['interfaceids']) ?>;
-
-	const item_type_elem = document.querySelector('#type');
+	const item_interface_types = <?= json_encode(itemTypeInterface()) ?>,
+		interface_ids_by_types = <?= interfaceIdsByTypes($data['interfaces'], true) ?>,
+		interface_types_allowed_inherit = <?= json_encode(interfaceTypesAllowedInherit())?>,
+		item_type_elem = document.querySelector('#type');
 
 	if (!item_type_elem) {
 		return false;
@@ -41,21 +41,23 @@
 		obj = item_type_elem.originalObject;
 	}
 
-	const cb = (event) => {
+	const popupTypeChangeHandler = (event) => {
+		let item_type = parseInt(obj.value, 10);
+
 		if (!document.querySelector('#visible_type').checked) {
-			return organizeInterfaces(interface_ids_by_types, item_interface_types, <?= json_encode($data['initial_item_type']) ?>);
+			item_type = <?= json_encode($data['initial_item_type']) ?>;
 		}
 
-		return organizeInterfaces(interface_ids_by_types, item_interface_types, parseInt(obj.value));
+		return organizeInterfaces(interface_ids_by_types, item_interface_types, item_type, interface_types_allowed_inherit);
 	};
 
-	obj.addEventListener('change', cb);
+	obj.addEventListener('change', popupTypeChangeHandler);
 	obj.dispatchEvent(new CustomEvent('change', {}));
 
-	document.querySelector('#visible_type').addEventListener('click', cb);
+	document.querySelector('#visible_type').addEventListener('click', popupTypeChangeHandler);
 
 	if (!!document.querySelector('#visible_interfaceid')) {
-		document.querySelector('#visible_interfaceid').addEventListener('click', cb);
+		document.querySelector('#visible_interfaceid').addEventListener('click', popupTypeChangeHandler);
 	}
 })();
 

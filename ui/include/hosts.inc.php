@@ -493,7 +493,10 @@ function getHostInterface(?array $interface): string {
 		return '';
 	}
 
-	if ($interface['useip'] == INTERFACE_USE_IP) {
+	if ($interface['useip'] === INTERFACE_USE_INHERITED){
+		return _('Inherited');
+	}
+	elseif ($interface['useip'] == INTERFACE_USE_IP) {
 		$ip_or_dns = (filter_var($interface['ip'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false)
 			? '['.$interface['ip'].']'
 			: $interface['ip'];

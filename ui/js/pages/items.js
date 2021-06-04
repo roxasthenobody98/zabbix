@@ -19,11 +19,12 @@
 
 
 /**
- * @param {object} interface_ids_by_types  Iterface ids grouped by interface type.
+ * @param {object} interface_ids_by_types  Interface ids grouped by interface type.
  * @param {object} item_interface_types    Item type to interface type map.
  * @param {number|null} item_type          Current item type.
+ * @param {array} interface_types_allowed_inherit Item types allowed the Inherit (empty) host interface
  */
-function organizeInterfaces(interface_ids_by_types, item_interface_types, item_type) {
+function organizeInterfaces(interface_ids_by_types, item_interface_types, item_type, interface_types_allowed_inherit) {
 	const $interface_select = $('#interface-select'),
 		interface_select_node = $interface_select.get(0),
 		selected_interfaceid = +$('#selectedInterfaceId').val();
@@ -40,19 +41,27 @@ function organizeInterfaces(interface_ids_by_types, item_interface_types, item_t
 		return;
 	}
 
-
-	const iterface_type = item_interface_types[item_type],
-		available_interfaceids = interface_ids_by_types[iterface_type]
+	const interface_type = item_interface_types[item_type],
+		available_interfaceids = interface_ids_by_types[interface_type]
 		select_options = interface_select_node.getOptions();
 
+	/**
+	 * Hide interface select, show "requires host interfaces" message
+	 */
+	function noRequiredInterfacesFound() {
+		interface_select_node.disabled = true;
+		$interface_select.hide();
+		$('#interface_not_defined').html(t('No interface found')).show();
+	}
+
 	// If no interface is required.
-	if (iterface_type === undefined) {
+	if (typeof interface_type === 'undefined') {
 		interface_select_node.disabled = true;
 		$interface_select.hide();
 		$('#interface_not_defined').html(t('Item type does not use interface')).show();
 	}
 	// If any interface type allowed, enable all options.
-	else if (iterface_type == -1 && select_options.length) {
+	else if (interface_type < 0 && select_options.length) {
 		interface_select_node.disabled = false;
 		select_options.map(opt => opt.disabled = false);
 		$interface_select.show();
@@ -60,14 +69,13 @@ function organizeInterfaces(interface_ids_by_types, item_interface_types, item_t
 	}
 	// If none of required interfaces found.
 	else if (!available_interfaceids) {
-		interface_select_node.disabled = true;
-		$interface_select.hide();
-		$('#interface_not_defined').html(t('No interface found')).show();
+		noRequiredInterfacesFound();
 	}
 	// Enable required interfaces, disable other interfaces.
 	else {
 		interface_select_node.disabled = false;
-		select_options.map(opt => opt.disabled = !available_interfaceids.includes(opt.value));
+		select_options.map(opt =>
+			opt.disabled = (typeof available_interfaceids === 'undefined' || !available_interfaceids.includes(opt.value)));
 		$interface_select.show();
 		$('#interface_not_defined').hide();
 	}
@@ -75,8 +83,18 @@ function organizeInterfaces(interface_ids_by_types, item_interface_types, item_t
 	if (selected_interfaceid) {
 		interface_select_node.value = selected_interfaceid;
 	}
+
+	const allowed_inherit = interface_types_allowed_inherit.includes(interface_type);
+
+	$(interface_select_node.getOptionByValue(0)).attr('disabled', !allowed_inherit);
+	$interface_select.find('li[value=0]')
+		.toggle(allowed_inherit)
+		.parents('li[optgroup]:first')
+			.toggle(allowed_inherit);
+
 	// If value current option is disabled, select first available interface.
 	const selected_option = interface_select_node.getOptionByValue(interface_select_node.value);
+
 	if (!selected_option || selected_option.disabled) {
 		for (let opt of select_options) {
 			if (!opt.disabled) {
@@ -84,5 +102,9 @@ function organizeInterfaces(interface_ids_by_types, item_interface_types, item_t
 				break;
 			}
 		}
+	}
+
+	if (!select_options.some(opt => !opt.disabled)) {
+		noRequiredInterfacesFound();
 	}
 }

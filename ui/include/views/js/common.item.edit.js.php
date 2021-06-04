@@ -220,9 +220,10 @@ zbx_subarray_push($this->data['typeDisable'], ITEM_TYPE_CALCULATED, [ITEM_VALUE_
 
 	function updateItemFormElements() {
 		// test button
-		var testable_item_types = <?= json_encode(CControllerPopupItemTest::getTestableItemTypes($this->data['hostid'])) ?>,
-			type = parseInt(jQuery('#type').val()),
-			key = jQuery('#key').val();
+		const testable_item_types = <?= json_encode(CControllerPopupItemTest::getTestableItemTypes($this->data['hostid'])) ?>,
+			type = parseInt(jQuery('#type').val(), 10),
+			key = jQuery('#key').val(),
+			is_http_agent = (type === <?= ITEM_TYPE_HTTPAGENT?>);
 
 		if (type == <?= ITEM_TYPE_SIMPLE ?> && (key.substr(0, 7) === 'vmware.' || key.substr(0, 8) === 'icmpping')) {
 			jQuery('#test_item').prop('disabled', true);
@@ -244,6 +245,9 @@ zbx_subarray_push($this->data['typeDisable'], ITEM_TYPE_CALCULATED, [ITEM_VALUE_
 				globalAllObjForViewSwitcher['type'].showObj(<?= json_encode(['id' => 'row_flex_intervals']) ?>);
 			}
 		}
+
+		$('label[for=interfaceid]').toggleClass('<?= ZBX_STYLE_FIELD_LABEL_ASTERISK ?>', !is_http_agent);
+		$('input[name=interfaceid]').prop('aria-required', !is_http_agent);
 	}
 
 	jQuery(document).ready(function($) {
@@ -278,11 +282,13 @@ zbx_subarray_push($this->data['typeDisable'], ITEM_TYPE_CALCULATED, [ITEM_VALUE_
 
 		$('#type')
 			.change(function() {
-				var item_interface_types = <?= json_encode(itemTypeInterface()) ?>,
-					interface_ids_by_types = <?= json_encode($interface_ids_by_types) ?>;
+				const item_interface_types = <?= json_encode(itemTypeInterface()) ?>,
+					interface_ids_by_types = <?= interfaceIdsByTypes($data['interfaces'], true) ?>,
+					interface_types_allowed_inherit = <?= json_encode(interfaceTypesAllowedInherit())?>;
 
 				updateItemFormElements();
-				organizeInterfaces(interface_ids_by_types, item_interface_types, parseInt($(this).val()));
+				organizeInterfaces(interface_ids_by_types, item_interface_types, parseInt($(this).val(), 10),
+					interface_types_allowed_inherit);
 
 				setAuthTypeLabel();
 			})

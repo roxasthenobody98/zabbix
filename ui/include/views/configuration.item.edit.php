@@ -564,11 +564,10 @@ $form_list
 	);
 
 $form_list
-
-->addRow(_('IPMI sensor'),
-	(new CTextBox('ipmi_sensor', $data['ipmi_sensor'], $readonly, 128))->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH),
-	'row_ipmi_sensor'
-);
+	->addRow(_('IPMI sensor'),
+		(new CTextBox('ipmi_sensor', $data['ipmi_sensor'], $readonly, 128))->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH),
+		'row_ipmi_sensor'
+	);
 
 $form_list
 	->addRow(new CLabel(_('Authentication method'), 'label-authtype'),

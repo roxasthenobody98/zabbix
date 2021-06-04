@@ -344,6 +344,7 @@ function orderItemsByStatus(array &$items, $sortorder = ZBX_SORT_UP) {
  */
 function interfaceType2str($type) {
 	$interfaceGroupLabels = [
+		INTERFACE_TYPE_INHERITED => _('Inherited'),
 		INTERFACE_TYPE_AGENT => _('Agent'),
 		INTERFACE_TYPE_SNMP => _('SNMP'),
 		INTERFACE_TYPE_JMX => _('JMX'),
@@ -364,7 +365,7 @@ function itemTypeInterface($type = null) {
 		ITEM_TYPE_SSH => INTERFACE_TYPE_ANY,
 		ITEM_TYPE_TELNET => INTERFACE_TYPE_ANY,
 		ITEM_TYPE_JMX => INTERFACE_TYPE_JMX,
-		ITEM_TYPE_HTTPAGENT => INTERFACE_TYPE_ANY
+		ITEM_TYPE_HTTPAGENT => INTERFACE_TYPE_INHERITED
 	];
 	if (is_null($type)) {
 		return $types;
@@ -375,6 +376,31 @@ function itemTypeInterface($type = null) {
 	else {
 		return false;
 	}
+}
+
+function interfaceTypesAllowedInherit(){
+	return [INTERFACE_TYPE_INHERITED];
+}
+
+/**
+ * Convert an array of (host's) interfaces to a list of interface type => interfaceids
+ *
+ * @param array $interfaces List of (host) interfaces
+ * @param bool $as_json Whether to json_encode the result
+ *
+ * @return [array|string]
+ */
+function interfaceIdsByTypes(array $interfaces, $as_json = true) {
+	$interface_ids_by_types = [];
+	foreach ($interfaces as $interface) {
+		$interface_ids_by_types[$interface['type']][] = $interface['interfaceid'];
+	}
+
+	if ($as_json){
+		return json_encode($interface_ids_by_types);
+	}
+
+	return $interface_ids_by_types;
 }
 
 /**
@@ -513,8 +539,8 @@ function copyItemsToHosts($src_itemids, $dst_hostids) {
 			if ($dstHost['status'] != HOST_STATUS_TEMPLATE) {
 				$type = itemTypeInterface($item['type']);
 
-				if ($type == INTERFACE_TYPE_ANY) {
-					foreach ([INTERFACE_TYPE_AGENT, INTERFACE_TYPE_SNMP, INTERFACE_TYPE_JMX, INTERFACE_TYPE_IPMI] as $itype) {
+				if ($type === INTERFACE_TYPE_ANY || $type === INTERFACE_TYPE_INHERITED) {
+					foreach ([INTERFACE_TYPE_INHERITED, INTERFACE_TYPE_AGENT, INTERFACE_TYPE_SNMP, INTERFACE_TYPE_JMX, INTERFACE_TYPE_IPMI] as $itype) {
 						if (isset($interfaceids[$itype])) {
 							$item['interfaceid'] = $interfaceids[$itype];
 							break;
@@ -1256,6 +1282,16 @@ function getInterfaceSelect(array $interfaces): CSelect {
 
 	/** @var CSelectOption[] $options_by_type */
 	$options_by_type = [];
+
+	// INTERFACE_TYPE_INHERITED stub
+	$inherited_interface = [
+		'interfaceid' => INTERFACE_TYPE_UNKNOWN,
+		'type' => INTERFACE_TYPE_INHERITED,
+		'useip' => INTERFACE_USE_INHERITED,
+		'port' => 0,
+		'dns' => 0,
+	];
+	$interface_select->addOption(new CSelectOption($inherited_interface['interfaceid'], getHostInterface($inherited_interface)));
 
 	foreach ($interfaces as $interface) {
 		$option = new CSelectOption($interface['interfaceid'], getHostInterface($interface));

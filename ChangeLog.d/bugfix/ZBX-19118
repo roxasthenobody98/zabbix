@@ -1,0 +1,1 @@
+A.F.....S. [ZBX-19118] made "Host Interface" non-required for "HTTP agent" items, default to "Inherited" (jfreibergs)
