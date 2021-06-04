@@ -96,7 +96,7 @@ static void	free_active_metric(ZBX_ACTIVE_METRIC *metric)
 		zbx_free(metric->logfiles[i].filename);
 
 	zbx_free(metric->logfiles);
-#if !defined(_WINDOWS)
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
 	zbx_free(metric->persistent_file_name);
 #endif
 	zbx_free(metric);
@@ -184,7 +184,7 @@ static void	add_check(const char *key, const char *key_orig, int refresh, zbx_ui
 			metric->logfiles_num = 0;
 			metric->start_time = 0.0;
 			metric->processed_bytes = 0;
-#if !defined(_WINDOWS)
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
 			if (NULL != metric->persistent_file_name)
 			{
 				char	*error = NULL;
@@ -767,7 +767,7 @@ static int	check_response(char *response)
 	return ret;
 }
 
-#if !defined(_WINDOWS)
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
 static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
 {
 	int	i;
@@ -782,32 +782,45 @@ static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
 
 		/* prepare JSON */
 		zbx_json_init(&json, ZBX_JSON_STAT_BUF_LEN);
-		zbx_json_addstring(&json, ZBX_PERSIST_TAG_FILENAME, prep_vec->values[i].filename, ZBX_JSON_TYPE_STRING);
+
+		if (NULL != prep_vec->values[i].filename)
+		{
+			zbx_json_addstring(&json, ZBX_PERSIST_TAG_FILENAME, prep_vec->values[i].filename,
+					ZBX_JSON_TYPE_STRING);
+		}
+
 		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_MTIME, (zbx_uint64_t)prep_vec->values[i].mtime);
-		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_SIZE, prep_vec->values[i].size);
+
+		if (NULL != prep_vec->values[i].filename)
+			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_SIZE, prep_vec->values[i].size);
+
 		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_PROCESSED_SIZE, prep_vec->values[i].processed_size);
 
-		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_LAST_REC_SIZE,
-				(zbx_uint64_t)prep_vec->values[i].last_rec_size);
+		if (NULL != prep_vec->values[i].filename)
+		{
+			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_LAST_REC_SIZE,
+					(zbx_uint64_t)prep_vec->values[i].last_rec_size);
 
-		zbx_md5_init(&state);
-		zbx_md5_append(&state, (const md5_byte_t *)prep_vec->values[i].last_rec_part,
-				(int)MIN(ZBX_LAST_REC_COPY_MAX_LEN, prep_vec->values[i].last_rec_size));
-		zbx_md5_finish(&state, md5);
+			zbx_md5_init(&state);
+			zbx_md5_append(&state, (const md5_byte_t *)prep_vec->values[i].last_rec_part,
+					(int)MIN(ZBX_LAST_REC_COPY_MAX_LEN, prep_vec->values[i].last_rec_size));
+			zbx_md5_finish(&state, md5);
 
-		md5buf2str(md5, buf);
-		zbx_json_addstring(&json, ZBX_PERSIST_TAG_LAST_REC_MD5, buf, ZBX_JSON_TYPE_STRING);
+			md5buf2str(md5, buf);
+			zbx_json_addstring(&json, ZBX_PERSIST_TAG_LAST_REC_MD5, buf, ZBX_JSON_TYPE_STRING);
 
-		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_SEQ, (zbx_uint64_t)prep_vec->values[i].seq);
-		zbx_json_addint64(&json, ZBX_PERSIST_TAG_COPY_OF, prep_vec->values[i].copy_of);
-		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INCOMPLETE, (zbx_uint64_t)prep_vec->values[i].incomplete);
-		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_DEVICE, prep_vec->values[i].dev);
-		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INODE_HI, prep_vec->values[i].ino_hi);
-		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INODE_LO, prep_vec->values[i].ino_lo);
-		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_MD5_SIZE, (zbx_uint64_t)prep_vec->values[i].md5size);
+			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_SEQ, (zbx_uint64_t)prep_vec->values[i].seq);
+			zbx_json_addint64(&json, ZBX_PERSIST_TAG_COPY_OF, prep_vec->values[i].copy_of);
+			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INCOMPLETE,
+					(zbx_uint64_t)prep_vec->values[i].incomplete);
+			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_DEVICE, prep_vec->values[i].dev);
+			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INODE_HI, prep_vec->values[i].ino_hi);
+			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INODE_LO, prep_vec->values[i].ino_lo);
+			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_MD5_SIZE, (zbx_uint64_t)prep_vec->values[i].md5size);
 
-		md5buf2str(prep_vec->values[i].md5buf, buf);
-		zbx_json_addstring(&json, ZBX_PERSIST_TAG_MD5_BUF, buf, ZBX_JSON_TYPE_STRING);
+			md5buf2str(prep_vec->values[i].md5buf, buf);
+			zbx_json_addstring(&json, ZBX_PERSIST_TAG_MD5_BUF, buf, ZBX_JSON_TYPE_STRING);
+		}
 
 		zbx_json_close(&json);
 
@@ -839,7 +852,7 @@ static void	clean_pre_persistent_elements(zbx_vector_pre_persistent_t *prep_vec)
 
 	zbx_vector_pre_persistent_clear(prep_vec);
 }
-#endif	/* not WINDOWS */
+#endif	/* not WINDOWS, not __MINGW32__ */
 
 /******************************************************************************
  *                                                                            *
@@ -997,9 +1010,10 @@ out:
 
 	if (SUCCEED == ret)
 	{
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
 		write_persistent_files(prep_vec);
 		clean_pre_persistent_elements(prep_vec);
-
+#endif
 		/* free buffer */
 		for (i = 0; i < buffer.count; i++)
 		{
@@ -1272,6 +1286,78 @@ out:
 	return ret;
 }
 
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
+/******************************************************************************
+ *                                                                            *
+ * Function: zbx_find_or_create_prep_vec_element                              *
+ *                                                                            *
+ * Purpose: search preparation vector to find element with the specified key. *
+ *          If not found then create the element.                             *
+ *                                                                            *
+ * Parameters:                                                                *
+ *    prep_vec             - [IN/OUT] preparation vector for persistent data  *
+ *                                files                                       *
+ *    key                  - [IN] log*[] item key                             *
+ *    persistent_file_name - [IN] file name for copying into new element      *
+ *                                                                            *
+ ******************************************************************************/
+int	zbx_find_or_create_prep_vec_element(zbx_vector_pre_persistent_t *prep_vec, const char *key,
+		const char *persistent_file_name)
+{
+	zbx_pre_persistent_t	prep_element;
+	int			prep_vec_idx;
+
+	prep_element.key_orig = (char *)key;
+
+	if (FAIL == (prep_vec_idx = zbx_vector_pre_persistent_search(prep_vec, prep_element,
+			zbx_pre_persistent_compare_func)))
+	{
+		/* create and initialize a new vector element */
+		memset(&prep_element, 0, sizeof(prep_element));
+
+		zbx_vector_pre_persistent_append(prep_vec, prep_element);
+		prep_vec_idx = prep_vec->values_num - 1;
+
+		/* fill in 'key_orig' and 'persistent_file_name' values - they never change for the specified */
+		/* log*[] item (otherwise it is not the same item anymore) */
+		prep_vec->values[prep_vec_idx].key_orig = zbx_strdup(NULL, key);
+		prep_vec->values[prep_vec_idx].persistent_file_name = zbx_strdup(NULL, persistent_file_name);
+
+		zabbix_log(LOG_LEVEL_DEBUG, "%s(): key:[%s] created element %d", __func__, key, prep_vec_idx);
+	}
+	else
+		zabbix_log(LOG_LEVEL_DEBUG, "%s(): key:[%s] found element %d", __func__, key, prep_vec_idx);
+
+	return prep_vec_idx;
+}
+
+/******************************************************************************
+ *                                                                            *
+ * Function: zbx_minimal_init_prep_vec_data                                   *
+ *                                                                            *
+ * Purpose: initialize an element of preparation vector with available data   *
+ *                                                                            *
+ * Parameters: lastlogsize   - [IN] lastlogize value to write into persistent *
+ *                                  data file                                 *
+ *             mtime         - [IN] mtime value to write into persistent data *
+ *                                  file                                      *
+ *             prep_vec_elem - [IN/OUT] element of vector to initialize       *
+ *                                                                            *
+ * Comments: this is a minimal initialization for using before sending status *
+ *           updates or meta-data. It initializes only 2 attributes to be     *
+ *           usable without any data about log files.                         *
+ *                                                                            *
+ ******************************************************************************/
+static void	zbx_minimal_init_prep_vec_data(zbx_uint64_t lastlogsize, int mtime, zbx_pre_persistent_t *prep_vec_elem)
+{
+	if (NULL != prep_vec_elem->filename)
+		zbx_free(prep_vec_elem->filename);	/* filename == NULL should be checked when preparing JSON */
+							/* for writing as most attributes are not initialized */
+	prep_vec_elem->processed_size = lastlogsize;
+	prep_vec_elem->mtime = mtime;
+}
+#endif	/* not WINDOWS, not __MINGW32__ */
+
 static void	process_active_checks(char *server, unsigned short port)
 {
 	char	*error = NULL;
@@ -1331,7 +1417,20 @@ static void	process_active_checks(char *server, unsigned short port)
 			metric->processed_bytes = 0;
 
 			zabbix_log(LOG_LEVEL_WARNING, "active check \"%s\" is not supported: %s", metric->key, perror);
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
+			/* only for log*[] items */
+			if (0 != ((ZBX_METRIC_FLAG_LOG_LOG | ZBX_METRIC_FLAG_LOG_LOGRT) & metric->flags) &&
+					NULL != metric->persistent_file_name)
+			{
+				int	prep_vec_idx;	/* index in 'prep_vec' vector */
 
+				prep_vec_idx = zbx_find_or_create_prep_vec_element(&pre_persistent_vec,
+						metric->key_orig, metric->persistent_file_name);
+
+				zbx_minimal_init_prep_vec_data(metric->lastlogsize, metric->mtime,
+						pre_persistent_vec.values + prep_vec_idx);
+			}
+#endif
 			process_value(server, port, CONFIG_HOSTNAME, metric->key_orig, perror, ITEM_STATE_NOTSUPPORTED,
 					&metric->lastlogsize, &metric->mtime, NULL, NULL, NULL, NULL, metric->flags);
 
@@ -1355,6 +1454,18 @@ static void	process_active_checks(char *server, unsigned short port)
 				if (SUCCEED == need_meta_update(metric, lastlogsize_sent, mtime_sent, old_state,
 						lastlogsize_last, mtime_last))
 				{
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
+					if (NULL != metric->persistent_file_name)
+					{
+						int	prep_vec_idx;	/* index in 'prep_vec' vector */
+
+						prep_vec_idx = zbx_find_or_create_prep_vec_element(&pre_persistent_vec,
+								metric->key_orig, metric->persistent_file_name);
+
+						zbx_minimal_init_prep_vec_data(metric->lastlogsize, metric->mtime,
+								pre_persistent_vec.values + prep_vec_idx);
+					}
+#endif
 					/* meta information update */
 					process_value(server, port, CONFIG_HOSTNAME, metric->key_orig, NULL,
 							metric->state, &metric->lastlogsize, &metric->mtime, NULL, NULL,

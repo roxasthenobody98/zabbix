@@ -104,4 +104,6 @@ int	zbx_pre_persistent_compare_func(const void *d1, const void *d2);
 
 ZBX_VECTOR_DECL(pre_persistent, zbx_pre_persistent_t)
 
+int	zbx_find_or_create_prep_vec_element(zbx_vector_pre_persistent_t *prep_vec, const char *key,
+		const char *persistent_file_name);
 #endif	/* ZABBIX_ACTIVE_H */
