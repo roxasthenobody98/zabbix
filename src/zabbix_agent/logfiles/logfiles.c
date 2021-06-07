@@ -1895,18 +1895,18 @@ static void	zbx_init_prep_vec_data(const struct st_logfile *logfile, zbx_pre_per
 		prep_vec_elem->filename = zbx_strdup(prep_vec_elem->filename, logfile->filename);
 
 	prep_vec_elem->mtime = logfile->mtime;
-	prep_vec_elem->size = logfile->size;
+	prep_vec_elem->md5size = logfile->md5size;
 	prep_vec_elem->seq = logfile->seq;
 	prep_vec_elem->copy_of = logfile->copy_of;
 	prep_vec_elem->dev = logfile->dev;
-	prep_vec_elem->ino_hi = logfile->ino_hi;
 	prep_vec_elem->ino_lo = logfile->ino_lo;
-	prep_vec_elem->md5size = logfile->md5size;
+	prep_vec_elem->ino_hi = logfile->ino_hi;
+	prep_vec_elem->size = logfile->size;
 	memcpy(prep_vec_elem->md5buf, logfile->md5buf, sizeof(logfile->md5buf));
 }
 
 static void	zbx_update_prep_vec_data(const struct st_logfile *logfile, zbx_uint64_t processed_size,
-		const char *last_rec, zbx_uint64_t last_rec_size, zbx_pre_persistent_t *prep_vec_elem)
+		const char *last_rec, int last_rec_size, zbx_pre_persistent_t *prep_vec_elem)
 {
 	/* copy attributes specific to every log file record */
 	prep_vec_elem->processed_size = processed_size;
@@ -1916,7 +1916,7 @@ static void	zbx_update_prep_vec_data(const struct st_logfile *logfile, zbx_uint6
 
 	/* It is expensive to calculate MD5 sum for every record when it is required only for the last record. */
 	/* Therefore we maintain a copy of the curent record and calculate MD5 sum later when necessary. */
-	memcpy(prep_vec_elem->last_rec_part, last_rec, MIN(ZBX_LAST_REC_COPY_MAX_LEN, last_rec_size));
+	memcpy(prep_vec_elem->last_rec_part, last_rec, (size_t)MIN(ZBX_LAST_REC_COPY_MAX_LEN, last_rec_size));
 }
 #endif	/* not WINDOWS, not __MINGW32__ */
 
@@ -2059,8 +2059,8 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 									prep_vec->values + prep_vec_idx);
 						}
 
-						zbx_update_prep_vec_data(logfile, lastlogsize1, buf,
-								(zbx_uint64_t)BUF_SIZE, prep_vec->values + prep_vec_idx);
+						zbx_update_prep_vec_data(logfile, lastlogsize1, buf, BUF_SIZE,
+								prep_vec->values + prep_vec_idx);
 					}
 #endif
 					if (ZBX_REGEXP_MATCH == (regexp_ret = zbx_match_log_rec(is_count_item, regexps,
@@ -2165,7 +2165,7 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 						}
 
 						zbx_update_prep_vec_data(logfile, lastlogsize1, p_start,
-								(zbx_uint64_t)(p_nl - p_start),
+								(int)(p_nl - p_start),
 								prep_vec->values + prep_vec_idx);
 					}
 #endif
@@ -2267,7 +2267,7 @@ out:
 				(int)MIN(ZBX_LAST_REC_COPY_MAX_LEN, prep_vec->values[prep_vec_idx].last_rec_size));
 		zbx_md5_finish(&state, md5);
 
-		logfile->last_rec_size = (int)prep_vec->values[prep_vec_idx].last_rec_size;
+		logfile->last_rec_size = prep_vec->values[prep_vec_idx].last_rec_size;
 		memcpy(logfile->last_rec_md5, md5, MD5_DIGEST_SIZE);
 	}
 #endif

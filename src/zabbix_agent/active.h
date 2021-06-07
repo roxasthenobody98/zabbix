@@ -85,17 +85,17 @@ typedef struct
 	/* data for writing into persistent file */
 	char		*filename;
 	int		mtime;
+	int		md5size;
+	int		last_rec_size;
+	int		seq;
+	int		incomplete;
+	int		copy_of;
+	zbx_uint64_t	dev;
+	zbx_uint64_t	ino_lo;
+	zbx_uint64_t	ino_hi;
 	zbx_uint64_t	size;
 	zbx_uint64_t	processed_size;
-	int		seq;
-	int		copy_of;
-	int		incomplete;
-	zbx_uint64_t	dev;
-	zbx_uint64_t	ino_hi;
-	zbx_uint64_t	ino_lo;
-	int		md5size;
 	md5_byte_t	md5buf[MD5_DIGEST_SIZE];
-	zbx_uint64_t	last_rec_size;
 	char		last_rec_part[ZBX_LAST_REC_COPY_MAX_LEN];
 }
 zbx_pre_persistent_t;
