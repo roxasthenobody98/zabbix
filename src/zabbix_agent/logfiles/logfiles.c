@@ -3613,7 +3613,7 @@ static int	init_persistent_dir_parameter(const char *server, unsigned short port
 	if (NULL == (persistent_dir = get_rparam(request, persistent_dir_param_nr)) || '\0' == *persistent_dir)
 		return SUCCEED;
 
-#if defined(_WINDOWS)
+#if defined(_WINDOWS) || defined(__MINGW32__)
 	*error = zbx_dsprintf(*error, "The %s parameter (persistent directory) is not supported on Microsoft Windows.",
 			(8 == persistent_dir_param_nr) ? "ninth" : "eighth");
 	return FAIL;
