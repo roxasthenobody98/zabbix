@@ -355,6 +355,8 @@ int	write_persistent_file(const char *filename, const char *data, char **error)
 	FILE	*fp;
 	size_t	sz;
 
+	zabbix_log(LOG_LEVEL_DEBUG, "%s(): filename:[%s] data:[%s]", __func__, filename, data);
+
 	if (NULL == (fp = fopen(filename, "w")))
 	{
 		*error = zbx_dsprintf(*error, "cannot open file: %s", zbx_strerror(errno));
