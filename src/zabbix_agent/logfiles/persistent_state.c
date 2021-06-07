@@ -65,7 +65,7 @@ static char	*str2file_name_part(const char *str)
 	md5_text_sz = MD5_DIGEST_SIZE * 2 + size_buf_len + 1;
 	md5_text = (char *)zbx_malloc(NULL, md5_text_sz);
 
-	md5buf2str(md5, md5_text);
+	zbx_md5buf2str(md5, md5_text);
 	memcpy(md5_text + MD5_DIGEST_SIZE * 2, size_buf, size_buf_len + 1);
 
 	return md5_text;

@@ -806,7 +806,7 @@ static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
 					(int)MIN(ZBX_LAST_REC_COPY_MAX_LEN, prep_vec->values[i].last_rec_size));
 			zbx_md5_finish(&state, md5);
 
-			md5buf2str(md5, buf);
+			zbx_md5buf2str(md5, buf);
 			zbx_json_addstring(&json, ZBX_PERSIST_TAG_LAST_REC_MD5, buf, ZBX_JSON_TYPE_STRING);
 
 			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_SEQ, (zbx_uint64_t)prep_vec->values[i].seq);
@@ -818,7 +818,7 @@ static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
 			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INODE_LO, prep_vec->values[i].ino_lo);
 			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_MD5_SIZE, (zbx_uint64_t)prep_vec->values[i].md5size);
 
-			md5buf2str(prep_vec->values[i].md5buf, buf);
+			zbx_md5buf2str(prep_vec->values[i].md5buf, buf);
 			zbx_json_addstring(&json, ZBX_PERSIST_TAG_MD5_BUF, buf, ZBX_JSON_TYPE_STRING);
 		}
 
