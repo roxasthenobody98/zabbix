@@ -1885,67 +1885,40 @@ static char	*buf_find_newline(char *p, char **p_next, const char *p_end, const c
 	}
 }
 
-#if !defined(_WINDOWS)
-static int	find_or_create_prep_vec_element(zbx_vector_pre_persistent_t *prep_vec, const char *key,
-		const char *persistent_file_name)
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
+static void	zbx_init_prep_vec_data(const struct st_logfile *logfile, zbx_pre_persistent_t *prep_vec_elem)
 {
-	zbx_pre_persistent_t	prep_element;
-	int			prep_vec_idx;
+	/* copy attributes which are stable within one check of the specified log file but */
+	/* may change in the next check */
 
-	prep_element.key_orig = (char *)key;
+	if (NULL == prep_vec_elem->filename || 0 != strcmp(prep_vec_elem->filename, logfile->filename))
+		prep_vec_elem->filename = zbx_strdup(prep_vec_elem->filename, logfile->filename);
 
-	if (FAIL == (prep_vec_idx = zbx_vector_pre_persistent_search(prep_vec, prep_element,
-			zbx_pre_persistent_compare_func)))
-	{
-		/* create and initialize a new vector element */
-		memset(&prep_element, 0, sizeof(prep_element));
-
-		zbx_vector_pre_persistent_append(prep_vec, prep_element);
-		prep_vec_idx = prep_vec->values_num - 1;
-
-		/* fill in 'key_orig' and 'persistent_file_name' values - they never change for the specified */
-		/* log*[] item (otherwise it is not the same item anymore) */
-		prep_vec->values[prep_vec_idx].key_orig = zbx_strdup(NULL, key);
-		prep_vec->values[prep_vec_idx].persistent_file_name = zbx_strdup(NULL, persistent_file_name);
-	}
-
-	return prep_vec_idx;
+	prep_vec_elem->mtime = logfile->mtime;
+	prep_vec_elem->size = logfile->size;
+	prep_vec_elem->seq = logfile->seq;
+	prep_vec_elem->copy_of = logfile->copy_of;
+	prep_vec_elem->dev = logfile->dev;
+	prep_vec_elem->ino_hi = logfile->ino_hi;
+	prep_vec_elem->ino_lo = logfile->ino_lo;
+	prep_vec_elem->md5size = logfile->md5size;
+	memcpy(prep_vec_elem->md5buf, logfile->md5buf, sizeof(logfile->md5buf));
 }
 
-static void	zbx_fill_prep_vec_data(const struct st_logfile *logfile, const char *key, zbx_uint64_t processed_size,
-		const char *persistent_file_name, zbx_vector_pre_persistent_t *prep_vec, int *prep_vec_idx)
+static void	zbx_update_prep_vec_data(const struct st_logfile *logfile, zbx_uint64_t processed_size,
+		const char *last_rec, zbx_uint64_t last_rec_size, zbx_pre_persistent_t *prep_vec_elem)
 {
-	/* insert or update an element in the persistent data vector */
-	if (-1 == *prep_vec_idx)
-	{
-		*prep_vec_idx = find_or_create_prep_vec_element(prep_vec, key, persistent_file_name);
-
-		/* copy attributes which are stable within one invocation of zbx_read2() but */
-		/* may change in the next invocation */
-
-		if (NULL == prep_vec->values[*prep_vec_idx].filename ||
-				0 != strcmp(prep_vec->values[*prep_vec_idx].filename, logfile->filename))
-		{
-			prep_vec->values[*prep_vec_idx].filename =
-					zbx_strdup(prep_vec->values[*prep_vec_idx].filename, logfile->filename);
-		}
-
-		prep_vec->values[*prep_vec_idx].mtime = logfile->mtime;
-		prep_vec->values[*prep_vec_idx].size = logfile->size;
-		prep_vec->values[*prep_vec_idx].seq = logfile->seq;
-		prep_vec->values[*prep_vec_idx].copy_of = logfile->copy_of;
-		prep_vec->values[*prep_vec_idx].dev = logfile->dev;
-		prep_vec->values[*prep_vec_idx].ino_hi = logfile->ino_hi;
-		prep_vec->values[*prep_vec_idx].ino_lo = logfile->ino_lo;
-		prep_vec->values[*prep_vec_idx].md5size = logfile->md5size;
-		memcpy(prep_vec->values[*prep_vec_idx].md5buf, logfile->md5buf, sizeof(logfile->md5buf));
-	}
-
 	/* copy attributes specific to every log file record */
-	prep_vec->values[*prep_vec_idx].processed_size = processed_size;
-	prep_vec->values[*prep_vec_idx].incomplete = logfile->incomplete;
+	prep_vec_elem->processed_size = processed_size;
+	prep_vec_elem->incomplete = logfile->incomplete;
+
+	prep_vec_elem->last_rec_size = last_rec_size;
+
+	/* It is expensive to calculate MD5 sum for every record when it is required only for the last record. */
+	/* Therefore we maintain a copy of the curent record and calculate MD5 sum later when necessary. */
+	memcpy(prep_vec_elem->last_rec_part, last_rec, MIN(ZBX_LAST_REC_COPY_MAX_LEN, last_rec_size));
 }
-#endif	/* not WINDOWS */
+#endif	/* not WINDOWS, not __MINGW32__ */
 
 static int	zbx_match_log_rec(int is_count_item, const zbx_vector_ptr_t *regexps, const char *value,
 		const char *pattern, const char *output_template, char **output, char **err_msg)
@@ -2075,13 +2048,21 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 
 					lastlogsize1 = (size_t)offset + (size_t)nbytes;
 					send_err = FAIL;
-#if !defined(_WINDOWS)
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
 					if (NULL != persistent_file_name)
 					{
-						zbx_fill_prep_vec_data(logfile, key, lastlogsize1, persistent_file_name,
-								prep_vec, &prep_vec_idx);
+						if (-1 == prep_vec_idx)
+						{
+							prep_vec_idx = zbx_find_or_create_prep_vec_element(prep_vec,
+									key, persistent_file_name);
+							zbx_init_prep_vec_data(logfile,
+									prep_vec->values + prep_vec_idx);
+						}
+
+						zbx_update_prep_vec_data(logfile, lastlogsize1, buf,
+								(zbx_uint64_t)BUF_SIZE, prep_vec->values + prep_vec_idx);
 					}
-#endif	/* not WINDOWS */
+#endif
 					if (ZBX_REGEXP_MATCH == (regexp_ret = zbx_match_log_rec(is_count_item, regexps,
 							value, pattern, output_template, &item_value, err_msg)))
 					{
@@ -2172,13 +2153,22 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 
 					lastlogsize1 = (size_t)offset + (size_t)(p_next - buf);
 					send_err = FAIL;
-#if !defined(_WINDOWS)
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
 					if (NULL != persistent_file_name)
 					{
-						zbx_fill_prep_vec_data(logfile, key, lastlogsize1, persistent_file_name,
-								prep_vec, &prep_vec_idx);
+						if (-1 == prep_vec_idx)
+						{
+							prep_vec_idx = zbx_find_or_create_prep_vec_element(prep_vec,
+									key, persistent_file_name);
+							zbx_init_prep_vec_data(logfile,
+									prep_vec->values + prep_vec_idx);
+						}
+
+						zbx_update_prep_vec_data(logfile, lastlogsize1, p_start,
+								(zbx_uint64_t)(p_nl - p_start),
+								prep_vec->values + prep_vec_idx);
 					}
-#endif	/* not WINDOWS */
+#endif
 					if (ZBX_REGEXP_MATCH == (regexp_ret = zbx_match_log_rec(is_count_item, regexps,
 							value, pattern, output_template, &item_value, err_msg)))
 					{
@@ -2264,6 +2254,23 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 		}
 	}
 out:
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
+	if (-1 != prep_vec_idx)
+	{
+		/* Preparation vector element was created or updated. */
+		/* Update the list of log files with the size and MD5 sum of the last processsed record. */
+		md5_state_t	state;
+		md5_byte_t	md5[MD5_DIGEST_SIZE];
+
+		zbx_md5_init(&state);
+		zbx_md5_append(&state, (const md5_byte_t *)prep_vec->values[prep_vec_idx].last_rec_part,
+				(int)MIN(ZBX_LAST_REC_COPY_MAX_LEN, prep_vec->values[prep_vec_idx].last_rec_size));
+		zbx_md5_finish(&state, md5);
+
+		logfile->last_rec_size = (int)prep_vec->values[prep_vec_idx].last_rec_size;
+		memcpy(logfile->last_rec_md5, md5, MD5_DIGEST_SIZE);
+	}
+#endif
 	return ret;
 #undef BUF_SIZE
 }
