@@ -1977,13 +1977,15 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 {
 	static ZBX_THREAD_LOCAL char	*buf = NULL;
 
-	int				nbytes, regexp_ret;
+	int				ret, nbytes, regexp_ret;
 	const char			*cr, *lf, *p_end;
 	char				*p_start, *p, *p_nl, *p_next, *item_value = NULL;
 	size_t				szbyte;
 	zbx_offset_t			offset;
 	const int			is_count_item = (0 != (ZBX_METRIC_FLAG_LOG_COUNT & flags)) ? 1 : 0;
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
 	int				prep_vec_idx = -1;	/* index in 'prep_vec' vector */
+#endif
 
 #define BUF_SIZE	(256 * ZBX_KIBIBYTE)	/* The longest encodings use 4 bytes for every character. To send */
 						/* up to 64 k characters to Zabbix server a 256 kB buffer might be */
@@ -1995,14 +1997,19 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 
 	for (;;)
 	{
-		if (0 >= *p_count || 0 >= *s_count)	/* limit on number of processed or */
-			return SUCCEED;			/* sent-to-server lines reached */
+		if (0 >= *p_count || 0 >= *s_count)
+		{
+			/* limit on number of processed or sent-to-server lines reached */
+			ret = SUCCEED;
+			goto out;
+		}
 
 		if ((zbx_offset_t)-1 == (offset = zbx_lseek(fd, 0, SEEK_CUR)))
 		{
 			*big_rec = 0;
 			*err_msg = zbx_dsprintf(*err_msg, "Cannot set position to 0 in file: %s", zbx_strerror(errno));
-			return FAIL;
+			ret = FAIL;
+			goto out;
 		}
 
 		if (-1 == (nbytes = (int)read(fd, buf, (size_t)BUF_SIZE)))
@@ -2010,11 +2017,16 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 			/* error on read */
 			*big_rec = 0;
 			*err_msg = zbx_dsprintf(*err_msg, "Cannot read from file: %s", zbx_strerror(errno));
-			return FAIL;
+			ret = FAIL;
+			goto out;
 		}
 
-		if (0 == nbytes)	/* end of file reached */
-			return SUCCEED;
+		if (0 == nbytes)
+		{
+			/* end of file reached */
+			ret = SUCCEED;
+			goto out;
+		}
 
 		p_start = buf;			/* beginning of current line */
 		p = buf;			/* current byte */
@@ -2032,7 +2044,8 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 				/* maybe more data will come. */
 
 				*lastlogsize = (zbx_uint64_t)offset;
-				return SUCCEED;
+				ret = SUCCEED;
+				goto out;
 			}
 			else
 			{
@@ -2095,7 +2108,8 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 
 								/* Sending of buffer failed. */
 								/* Try to resend it in the next check. */
-								return SUCCEED;
+								ret = SUCCEED;
+								goto out;
 							}
 						}
 						else	/* log.count[] or logrt.count[] */
@@ -2106,7 +2120,10 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 						zbx_free(value);
 
 					if (FAIL == regexp_ret)
-						return FAIL;
+					{
+						ret = FAIL;
+						goto out;
+					}
 
 					(*p_count)--;
 
@@ -2133,8 +2150,12 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 
 			for (;;)
 			{
-				if (0 >= *p_count || 0 >= *s_count)	/* limit on number of processed or */
-					return SUCCEED;			/*sent-to-server lines reached */
+				if (0 >= *p_count || 0 >= *s_count)
+				{
+					/* limit on number of processed or sent-to-server lines reached */
+					ret = SUCCEED;
+					goto out;
+				}
 
 				if (0 == *big_rec)
 				{
@@ -2184,7 +2205,8 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 
 								/* Sending of buffer failed. */
 								/* Try to resend it in the next check. */
-								return SUCCEED;
+								ret = SUCCEED;
+								goto out;
 							}
 						}
 						else	/* log.count[] or logrt.count[] */
@@ -2195,7 +2217,10 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 						zbx_free(value);
 
 					if (FAIL == regexp_ret)
-						return FAIL;
+					{
+						ret = FAIL;
+						goto out;
+					}
 
 					(*p_count)--;
 
@@ -2227,7 +2252,8 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 					{
 						*err_msg = zbx_dsprintf(*err_msg, "Cannot set position to " ZBX_FS_UI64
 								" in file: %s", *lastlogsize, zbx_strerror(errno));
-						return FAIL;
+						ret = FAIL;
+						goto out;
 					}
 					else
 						break;
@@ -2237,6 +2263,8 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 			}
 		}
 	}
+out:
+	return ret;
 #undef BUF_SIZE
 }
 
