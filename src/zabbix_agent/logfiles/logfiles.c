@@ -447,23 +447,26 @@ static int	set_use_ino_by_fs_type(const char *path, int *use_ino, char **err_msg
  ******************************************************************************/
 static void	print_logfile_list(const struct st_logfile *logfiles, int logfiles_num)
 {
-	int	i;
-
-	for (i = 0; i < logfiles_num; i++)
+	if (SUCCEED == ZBX_CHECK_LOG_LEVEL(LOG_LEVEL_DEBUG))
 	{
-		zabbix_log(LOG_LEVEL_DEBUG, "   nr:%d filename:'%s' mtime:%d size:" ZBX_FS_UI64 " processed_size:"
-				ZBX_FS_UI64 " seq:%d copy_of:%d incomplete:%d dev:" ZBX_FS_UI64 " ino_hi:" ZBX_FS_UI64
-				" ino_lo:" ZBX_FS_UI64
-				" md5size:%d md5buf:%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-				i, logfiles[i].filename, logfiles[i].mtime, logfiles[i].size,
-				logfiles[i].processed_size, logfiles[i].seq, logfiles[i].copy_of,
-				logfiles[i].incomplete, logfiles[i].dev, logfiles[i].ino_hi, logfiles[i].ino_lo,
-				logfiles[i].md5size, logfiles[i].md5buf[0], logfiles[i].md5buf[1],
-				logfiles[i].md5buf[2], logfiles[i].md5buf[3], logfiles[i].md5buf[4],
-				logfiles[i].md5buf[5], logfiles[i].md5buf[6], logfiles[i].md5buf[7],
-				logfiles[i].md5buf[8], logfiles[i].md5buf[9], logfiles[i].md5buf[10],
-				logfiles[i].md5buf[11], logfiles[i].md5buf[12], logfiles[i].md5buf[13],
-				logfiles[i].md5buf[14], logfiles[i].md5buf[15]);
+		int	i;
+		char	buf[33], last_buf[33];	/* for MD5 sum representation with hex-digits: 2 * 16 bytes + '\0' */
+
+		for (i = 0; i < logfiles_num; i++)
+		{
+			zbx_md5buf2str(logfiles[i].md5buf, buf);
+			zbx_md5buf2str(logfiles[i].last_rec_md5, last_buf);
+
+			zabbix_log(LOG_LEVEL_DEBUG, "   nr:%d filename:'%s' mtime:%d size:" ZBX_FS_UI64
+					" processed_size:" ZBX_FS_UI64 " seq:%d copy_of:%d incomplete:%d dev:"
+					ZBX_FS_UI64 " ino_hi:" ZBX_FS_UI64 " ino_lo:" ZBX_FS_UI64
+					" md5size:%d md5buf:%s last_rec_size:%d last_rec_md5:%s", i,
+					logfiles[i].filename, logfiles[i].mtime, logfiles[i].size,
+					logfiles[i].processed_size, logfiles[i].seq, logfiles[i].copy_of,
+					logfiles[i].incomplete, logfiles[i].dev, logfiles[i].ino_hi,
+					logfiles[i].ino_lo, logfiles[i].md5size, buf, logfiles[i].last_rec_size,
+					last_buf);
+		}
 	}
 }
 
