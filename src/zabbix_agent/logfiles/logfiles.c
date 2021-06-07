@@ -1404,7 +1404,9 @@ static void	add_logfile(struct st_logfile **logfiles, int *logfiles_alloc, int *
 	(*logfiles)[i].filename = zbx_strdup(NULL, filename);
 	(*logfiles)[i].mtime = (int)st->st_mtime;
 	(*logfiles)[i].md5size = -1;
+	(*logfiles)[i].last_rec_size = -1;
 	(*logfiles)[i].seq = 0;
+	(*logfiles)[i].retry = 0;
 	(*logfiles)[i].incomplete = 0;
 	(*logfiles)[i].copy_of = -1;
 #if !defined(_WINDOWS) && !defined(__MINGW32__)
@@ -1414,7 +1416,7 @@ static void	add_logfile(struct st_logfile **logfiles, int *logfiles_alloc, int *
 #endif
 	(*logfiles)[i].size = (zbx_uint64_t)st->st_size;
 	(*logfiles)[i].processed_size = 0;
-	(*logfiles)[i].retry = 0;
+	memset((*logfiles)[i].last_rec_md5, 0, sizeof((*logfiles)[i].last_rec_md5));
 
 	++(*logfiles_num);
 out:
