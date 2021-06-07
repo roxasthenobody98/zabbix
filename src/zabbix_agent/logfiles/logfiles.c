@@ -3630,10 +3630,10 @@ static int	init_persistent_dir_parameter(const char *server, unsigned short port
 		return FAIL;
 	}
 
-	if (NULL == (persistent_serv_dir = create_persistent_server_directory(persistent_dir, server, port, error)))
+	if (NULL == (persistent_serv_dir = zbx_create_persistent_server_directory(persistent_dir, server, port, error)))
 		return FAIL;
 
-	*persistent_file_name = make_persistent_file_name(persistent_serv_dir, item_key);
+	*persistent_file_name = zbx_make_persistent_file_name(persistent_serv_dir, item_key);
 
 	zbx_free(persistent_serv_dir);
 

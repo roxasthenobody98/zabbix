@@ -22,7 +22,7 @@
 #include "log.h"
 #include "persistent_state.h"
 
-#if !defined(_WINDOWS)
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
 /******************************************************************************
  *                                                                            *
  * Function: str2file_name_part                                               *
@@ -122,7 +122,7 @@ static char	*active_server2dir_name_part(const char *server, unsigned short port
  *          function returns "/var/tmp/8392b6ea687188e70feac24517d2f9d715"    *
  *                                                                            *
  ******************************************************************************/
-char	*make_persistent_server_directory_name(const char *base_path, const char *server, unsigned short port)
+static char	*make_persistent_server_directory_name(const char *base_path, const char *server, unsigned short port)
 {
 	char	*server_part, *file_name;
 
@@ -266,7 +266,7 @@ static int	create_base_path_directories(const char *pathname, char **error)
 
 /******************************************************************************
  *                                                                            *
- * Function: create_persistent_server_directory                               *
+ * Function: zbx_create_persistent_server_directory                           *
  *                                                                            *
  * Purpose: create directory if it does not exist or check access if it       *
  *          exists. Directory name is derived from host and port.             *
@@ -283,7 +283,8 @@ static int	create_base_path_directories(const char *pathname, char **error)
  *               on error   - NULL (with dynamically allocated 'error')       *
  *                                                                            *
  ******************************************************************************/
-char	*create_persistent_server_directory(const char *base_path, const char *host, unsigned short port, char **error)
+char	*zbx_create_persistent_server_directory(const char *base_path, const char *host, unsigned short port,
+		char **error)
 {
 	char	*server_dir_name, *err_msg = NULL;
 
@@ -312,7 +313,7 @@ char	*create_persistent_server_directory(const char *base_path, const char *host
 
 /******************************************************************************
  *                                                                            *
- * Function: make_persistent_file_name                                        *
+ * Function: zbx_make_persistent_file_name                                    *
  *                                                                            *
  * Purpose: make the name of persistent storage directory or file             *
  *                                                                            *
@@ -323,7 +324,7 @@ char	*create_persistent_server_directory(const char *base_path, const char *host
  * Return value: dynamically allocated string with the name of file           *
  *                                                                            *
  ******************************************************************************/
-char	*make_persistent_file_name(const char *persistent_server_dir, const char *item_key)
+char	*zbx_make_persistent_file_name(const char *persistent_server_dir, const char *item_key)
 {
 	char	*file_name, *item_part;
 
@@ -336,7 +337,7 @@ char	*make_persistent_file_name(const char *persistent_server_dir, const char *i
 
 /******************************************************************************
  *                                                                            *
- * Function: write_persistent_file                                            *
+ * Function: zbx_write_persistent_file                                        *
  *                                                                            *
  * Purpose: write metric info into persistent file                            *
  *                                                                            *
@@ -350,7 +351,7 @@ char	*make_persistent_file_name(const char *persistent_server_dir, const char *i
  *                         'error' message)                                   *
  *                                                                            *
  ******************************************************************************/
-int	write_persistent_file(const char *filename, const char *data, char **error)
+int	zbx_write_persistent_file(const char *filename, const char *data, char **error)
 {
 	FILE	*fp;
 	size_t	sz;
@@ -379,7 +380,7 @@ int	write_persistent_file(const char *filename, const char *data, char **error)
 
 /******************************************************************************
  *                                                                            *
- * Function: remove_persistent_file                                           *
+ * Function: zbx_remove_persistent_file                                       *
  *                                                                            *
  * Purpose: remove the specified file                                         *
  *                                                                            *
@@ -392,7 +393,7 @@ int	write_persistent_file(const char *filename, const char *data, char **error)
  *                         allocated 'error' message)                         *
  *                                                                            *
  ******************************************************************************/
-int remove_persistent_file(const char *pathname, char **error)
+int zbx_remove_persistent_file(const char *pathname, char **error)
 {
 	if (0 == unlink(pathname) || ENOENT == errno)
 		return SUCCEED;

@@ -17,8 +17,9 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **/
 
-char	*make_persistent_server_directory_name(const char *base_path, const char *server, unsigned short port);
-char	*create_persistent_server_directory(const char *base_path, const char *host, unsigned short port, char **error);
-char	*make_persistent_file_name(const char *persistent_server_dir, const char *item_key);
-int	write_persistent_file(const char *filename, const char *data, char **error);
-int	remove_persistent_file(const char *pathname, char **error);
+char	*zbx_create_persistent_server_directory(const char *base_path, const char *host, unsigned short port,
+		char **error);
+char	*zbx_make_persistent_file_name(const char *persistent_server_dir, const char *item_key);
+int	zbx_write_persistent_file(const char *filename, const char *data, char **error);
+int	zbx_read_persistent_file(const char *filename, char *data, char **error);
+int	zbx_remove_persistent_file(const char *pathname, char **error);

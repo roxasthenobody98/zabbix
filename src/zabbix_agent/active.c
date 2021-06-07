@@ -192,7 +192,7 @@ static void	add_check(const char *key, const char *key_orig, int refresh, zbx_ui
 				zabbix_log(LOG_LEVEL_DEBUG, "%s() removing persistent file '%s'",
 						__func__, metric->persistent_file_name);
 
-				if (SUCCEED != remove_persistent_file(metric->persistent_file_name, &error))
+				if (SUCCEED != zbx_remove_persistent_file(metric->persistent_file_name, &error))
 				{
 					/* log error and continue operation */
 					zabbix_log(LOG_LEVEL_WARNING, "cannot remove peristent file \"%s\": %s",
@@ -822,7 +822,7 @@ static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
 
 		zbx_json_close(&json);
 
-		write_persistent_file(prep_vec->values[i].persistent_file_name, json.buffer, &error);
+		zbx_write_persistent_file(prep_vec->values[i].persistent_file_name, json.buffer, &error);
 
 		if (NULL != error)
 		{
