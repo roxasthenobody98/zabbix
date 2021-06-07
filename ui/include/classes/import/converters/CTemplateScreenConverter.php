@@ -380,10 +380,6 @@ class CTemplateScreenConverter extends CConverter {
 			// Transform graph screen item with height of at least 100px to occupy minimum 5 grid rows.
 			$height += self::SCREEN_LEGEND_HEIGHT;
 		}
-		elseif ($screen_item['resourcetype'] == SCREEN_RESOURCE_PLAIN_TEXT) {
-			$show_lines = min($screen_item['elements'], 15);
-			$height += ceil($show_lines / 2.5) * self::WIDGET_ROW_HEIGHT;
-		}
 
 		if ($screen_item['resourcetype'] == SCREEN_RESOURCE_PLAIN_TEXT) {
 			// Constants are synchronised with the same algorithm in DB upgrade patch converter.
