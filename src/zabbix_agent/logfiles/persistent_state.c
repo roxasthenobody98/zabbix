@@ -380,6 +380,52 @@ int	zbx_write_persistent_file(const char *filename, const char *data, char **err
 
 /******************************************************************************
  *                                                                            *
+ * Function: zbx_read_persistent_file                                         *
+ *                                                                            *
+ * Purpose: read metric info from persistent file. One line ir read.          *
+ *                                                                            *
+ * Parameters:                                                                *
+ *          filename  - [IN] file name                                        *
+ *          buf       - [OUT] buffer to read file into                        *
+ *          buf_size  - [IN] buffer size                                      *
+ *          err_msg   - [OUT] error message                                   *
+ *                                                                            *
+ * Return value: SUCCEED - file was successfully read                         *
+ *               FAIL    - cannot read the file (see dynamically allocated    *
+ *                         'err_msg' message)                                 *
+ *                                                                            *
+ ******************************************************************************/
+int	zbx_read_persistent_file(const char *filename, char *buf, size_t buf_size, char **err_msg)
+{
+	int	ret = FAIL;
+	FILE	*f;
+
+	if (NULL == (f = fopen(filename, "r")))
+	{
+		*err_msg = zbx_dsprintf(*err_msg, "cannot open file \"%s\": %s", filename, zbx_strerror(errno));
+		return FAIL;
+	}
+
+	if (NULL == fgets(buf, (int)buf_size, f))
+	{
+		*err_msg = zbx_dsprintf(*err_msg, "cannot read from file \"%s\" or file empty", filename);
+		goto out;
+	}
+
+	buf[strcspn(buf, "\r\n")] = '\0';	/* discard newline at the end of string */
+
+	ret = SUCCEED;
+out:
+	if (0 != fclose(f))
+	{	/* only log, cannot do anything in case of error */
+		zabbix_log(LOG_LEVEL_CRIT, "cannot close file \"%s\": %s", filename, zbx_strerror(errno));
+	}
+
+	return ret;
+}
+
+/******************************************************************************
+ *                                                                            *
  * Function: zbx_remove_persistent_file                                       *
  *                                                                            *
  * Purpose: remove the specified file                                         *

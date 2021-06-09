@@ -22,6 +22,7 @@
 #include "log.h"
 #include "sysinfo.h"
 #include "persistent_state.h"
+#include "zbxjson.h"
 
 #if defined(_WINDOWS) || defined(__MINGW32__)
 #	include "symbols.h"
@@ -3643,6 +3644,211 @@ static int	init_persistent_dir_parameter(const char *server, unsigned short port
 #endif
 }
 
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
+/******************************************************************************
+ *                                                                            *
+ * Function: zbx_restore_file_details                                         *
+ *                                                                            *
+ * Purpose: create the 'old log file list' and restore log file attributes    *
+ *          from JSON string which was read from persistent file              *
+ *                                                                            *
+ * Parameters:                                                                *
+ *     str          - [IN] JSON string                                        *
+ *     logfiles     - [OUT] log file list (vector)                            *
+ *     logfiles_num - [OUT] number of elements in the log file list           *
+ *     err_msg      - [OUT] dynamically allocated error message               *
+ *                                                                            *
+ * Return value: SUCCEED or FAIL                                              *
+ *                                                                            *
+ * Examples of valid JSON 'str' (one text line but here it is split for       *
+ * readability):                                                              *
+ *     {"mtime":1623174047,                                                   *
+ *      "processed_size":0}                                                   *
+ * or                                                                         *
+ *     {"filename":"/home/zabbix/test.log",                                   *
+ *	"mtime":0,                                                            *
+ *	"processed_size":24,                                                  *
+ *	"last_record_size":5,                                                 *
+ *	"last_record_md5":"86985e105f79b95d6bc918fb45ec7727",                 *
+ *	"seq":0,                                                              *
+ *	"incomplete":0,                                                       *
+ *	"copy_of":-1,                                                         *
+ *	"dev":65027,                                                          *
+ *	"ino_lo":17043636,                                                    *
+ *	"ino_hi":0,                                                           *
+ *	"size":24,                                                            *
+ *	"md5size":24,                                                         *
+ *	"md5buf":"7f2d0cf871384671c51359ce8c90e475"}                          *
+ ******************************************************************************/
+static int	zbx_restore_file_details(const char *str, struct st_logfile **logfiles, int *logfiles_num,
+		char **err_msg)
+{
+	struct zbx_json_parse	jp;
+	/* temporary variables before filling in 'st_logfile' elements */
+	char		filename[MAX_STRING_LEN];
+	int		mtime;
+	int		md5size;
+	int		last_rec_size;
+	int		seq;
+	int		incomplete;
+	int		copy_of;
+	zbx_uint64_t	dev;
+	zbx_uint64_t	ino_lo;
+	zbx_uint64_t	ino_hi;
+	zbx_uint64_t	size;
+	zbx_uint64_t	processed_size;
+	md5_byte_t	md5buf[MD5_DIGEST_SIZE];
+	md5_byte_t	last_rec_md5[MD5_DIGEST_SIZE];
+	/* validation flags */
+	int		got_filename = 0, got_mtime = 0, got_processed_size = 0, got_last_rec_size = 0,
+			got_last_rec_md5 = 0, got_seq = 0, got_incomplete = 0, got_copy_of = 0, got_dev = 0,
+			got_ino_lo = 0, got_ino_hi = 0, got_size = 0, got_md5size = 0, got_md5buf = 0, sum;
+	char		tmp[MAX_STRING_LEN];
+
+	if (SUCCEED != zbx_json_open(str, &jp))
+	{
+		*err_msg = zbx_dsprintf(*err_msg, "cannot parse persistent data: %s", zbx_json_strerror());
+		return FAIL;
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_FILENAME, filename, sizeof(filename), NULL))
+		got_filename = 1;
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_MTIME, tmp, sizeof(tmp), NULL))
+	{
+		mtime = atoi(tmp);
+		got_mtime = 1;
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_PROCESSED_SIZE, tmp, sizeof(tmp), NULL))
+	{
+		if (SUCCEED == is_uint64(tmp, &processed_size))
+			got_processed_size = 1;
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_LAST_REC_SIZE, tmp, sizeof(tmp), NULL))
+	{
+		last_rec_size = atoi(tmp);
+		got_last_rec_size = 1;
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_LAST_REC_MD5, tmp, sizeof(tmp), NULL))
+	{
+		if (sizeof(last_rec_md5) == zbx_hex2bin((const unsigned char *)tmp, last_rec_md5,
+				sizeof(last_rec_md5)))
+		{
+			got_last_rec_md5 = 1;
+		}
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_SEQ, tmp, sizeof(tmp), NULL))
+	{
+		seq = atoi(tmp);
+		got_seq = 1;
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_INCOMPLETE, tmp, sizeof(tmp), NULL))
+	{
+		incomplete = atoi(tmp);
+		got_incomplete = 1;
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_COPY_OF, tmp, sizeof(tmp), NULL))
+	{
+		copy_of = atoi(tmp);
+		got_copy_of = 1;
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_DEVICE, tmp, sizeof(tmp), NULL))
+	{
+		if (SUCCEED == is_uint64(tmp, &dev))
+			got_dev = 1;
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_INODE_LO, tmp, sizeof(tmp), NULL))
+	{
+		if (SUCCEED == is_uint64(tmp, &ino_lo))
+			got_ino_lo = 1;
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_INODE_HI, tmp, sizeof(tmp), NULL))
+	{
+		if (SUCCEED == is_uint64(tmp, &ino_hi))
+			got_ino_hi = 1;
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_SIZE, tmp, sizeof(tmp), NULL))
+	{
+		if (SUCCEED == is_uint64(tmp, &size))
+			got_size = 1;
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_MD5_SIZE, tmp, sizeof(tmp), NULL))
+	{
+		md5size = atoi(tmp);
+		got_md5size = 1;
+	}
+
+	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_MD5_BUF, tmp, sizeof(tmp), NULL))
+	{
+		if (sizeof(md5buf) == zbx_hex2bin((const unsigned char *)tmp, md5buf, sizeof(md5buf)))
+			got_md5buf = 1;
+	}
+
+	/* 'mtime' and 'processed_size' should always be present */
+	if (0 == got_mtime || 0 == got_processed_size)
+	{
+		*err_msg = zbx_dsprintf(*err_msg, "corrupted data: 'mtime' or 'processed_size' attribute missing");
+		return FAIL;
+	}
+
+	/* all other 12 variables should be present or none of them */
+	sum = got_filename + got_last_rec_size + got_last_rec_md5 + got_seq + got_incomplete + got_copy_of + got_dev +
+			got_ino_lo + got_ino_hi + got_size + got_md5size + got_md5buf;
+
+	if (12 != sum && 0 != sum)
+	{
+		*err_msg = zbx_dsprintf(*err_msg, "present/missing attributes: filename:%d last_rec_size:%d"
+				" last_rec_md5:%d seq:%d incomplete:%d copy_of:%d dev:%d ino_lo:%d ino_hi:%d size:%d"
+				" md5size:%d md5buf:%d", got_filename, got_last_rec_size, got_last_rec_md5, got_seq,
+				got_incomplete, got_copy_of, got_dev, got_ino_lo, got_ino_hi, got_size, got_md5size,
+				got_md5buf);
+		return FAIL;
+	}
+
+	/* Create log file list with one element. It will be used as the 'old log file list', */
+	/* it does not need to be resizable. */
+	*logfiles = (struct st_logfile *)zbx_malloc(NULL, sizeof(struct st_logfile));
+	*logfiles_num = 1;
+
+	(*logfiles)[0].filename = (0 != got_filename) ? zbx_strdup(NULL, filename) : NULL;
+	(*logfiles)[0].mtime = (0 != got_mtime) ? mtime : 0;
+	(*logfiles)[0].md5size = (0 != got_md5size) ? md5size : -1;
+	(*logfiles)[0].last_rec_size = (0 != got_last_rec_size) ? last_rec_size : -1;
+	(*logfiles)[0].seq = (0 != got_seq) ? seq : 0;
+	(*logfiles)[0].retry = 0;
+	(*logfiles)[0].incomplete = (0 != got_incomplete) ? incomplete : 0;
+	(*logfiles)[0].copy_of = (0 != got_copy_of) ? copy_of : -1;
+	(*logfiles)[0].dev = (0 != got_dev) ? dev : 0;
+	(*logfiles)[0].ino_lo = (0 != got_ino_lo) ? ino_lo : 0;
+	(*logfiles)[0].ino_hi = (0 != got_ino_hi) ? ino_hi : 0;
+	(*logfiles)[0].size = (0 != got_size) ? size : 0;
+	(*logfiles)[0].processed_size = (0 != got_processed_size) ? processed_size : 0;
+
+	if (0 != got_md5buf)
+		memcpy((*logfiles)[0].md5buf, md5buf, sizeof(md5buf));
+	else
+		memset((*logfiles)[0].md5buf, 0, sizeof((*logfiles)[0].md5buf));
+
+	if (0 != got_last_rec_md5)
+		memcpy((*logfiles)[0].last_rec_md5, last_rec_md5, sizeof(last_rec_md5));
+	else
+		memset((*logfiles)[0].last_rec_md5, 0, sizeof((*logfiles)[0].last_rec_md5));
+
+	return SUCCEED;
+}
+#endif
+
 /******************************************************************************
  *                                                                            *
  * Function: process_log_check                                                *
@@ -3794,6 +4000,35 @@ int	process_log_check(char *server, unsigned short port, zbx_vector_ptr_t *regex
 		/* not be sent to server. */
 	}
 
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
+	if (0 != (ZBX_METRIC_FLAG_NEW & metric->flags) && NULL != metric->persistent_file_name)
+	{
+		/* try to restore state from persistent file */
+		char	*err_msg = NULL;
+		char	buf[MAX_STRING_LEN];
+
+		if (SUCCEED == zbx_read_persistent_file(metric->persistent_file_name, buf, sizeof(buf), &err_msg))
+		{
+			zabbix_log(LOG_LEVEL_DEBUG, "%s(): item \"%s\": persistent file \"%s\" found, data:[%s]",
+					__func__, metric->key, metric->persistent_file_name, buf);
+
+			if (SUCCEED != zbx_restore_file_details(buf, &metric->logfiles, &metric->logfiles_num,
+					&err_msg))
+			{
+				zabbix_log(LOG_LEVEL_WARNING, "%s(): item \"%s\": persistent file \"%s\" restore error:"
+						" %s", __func__, metric->key, metric->persistent_file_name, err_msg);
+				zbx_free(err_msg);
+			}
+		}
+		else
+		{
+			/* persistent file errors are not fatal */
+			zabbix_log(LOG_LEVEL_DEBUG, "%s(): item \"%s\": persistent file [%s] does not exist or error:"
+					" %s", __func__, metric->key, metric->persistent_file_name, err_msg);
+			zbx_free(err_msg);
+		}
+	}
+#endif
 	ret = process_logrt(metric->flags, filename, &metric->lastlogsize, &metric->mtime, lastlogsize_sent, mtime_sent,
 			&metric->skip_old_data, &metric->big_rec, &metric->use_ino, error, &metric->logfiles,
 			metric->logfiles_num, &logfiles_new, &logfiles_num_new, encoding, regexps, regexp,
