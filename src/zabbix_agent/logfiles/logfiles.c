@@ -462,7 +462,7 @@ static void	print_logfile_list(const struct st_logfile *logfiles, int logfiles_n
 					" processed_size:" ZBX_FS_UI64 " seq:%d copy_of:%d incomplete:%d dev:"
 					ZBX_FS_UI64 " ino_hi:" ZBX_FS_UI64 " ino_lo:" ZBX_FS_UI64
 					" md5size:%d md5buf:%s last_rec_size:%d last_rec_md5:%s", i,
-					logfiles[i].filename, logfiles[i].mtime, logfiles[i].size,
+					ZBX_NULL2STR(logfiles[i].filename), logfiles[i].mtime, logfiles[i].size,
 					logfiles[i].processed_size, logfiles[i].seq, logfiles[i].copy_of,
 					logfiles[i].incomplete, logfiles[i].dev, logfiles[i].ino_hi,
 					logfiles[i].ino_lo, logfiles[i].md5size, buf, logfiles[i].last_rec_size,
