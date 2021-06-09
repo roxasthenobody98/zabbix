@@ -3653,10 +3653,12 @@ static int	init_persistent_dir_parameter(const char *server, unsigned short port
  *          from JSON string which was read from persistent file              *
  *                                                                            *
  * Parameters:                                                                *
- *     str          - [IN] JSON string                                        *
- *     logfiles     - [OUT] log file list (vector)                            *
- *     logfiles_num - [OUT] number of elements in the log file list           *
- *     err_msg      - [OUT] dynamically allocated error message               *
+ *     str            - [IN] JSON string                                      *
+ *     logfiles       - [OUT] log file list (vector)                          *
+ *     logfiles_num   - [OUT] number of elements in the log file list         *
+ *     processed_size - [OUT] processed size attribute                        *
+ *     mtime          - [OUT] mtime                                           *
+ *     err_msg        - [OUT] dynamically allocated error message             *
  *                                                                            *
  * Return value: SUCCEED or FAIL                                              *
  *                                                                            *
@@ -3681,25 +3683,25 @@ static int	init_persistent_dir_parameter(const char *server, unsigned short port
  *	"md5buf":"7f2d0cf871384671c51359ce8c90e475"}                          *
  ******************************************************************************/
 static int	zbx_restore_file_details(const char *str, struct st_logfile **logfiles, int *logfiles_num,
-		char **err_msg)
+		zbx_uint64_t *processed_size, int *mtime, char **err_msg)
 {
 	struct zbx_json_parse	jp;
 	/* temporary variables before filling in 'st_logfile' elements */
 	char		filename[MAX_STRING_LEN];
-	int		mtime;
-	int		md5size;
-	int		last_rec_size;
-	int		seq;
-	int		incomplete;
-	int		copy_of;
+	int		mtime_tmp = 0;
+	int		md5size = 0;
+	int		last_rec_size = 0;
+	int		seq = 0;
+	int		incomplete = 0;
+	int		copy_of = 0;
 	zbx_uint64_t	dev;
 	zbx_uint64_t	ino_lo;
 	zbx_uint64_t	ino_hi;
 	zbx_uint64_t	size;
-	zbx_uint64_t	processed_size;
+	zbx_uint64_t	processed_size_tmp;
 	md5_byte_t	md5buf[MD5_DIGEST_SIZE];
 	md5_byte_t	last_rec_md5[MD5_DIGEST_SIZE];
-	/* validation flags */
+	/* flags to check missing attributes */
 	int		got_filename = 0, got_mtime = 0, got_processed_size = 0, got_last_rec_size = 0,
 			got_last_rec_md5 = 0, got_seq = 0, got_incomplete = 0, got_copy_of = 0, got_dev = 0,
 			got_ino_lo = 0, got_ino_hi = 0, got_size = 0, got_md5size = 0, got_md5buf = 0, sum;
@@ -3716,13 +3718,13 @@ static int	zbx_restore_file_details(const char *str, struct st_logfile **logfile
 
 	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_MTIME, tmp, sizeof(tmp), NULL))
 	{
-		mtime = atoi(tmp);
+		mtime_tmp = atoi(tmp);
 		got_mtime = 1;
 	}
 
 	if (SUCCEED == zbx_json_value_by_name(&jp, ZBX_PERSIST_TAG_PROCESSED_SIZE, tmp, sizeof(tmp), NULL))
 	{
-		if (SUCCEED == is_uint64(tmp, &processed_size))
+		if (SUCCEED == is_uint64(tmp, &processed_size_tmp))
 			got_processed_size = 1;
 	}
 
@@ -3806,7 +3808,14 @@ static int	zbx_restore_file_details(const char *str, struct st_logfile **logfile
 	sum = got_filename + got_last_rec_size + got_last_rec_md5 + got_seq + got_incomplete + got_copy_of + got_dev +
 			got_ino_lo + got_ino_hi + got_size + got_md5size + got_md5buf;
 
-	if (12 != sum && 0 != sum)
+	if (0 == sum)	/* got only metadata 'mtime' and 'processed_size' */
+	{
+		*mtime = mtime_tmp;
+		*processed_size = processed_size_tmp;
+		return SUCCEED;
+	}
+
+	if (12 != sum)
 	{
 		*err_msg = zbx_dsprintf(*err_msg, "present/missing attributes: filename:%d last_rec_size:%d"
 				" last_rec_md5:%d seq:%d incomplete:%d copy_of:%d dev:%d ino_lo:%d ino_hi:%d size:%d"
@@ -3816,34 +3825,27 @@ static int	zbx_restore_file_details(const char *str, struct st_logfile **logfile
 		return FAIL;
 	}
 
-	/* Create log file list with one element. It will be used as the 'old log file list', */
+	/* All attributes present. Create log file list with one element. It will be used as the 'old log file list', */
 	/* it does not need to be resizable. */
 	*logfiles = (struct st_logfile *)zbx_malloc(NULL, sizeof(struct st_logfile));
 	*logfiles_num = 1;
 
-	(*logfiles)[0].filename = (0 != got_filename) ? zbx_strdup(NULL, filename) : NULL;
-	(*logfiles)[0].mtime = (0 != got_mtime) ? mtime : 0;
-	(*logfiles)[0].md5size = (0 != got_md5size) ? md5size : -1;
-	(*logfiles)[0].last_rec_size = (0 != got_last_rec_size) ? last_rec_size : -1;
-	(*logfiles)[0].seq = (0 != got_seq) ? seq : 0;
+	(*logfiles)[0].filename = zbx_strdup(NULL, filename);
+	(*logfiles)[0].mtime = mtime_tmp;
+	(*logfiles)[0].md5size = md5size;
+	(*logfiles)[0].last_rec_size = last_rec_size;
+	(*logfiles)[0].seq = seq;
 	(*logfiles)[0].retry = 0;
-	(*logfiles)[0].incomplete = (0 != got_incomplete) ? incomplete : 0;
-	(*logfiles)[0].copy_of = (0 != got_copy_of) ? copy_of : -1;
-	(*logfiles)[0].dev = (0 != got_dev) ? dev : 0;
-	(*logfiles)[0].ino_lo = (0 != got_ino_lo) ? ino_lo : 0;
-	(*logfiles)[0].ino_hi = (0 != got_ino_hi) ? ino_hi : 0;
-	(*logfiles)[0].size = (0 != got_size) ? size : 0;
-	(*logfiles)[0].processed_size = (0 != got_processed_size) ? processed_size : 0;
+	(*logfiles)[0].incomplete = incomplete;
+	(*logfiles)[0].copy_of = copy_of;
+	(*logfiles)[0].dev = dev;
+	(*logfiles)[0].ino_lo = ino_lo;
+	(*logfiles)[0].ino_hi = ino_hi;
+	(*logfiles)[0].size = size;
+	(*logfiles)[0].processed_size = processed_size_tmp;
 
-	if (0 != got_md5buf)
-		memcpy((*logfiles)[0].md5buf, md5buf, sizeof(md5buf));
-	else
-		memset((*logfiles)[0].md5buf, 0, sizeof((*logfiles)[0].md5buf));
-
-	if (0 != got_last_rec_md5)
-		memcpy((*logfiles)[0].last_rec_md5, last_rec_md5, sizeof(last_rec_md5));
-	else
-		memset((*logfiles)[0].last_rec_md5, 0, sizeof((*logfiles)[0].last_rec_md5));
+	memcpy((*logfiles)[0].md5buf, md5buf, sizeof(md5buf));
+	memcpy((*logfiles)[0].last_rec_md5, last_rec_md5, sizeof(last_rec_md5));
 
 	return SUCCEED;
 }
@@ -4009,11 +4011,31 @@ int	process_log_check(char *server, unsigned short port, zbx_vector_ptr_t *regex
 
 		if (SUCCEED == zbx_read_persistent_file(metric->persistent_file_name, buf, sizeof(buf), &err_msg))
 		{
+			zbx_uint64_t	processed_size_tmp = 0;
+			int		mtime_tmp = 0;
+
 			zabbix_log(LOG_LEVEL_DEBUG, "%s(): item \"%s\": persistent file \"%s\" found, data:[%s]",
 					__func__, metric->key, metric->persistent_file_name, buf);
 
-			if (SUCCEED != zbx_restore_file_details(buf, &metric->logfiles, &metric->logfiles_num,
-					&err_msg))
+			if (SUCCEED == zbx_restore_file_details(buf, &metric->logfiles, &metric->logfiles_num,
+					&processed_size_tmp, &mtime_tmp, &err_msg))
+			{
+				if (0 == metric->logfiles_num)	/* only metadata was found */
+				{
+					if (metric->lastlogsize != processed_size_tmp || metric->mtime != mtime_tmp)
+					{
+						zabbix_log(LOG_LEVEL_DEBUG, "%s(): item \"%s\": overriding mtime:"
+								" %d -> %d lastlogsize: " ZBX_FS_UI64 " -> " ZBX_FS_UI64
+								" from persistent file", __func__, metric->key,
+								metric->mtime, mtime_tmp, metric->lastlogsize,
+								processed_size_tmp);
+					}
+
+					metric->lastlogsize = processed_size_tmp;
+					metric->mtime = mtime_tmp;
+				}
+			}
+			else
 			{
 				zabbix_log(LOG_LEVEL_WARNING, "%s(): item \"%s\": persistent file \"%s\" restore error:"
 						" %s", __func__, metric->key, metric->persistent_file_name, err_msg);
