@@ -1,1 +1,1 @@
-A......... [ZBX-19107] fixed check for presence of an UI rule when updating user role (jfreibergs)
+A......... [ZBX-19107] fixed storing User roles' UI element access rules, checks for at least one allowed (jfreibergs)

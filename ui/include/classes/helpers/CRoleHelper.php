@@ -276,7 +276,7 @@ class CRoleHelper {
 	 * @static
 	 *
 	 * @param integer $user_type  User type.
-	 * @param bool $unprefixed  Whether to remove the "ui." prefix form rule names.
+	 * @param bool    $unprefixed  Whether to remove the "ui." prefix form rule names.
 	 *
 	 * @return array  Returns the array of rule names for specified user type.
 	 */
@@ -308,9 +308,11 @@ class CRoleHelper {
 		}
 
 		if ($unprefixed) {
-			$skip = strlen(CRoleHelper::SECTION_UI.'.');
+			$skip = strlen(self::SECTION_UI.'.');
 			foreach ($rules as $key => $rule) {
-				$rules[$key] = substr($rule, $skip);
+				$name = substr($rule, $skip);
+				$rules[$name] = $name;
+				unset($rules[$key]);
 			}
 		}
 

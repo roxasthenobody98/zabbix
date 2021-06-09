@@ -355,7 +355,18 @@ class testUserRole extends CAPITest {
 				],
 				'expected_error' => null
 			],
-			'Update with rule on same type' => [
+			'Revoke default UI access rule' => [
+				'role' => [
+					[
+						'roleid' => 1,
+						'rules' => [
+							'ui.default_access' => 0
+						]
+					],
+				],
+				'expected_error' => null
+			],
+			'Type change and enable default access' => [
 				'role' => [
 					[
 						'roleid' => 1,
@@ -366,18 +377,6 @@ class testUserRole extends CAPITest {
 					],
 				],
 				'expected_error' => null
-			],
-			'Revoke default UI access rule' => [
-				'role' => [
-					[
-						'roleid' => 1,
-						'type' => USER_TYPE_ZABBIX_ADMIN,
-						'rules' => [
-							'ui.default_access' => 0
-						]
-					],
-				],
-				'expected_error' => 'At least one UI element must be checked.'
 			],
 			'Revoke default UI access rule, add another' => [
 				'role' => [
@@ -396,7 +395,7 @@ class testUserRole extends CAPITest {
 				],
 				'expected_error' => null
 			],
-			'Revoke only left UI access rule' => [
+			'Revoke some access rule' => [
 				'role' => [
 					[
 						'roleid' => 1,
@@ -410,7 +409,7 @@ class testUserRole extends CAPITest {
 						]
 					],
 				],
-				'expected_error' => 'At least one UI element must be checked.'
+				'expected_error' => null
 			],
 			'Update with UI rule and type change' => [
 				'role' => [
@@ -458,11 +457,11 @@ class testUserRole extends CAPITest {
 			$dbRow = DBFetch($dbResult);
 
 			if (array_key_exists('name', $role[$key])) {
-				$this->assertEquals($dbRow['name'], $role[$key]['name']);
+				$this->assertEquals($dbRow['name'], $role[$key]['name'], 'Name does not match');
 			}
 
 			if (array_key_exists('type', $role[$key])) {
-				$this->assertEquals($dbRow['type'], $role[$key]['type']);
+				$this->assertEquals((int) $dbRow['type'], (int) $role[$key]['type'], 'Type does not match');
 			}
 		}
 	}
