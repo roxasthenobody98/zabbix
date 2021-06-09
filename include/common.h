@@ -1651,4 +1651,5 @@ int	zbx_str_extract(const char *text, size_t len, char **value);
 #define AUDIT_RESOURCE_SCRIPT	25
 
 void	zbx_md5buf2str(const md5_byte_t *md5, char *str);
+int	zbx_hex2bin(const unsigned char *p_hex, unsigned char *buf, int buf_len);
 #endif
