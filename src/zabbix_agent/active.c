@@ -195,7 +195,7 @@ static void	add_check(const char *key, const char *key_orig, int refresh, zbx_ui
 				if (SUCCEED != zbx_remove_persistent_file(metric->persistent_file_name, &error))
 				{
 					/* log error and continue operation */
-					zabbix_log(LOG_LEVEL_WARNING, "cannot remove peristent file \"%s\": %s",
+					zabbix_log(LOG_LEVEL_WARNING, "cannot remove persistent file \"%s\": %s",
 							metric->persistent_file_name, error);
 					zbx_free(error);
 				}
