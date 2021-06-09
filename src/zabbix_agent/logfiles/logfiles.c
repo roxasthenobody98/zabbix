@@ -1916,7 +1916,7 @@ static void	zbx_update_prep_vec_data(const struct st_logfile *logfile, zbx_uint6
 	prep_vec_elem->last_rec_size = last_rec_size;
 
 	/* It is expensive to calculate MD5 sum for every record when it is required only for the last record. */
-	/* Therefore we maintain a copy of the curent record and calculate MD5 sum later when necessary. */
+	/* Therefore we maintain a copy of the current record and calculate MD5 sum later when necessary. */
 	memcpy(prep_vec_elem->last_rec_part, last_rec, (size_t)MIN(ZBX_LAST_REC_COPY_MAX_LEN, last_rec_size));
 }
 #endif	/* not WINDOWS, not __MINGW32__ */
@@ -2259,7 +2259,7 @@ out:
 	if (-1 != prep_vec_idx)
 	{
 		/* Preparation vector element was created or updated. */
-		/* Update the list of log files with the size and MD5 sum of the last processsed record. */
+		/* Update the list of log files with the size and MD5 sum of the last processed record. */
 		md5_state_t	state;
 		md5_byte_t	md5[MD5_DIGEST_SIZE];
 
