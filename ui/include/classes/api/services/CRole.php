@@ -438,7 +438,7 @@ class CRole extends CApiService {
 	 *
 	 * @throws APIException if input is invalid.
 	 */
-	private function checkRules(array $roles, array $db_roles = [], ?array &$computed_roles = []): void {
+	private function checkRules(array $roles, array $db_roles = [], ?array &$computed_roles): void {
 		$computed_roles = [];
 		$moduleids = [];
 
