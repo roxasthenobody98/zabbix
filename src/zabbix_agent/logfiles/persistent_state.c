@@ -373,7 +373,11 @@ int	zbx_write_persistent_file(const char *filename, const char *data, char **err
 		return FAIL;
 	}
 
-	fclose(fp);
+	if (0 != fclose(fp))
+	{
+		*error = zbx_dsprintf(*error, "cannot close file: %s", zbx_strerror(errno));
+		return FAIL;
+	}
 
 	return SUCCEED;
 }
