@@ -233,13 +233,14 @@ out:
 
 /******************************************************************************
  *                                                                            *
- * Function: file_start_md5                                                   *
+ * Function: file_part_md5                                                    *
  *                                                                            *
- * Purpose: calculate the MD5 sum of the first block of the file              *
+ * Purpose: calculate the MD5 sum of the specified part of the file           *
  *                                                                            *
  * Parameters:                                                                *
  *     f        - [IN] file descriptor                                        *
- *     length   - [IN] length of the block in bytes. Maximum is 512 bytes.    *
+ *     offset   - [IN] start position of the part                             *
+ *     length   - [IN] length of the part in bytes. Maximum is 512 bytes.     *
  *     md5buf   - [OUT] output buffer, MD5_DIGEST_SIZE-bytes long, where the  *
  *                calculated MD5 sum is placed                                *
  *     filename - [IN] file name, used in error logging                       *
@@ -248,7 +249,8 @@ out:
  * Return value: SUCCEED or FAIL                                              *
  *                                                                            *
  ******************************************************************************/
-static int	file_start_md5(int f, int length, md5_byte_t *md5buf, const char *filename, char **err_msg)
+static int	file_part_md5(int f, size_t offset, int length, md5_byte_t *md5buf, const char *filename,
+		char **err_msg)
 {
 	md5_state_t	state;
 	char		buf[MAX_LEN_MD5];
@@ -261,10 +263,10 @@ static int	file_start_md5(int f, int length, md5_byte_t *md5buf, const char *fil
 		return FAIL;
 	}
 
-	if ((zbx_offset_t)-1 == zbx_lseek(f, 0, SEEK_SET))
+	if ((zbx_offset_t)-1 == zbx_lseek(f, offset, SEEK_SET))
 	{
-		*err_msg = zbx_dsprintf(*err_msg, "Cannot set position to 0 for file \"%s\": %s", filename,
-				zbx_strerror(errno));
+		*err_msg = zbx_dsprintf(*err_msg, "Cannot set position to " ZBX_FS_SIZE_T " for file \"%s\": %s",
+				(zbx_fs_size_t)offset, filename, zbx_strerror(errno));
 		return FAIL;
 	}
 
@@ -645,7 +647,7 @@ static int	is_same_file_logcpt(const struct st_logfile *old_file, const struct s
 		if (-1 == (f = open_file_helper(new_file->filename, err_msg)))
 			return ZBX_SAME_FILE_ERROR;
 
-		if (SUCCEED == file_start_md5(f, old_file->md5size, md5tmp, new_file->filename, err_msg))
+		if (SUCCEED == file_part_md5(f, 0, old_file->md5size, md5tmp, new_file->filename, err_msg))
 			ret = examine_md5_and_place(old_file->md5buf, md5tmp, sizeof(md5tmp), is_same_place);
 		else
 			ret = ZBX_SAME_FILE_ERROR;
@@ -685,7 +687,7 @@ static int	is_same_file_logcpt(const struct st_logfile *old_file, const struct s
 		if (-1 == (f = open_file_helper(new_files[i].filename, err_msg)))
 			return ZBX_SAME_FILE_ERROR;
 
-		if (SUCCEED == file_start_md5(f, new_file->md5size, md5tmp, new_files[i].filename, err_msg))
+		if (SUCCEED == file_part_md5(f, 0, new_file->md5size, md5tmp, new_files[i].filename, err_msg))
 		{
 			ret = examine_md5_and_place(new_file->md5buf, md5tmp, sizeof(md5tmp),
 					compare_file_places(old_file, new_files + i, use_ino));
@@ -714,7 +716,7 @@ static int	is_same_file_logcpt(const struct st_logfile *old_file, const struct s
 		if (-1 == (f = open_file_helper(old_file->filename, err_msg)))
 			return ZBX_SAME_FILE_NO;	/* not an error if it is no longer available */
 
-		if (SUCCEED == file_start_md5(f, new_file->md5size, md5tmp, old_file->filename, err_msg))
+		if (SUCCEED == file_part_md5(f, 0, new_file->md5size, md5tmp, old_file->filename, err_msg))
 		{
 			ret = examine_md5_and_place(new_file->md5buf, md5tmp, sizeof(md5tmp),
 					compare_file_places(old_file, new_file, use_ino));
@@ -848,7 +850,7 @@ static int	is_same_file_logrt(const struct st_logfile *old_file, const struct st
 		if (-1 == (f = open_file_helper(new_file->filename, err_msg)))
 			return ZBX_SAME_FILE_ERROR;
 
-		if (SUCCEED == file_start_md5(f, old_file->md5size, md5tmp, new_file->filename, err_msg))
+		if (SUCCEED == file_part_md5(f, 0, old_file->md5size, md5tmp, new_file->filename, err_msg))
 		{
 			ret = (0 == memcmp(old_file->md5buf, &md5tmp, sizeof(md5tmp))) ? ZBX_SAME_FILE_YES :
 					ZBX_SAME_FILE_NO;
@@ -1668,8 +1670,10 @@ static int	fill_file_details(struct st_logfile **logfiles, int logfiles_num, cha
 
 		p->md5size = (zbx_uint64_t)MAX_LEN_MD5 > p->size ? (int)p->size : MAX_LEN_MD5;
 
-		if (SUCCEED != (ret = file_start_md5(f, p->md5size, p->md5buf, p->filename, err_msg)))
+		/* MD5 of the file first block (up to 512 bytes) */
+		if (SUCCEED != (ret = file_part_md5(f, 0, p->md5size, p->md5buf, p->filename, err_msg)))
 			goto clean;
+
 #if defined(_WINDOWS) || defined(__MINGW32__)
 		ret = file_id(f, use_ino, &p->dev, &p->ino_lo, &p->ino_hi, p->filename, err_msg);
 #endif	/*_WINDOWS*/
@@ -2506,7 +2510,7 @@ static int	files_start_with_same_md5(const struct st_logfile *log1, const struct
 		if (-1 == (fd = zbx_open(file_larger->filename, O_RDONLY)))
 			return FAIL;
 
-		if (SUCCEED == file_start_md5(fd, file_smaller->md5size, md5tmp, "", &err_msg))
+		if (SUCCEED == file_part_md5(fd, 0, file_smaller->md5size, md5tmp, "", &err_msg))
 		{
 			if (0 == memcmp(file_smaller->md5buf, md5tmp, sizeof(md5tmp)))
 				ret = SUCCEED;
