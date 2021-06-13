@@ -29,7 +29,7 @@
 #	include "zbxtypes.h"	/* ssize_t */
 #endif /* _WINDOWS */
 
-#define MAX_LEN_MD5	512	/* maximum size of the initial part of the file to calculate MD5 sum for */
+#define MAX_PART_FOR_MD5	512	/* maximum size of the part of the file to calculate MD5 sum for */
 
 #define ZBX_SAME_FILE_ERROR	-1
 #define ZBX_SAME_FILE_NO	0
@@ -253,13 +253,13 @@ static int	file_part_md5(int f, size_t offset, int length, md5_byte_t *md5buf, c
 		char **err_msg)
 {
 	md5_state_t	state;
-	char		buf[MAX_LEN_MD5];
+	char		buf[MAX_PART_FOR_MD5];
 	int		rc;
 
-	if (MAX_LEN_MD5 < length)
+	if (MAX_PART_FOR_MD5 < length)
 	{
-		*err_msg = zbx_dsprintf(*err_msg, "Length %d exceeds maximum MD5 fragment length of %d.", length,
-				MAX_LEN_MD5);
+		*err_msg = zbx_dsprintf(*err_msg, "Length %d exceeds maximum MD5 fragment length %d.", length,
+				MAX_PART_FOR_MD5);
 		return FAIL;
 	}
 
@@ -1668,7 +1668,7 @@ static int	fill_file_details(struct st_logfile **logfiles, int logfiles_num, cha
 		if (-1 == (f = open_file_helper(p->filename, err_msg)))
 			return FAIL;
 
-		p->md5size = (zbx_uint64_t)MAX_LEN_MD5 > p->size ? (int)p->size : MAX_LEN_MD5;
+		p->md5size = (zbx_uint64_t)MAX_PART_FOR_MD5 > p->size ? (int)p->size : MAX_PART_FOR_MD5;
 
 		/* MD5 of the file first block (up to 512 bytes) */
 		if (SUCCEED != (ret = file_part_md5(f, 0, p->md5size, p->md5buf, p->filename, err_msg)))
