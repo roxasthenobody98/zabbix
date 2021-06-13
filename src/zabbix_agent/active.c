@@ -776,9 +776,6 @@ static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
 	{
 		char		*error = NULL;
 		struct zbx_json	json;
-		md5_state_t	state;
-		md5_byte_t	md5[MD5_DIGEST_SIZE];
-		char		buf[33];	/* for MD5 sum representation with hex-digits: 2 * 16 bytes + '\0' */
 
 		/* prepare JSON */
 		zbx_json_init(&json, ZBX_JSON_STAT_BUF_LEN);
@@ -795,6 +792,11 @@ static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
 
 		if (NULL != prep_vec->values[i].filename)
 		{
+			md5_state_t	state;
+			md5_byte_t	md5[MD5_DIGEST_SIZE];
+			char		buf[33];	/* for MD5 sum representation with */
+							/* hex-digits: 2 * 16 bytes + '\0' */
+
 			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_LAST_REC_SIZE,
 					(zbx_uint64_t)prep_vec->values[i].last_rec_size);
 
