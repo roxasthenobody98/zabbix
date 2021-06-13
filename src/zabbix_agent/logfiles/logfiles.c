@@ -3531,7 +3531,38 @@ static int	process_logrt(unsigned char flags, const char *filename, zbx_uint64_t
 	*logfiles_num_new = logfiles_num;
 
 	if (0 < logfiles_num)
+	{
+		/* Try to update MD5 sums of initial blocks if they were calculated for small blocks. */
+		/* Log file processing has been done. Errors can be ignored here. */
+		int	k;
+
+		ret = SUCCEED;
+
+		for (k = 0; k < logfiles_num; k++)
+		{
+			if (MAX_PART_FOR_MD5 > logfiles[k].md5size &&
+					logfiles[k].size > (zbx_uint64_t)logfiles[k].md5size)
+			{
+				int	f, new_md5size = (int)MIN(MAX_PART_FOR_MD5, logfiles[k].size);
+
+				if (-1 == (f = zbx_open(logfiles[k].filename, O_RDONLY)))
+					continue;
+
+				if (FAIL == (ret = file_part_md5(f, 0, new_md5size, logfiles[k].md5buf,
+						logfiles[k].filename, err_msg)))
+				{
+					zbx_free(err_msg);
+				}
+
+				logfiles[k].md5size = new_md5size;
+
+				if (0 != close(f))
+					continue;
+			}
+		}
+
 		*logfiles_new = logfiles;
+	}
 out:
 	if (0.0f != max_delay)
 	{
