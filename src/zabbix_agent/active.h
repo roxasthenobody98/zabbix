@@ -76,8 +76,8 @@ ZBX_ACTIVE_BUFFER;
 
 ZBX_THREAD_ENTRY(active_checks_thread, args);
 
-#define ZBX_LAST_REC_COPY_MAX_LEN	512	/* keep a copy of up to the first 512 bytes of the last record to */
-						/* calculate md5 sum. It could be a not null-terminated string! */
+#define MAX_PART_FOR_MD5	512	/* maximum size of the part of the file to calculate MD5 sum for */
+
 typedef struct
 {
 	char		*key_orig;
@@ -96,7 +96,9 @@ typedef struct
 	zbx_uint64_t	size;
 	zbx_uint64_t	processed_size;
 	md5_byte_t	md5buf[MD5_DIGEST_SIZE];
-	char		last_rec_part[ZBX_LAST_REC_COPY_MAX_LEN];
+	char		last_rec_part[MAX_PART_FOR_MD5];	/* Keep a copy of up to the first 512 bytes of */
+								/* the last record to calculate md5 sum. It could */
+								/* be a not null-terminated string! */
 }
 zbx_pre_persistent_t;
 

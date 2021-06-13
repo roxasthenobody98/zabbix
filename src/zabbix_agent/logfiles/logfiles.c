@@ -1918,7 +1918,7 @@ static void	zbx_update_prep_vec_data(const struct st_logfile *logfile, zbx_uint6
 
 	/* It is expensive to calculate MD5 sum for every record when it is required only for the last record. */
 	/* Therefore we maintain a copy of the current record and calculate MD5 sum later when necessary. */
-	memcpy(prep_vec_elem->last_rec_part, last_rec, (size_t)MIN(ZBX_LAST_REC_COPY_MAX_LEN, last_rec_size));
+	memcpy(prep_vec_elem->last_rec_part, last_rec, (size_t)MIN(MAX_PART_FOR_MD5, last_rec_size));
 }
 #endif	/* not WINDOWS, not __MINGW32__ */
 
@@ -2266,7 +2266,7 @@ out:
 
 		zbx_md5_init(&state);
 		zbx_md5_append(&state, (const md5_byte_t *)prep_vec->values[prep_vec_idx].last_rec_part,
-				(int)MIN(ZBX_LAST_REC_COPY_MAX_LEN, prep_vec->values[prep_vec_idx].last_rec_size));
+				(int)MIN(MAX_PART_FOR_MD5, prep_vec->values[prep_vec_idx].last_rec_size));
 		zbx_md5_finish(&state, md5);
 
 		logfile->last_rec_size = prep_vec->values[prep_vec_idx].last_rec_size;

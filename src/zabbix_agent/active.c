@@ -802,7 +802,7 @@ static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
 
 			zbx_md5_init(&state);
 			zbx_md5_append(&state, (const md5_byte_t *)prep_vec->values[i].last_rec_part,
-					MIN(ZBX_LAST_REC_COPY_MAX_LEN, prep_vec->values[i].last_rec_size));
+					MIN(MAX_PART_FOR_MD5, prep_vec->values[i].last_rec_size));
 			zbx_md5_finish(&state, md5);
 
 			zbx_md5buf2str(md5, buf);
