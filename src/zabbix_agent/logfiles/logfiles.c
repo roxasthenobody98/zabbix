@@ -1961,6 +1961,10 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 #if !defined(_WINDOWS) && !defined(__MINGW32__)
 	int				prep_vec_idx = -1;	/* index in 'prep_vec' vector */
 #endif
+	zbx_uint64_t			processed_size;		/* how far (in bytes) the log file was processed */
+	int				last_rec_offset = 0;	/* offset where the last processed record begins */
+								/* in 'buf' */
+	int				last_rec_size = -1;	/* size of the last processed record */
 
 #define BUF_SIZE	(256 * ZBX_KIBIBYTE)	/* The longest encodings use 4 bytes for every character. To send */
 						/* up to 64 k characters to Zabbix server a 256 kB buffer might be */
@@ -2032,10 +2036,10 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 					/* regexp now (our buffer length corresponds to what we can save in the */
 					/* database). */
 
-					char		*value;
-					zbx_uint64_t	lastlogsize1;
-					int		send_err;
+					char	*value, last_byte;
+					int	send_err;
 
+					last_byte = buf[BUF_SIZE];
 					buf[BUF_SIZE] = '\0';
 
 					if ('\0' != *encoding)
@@ -2048,11 +2052,16 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 							" will be analyzed, the rest will be ignored while Zabbix agent"
 							" is running.", value);
 
-					lastlogsize1 = (size_t)offset + (size_t)nbytes;
+					processed_size = (size_t)offset + (size_t)nbytes;
+					last_rec_offset = 0;
+					last_rec_size = nbytes;
 					send_err = FAIL;
 #if !defined(_WINDOWS) && !defined(__MINGW32__)
 					if (NULL != persistent_file_name)
 					{
+						/* Prepare 'prep_vec' element even if the current record won't match. */
+						/* Its mtime and lastlogsize could be sent to server later as */
+						/* metadata update, then a persistent file should be written. */
 						if (-1 == prep_vec_idx)
 						{
 							prep_vec_idx = zbx_find_or_create_prep_vec_element(prep_vec,
@@ -2061,8 +2070,10 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 									prep_vec->values + prep_vec_idx);
 						}
 
-						zbx_update_prep_vec_data(logfile, lastlogsize1, buf, BUF_SIZE,
+						*p_nl = last_byte;	/* temporary restore the replaced byte */
+						zbx_update_prep_vec_data(logfile, processed_size, buf, last_rec_size,
 								prep_vec->values + prep_vec_idx);
+						buf[BUF_SIZE] = '\0';
 					}
 #endif
 					if (ZBX_REGEXP_MATCH == (regexp_ret = zbx_match_log_rec(is_count_item, regexps,
@@ -2072,10 +2083,10 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 						{
 							if (SUCCEED == (send_err = process_value(server, port,
 									hostname, key, item_value, ITEM_STATE_NORMAL,
-									&lastlogsize1, mtime, NULL, NULL, NULL, NULL,
+									&processed_size, mtime, NULL, NULL, NULL, NULL,
 									flags | ZBX_METRIC_FLAG_PERSISTENT)))
 							{
-								*lastlogsize_sent = lastlogsize1;
+								*lastlogsize_sent = processed_size;
 								if (NULL != mtime_sent)
 									*mtime_sent = *mtime;
 
@@ -2092,12 +2103,15 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 								/* Sending of buffer failed. */
 								/* Try to resend it in the next check. */
 								ret = SUCCEED;
+								buf[BUF_SIZE] = last_byte;
 								goto out;
 							}
 						}
 						else	/* log.count[] or logrt.count[] */
 							(*s_count)--;
 					}
+
+					buf[BUF_SIZE] = last_byte;	/* finally restore the replaced byte */
 
 					if ('\0' != *encoding)
 						zbx_free(value);
@@ -2113,7 +2127,7 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 					if (0 != is_count_item ||
 							ZBX_REGEXP_NO_MATCH == regexp_ret || SUCCEED == send_err)
 					{
-						*lastlogsize = lastlogsize1;
+						*lastlogsize = processed_size;
 						*big_rec = 1;	/* ignore the rest of this record */
 					}
 				}
@@ -2142,10 +2156,10 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 
 				if (0 == *big_rec)
 				{
-					char		*value;
-					zbx_uint64_t	lastlogsize1;
-					int		send_err;
+					char	*value, newline_byte;
+					int	send_err;
 
+					newline_byte = *p_nl;
 					*p_nl = '\0';
 
 					if ('\0' != *encoding)
@@ -2153,11 +2167,16 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 					else
 						value = p_start;
 
-					lastlogsize1 = (size_t)offset + (size_t)(p_next - buf);
+					processed_size = (size_t)offset + (size_t)(p_next - buf);
+					last_rec_offset = (int)(p_start - buf);
+					last_rec_size = (int)(p_next - p_start);	/* includes newline */
 					send_err = FAIL;
 #if !defined(_WINDOWS) && !defined(__MINGW32__)
 					if (NULL != persistent_file_name)
 					{
+						/* Prepare 'prep_vec' element even if the current record won't match. */
+						/* Its mtime and lastlogsize could be sent to server later as */
+						/* metadata update, then a persistent file should be written. */
 						if (-1 == prep_vec_idx)
 						{
 							prep_vec_idx = zbx_find_or_create_prep_vec_element(prep_vec,
@@ -2166,9 +2185,10 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 									prep_vec->values + prep_vec_idx);
 						}
 
-						zbx_update_prep_vec_data(logfile, lastlogsize1, p_start,
-								(int)(p_nl - p_start),
-								prep_vec->values + prep_vec_idx);
+						*p_nl = newline_byte;	/* temporary restore the replaced byte */
+						zbx_update_prep_vec_data(logfile, processed_size, p_start,
+								last_rec_size, prep_vec->values + prep_vec_idx);
+						*p_nl = '\0';
 					}
 #endif
 					if (ZBX_REGEXP_MATCH == (regexp_ret = zbx_match_log_rec(is_count_item, regexps,
@@ -2178,10 +2198,10 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 						{
 							if (SUCCEED == (send_err = process_value(server, port,
 									hostname, key, item_value, ITEM_STATE_NORMAL,
-									&lastlogsize1, mtime, NULL, NULL, NULL, NULL,
+									&processed_size, mtime, NULL, NULL, NULL, NULL,
 									flags | ZBX_METRIC_FLAG_PERSISTENT)))
 							{
-								*lastlogsize_sent = lastlogsize1;
+								*lastlogsize_sent = processed_size;
 								if (NULL != mtime_sent)
 									*mtime_sent = *mtime;
 
@@ -2198,12 +2218,15 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 								/* Sending of buffer failed. */
 								/* Try to resend it in the next check. */
 								ret = SUCCEED;
+								*p_nl = newline_byte;
 								goto out;
 							}
 						}
 						else	/* log.count[] or logrt.count[] */
 							(*s_count)--;
 					}
+
+					*p_nl = newline_byte;	/* finally restore the replaced byte */
 
 					if ('\0' != *encoding)
 						zbx_free(value);
@@ -2219,7 +2242,7 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 					if (0 != is_count_item ||
 							ZBX_REGEXP_NO_MATCH == regexp_ret || SUCCEED == send_err)
 					{
-						*lastlogsize = lastlogsize1;
+						*lastlogsize = processed_size;
 					}
 				}
 				else
@@ -2256,23 +2279,19 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 		}
 	}
 out:
-#if !defined(_WINDOWS) && !defined(__MINGW32__)
-	if (-1 != prep_vec_idx)
+	if (SUCCEED == ret && -1 != last_rec_size)
 	{
-		/* Preparation vector element was created or updated. */
-		/* Update the list of log files with the size and MD5 sum of the last processed record. */
 		md5_state_t	state;
 		md5_byte_t	md5[MD5_DIGEST_SIZE];
 
 		zbx_md5_init(&state);
-		zbx_md5_append(&state, (const md5_byte_t *)prep_vec->values[prep_vec_idx].last_rec_part,
-				(int)MIN(MAX_PART_FOR_MD5, prep_vec->values[prep_vec_idx].last_rec_size));
+		zbx_md5_append(&state, (const md5_byte_t *)(buf + last_rec_offset),
+				(int)MIN(MAX_PART_FOR_MD5, last_rec_size));
 		zbx_md5_finish(&state, md5);
 
-		logfile->last_rec_size = prep_vec->values[prep_vec_idx].last_rec_size;
-		memcpy(logfile->last_rec_md5, md5, MD5_DIGEST_SIZE);
+		logfile->last_rec_size = last_rec_size;
+		memcpy(logfile->last_rec_md5, md5, sizeof(md5));
 	}
-#endif
 	return ret;
 #undef BUF_SIZE
 }
