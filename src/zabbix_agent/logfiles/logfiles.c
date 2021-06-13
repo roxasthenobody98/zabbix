@@ -1639,10 +1639,12 @@ static int	compile_filename_regexp(const char *filename_regexp, zbx_regexp_t **r
  * Purpose: fill-in MD5 sums, device and inode numbers for files in the list  *
  *                                                                            *
  * Parameters:                                                                *
- *     logfiles     - [IN/OUT] list of log files                              *
- *     logfiles_num - [IN] number of elements in 'logfiles'                   *
- *     use_ino      - [IN] how to get file IDs in file_id()                   *
- *     err_msg      - [IN/OUT] error message why operation failed             *
+ *     logfiles_old     - [IN] array of logfiles from the last check          *
+ *     logfiles_num_old - [IN] number of elements in "logfiles_old"           *
+ *     logfiles_new     - [IN/OUT] list of log files                          *
+ *     logfiles_num_new - [IN] number of elements in 'logfiles'               *
+ *     use_ino          - [IN] how to get file IDs in file_id()               *
+ *     err_msg          - [IN/OUT] error message why operation failed         *
  *                                                                            *
  * Return value: SUCCEED or FAIL                                              *
  *                                                                            *
@@ -1650,9 +1652,11 @@ static int	compile_filename_regexp(const char *filename_regexp, zbx_regexp_t **r
  *                                                                            *
  ******************************************************************************/
 #if defined(_WINDOWS) || defined(__MINGW32__)
-static int	fill_file_details(struct st_logfile **logfiles, int logfiles_num, int use_ino, char **err_msg)
+static int	fill_file_details(const struct st_logfile *logfiles_old, int logfiles_num_old,
+		struct st_logfile **logfiles_new, int logfiles_num_new, int use_ino, char **err_msg)
 #else
-static int	fill_file_details(struct st_logfile **logfiles, int logfiles_num, char **err_msg)
+static int	fill_file_details(const struct st_logfile *logfiles_old, int logfiles_num_old,
+		struct st_logfile **logfiles_new, int logfiles_num_new, char **err_msg)
 #endif
 {
 	int	i, ret = SUCCEED;
@@ -1660,26 +1664,88 @@ static int	fill_file_details(struct st_logfile **logfiles, int logfiles_num, cha
 	/* Fill in MD5 sums and file indexes in the logfile list. */
 	/* These operations require opening of file, therefore we group them together. */
 
-	for (i = 0; i < logfiles_num; i++)
+	for (i = 0; i < logfiles_num_new; i++)
 	{
-		int			f;
-		struct st_logfile	*p = *logfiles + i;
+		int			f, j;
+		struct st_logfile	*p_new = *logfiles_new + i;
+		md5_byte_t		md5tmp[MD5_DIGEST_SIZE];
 
-		if (-1 == (f = open_file_helper(p->filename, err_msg)))
+		if (-1 == (f = open_file_helper(p_new->filename, err_msg)))
 			return FAIL;
 
-		p->md5size = (zbx_uint64_t)MAX_PART_FOR_MD5 > p->size ? (int)p->size : MAX_PART_FOR_MD5;
+		/* Try to get MD5 sums for the new log file list which are comparable with the old file list. */
+		/* Then it will be easy to identify which are the same files in the old and the new lists. */
 
-		/* MD5 of the file first block (up to 512 bytes) */
-		if (SUCCEED != (ret = file_part_md5(f, 0, p->md5size, p->md5buf, p->filename, err_msg)))
-			goto clean;
+		for (j = 0; j < logfiles_num_old; j++)
+		{
+			const struct st_logfile	*p_old = logfiles_old + j;
+
+			if (p_old->size > p_new->size)	/* the old and the new file are not comparable */
+				continue;
+
+			if (0 < p_old->md5size)		/* file in the old file list is not empty */
+			{
+				if (SUCCEED != (ret = file_part_md5(f, 0, p_old->md5size, md5tmp, p_new->filename,
+						err_msg)))
+				{
+					goto clean;
+				}
+
+				if (0 != memcmp(p_old->md5buf, md5tmp, sizeof(md5tmp)))
+					continue;
+
+				p_new->md5size = p_old->md5size;
+				memcpy(p_new->md5buf, md5tmp, sizeof(p_new->md5buf));
+
+				/* both files are not empty, initial blocks have the same MD5 */
+
+				if (0 < p_old->last_rec_size)
+				{
+					if (SUCCEED != (ret = file_part_md5(f, p_old->processed_size -
+							(zbx_uint64_t)p_old->last_rec_size,
+							MIN(MAX_PART_FOR_MD5, p_old->last_rec_size),
+							md5tmp, p_new->filename, err_msg)))
+					{
+						goto clean;
+					}
+
+					if (0 != memcmp(p_old->last_rec_md5, md5tmp, sizeof(md5tmp)))
+						continue;
+
+					/* the last processed record in the old file was found also in the new file */
+					p_new->last_rec_size = p_old->last_rec_size;
+					memcpy(p_new->last_rec_md5, md5tmp, sizeof(p_new->last_rec_md5));
+					break;
+				}
+			}
+		}
+
+		if (logfiles_num_old == j)
+		{
+			/* No match found among old files. Get MD5 sum of initial block (up to 512 bytes). */
+			const int	md5size = (int)MIN(MAX_PART_FOR_MD5, p_new->size);
+
+			if (SUCCEED != (ret = file_part_md5(f, 0, md5size, p_new->md5buf, p_new->filename, err_msg)))
+				goto clean;
+
+			p_new->md5size = md5size;
+
+			/* 'last_rec_size' and 'last_rec_md5' are not yet available */
+			p_new->last_rec_size = -1;
+			memset(p_new->last_rec_md5, 0, sizeof(p_new->last_rec_md5));
+		}
 
 #if defined(_WINDOWS) || defined(__MINGW32__)
-		ret = file_id(f, use_ino, &p->dev, &p->ino_lo, &p->ino_hi, p->filename, err_msg);
+		ret = file_id(f, use_ino, &p_new->dev, &p_new->ino_lo, &p_new->ino_hi, p_new->filename, err_msg);
 #endif	/*_WINDOWS*/
 clean:
-		if (SUCCEED != close_file_helper(f, p->filename, err_msg) || FAIL == ret)
-			return FAIL;
+		if (SUCCEED == ret)	/* no errors so far */
+		{
+			if (SUCCEED != close_file_helper(f, p_new->filename, err_msg))
+				return FAIL;
+		}
+		else
+			close(f);
 	}
 
 	return ret;
@@ -1697,6 +1763,8 @@ clean:
  *                      or logrt.count                                        *
  *     filename       - [IN] logfile name (regular expression with a path)    *
  *     mtime          - [IN] last modification time of the file               *
+ *     logfiles_old     - [IN] array of logfiles from the last check          *
+ *     logfiles_num_old - [IN] number of elements in "logfiles_old"           *
  *     logfiles       - [IN/OUT] pointer to the list of logfiles              *
  *     logfiles_alloc - [IN/OUT] number of logfiles memory was allocated for  *
  *     logfiles_num   - [IN/OUT] number of already inserted logfiles          *
@@ -1712,6 +1780,7 @@ clean:
  *                                                                            *
  ******************************************************************************/
 static int	make_logfile_list(unsigned char flags, const char *filename, int mtime,
+		const struct st_logfile *logfiles_old, int logfiles_num_old,
 		struct st_logfile **logfiles, int *logfiles_alloc, int *logfiles_num, int *use_ino, char **err_msg)
 {
 	int	ret = SUCCEED;
@@ -1801,9 +1870,9 @@ clean1:
 		THIS_SHOULD_NEVER_HAPPEN;
 
 #if defined(_WINDOWS) || defined(__MINGW32__)
-	ret = fill_file_details(logfiles, *logfiles_num, *use_ino, err_msg);
+	ret = fill_file_details(logfiles_old, logfiles_num_old, logfiles, *logfiles_num, *use_ino, err_msg);
 #else
-	ret = fill_file_details(logfiles, *logfiles_num, err_msg);
+	ret = fill_file_details(logfiles_old, logfiles_num_old, logfiles, *logfiles_num, err_msg);
 #endif
 clean:
 	if ((FAIL == ret || ZBX_NO_FILE_ERROR == ret) && NULL != *logfiles)
@@ -3202,8 +3271,8 @@ static int	process_logrt(unsigned char flags, const char *filename, zbx_uint64_t
 
 	adjust_mtime_to_clock(mtime);
 
-	if (SUCCEED != (res = make_logfile_list(flags, filename, *mtime, &logfiles, &logfiles_alloc, &logfiles_num,
-			use_ino, err_msg)))
+	if (SUCCEED != (res = make_logfile_list(flags, filename, *mtime, *logfiles_old, logfiles_num_old,
+			&logfiles, &logfiles_alloc, &logfiles_num, use_ino, err_msg)))
 	{
 		if (ZBX_NO_FILE_ERROR == res)
 		{
