@@ -45,6 +45,19 @@ extern ZBX_THREAD_LOCAL int		server_num, process_num;
 
 #include "zbxcrypto.h"
 
+#define ZBX_PERSIST_INACTIVITY_PERIOD	SEC_PER_DAY	/* the time period after which persistent files used by log */
+							/* items which are not received in active check list can be */
+							/* removed */
+typedef struct
+{
+	char	*key_orig;
+	time_t	not_received_time;	/* time the item was not received anymore in the list of active checks */
+	char	*persistent_file_name;
+}
+zbx_persistent_inactive_t;
+
+ZBX_VECTOR_DECL(persistent_inactive, zbx_persistent_inactive_t)
+
 static ZBX_THREAD_LOCAL ZBX_ACTIVE_BUFFER	buffer;
 static ZBX_THREAD_LOCAL zbx_vector_ptr_t	active_metrics;
 static ZBX_THREAD_LOCAL zbx_vector_ptr_t	regexps;
@@ -52,13 +65,22 @@ static ZBX_THREAD_LOCAL char			*session_token;
 static ZBX_THREAD_LOCAL zbx_uint64_t		last_valueid = 0;
 static ZBX_THREAD_LOCAL zbx_vector_pre_persistent_t	pre_persistent_vec;	/* used for staging of data going */
 										/* into persistent files */
+/* used for deleting inactive persistent files */
+static ZBX_THREAD_LOCAL zbx_vector_persistent_inactive_t	persistent_inactive_vec;
 
 int	zbx_pre_persistent_compare_func(const void *d1, const void *d2)
 {
 	return strcmp(((const zbx_pre_persistent_t *)d1)->key_orig, ((const zbx_pre_persistent_t *)d2)->key_orig);
 }
 
+static	int	zbx_persistent_inactive_compare_func(const void *d1, const void *d2)
+{
+	return strcmp(((const zbx_persistent_inactive_t *)d1)->key_orig,
+			((const zbx_persistent_inactive_t *)d2)->key_orig);
+}
+
 ZBX_VECTOR_IMPL(pre_persistent, zbx_pre_persistent_t)
+ZBX_VECTOR_IMPL(persistent_inactive, zbx_persistent_inactive_t)
 
 static void	init_active_metrics(void)
 {
@@ -81,6 +103,7 @@ static void	init_active_metrics(void)
 	zbx_vector_ptr_create(&active_metrics);
 	zbx_vector_ptr_create(&regexps);
 	zbx_vector_pre_persistent_create(&pre_persistent_vec);
+	zbx_vector_persistent_inactive_create(&persistent_inactive_vec);
 
 	zabbix_log(LOG_LEVEL_DEBUG, "End of %s()", __func__);
 }
@@ -150,6 +173,84 @@ static int	get_min_nextcheck(void)
 	return min;
 }
 
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
+static	void	add_to_persistent_inactive_list(zbx_vector_persistent_inactive_t *inactive_vec, char *key,
+		const char *filename)
+{
+	zbx_persistent_inactive_t	el;
+	int				idx;
+
+	el.key_orig = key;
+
+	if (FAIL == (idx = zbx_vector_persistent_inactive_search(inactive_vec, el,
+			zbx_persistent_inactive_compare_func)))
+	{
+		/* create and initialize a new vector element */
+
+		el.key_orig = zbx_strdup(NULL, key);
+		el.not_received_time = time(NULL);
+		el.persistent_file_name = zbx_strdup(NULL, filename);
+
+		zbx_vector_persistent_inactive_append(inactive_vec, el);
+
+		zabbix_log(LOG_LEVEL_DEBUG, "%s(): added element %d with key '%s' for file '%s'", __func__,
+				inactive_vec->values_num - 1, key, filename);
+	}
+}
+
+static void	remove_from_persistent_inactive_list(zbx_vector_persistent_inactive_t *inactive_vec, char *key)
+{
+	zbx_persistent_inactive_t	el;
+	int				idx;
+
+	el.key_orig = key;
+
+	if (FAIL == (idx = zbx_vector_persistent_inactive_search(inactive_vec, el,
+			zbx_persistent_inactive_compare_func)))
+	{
+		return;
+	}
+
+	zabbix_log(LOG_LEVEL_DEBUG, "%s(): removed element %d with key '%s'", __func__, idx, key);
+
+	zbx_free(inactive_vec->values[idx].key_orig);
+	zbx_free(inactive_vec->values[idx].persistent_file_name);
+	zbx_vector_persistent_inactive_remove(inactive_vec, idx);
+}
+
+static void	remove_inactive_persistent_files(zbx_vector_persistent_inactive_t *inactive_vec)
+{
+	int	i;
+	time_t	now;
+
+	now = time(NULL);
+
+	for (i = 0; i < inactive_vec->values_num; i++)
+	{
+		zbx_persistent_inactive_t	*el = inactive_vec->values + i;
+
+		if (ZBX_PERSIST_INACTIVITY_PERIOD <= now - el->not_received_time)
+		{
+			char	*err_msg = NULL;
+
+			zabbix_log(LOG_LEVEL_DEBUG, "%s(): removing element %d with key '%s'", __func__, i,
+					el->key_orig);
+
+			if (SUCCEED != zbx_remove_persistent_file(el->persistent_file_name, &err_msg))
+			{
+				zabbix_log(LOG_LEVEL_WARNING, "cannot remove persistent file \"%s\": %s",
+						el->persistent_file_name, err_msg);
+				zbx_free(err_msg);
+			}
+
+			zbx_free(el->key_orig);
+			zbx_free(el->persistent_file_name);
+			zbx_vector_persistent_inactive_remove(inactive_vec, i);
+		}
+	}
+}
+#endif
+
 static void	add_check(const char *key, const char *key_orig, int refresh, zbx_uint64_t lastlogsize, int mtime)
 {
 	ZBX_ACTIVE_METRIC	*metric;
@@ -192,6 +293,8 @@ static void	add_check(const char *key, const char *key_orig, int refresh, zbx_ui
 				zabbix_log(LOG_LEVEL_DEBUG, "%s() removing persistent file '%s'",
 						__func__, metric->persistent_file_name);
 
+				remove_from_persistent_inactive_list(&persistent_inactive_vec, metric->key_orig);
+
 				if (SUCCEED != zbx_remove_persistent_file(metric->persistent_file_name, &error))
 				{
 					/* log error and continue operation */
@@ -206,7 +309,13 @@ static void	add_check(const char *key, const char *key_orig, int refresh, zbx_ui
 			// TODO: perhaps we should check for empty server directory here and remove it
 #endif
 		}
-
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
+		else if (NULL != metric->persistent_file_name)
+		{
+			/* the metric is active, but it could have been placed on inactive list earier */
+			remove_from_persistent_inactive_list(&persistent_inactive_vec, metric->key_orig);
+		}
+#endif
 		/* replace metric */
 		if (metric->refresh != refresh)
 		{
@@ -457,6 +566,13 @@ static int	parse_list_of_checks(char *str, const char *host, unsigned short port
 
 		if (0 == found)
 		{
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
+			if (NULL != metric->persistent_file_name)
+			{
+				add_to_persistent_inactive_list(&persistent_inactive_vec, metric->key_orig,
+						metric->persistent_file_name);
+			}
+#endif
 			zbx_vector_ptr_remove_noorder(&active_metrics, i);
 			free_active_metric(metric);
 			i--;	/* consider the same index on the next run */
@@ -1560,6 +1676,9 @@ ZBX_THREAD_ENTRY(active_checks_thread, args)
 			{
 				nextrefresh = time(NULL) + CONFIG_REFRESH_ACTIVE_CHECKS;
 			}
+#if !defined(_WINDOWS) && !defined(__MINGW32__)
+			remove_inactive_persistent_files(&persistent_inactive_vec);
+#endif
 		}
 
 		if (now >= nextcheck && CONFIG_BUFFER_SIZE / 2 > buffer.pcount)

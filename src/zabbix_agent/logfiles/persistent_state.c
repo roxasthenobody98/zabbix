@@ -445,6 +445,8 @@ out:
  ******************************************************************************/
 int zbx_remove_persistent_file(const char *pathname, char **error)
 {
+	zabbix_log(LOG_LEVEL_DEBUG, "%s(): removing persistent file '%s'", __func__, pathname);
+
 	if (0 == unlink(pathname) || ENOENT == errno)
 		return SUCCEED;
 
