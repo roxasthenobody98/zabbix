@@ -178,12 +178,11 @@ static	void	add_to_persistent_inactive_list(zbx_vector_persistent_inactive_t *in
 		const char *filename)
 {
 	zbx_persistent_inactive_t	el;
-	int				idx;
 
 	el.key_orig = key;
 
-	if (FAIL == (idx = zbx_vector_persistent_inactive_search(inactive_vec, el,
-			zbx_persistent_inactive_compare_func)))
+	if (FAIL == zbx_vector_persistent_inactive_search(inactive_vec, el,
+			zbx_persistent_inactive_compare_func))
 	{
 		/* create and initialize a new vector element */
 
