@@ -25,12 +25,12 @@ import (
 	"net/url"
 	"time"
 
+	"zabbix.com/pkg/tlsconfig"
 	"zabbix.com/pkg/uri"
 	"zabbix.com/pkg/zbxerr"
 
 	"github.com/omeid/go-yarn"
 	"zabbix.com/pkg/plugin"
-	zbxTls "zabbix.com/pkg/tls"
 )
 
 const (
@@ -58,7 +58,7 @@ func (p *Plugin) Export(key string, rawParams []string, _ plugin.ContextProvider
 		return nil, err
 	}
 
-	details, err := zbxTls.NewTlsDetails(params["sessionName"], params["DBTLSConnect"],
+	details, err := tlsconfig.CreateDetails(params["sessionName"], params["DBTLSConnect"],
 		params["TLSCaFile"], params["TLSCertFile"], params["TLSKeyFile"], params["URI"])
 	if err != nil {
 		return nil, zbxerr.ErrorInvalidConfiguration.Wrap(err)
