@@ -2562,6 +2562,26 @@ static void	ensure_order_if_mtimes_equal(const struct st_logfile *logfiles_old, 
 	}
 }
 
+/******************************************************************************
+ *                                                                            *
+ * Function: files_start_with_same_md5                                        *
+ *                                                                            *
+ * Purpose: compare MD5 sums of initial parts of files in a file list. If MD5 *
+ *          sums have been calculated for initial parts of different sizes    *
+ *          then open the log file with larger size of inital part and get    *
+ *          MD5 for the smaller size                                          *
+ *                                                                            *
+ * Parameters:                                                                *
+ *     log1 - [IN] log file 1 attributes                                      *
+ *     log2 - [IN] log file 2 attributes                                      *
+ *                                                                            *
+ * Return value: SUCCEED or FAIL                                              *
+ *                                                                            *
+ * Comments: Use this function to compare log files from the 'new' file list. *
+ *           DO NOT use it with a file which belongs to the 'old' list (the   *
+ *           old file name now could point to different file)                 *
+ *                                                                            *
+ ******************************************************************************/
 static int	files_start_with_same_md5(const struct st_logfile *log1, const struct st_logfile *log2)
 {
 	if (-1 == log1->md5size || -1 == log2->md5size)
