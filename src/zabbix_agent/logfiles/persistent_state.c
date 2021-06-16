@@ -386,7 +386,7 @@ int	zbx_write_persistent_file(const char *filename, const char *data, char **err
  *                                                                            *
  * Function: zbx_read_persistent_file                                         *
  *                                                                            *
- * Purpose: read metric info from persistent file. One line ir read.          *
+ * Purpose: read metric info from persistent file. One line is read.          *
  *                                                                            *
  * Parameters:                                                                *
  *          filename  - [IN] file name                                        *
@@ -443,7 +443,7 @@ out:
  *                         allocated 'error' message)                         *
  *                                                                            *
  ******************************************************************************/
-int zbx_remove_persistent_file(const char *pathname, char **error)
+int	zbx_remove_persistent_file(const char *pathname, char **error)
 {
 	zabbix_log(LOG_LEVEL_DEBUG, "%s(): removing persistent file '%s'", __func__, pathname);
 
