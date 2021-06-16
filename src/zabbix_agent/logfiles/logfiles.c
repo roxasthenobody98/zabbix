@@ -778,7 +778,7 @@ static int	is_same_file_logrt(const struct st_logfile *old_file, const struct st
 		return ZBX_SAME_FILE_NO;
 	}
 
-	if (old_file->size > new_file->size)
+	if (old_file->size > new_file->size || old_file->processed_size > new_file->size)
 	{
 		/* File size cannot decrease. Truncating or replacing a file with a smaller one */
 		/* counts as 2 different files. */
@@ -787,14 +787,55 @@ static int	is_same_file_logrt(const struct st_logfile *old_file, const struct st
 
 	if (old_file->size == new_file->size && old_file->mtime < new_file->mtime)
 	{
-		/* Depending on file system it's possible that stat() was called */
-		/* between mtime and file size update. In this situation we will */
-		/* get a file with the old size and a new mtime.                 */
+		int	same_initial_part = 0, same_last_rec = 0;
+
+		if (0 < old_file->md5size && old_file->md5size == new_file->md5size)
+		{
+			if (0 != memcmp(old_file->md5buf, new_file->md5buf, sizeof(new_file->md5buf)))
+				return ZBX_SAME_FILE_NO;
+
+			same_initial_part = 1;
+		}
+
+		if (0 < old_file->last_rec_size && old_file->last_rec_size == new_file->last_rec_size)
+		{
+			if (0 != memcmp(old_file->last_rec_md5, new_file->last_rec_md5, sizeof(new_file->last_rec_md5)))
+				return ZBX_SAME_FILE_NO;
+
+			same_last_rec = 1;
+		}
+
+		/* There is one problematic case: log file size stays the same   */
+		/* but its modification time (mtime) changes. This can be caused */
+		/* by 3 scenarios:                                               */
+		/*   1) the log file is rewritten with the same content at the   */
+		/*     same location on disk. Very rare but possible.            */
+		/*   2) depending on file system it's possible that stat() was   */
+		/*     called between mtime and file size update. In this        */
+		/*     situation the agent registers a file with the old size    */
+		/*     and a new mtime.                                          */
+		/*   3) application somehow "touch"-es the log file: mtime       */
+		/*     increases, size does not.                                 */
+		/*                                                               */
+		/* Agent cannot distinguish between these cases. Only users      */
+		/* familiar with their applications and log file rotation can    */
+		/* know which scenario takes place with which log file.          */
+		/* Most users would choose "noreread" option (it is not enabled  */
+		/* by default!) to handle it as the the same log file without no */
+		/* new records to report.                                        */
+		/* Some users might want to handle it as a new log file (it is   */
+		/* the default setting) (e.g. for log*.count[] purpose).         */
+
+		if (0 != same_initial_part && 0 != same_last_rec && ZBX_LOG_ROTATION_NO_REREAD == options)
+			return ZBX_SAME_FILE_YES;
+
+		/* Assume that stat() was called between mtime and file size     */
+		/* update showing the file with the old size and a new mtime.    */
 		/* On the first try we assume it's the same file, just its size  */
 		/* has not been changed yet.                                     */
 		/* If the size has not changed on the next check, then we assume */
 		/* that some tampering was done and to be safe we will treat it  */
-		/* as a different file.                                          */
+		/* as a different file unless "noreread" option is specified.    */
 		if (0 == old_file->retry)
 		{
 			if (ZBX_LOG_ROTATION_NO_REREAD != options)
@@ -837,6 +878,12 @@ static int	is_same_file_logrt(const struct st_logfile *old_file, const struct st
 		if (0 != memcmp(old_file->md5buf, new_file->md5buf, sizeof(new_file->md5buf)))	/* MD5 sums differ */
 			return ZBX_SAME_FILE_NO;
 
+		if (0 <= old_file->last_rec_size && old_file->last_rec_size == new_file->last_rec_size)
+		{
+			if (0 != memcmp(old_file->last_rec_md5, new_file->last_rec_md5, sizeof(new_file->last_rec_md5)))
+				return ZBX_SAME_FILE_NO;
+		}
+
 		return ZBX_SAME_FILE_YES;
 	}
 
@@ -844,20 +891,46 @@ static int	is_same_file_logrt(const struct st_logfile *old_file, const struct st
 	{
 		/* MD5 for the old file has been calculated from a smaller block than for the new file */
 
-		int		f, ret;
+		int		f, ret = ZBX_SAME_FILE_YES;
 		md5_byte_t	md5tmp[MD5_DIGEST_SIZE];
 
 		if (-1 == (f = open_file_helper(new_file->filename, err_msg)))
 			return ZBX_SAME_FILE_ERROR;
 
-		if (SUCCEED == file_part_md5(f, 0, old_file->md5size, md5tmp, new_file->filename, err_msg))
+		if (SUCCEED != file_part_md5(f, 0, old_file->md5size, md5tmp, new_file->filename, err_msg))
 		{
-			ret = (0 == memcmp(old_file->md5buf, &md5tmp, sizeof(md5tmp))) ? ZBX_SAME_FILE_YES :
-					ZBX_SAME_FILE_NO;
-		}
-		else
 			ret = ZBX_SAME_FILE_ERROR;
+			goto out;
+		}
 
+		if (0 != memcmp(old_file->md5buf, &md5tmp, sizeof(md5tmp)))
+		{
+			ret = ZBX_SAME_FILE_NO;
+			goto out;
+		}
+
+		/* initial blocks have the same MD5 */
+
+		if (0 < old_file->last_rec_size)
+		{
+			if (SUCCEED != file_part_md5(f, old_file->processed_size -
+					(zbx_uint64_t)old_file->last_rec_size,
+					MIN(MAX_PART_FOR_MD5, old_file->last_rec_size),
+					md5tmp, new_file->filename, err_msg))
+			{
+				ret = ZBX_SAME_FILE_ERROR;
+				goto out;
+			}
+
+			if (0 != memcmp(old_file->last_rec_md5, &md5tmp, sizeof(md5tmp)))
+			{
+				ret = ZBX_SAME_FILE_NO;
+				goto out;
+			}
+
+			/* the last processed record in the old file was found also in the new file */
+		}
+out:
 		if (0 != close(f))
 		{
 			if (ZBX_SAME_FILE_ERROR != ret)
