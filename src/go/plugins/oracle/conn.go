@@ -208,16 +208,27 @@ func (c *ConnManager) create(uri uri.URI, details tlsconfig.Details) (*OraConn, 
 	}
 
 	var protocol string
-	if details.TlsConnect != "" {
+	var security string
+
+	switch details.TlsConnect {
+	case "required":
 		protocol = "TCPS"
-	} else {
+	case "verify_ca":
+		protocol = "TCPS"
+		security = fmt.Sprintf(`(SECURITY=(MY_WALLET_DIRECTORY=%s)(SSL_SERVER_DN_MATCH=OFF))`, details.TlsWallet)
+
+	case "verify_full":
+		protocol = "TCPS"
+		security = fmt.Sprintf(`(SECURITY=(MY_WALLET_DIRECTORY=%s)(SSL_SERVER_DN_MATCH=ON))`, details.TlsWallet)
+	default:
 		protocol = "tcp"
 	}
 
 	connectString := fmt.Sprintf(`(DESCRIPTION=(ADDRESS=(PROTOCOL=%s)(HOST=%s)(PORT=%s))`+
-		`(CONNECT_DATA=(SERVICE_NAME="%s"))(CONNECT_TIMEOUT=%d)(RETRY_COUNT=0))`,
-		protocol, uri.Host(), uri.Port(), service, c.connectTimeout/time.Second)
-
+		`(CONNECT_DATA=(SERVICE_NAME="%s"))(CONNECT_TIMEOUT=%d)(RETRY_COUNT=0)`+
+		`%s)`,
+		protocol, uri.Host(), uri.Port(), service, c.connectTimeout/time.Second, security)
+	fmt.Println(connectString)
 	connector := godror.NewConnector(godror.ConnectionParams{
 		StandaloneConnection: true,
 		CommonParams: godror.CommonParams{

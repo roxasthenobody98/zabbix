@@ -58,8 +58,8 @@ func (p *Plugin) Export(key string, rawParams []string, _ plugin.ContextProvider
 		return nil, err
 	}
 
-	details, err := tlsconfig.CreateDetails(params["sessionName"], params["DBTLSConnect"],
-		params["TLSCaFile"], params["TLSCertFile"], params["TLSKeyFile"], params["URI"])
+	details, err := tlsconfig.CreateDetailsWithWallet(params["sessionName"], params["DBTLSConnect"], params["TLSWallet"],
+		params["URI"])
 	if err != nil {
 		return nil, zbxerr.ErrorInvalidConfiguration.Wrap(err)
 	}

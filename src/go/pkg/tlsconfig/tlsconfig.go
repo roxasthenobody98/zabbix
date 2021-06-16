@@ -14,6 +14,7 @@ type Details struct {
 	TlsCaFile   string
 	TlsCertFile string
 	TlsKeyFile  string
+	TlsWallet   string
 	RawUri      string
 }
 
@@ -43,32 +44,18 @@ func CreateConfig(details Details, skipVerify bool) (*tls.Config, error) {
 	return &tls.Config{RootCAs: rootCertPool, Certificates: clientCerts, InsecureSkipVerify: skipVerify, ServerName: details.RawUri}, nil
 }
 
-func CreateDetails(session, dbConnect, caFile, certFile, keyFile, uri string) (Details, error) {
-
+func CreateDetailsWithWallet(session, dbConnect, wallet, uri string) (Details, error) {
 	if dbConnect != "" && dbConnect != "required" {
-		if caFile == "" {
-			return Details{}, fmt.Errorf("missing TLS CA file for database uri %s, with session %s", uri, session)
+		if wallet == "" {
+			return Details{}, fmt.Errorf("missing Wallet folder path for database uri %s, with session %s", uri, session)
 		}
-		if certFile == "" {
-			return Details{}, fmt.Errorf("missing TLS certificate file for database uri %s, with session %s", uri, session)
-		}
-		if keyFile == "" {
-			return Details{}, fmt.Errorf("missing TLS key file for database uri %s, with session %s", uri, session)
-		}
+
 	} else {
-		if caFile != "" {
-			return Details{}, fmt.Errorf("TLS CA file configuration parameter set without certificates being used for database uri %s, with session %s", uri, session)
-
-		}
-		if certFile != "" {
-			return Details{}, fmt.Errorf("TLS certificate file configuration parameter set without certificates being used for database uri %s, with session %s", uri, session)
-
-		}
-		if keyFile != "" {
-			return Details{}, fmt.Errorf(" TLS key file configuration parameter set without certificates being used for database uri %s, with session %s", uri, session)
+		if wallet != "" {
+			return Details{}, fmt.Errorf("Wallet folder configuration parameter set without wallet being used for database uri %s, with session %s", uri, session)
 
 		}
 	}
 
-	return Details{session, dbConnect, caFile, certFile, keyFile, uri}, nil
+	return Details{session, dbConnect, "", "", "", wallet, uri}, nil
 }

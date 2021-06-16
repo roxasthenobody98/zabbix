@@ -38,14 +38,8 @@ type Session struct {
 	// Connection type of Oracle server.
 	DBTLSConnect string `conf:"name=DBTLSConnect,optional"`
 
-	// Certificate Authority filepath for Oracle server.
-	TLSCaFile string `conf:"name=DBTLSCAFile,optional"`
-
-	// Certificate filepath for Oracle server.
-	TLSCertFile string `conf:"name=DBTLSCertFile,optional"`
-
-	// Key filepath for Oracle server.
-	TLSKeyFile string `conf:"name=DBTLSKeyFile,optional"`
+	// Oracle Wallet path for Oracle client.
+	TLSWallet string `conf:"name=TLSWallet,optional"`
 }
 
 type PluginOptions struct {
