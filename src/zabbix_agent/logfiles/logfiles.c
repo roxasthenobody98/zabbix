@@ -2139,7 +2139,8 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 									prep_vec->values + prep_vec_idx);
 						}
 
-						*p_nl = last_byte;	/* temporary restore the replaced byte */
+						buf[BUF_SIZE] = last_byte;	/* temporary restore the replaced */
+										/* byte */
 						zbx_update_prep_vec_data(logfile, processed_size, buf, last_rec_size,
 								prep_vec->values + prep_vec_idx);
 						buf[BUF_SIZE] = '\0';
