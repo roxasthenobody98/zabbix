@@ -1226,7 +1226,7 @@ static int	process_value(const char *server, unsigned short port, const char *ho
 		}
 	}
 
-	/* do not sent data from buffer if host/key are the same as previous unless buffer is full already */
+	/* do not send data from buffer if host/key are the same as previous unless buffer is full already */
 	if (0 < buffer.count)
 	{
 		el = &buffer.data[buffer.count - 1];
@@ -1317,6 +1317,14 @@ static int	process_value(const char *server, unsigned short port, const char *ho
 
 	if (0 != (ZBX_METRIC_FLAG_PERSISTENT & flags))
 		buffer.pcount++;
+
+	/* If conditions are met then send buffer now. It is necessary for synchronization */
+	/* between sending data to server and writing of persistent files. */
+	if ((0 != (flags & ZBX_METRIC_FLAG_PERSISTENT) && CONFIG_BUFFER_SIZE / 2 <= buffer.pcount) ||
+			CONFIG_BUFFER_SIZE <= buffer.count)
+	{
+		send_buffer(server, port, &pre_persistent_vec);
+	}
 
 	ret = SUCCEED;
 out:

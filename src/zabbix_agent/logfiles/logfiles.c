@@ -2204,7 +2204,9 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 						/* Prepare 'prep_vec' element even if the current record won't match. */
 						/* Its mtime and lastlogsize could be sent to server later as */
 						/* metadata update, then a persistent file should be written. */
-						if (-1 == prep_vec_idx)
+						/* 'prep_vec' can be emptied at any call to process_value() which */
+						/* calls send_buffer(), so be ready to reinitialize. */
+						if (-1 == prep_vec_idx || 0 == prep_vec->values_num)
 						{
 							prep_vec_idx = zbx_find_or_create_prep_vec_element(prep_vec,
 									key, persistent_file_name);
@@ -2320,7 +2322,9 @@ static int	zbx_read2(int fd, unsigned char flags, struct st_logfile *logfile, zb
 						/* Prepare 'prep_vec' element even if the current record won't match. */
 						/* Its mtime and lastlogsize could be sent to server later as */
 						/* metadata update, then a persistent file should be written. */
-						if (-1 == prep_vec_idx)
+						/* 'prep_vec' can be emptied at any call to process_value() which */
+						/* calls send_buffer(), so be ready to reinitialize. */
+						if (-1 == prep_vec_idx || 0 == prep_vec->values_num)
 						{
 							prep_vec_idx = zbx_find_or_create_prep_vec_element(prep_vec,
 									key, persistent_file_name);
