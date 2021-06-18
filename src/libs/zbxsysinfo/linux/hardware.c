@@ -426,7 +426,7 @@ int     SYSTEM_HW_CPU(AGENT_REQUEST *request, AGENT_RESULT *result)
 
 	*buffer = '\0';
 
-	while (NULL != fgets(line, sizeof(line), f))
+	while (NULL != zbx_fgets(line, sizeof(line), f))
 	{
 		if (2 != sscanf(line, "%[^:]: %[^\n]", name, tmp))
 			continue;

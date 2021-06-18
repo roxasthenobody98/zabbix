@@ -98,7 +98,7 @@ static int	cmp_status(FILE *f_stat, const char *procname)
 
 	rewind(f_stat);
 
-	while (NULL != fgets(tmp, (int)sizeof(tmp), f_stat))
+	while (NULL != zbx_fgets(tmp, (int)sizeof(tmp), f_stat))
 	{
 		if (0 != strncmp(tmp, "Name:\t", 6))
 			continue;
@@ -153,7 +153,7 @@ static int	check_user(FILE *f_stat, struct passwd *usrinfo)
 
 	rewind(f_stat);
 
-	while (NULL != fgets(tmp, (int)sizeof(tmp), f_stat))
+	while (NULL != zbx_fgets(tmp, (int)sizeof(tmp), f_stat))
 	{
 		if (0 != strncmp(tmp, "Uid:\t", 5))
 			continue;
@@ -208,7 +208,7 @@ static int	check_procstate(FILE *f_stat, int zbx_proc_stat)
 
 	rewind(f_stat);
 
-	while (NULL != fgets(tmp, (int)sizeof(tmp), f_stat))
+	while (NULL != zbx_fgets(tmp, (int)sizeof(tmp), f_stat))
 	{
 		if (0 != strncmp(tmp, "State:\t", 7))
 			continue;
@@ -273,7 +273,7 @@ int	byte_value_from_proc_file(FILE *f, const char *label, const char *guard, zbx
 			return FAIL;
 	}
 
-	while (NULL != fgets(buf, (int)sizeof(buf), f))
+	while (NULL != zbx_fgets(buf, (int)sizeof(buf), f))
 	{
 		if (NULL != guard)
 		{

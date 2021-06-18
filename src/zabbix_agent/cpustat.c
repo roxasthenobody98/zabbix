@@ -431,7 +431,7 @@ static void	update_cpustats(ZBX_CPUS_STAT_DATA *pcpus)
 	for (idx = 0; idx <= pcpus->count; idx++)
 		cpu_status[idx] = SYSINFO_RET_FAIL;
 
-	while (NULL != fgets(line, sizeof(line), file))
+	while (NULL != zbx_fgets(line, sizeof(line), file))
 	{
 		if (0 != strncmp(line, "cpu", 3))
 			continue;

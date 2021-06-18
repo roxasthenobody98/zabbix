@@ -37,7 +37,7 @@ int	SYSTEM_BOOTTIME(AGENT_REQUEST *request, AGENT_RESULT *result)
 	}
 
 	/* find boot time entry "btime [boot time]" */
-	while (NULL != fgets(buf, MAX_STRING_LEN, f))
+	while (NULL != zbx_fgets(buf, MAX_STRING_LEN, f))
 	{
 		if (1 == sscanf(buf, "btime %lu", &value))
 		{

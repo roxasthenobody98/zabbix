@@ -107,7 +107,7 @@ static int	zbx_get_cpu_num(void)
 	if (NULL == (file = fopen("/proc/cpuinfo", "r")))
 		goto return_one;
 
-	while (NULL != fgets(line, 1024, file))
+	while (NULL != zbx_fgets(line, 1024, file))
 	{
 		if (NULL == strstr(line, "processor"))
 			continue;

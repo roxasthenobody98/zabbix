@@ -38,7 +38,7 @@ static void	count_sensor(int do_task, const char *filename, double *aggr, int *c
 	if (NULL == (f = fopen(filename, "r")))
 		return;
 
-	if (NULL == fgets(line, sizeof(line), f))
+	if (NULL == zbx_fgets(line, sizeof(line), f))
 	{
 		zbx_fclose(f);
 		return;
@@ -102,7 +102,7 @@ static const char	*sysfs_read_attr(const char *device, char **attribute)
 
 		if (NULL != (f = fopen(path, "r")))
 		{
-			p = fgets(buf, ATTR_MAX, f);
+			p = zbx_fgets(buf, ATTR_MAX, f);
 			zbx_fclose(f);
 
 			if (NULL == p)

@@ -151,7 +151,7 @@ static int	get_swap_dev_stat(const char *swapdev, swap_stat_t *result)
 	if (NULL == (f = fopen(INFO_FILE_NAME, "r")))
 		return ret;
 
-	while (NULL != fgets(line, sizeof(line), f))
+	while (NULL != zbx_fgets(line, sizeof(line), f))
 	{
 		PARSE(line);
 
@@ -181,7 +181,7 @@ static int	get_swap_pages(swap_stat_t *result)
 	if (NULL != (f = fopen("/proc/vmstat", "r")))
 #endif
 	{
-		while (NULL != fgets(line, sizeof(line), f))
+		while (NULL != zbx_fgets(line, sizeof(line), f))
 		{
 #ifdef KERNEL_2_4
 			if (0 != strncmp(line, "swap ", 5))
@@ -239,7 +239,7 @@ static int	get_swap_stat(const char *swapdev, swap_stat_t *result)
 	if (NULL == (f = fopen("/proc/swaps", "r")))
 		return ret;
 
-	while (NULL != fgets(line, sizeof(line), f))
+	while (NULL != zbx_fgets(line, sizeof(line), f))
 	{
 		if (0 != strncmp(line, "/dev/", 5))
 			continue;

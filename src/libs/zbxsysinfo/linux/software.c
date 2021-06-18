@@ -84,7 +84,7 @@ int     SYSTEM_SW_OS(AGENT_REQUEST *request, AGENT_RESULT *result)
 		/* if cannot find it, get value from /etc/issue.net            */
 		if (NULL != (f = fopen(SW_OS_NAME_RELEASE, "r")))
 		{
-			while (NULL != fgets(tmp_line, sizeof(tmp_line), f))
+			while (NULL != zbx_fgets(tmp_line, sizeof(tmp_line), f))
 			{
 				char	line2[MAX_STRING_LEN];
 
@@ -116,7 +116,7 @@ int     SYSTEM_SW_OS(AGENT_REQUEST *request, AGENT_RESULT *result)
 		return ret;
 	}
 
-	if (SUCCEED == line_read || NULL != fgets(line, sizeof(line), f))
+	if (SUCCEED == line_read || NULL != zbx_fgets(line, sizeof(line), f))
 	{
 		ret = SYSINFO_RET_OK;
 		zbx_rtrim(line, ZBX_WHITESPACE);

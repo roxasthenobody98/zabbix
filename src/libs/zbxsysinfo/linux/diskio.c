@@ -96,7 +96,7 @@ int	get_diskstat(const char *devname, zbx_uint64_t *dstat)
 	if (NULL == (f = fopen(INFO_FILE_NAME, "r")))
 		return FAIL;
 
-	while (NULL != fgets(tmp, sizeof(tmp), f))
+	while (NULL != zbx_fgets(tmp, sizeof(tmp), f))
 	{
 		PARSE(tmp);
 
@@ -155,7 +155,7 @@ static int	get_kernel_devname(const char *devname, char *kernel_devname, size_t 
 	if (zbx_stat(dev_path, &dev_st) < 0 || NULL == (f = fopen(INFO_FILE_NAME, "r")))
 		return ret;
 
-	while (NULL != fgets(tmp, sizeof(tmp), f))
+	while (NULL != zbx_fgets(tmp, sizeof(tmp), f))
 	{
 		PARSE(tmp);
 		if (major(dev_st.st_rdev) != rdev_major || minor(dev_st.st_rdev) != rdev_minor)
@@ -336,7 +336,7 @@ int	VFS_DEV_DISCOVERY(AGENT_REQUEST *request, AGENT_RESULT *result)
 
 					if (NULL != (f = fopen(tmp, "r")))
 					{
-						while (NULL != fgets(tmp, sizeof(tmp), f))
+						while (NULL != zbx_fgets(tmp, sizeof(tmp), f))
 						{
 							if (0 == strncmp(tmp, DEVTYPE_STR, DEVTYPE_STR_LEN))
 							{

@@ -202,7 +202,7 @@ int     SYSTEM_CPU_SWITCHES(AGENT_REQUEST *request, AGENT_RESULT *result)
 		return SYSINFO_RET_FAIL;
 	}
 
-	while (NULL != fgets(line, sizeof(line), f))
+	while (NULL != zbx_fgets(line, sizeof(line), f))
 	{
 		if (0 != strncmp(line, "ctxt", 4))
 			continue;
@@ -237,7 +237,7 @@ int     SYSTEM_CPU_INTR(AGENT_REQUEST *request, AGENT_RESULT *result)
 		return SYSINFO_RET_FAIL;
 	}
 
-	while (NULL != fgets(line, sizeof(line), f))
+	while (NULL != zbx_fgets(line, sizeof(line), f))
 	{
 		if (0 != strncmp(line, "intr", 4))
 			continue;

@@ -28,7 +28,7 @@ static int	read_uint64_from_procfs(const char *path, zbx_uint64_t *value)
 
 	if (NULL != (f = fopen(path, "r")))
 	{
-		if (NULL != fgets(line, sizeof(line), f))
+		if (NULL != zbx_fgets(line, sizeof(line), f))
 		{
 			if (1 == sscanf(line, ZBX_FS_UI64 "\n", value))
 				ret = SYSINFO_RET_OK;

@@ -143,7 +143,7 @@ int	VFS_FS_DISCOVERY(AGENT_REQUEST *request, AGENT_RESULT *result)
 
 	zbx_json_initarray(&j, ZBX_JSON_STAT_BUF_LEN);
 
-	while (NULL != fgets(line, sizeof(line), f))
+	while (NULL != zbx_fgets(line, sizeof(line), f))
 	{
 		if (NULL == (p = strchr(line, ' ')))
 			continue;
@@ -202,7 +202,7 @@ static int	vfs_fs_get(AGENT_REQUEST *request, AGENT_RESULT *result)
 
 	zbx_vector_ptr_create(&mntpoints);
 
-	while (NULL != fgets(line, sizeof(line), f))
+	while (NULL != zbx_fgets(line, sizeof(line), f))
 	{
 		if (NULL == (p = strchr(line, ' ')))
 			continue;
@@ -258,7 +258,7 @@ static int	vfs_fs_get(AGENT_REQUEST *request, AGENT_RESULT *result)
 	}
 	zbx_json_initarray(&j, ZBX_JSON_STAT_BUF_LEN);
 
-	while (NULL != fgets(line, sizeof(line), f))
+	while (NULL != zbx_fgets(line, sizeof(line), f))
 	{
 		int idx;
 
