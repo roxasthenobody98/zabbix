@@ -3918,14 +3918,14 @@ int	zbx_hex2bin(const unsigned char *p_hex, unsigned char *buf, int buf_len)
 			hi = *p_hex & 0x0f;
 
 			if ('9' < *p_hex++)
-				hi += 9u;
+				hi += (unsigned char)9;
 
 			lo = *p_hex & 0x0f;
 
 			if ('9' < *p_hex++)
-				lo += 9u;
+				lo += (unsigned char)9;
 
-			*q++ = hi << 4 | lo;
+			*q++ = (unsigned char)(hi << 4 | lo);
 			len++;
 		}
 		else
