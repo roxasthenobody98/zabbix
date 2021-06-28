@@ -432,12 +432,13 @@ class testPageLowLevelDiscovery extends CWebTest {
 			[
 				[
 					'filter' => [
-						'Type' => 'Database monitor',
-						'Update interval' => '1h',
-						'Name'=> 'Databases'
+						'Type' => 'Zabbix agent',
+						'Update interval' => '15m'
 					],
 					'expected' => [
-						'Databases discovery'
+						'Containers discovery',
+						'Images discovery',
+						'Replication Discovery'
 					]
 				]
 			],
