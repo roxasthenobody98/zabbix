@@ -212,22 +212,6 @@
 #define ZBX_PROTO_VALUE_PROXY_UPLOAD_ENABLED	"enabled"
 #define ZBX_PROTO_VALUE_PROXY_UPLOAD_DISABLED	"disabled"
 
-/* tags for agent persistent storage files */
-#define ZBX_PERSIST_TAG_FILENAME		"filename"
-#define ZBX_PERSIST_TAG_MTIME			"mtime"
-#define ZBX_PERSIST_TAG_SIZE			"size"
-#define ZBX_PERSIST_TAG_PROCESSED_SIZE		"processed_size"
-#define ZBX_PERSIST_TAG_LAST_REC_SIZE		"last_record_size"
-#define ZBX_PERSIST_TAG_LAST_REC_MD5		"last_record_md5"
-#define ZBX_PERSIST_TAG_SEQ			"seq"
-#define ZBX_PERSIST_TAG_COPY_OF			"copy_of"
-#define ZBX_PERSIST_TAG_INCOMPLETE		"incomplete"
-#define ZBX_PERSIST_TAG_DEVICE			"dev"
-#define ZBX_PERSIST_TAG_INODE_HI		"ino_hi"
-#define ZBX_PERSIST_TAG_INODE_LO		"ino_lo"
-#define ZBX_PERSIST_TAG_MD5_SIZE		"md5size"
-#define ZBX_PERSIST_TAG_MD5_BUF			"md5buf"
-
 typedef enum
 {
 	ZBX_JSON_TYPE_UNKNOWN = 0,
