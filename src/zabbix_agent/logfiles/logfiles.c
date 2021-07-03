@@ -28,8 +28,6 @@
 #	include "zbxtypes.h"	/* ssize_t */
 #endif /* _WINDOWS */
 
-#define MAX_PART_FOR_MD5	512	/* maximum size of the part of the file to calculate MD5 sum for */
-
 #define ZBX_SAME_FILE_ERROR	-1
 #define ZBX_SAME_FILE_NO	0
 #define ZBX_SAME_FILE_YES	1
@@ -40,6 +38,9 @@
 #define ZBX_FILE_PLACE_UNKNOWN	-1	/* cannot compare file device and inode numbers */
 #define ZBX_FILE_PLACE_OTHER	0	/* both files have different device or inode numbers */
 #define ZBX_FILE_PLACE_SAME	1	/* both files have the same device and inode numbers */
+
+extern int	CONFIG_MAX_LINES_PER_SECOND;
+extern char	*CONFIG_HOSTNAME;
 
 /******************************************************************************
  *                                                                            *

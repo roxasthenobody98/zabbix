@@ -23,7 +23,7 @@
 #include "zbxregexp.h"
 #include "md5.h"
 #include "../metrics.h"
-#include "../active.h"
+#include "persistent_state.h"
 
 typedef enum
 {

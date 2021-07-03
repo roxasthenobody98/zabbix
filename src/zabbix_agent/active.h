@@ -21,7 +21,6 @@
 #define ZABBIX_ACTIVE_H
 
 #include "threads.h"
-#include "zbxalgo.h"
 
 extern char	*CONFIG_SOURCE_IP;
 extern char	*CONFIG_HOSTNAME;
@@ -76,36 +75,4 @@ ZBX_ACTIVE_BUFFER;
 
 ZBX_THREAD_ENTRY(active_checks_thread, args);
 
-#define MAX_PART_FOR_MD5	512	/* maximum size of the part of the file to calculate MD5 sum for */
-
-typedef struct
-{
-	char		*key_orig;
-	char		*persistent_file_name;
-	/* data for writing into persistent file */
-	char		*filename;
-	int		mtime;
-	int		md5size;
-	int		last_rec_size;
-	int		seq;
-	int		incomplete;
-	int		copy_of;
-	zbx_uint64_t	dev;
-	zbx_uint64_t	ino_lo;
-	zbx_uint64_t	ino_hi;
-	zbx_uint64_t	size;
-	zbx_uint64_t	processed_size;
-	md5_byte_t	md5buf[MD5_DIGEST_SIZE];
-	char		last_rec_part[MAX_PART_FOR_MD5];	/* Keep a copy of up to the first 512 bytes of */
-								/* the last record to calculate md5 sum. It could */
-								/* be a not null-terminated string! */
-}
-zbx_pre_persistent_t;
-
-int	zbx_pre_persistent_compare_func(const void *d1, const void *d2);
-
-ZBX_VECTOR_DECL(pre_persistent, zbx_pre_persistent_t)
-
-int	zbx_find_or_create_prep_vec_element(zbx_vector_pre_persistent_t *prep_vec, const char *key,
-		const char *persistent_file_name);
 #endif	/* ZABBIX_ACTIVE_H */

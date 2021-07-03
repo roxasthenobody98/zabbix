@@ -31,7 +31,6 @@
 #include "alias.h"
 #include "metrics.h"
 #include "logfiles/persistent_state.h"
-#include "../libs/zbxalgo/vectorimpl.h"
 
 extern unsigned char			program_type;
 extern ZBX_THREAD_LOCAL unsigned char	process_type;
@@ -45,19 +44,6 @@ extern ZBX_THREAD_LOCAL int		server_num, process_num;
 
 #include "zbxcrypto.h"
 
-#define ZBX_PERSIST_INACTIVITY_PERIOD	SEC_PER_DAY	/* the time period after which persistent files used by log */
-							/* items which are not received in active check list can be */
-							/* removed */
-typedef struct
-{
-	char	*key_orig;
-	time_t	not_received_time;	/* time the item was not received anymore in the list of active checks */
-	char	*persistent_file_name;
-}
-zbx_persistent_inactive_t;
-
-ZBX_VECTOR_DECL(persistent_inactive, zbx_persistent_inactive_t)
-
 static ZBX_THREAD_LOCAL ZBX_ACTIVE_BUFFER	buffer;
 static ZBX_THREAD_LOCAL zbx_vector_ptr_t	active_metrics;
 static ZBX_THREAD_LOCAL zbx_vector_ptr_t	regexps;
@@ -67,20 +53,6 @@ static ZBX_THREAD_LOCAL zbx_vector_pre_persistent_t	pre_persistent_vec;	/* used 
 										/* into persistent files */
 /* used for deleting inactive persistent files */
 static ZBX_THREAD_LOCAL zbx_vector_persistent_inactive_t	persistent_inactive_vec;
-
-int	zbx_pre_persistent_compare_func(const void *d1, const void *d2)
-{
-	return strcmp(((const zbx_pre_persistent_t *)d1)->key_orig, ((const zbx_pre_persistent_t *)d2)->key_orig);
-}
-
-static	int	zbx_persistent_inactive_compare_func(const void *d1, const void *d2)
-{
-	return strcmp(((const zbx_persistent_inactive_t *)d1)->key_orig,
-			((const zbx_persistent_inactive_t *)d2)->key_orig);
-}
-
-ZBX_VECTOR_IMPL(pre_persistent, zbx_pre_persistent_t)
-ZBX_VECTOR_IMPL(persistent_inactive, zbx_persistent_inactive_t)
 
 static void	init_active_metrics(void)
 {
@@ -173,83 +145,6 @@ static int	get_min_nextcheck(void)
 	return min;
 }
 
-#if !defined(_WINDOWS) && !defined(__MINGW32__)
-static	void	add_to_persistent_inactive_list(zbx_vector_persistent_inactive_t *inactive_vec, char *key,
-		const char *filename)
-{
-	zbx_persistent_inactive_t	el;
-
-	el.key_orig = key;
-
-	if (FAIL == zbx_vector_persistent_inactive_search(inactive_vec, el,
-			zbx_persistent_inactive_compare_func))
-	{
-		/* create and initialize a new vector element */
-
-		el.key_orig = zbx_strdup(NULL, key);
-		el.not_received_time = time(NULL);
-		el.persistent_file_name = zbx_strdup(NULL, filename);
-
-		zbx_vector_persistent_inactive_append(inactive_vec, el);
-
-		zabbix_log(LOG_LEVEL_DEBUG, "%s(): added element %d with key '%s' for file '%s'", __func__,
-				inactive_vec->values_num - 1, key, filename);
-	}
-}
-
-static void	remove_from_persistent_inactive_list(zbx_vector_persistent_inactive_t *inactive_vec, char *key)
-{
-	zbx_persistent_inactive_t	el;
-	int				idx;
-
-	el.key_orig = key;
-
-	if (FAIL == (idx = zbx_vector_persistent_inactive_search(inactive_vec, el,
-			zbx_persistent_inactive_compare_func)))
-	{
-		return;
-	}
-
-	zabbix_log(LOG_LEVEL_DEBUG, "%s(): removed element %d with key '%s'", __func__, idx, key);
-
-	zbx_free(inactive_vec->values[idx].key_orig);
-	zbx_free(inactive_vec->values[idx].persistent_file_name);
-	zbx_vector_persistent_inactive_remove(inactive_vec, idx);
-}
-
-static void	remove_inactive_persistent_files(zbx_vector_persistent_inactive_t *inactive_vec)
-{
-	int	i;
-	time_t	now;
-
-	now = time(NULL);
-
-	for (i = 0; i < inactive_vec->values_num; i++)
-	{
-		zbx_persistent_inactive_t	*el = inactive_vec->values + i;
-
-		if (ZBX_PERSIST_INACTIVITY_PERIOD <= now - el->not_received_time)
-		{
-			char	*err_msg = NULL;
-
-			zabbix_log(LOG_LEVEL_DEBUG, "%s(): removing element %d with key '%s'", __func__, i,
-					el->key_orig);
-
-			if (SUCCEED != zbx_remove_persistent_file(el->persistent_file_name, &err_msg))
-			{
-				zabbix_log(LOG_LEVEL_WARNING, "cannot remove persistent file \"%s\": %s",
-						el->persistent_file_name, err_msg);
-				zbx_free(err_msg);
-			}
-
-			zbx_free(el->key_orig);
-			zbx_free(el->persistent_file_name);
-			zbx_vector_persistent_inactive_remove(inactive_vec, i);
-		}
-	}
-}
-#endif
-
 static void	add_check(const char *key, const char *key_orig, int refresh, zbx_uint64_t lastlogsize, int mtime)
 {
 	ZBX_ACTIVE_METRIC	*metric;
@@ -292,7 +187,7 @@ static void	add_check(const char *key, const char *key_orig, int refresh, zbx_ui
 				zabbix_log(LOG_LEVEL_DEBUG, "%s() removing persistent file '%s'",
 						__func__, metric->persistent_file_name);
 
-				remove_from_persistent_inactive_list(&persistent_inactive_vec, metric->key_orig);
+				zbx_remove_from_persistent_inactive_list(&persistent_inactive_vec, metric->key_orig);
 
 				if (SUCCEED != zbx_remove_persistent_file(metric->persistent_file_name, &error))
 				{
@@ -312,7 +207,7 @@ static void	add_check(const char *key, const char *key_orig, int refresh, zbx_ui
 		else if (NULL != metric->persistent_file_name)
 		{
 			/* the metric is active, but it could have been placed on inactive list earier */
-			remove_from_persistent_inactive_list(&persistent_inactive_vec, metric->key_orig);
+			zbx_remove_from_persistent_inactive_list(&persistent_inactive_vec, metric->key_orig);
 		}
 #endif
 		/* replace metric */
@@ -568,7 +463,7 @@ static int	parse_list_of_checks(char *str, const char *host, unsigned short port
 #if !defined(_WINDOWS) && !defined(__MINGW32__)
 			if (NULL != metric->persistent_file_name)
 			{
-				add_to_persistent_inactive_list(&persistent_inactive_vec, metric->key_orig,
+				zbx_add_to_persistent_inactive_list(&persistent_inactive_vec, metric->key_orig,
 						metric->persistent_file_name);
 			}
 #endif
@@ -882,93 +777,6 @@ static int	check_response(char *response)
 	return ret;
 }
 
-#if !defined(_WINDOWS) && !defined(__MINGW32__)
-static void	write_persistent_files(zbx_vector_pre_persistent_t *prep_vec)
-{
-	int	i;
-
-	for (i = 0; i < prep_vec->values_num; i++)
-	{
-		char		*error = NULL;
-		struct zbx_json	json;
-
-		/* prepare JSON */
-		zbx_json_init(&json, ZBX_JSON_STAT_BUF_LEN);
-
-		if (NULL != prep_vec->values[i].filename)
-		{
-			zbx_json_addstring(&json, ZBX_PERSIST_TAG_FILENAME, prep_vec->values[i].filename,
-					ZBX_JSON_TYPE_STRING);
-		}
-
-		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_MTIME, (zbx_uint64_t)prep_vec->values[i].mtime);
-
-		zbx_json_adduint64(&json, ZBX_PERSIST_TAG_PROCESSED_SIZE, prep_vec->values[i].processed_size);
-
-		if (NULL != prep_vec->values[i].filename)
-		{
-			md5_state_t	state;
-			md5_byte_t	md5[MD5_DIGEST_SIZE];
-			char		buf[33];	/* for MD5 sum representation with */
-							/* hex-digits: 2 * 16 bytes + '\0' */
-
-			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_LAST_REC_SIZE,
-					(zbx_uint64_t)prep_vec->values[i].last_rec_size);
-
-			zbx_md5_init(&state);
-			zbx_md5_append(&state, (const md5_byte_t *)prep_vec->values[i].last_rec_part,
-					MIN(MAX_PART_FOR_MD5, prep_vec->values[i].last_rec_size));
-			zbx_md5_finish(&state, md5);
-
-			zbx_md5buf2str(md5, buf);
-			zbx_json_addstring(&json, ZBX_PERSIST_TAG_LAST_REC_MD5, buf, ZBX_JSON_TYPE_STRING);
-
-			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_SEQ, (zbx_uint64_t)prep_vec->values[i].seq);
-			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INCOMPLETE,
-					(zbx_uint64_t)prep_vec->values[i].incomplete);
-			zbx_json_addint64(&json, ZBX_PERSIST_TAG_COPY_OF, prep_vec->values[i].copy_of);
-			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_DEVICE, prep_vec->values[i].dev);
-			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INODE_LO, prep_vec->values[i].ino_lo);
-			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_INODE_HI, prep_vec->values[i].ino_hi);
-			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_SIZE, prep_vec->values[i].size);
-			zbx_json_adduint64(&json, ZBX_PERSIST_TAG_MD5_SIZE, (zbx_uint64_t)prep_vec->values[i].md5size);
-
-			zbx_md5buf2str(prep_vec->values[i].md5buf, buf);
-			zbx_json_addstring(&json, ZBX_PERSIST_TAG_MD5_BUF, buf, ZBX_JSON_TYPE_STRING);
-		}
-
-		zbx_json_close(&json);
-
-		zbx_write_persistent_file(prep_vec->values[i].persistent_file_name, json.buffer, &error);
-
-		if (NULL != error)
-		{
-			zabbix_log(LOG_LEVEL_WARNING, "cannot write persistent file \"%s\": %s",
-					prep_vec->values[i].persistent_file_name, error);
-			zbx_free(error);
-		}
-
-		zbx_json_free(&json);
-	}
-}
-
-static void	clean_pre_persistent_elements(zbx_vector_pre_persistent_t *prep_vec)
-{
-	int	i;
-
-	/* clean only element data and number of elements, do not reduce vector size */
-
-	for (i = 0; i < prep_vec->values_num; i++)
-	{
-		zbx_free(prep_vec->values[i].key_orig);
-		zbx_free(prep_vec->values[i].persistent_file_name);
-		zbx_free(prep_vec->values[i].filename);
-	}
-
-	zbx_vector_pre_persistent_clear(prep_vec);
-}
-#endif	/* not WINDOWS, not __MINGW32__ */
-
 /******************************************************************************
  *                                                                            *
  * Function: send_buffer                                                      *
@@ -1126,8 +934,8 @@ out:
 	if (SUCCEED == ret)
 	{
 #if !defined(_WINDOWS) && !defined(__MINGW32__)
-		write_persistent_files(prep_vec);
-		clean_pre_persistent_elements(prep_vec);
+		zbx_write_persistent_files(prep_vec);
+		zbx_clean_pre_persistent_elements(prep_vec);
 #endif
 		/* free buffer */
 		for (i = 0; i < buffer.count; i++)
@@ -1412,50 +1220,6 @@ out:
 #if !defined(_WINDOWS) && !defined(__MINGW32__)
 /******************************************************************************
  *                                                                            *
- * Function: zbx_find_or_create_prep_vec_element                              *
- *                                                                            *
- * Purpose: search preparation vector to find element with the specified key. *
- *          If not found then create the element.                             *
- *                                                                            *
- * Parameters:                                                                *
- *    prep_vec             - [IN/OUT] preparation vector for persistent data  *
- *                                files                                       *
- *    key                  - [IN] log*[] item key                             *
- *    persistent_file_name - [IN] file name for copying into new element      *
- *                                                                            *
- ******************************************************************************/
-int	zbx_find_or_create_prep_vec_element(zbx_vector_pre_persistent_t *prep_vec, const char *key,
-		const char *persistent_file_name)
-{
-	zbx_pre_persistent_t	prep_element;
-	int			prep_vec_idx;
-
-	prep_element.key_orig = (char *)key;
-
-	if (FAIL == (prep_vec_idx = zbx_vector_pre_persistent_search(prep_vec, prep_element,
-			zbx_pre_persistent_compare_func)))
-	{
-		/* create and initialize a new vector element */
-		memset(&prep_element, 0, sizeof(prep_element));
-
-		zbx_vector_pre_persistent_append(prep_vec, prep_element);
-		prep_vec_idx = prep_vec->values_num - 1;
-
-		/* fill in 'key_orig' and 'persistent_file_name' values - they never change for the specified */
-		/* log*[] item (otherwise it is not the same item anymore) */
-		prep_vec->values[prep_vec_idx].key_orig = zbx_strdup(NULL, key);
-		prep_vec->values[prep_vec_idx].persistent_file_name = zbx_strdup(NULL, persistent_file_name);
-
-		zabbix_log(LOG_LEVEL_DEBUG, "%s(): key:[%s] created element %d", __func__, key, prep_vec_idx);
-	}
-	else
-		zabbix_log(LOG_LEVEL_DEBUG, "%s(): key:[%s] found element %d", __func__, key, prep_vec_idx);
-
-	return prep_vec_idx;
-}
-
-/******************************************************************************
- *                                                                            *
  * Function: zbx_minimal_init_prep_vec_data                                   *
  *                                                                            *
  * Purpose: initialize an element of preparation vector with available data   *
@@ -1684,7 +1448,7 @@ ZBX_THREAD_ENTRY(active_checks_thread, args)
 				nextrefresh = time(NULL) + CONFIG_REFRESH_ACTIVE_CHECKS;
 			}
 #if !defined(_WINDOWS) && !defined(__MINGW32__)
-			remove_inactive_persistent_files(&persistent_inactive_vec);
+			zbx_remove_inactive_persistent_files(&persistent_inactive_vec);
 #endif
 		}
 
