@@ -17,9 +17,15 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **/
 
+#ifndef ZABBIX_PERSISTENT_STATE_H
+#define ZABBIX_PERSISTENT_STATE_H
+
 char	*zbx_create_persistent_server_directory(const char *base_path, const char *host, unsigned short port,
 		char **error);
 char	*zbx_make_persistent_file_name(const char *persistent_server_dir, const char *item_key);
 int	zbx_write_persistent_file(const char *filename, const char *data, char **error);
 int	zbx_read_persistent_file(const char *filename, char *buf, size_t buf_size, char **err_msg);
 int	zbx_remove_persistent_file(const char *pathname, char **error);
+int	zbx_restore_file_details(const char *str, struct st_logfile **logfiles, int *logfiles_num,
+		zbx_uint64_t *processed_size, int *mtime, char **err_msg);
+#endif
