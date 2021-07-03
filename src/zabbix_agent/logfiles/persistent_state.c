@@ -457,6 +457,39 @@ int	zbx_remove_persistent_file(const char *pathname, char **error)
 	return FAIL;
 }
 
+void	zbx_init_prep_vec_data(const struct st_logfile *logfile, zbx_pre_persistent_t *prep_vec_elem)
+{
+	/* copy attributes which are stable within one check of the specified log file but */
+	/* may change in the next check */
+
+	if (NULL == prep_vec_elem->filename || 0 != strcmp(prep_vec_elem->filename, logfile->filename))
+		prep_vec_elem->filename = zbx_strdup(prep_vec_elem->filename, logfile->filename);
+
+	prep_vec_elem->mtime = logfile->mtime;
+	prep_vec_elem->md5size = logfile->md5size;
+	prep_vec_elem->seq = logfile->seq;
+	prep_vec_elem->copy_of = logfile->copy_of;
+	prep_vec_elem->dev = logfile->dev;
+	prep_vec_elem->ino_lo = logfile->ino_lo;
+	prep_vec_elem->ino_hi = logfile->ino_hi;
+	prep_vec_elem->size = logfile->size;
+	memcpy(prep_vec_elem->md5buf, logfile->md5buf, sizeof(logfile->md5buf));
+}
+
+void	zbx_update_prep_vec_data(const struct st_logfile *logfile, zbx_uint64_t processed_size,
+		const char *last_rec, int last_rec_size, zbx_pre_persistent_t *prep_vec_elem)
+{
+	/* copy attributes specific to every log file record */
+	prep_vec_elem->processed_size = processed_size;
+	prep_vec_elem->incomplete = logfile->incomplete;
+
+	prep_vec_elem->last_rec_size = last_rec_size;
+
+	/* It is expensive to calculate MD5 sum for every record when it is required only for the last record. */
+	/* Therefore we maintain a copy of the current record and calculate MD5 sum later when necessary. */
+	memcpy(prep_vec_elem->last_rec_part, last_rec, (size_t)MIN(MAX_PART_FOR_MD5, last_rec_size));
+}
+
 /******************************************************************************
  *                                                                            *
  * Function: zbx_restore_file_details                                         *
