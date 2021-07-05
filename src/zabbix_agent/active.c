@@ -206,7 +206,7 @@ static void	add_check(const char *key, const char *key_orig, int refresh, zbx_ui
 #if !defined(_WINDOWS) && !defined(__MINGW32__)
 		else if (NULL != metric->persistent_file_name)
 		{
-			/* the metric is active, but it could have been placed on inactive list earier */
+			/* the metric is active, but it could have been placed on inactive list earlier */
 			zbx_remove_from_persistent_inactive_list(&persistent_inactive_vec, metric->key_orig);
 		}
 #endif
