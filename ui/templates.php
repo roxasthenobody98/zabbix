@@ -18,6 +18,12 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **/
 
+if (array_key_exists('form_as_json', $_REQUEST)) {
+	$form_as_json = json_decode($_REQUEST['form_as_json'], true);
+	$_REQUEST = $form_as_json;
+	$_POST = $_REQUEST;
+	$_GET = $_REQUEST;
+}
 
 require_once dirname(__FILE__).'/include/config.inc.php';
 require_once dirname(__FILE__).'/include/hosts.inc.php';

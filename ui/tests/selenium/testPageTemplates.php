@@ -30,10 +30,7 @@ class testPageTemplates extends CLegacyWebTest {
 	use TableTrait;
 
 	public static function allTemplates() {
-		// TODO: remove 'AND name NOT LIKE "%Cisco Catalyst%"' and change to single quotes after fix ZBX-19356
-		return CDBHelper::getRandomizedDataProvider("SELECT * FROM hosts WHERE status IN (".HOST_STATUS_TEMPLATE.")".
-				" AND name NOT LIKE '%Cisco Catalyst%' AND name NOT LIKE '%Mellanox%' AND name NOT LIKE ".
-				"'%Cisco UCS%'", 25);
+		return CDBHelper::getRandomizedDataProvider('SELECT * FROM hosts WHERE status IN ('.HOST_STATUS_TEMPLATE.')', 25);
 	}
 
 	public function testPageTemplates_CheckLayout() {

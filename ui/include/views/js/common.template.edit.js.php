@@ -375,5 +375,31 @@
 					$('.is-loading', $container).remove();
 				});
 		});
+
+		$('#templates-form').on('submit', function(e){
+			const form = e.target;
+
+			if (form.length < <?= ini_get('max_input_vars') ?>) {
+				return true;
+			}
+
+			e.preventDefault();
+
+			const	$form = $(form),
+					button = e.originalEvent.submitter,
+					data = $form.serializeJSON(),
+					input = document.createElement('input');
+
+			data[button.name] = button.value;
+			input.name = 'form_as_json';
+			input.value = JSON.stringify(data);
+
+			$form
+				.off('submit')
+				.hide()
+				.empty()
+				.append(input)
+				.submit();
+		});
 	});
 </script>
