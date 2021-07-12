@@ -53,7 +53,7 @@ foreach ($data['tags'] as $i => $tag) {
 	$readonly = ($data['readonly'] || ($show_inherited_tags && $tag['type'] == ZBX_PROPERTY_INHERITED));
 
 	$tag_input = (new CTextAreaFlexible('tags['.$i.'][tag]', $tag['tag'], ['readonly' => $readonly]))
-		->setWidth(ZBX_TEXTAREA_TAG_WIDTH)
+		->setAdaptiveWidth(ZBX_TEXTAREA_TAG_WIDTH)
 		->setAttribute('placeholder', _('tag'));
 
 	$tag_cell = [$tag_input];
@@ -63,7 +63,7 @@ foreach ($data['tags'] as $i => $tag) {
 	}
 
 	$value_input = (new CTextAreaFlexible('tags['.$i.'][value]', $tag['value'], ['readonly' => $readonly]))
-		->setWidth(ZBX_TEXTAREA_TAG_VALUE_WIDTH)
+		->setAdaptiveWidth(ZBX_TEXTAREA_TAG_VALUE_WIDTH)
 		->setAttribute('placeholder', _('value'));
 
 	$row = [
