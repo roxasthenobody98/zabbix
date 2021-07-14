@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
    <version>5.0</version>
-   <date>2020-11-22T08:28:49Z</date>
+   <date>2021-07-13T18:29:15Z</date>
    <groups>
       <group>
          <name>Templates/Operating systems</name>
@@ -27,6 +27,7 @@
                <name>CPU DPC time</name>
                <key>perf_counter_en["\Processor Information(_total)\% DPC Time"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <value_type>FLOAT</value_type>
                <units>%</units>
                <description>Processor DPC time is the time that a single processor spent receiving and servicing deferred procedure &#13;
@@ -44,6 +45,7 @@ significantly diminish overall system performance.</description>
                <name>CPU interrupt time</name>
                <key>perf_counter_en["\Processor Information(_total)\% Interrupt Time"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <value_type>FLOAT</value_type>
                <units>%</units>
                <description>The Processor Information\% Interrupt Time is the time the processor spends receiving and servicing &#13;
@@ -80,6 +82,7 @@ hardware failure. This should never be higher than 20%.</description>
                <name>CPU privileged time</name>
                <key>perf_counter_en["\Processor Information(_total)\% Privileged Time"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <value_type>FLOAT</value_type>
                <units>%</units>
                <description>The Processor Information\% Privileged Time counter shows the percent of time that the processor is spent &#13;
@@ -114,6 +117,7 @@ functions of the Windows® Operating System.</description>
                <name>CPU user time</name>
                <key>perf_counter_en["\Processor Information(_total)\% User Time"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <value_type>FLOAT</value_type>
                <units>%</units>
                <description>The Processor Information\% User Time counter shows the percent of time that the processor(s) is spent executing &#13;
@@ -128,6 +132,7 @@ in User mode.</description>
                <name>Context switches per second</name>
                <key>perf_counter_en["\System\Context Switches/sec"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <value_type>FLOAT</value_type>
                <description>Context Switches/sec is the combined rate at which all processors on the computer are switched from one thread to another.&#13;
 Context switches occur when a running thread voluntarily relinquishes the processor, is preempted by a higher priority ready thread, or switches between user-mode and privileged (kernel) mode to use an Executive or subsystem service.&#13;
@@ -143,6 +148,7 @@ There are context switch counters on the System and Thread objects. This counter
                <name>CPU queue length</name>
                <key>perf_counter_en["\System\Processor Queue Length"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <value_type>FLOAT</value_type>
                <description>The Processor Queue Length shows the number of threads that are observed as delayed in the processor Ready Queue &#13;
 and are waiting to be executed.</description>
@@ -156,6 +162,7 @@ and are waiting to be executed.</description>
                <name>CPU utilization</name>
                <key>system.cpu.util</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <value_type>FLOAT</value_type>
                <units>%</units>
                <description>CPU utilization in %</description>
@@ -178,6 +185,7 @@ and are waiting to be executed.</description>
                <name>Number of cores</name>
                <key>wmi.get[root/cimv2,"Select NumberOfLogicalProcessors from Win32_ComputerSystem"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <description>The number of logical processors available on the computer.</description>
                <applications>
                   <application>
@@ -273,6 +281,7 @@ and are waiting to be executed.</description>
                      <name>{#FSNAME}: Space utilization</name>
                      <key>vfs.fs.size[{#FSNAME},pused]</key>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <value_type>FLOAT</value_type>
                      <units>%</units>
                      <description>Space utilization in % for {#FSNAME}</description>
@@ -286,6 +295,7 @@ and are waiting to be executed.</description>
                      <name>{#FSNAME}: Total space</name>
                      <key>vfs.fs.size[{#FSNAME},total]</key>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <units>B</units>
                      <description>Total space in Bytes</description>
                      <application_prototypes>
@@ -298,6 +308,7 @@ and are waiting to be executed.</description>
                      <name>{#FSNAME}: Used space</name>
                      <key>vfs.fs.size[{#FSNAME},used]</key>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <units>B</units>
                      <description>Used storage in Bytes</description>
                      <application_prototypes>
@@ -440,6 +451,7 @@ and are waiting to be executed.</description>
                <name>Number of threads</name>
                <key>perf_counter_en["\System\Threads"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <description>The number of threads used by all running processes.</description>
                <applications>
                   <application>
@@ -451,6 +463,7 @@ and are waiting to be executed.</description>
                <name>Number of processes</name>
                <key>proc.num[]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <description>The number of processes.</description>
                <applications>
                   <application>
@@ -464,6 +477,7 @@ and are waiting to be executed.</description>
                <delay>1h</delay>
                <history>2w</history>
                <trends>0</trends>
+               <status>ENABLED</status>
                <value_type>CHAR</value_type>
                <description>System host name.</description>
                <inventory_link>NAME</inventory_link>
@@ -492,6 +506,7 @@ and are waiting to be executed.</description>
                <name>System local time</name>
                <key>system.localtime</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <units>unixtime</units>
                <description>System local time of the host.</description>
                <applications>
@@ -515,6 +530,7 @@ and are waiting to be executed.</description>
                <delay>1h</delay>
                <history>2w</history>
                <trends>0</trends>
+               <status>ENABLED</status>
                <value_type>CHAR</value_type>
                <description>Operating system architecture of the host.</description>
                <applications>
@@ -535,6 +551,7 @@ and are waiting to be executed.</description>
                <delay>1h</delay>
                <history>2w</history>
                <trends>0</trends>
+               <status>ENABLED</status>
                <value_type>CHAR</value_type>
                <description>System description of the host.</description>
                <applications>
@@ -555,6 +572,7 @@ and are waiting to be executed.</description>
                <delay>30s</delay>
                <history>2w</history>
                <trends>0d</trends>
+               <status>ENABLED</status>
                <units>uptime</units>
                <description>System uptime in 'N days, hh:mm:ss' format.</description>
                <applications>
@@ -600,6 +618,7 @@ and are waiting to be executed.</description>
                <name>Cache bytes</name>
                <key>perf_counter_en["\Memory\Cache Bytes"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <units>B</units>
                <description>Cache Bytes is the sum of the Memory\\System Cache Resident Bytes, Memory\\System Driver Resident Bytes, &#13;
 Memory\\System Code Resident Bytes, and Memory\\Pool Paged Resident Bytes counters. This counter displays &#13;
@@ -614,6 +633,7 @@ the last observed value only; it is not an average.</description>
                <name>Free system page table entries</name>
                <key>perf_counter_en["\Memory\Free System Page Table Entries"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <description>This indicates the number of page table entries not currently in use by the system. If the number is less &#13;
 than 5,000, there may well be a memory leak or you running out of memory.</description>
                <applications>
@@ -640,6 +660,7 @@ than 5,000, there may well be a memory leak or you running out of memory.</descr
                <name>Memory page faults per second</name>
                <key>perf_counter_en["\Memory\Page Faults/sec"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <value_type>FLOAT</value_type>
                <description>Page Faults/sec is the average number of pages faulted per second. It is measured in number of pages &#13;
 faulted per second because only one page is faulted in each fault operation, hence this is also equal &#13;
@@ -657,6 +678,7 @@ which require disk access, can cause significant delays.</description>
                <name>Memory pages per second</name>
                <key>perf_counter_en["\Memory\Pages/sec"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <value_type>FLOAT</value_type>
                <description>This measures the rate at which pages are read from or written to disk to resolve hard page faults. &#13;
 If the value is greater than 1,000, as a result of excessive paging, there may be a memory leak.</description>
@@ -684,6 +706,7 @@ If the value is greater than 1,000, as a result of excessive paging, there may b
                <name>Memory pool non-paged</name>
                <key>perf_counter_en["\Memory\Pool Nonpaged Bytes"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <units>B</units>
                <description>This measures the size, in bytes, of the non-paged pool. This is an area of system memory for objects &#13;
 that cannot be written to disk but instead must remain in physical memory as long as they are allocated. &#13;
@@ -699,6 +722,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                <name>Used swap space in %</name>
                <key>perf_counter_en["\Paging file(_Total)\% Usage"]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <value_type>FLOAT</value_type>
                <units>%</units>
                <description>The used space of swap volume/file in percent.</description>
@@ -713,6 +737,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                <type>CALCULATED</type>
                <key>system.swap.free</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <units>B</units>
                <params>last("system.swap.size[,total]") - last("system.swap.size[,total]") / 100 * last("perf_counter_en[\"\Paging file(_Total)\% Usage\"]")</params>
                <description>The free space of swap volume/file in bytes.</description>
@@ -728,6 +753,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                <key>system.swap.pfree</key>
                <delay>0</delay>
                <history>7d</history>
+               <status>ENABLED</status>
                <value_type>FLOAT</value_type>
                <units>%</units>
                <description>The free space of swap volume/file in percent.</description>
@@ -750,6 +776,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                <name>Total swap space</name>
                <key>system.swap.size[,total]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <units>B</units>
                <description>The total space of swap volume/file in bytes.</description>
                <applications>
@@ -762,6 +789,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                <name>Total memory</name>
                <key>vm.memory.size[total]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <units>B</units>
                <description>Total memory in Bytes</description>
                <applications>
@@ -774,6 +802,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                <name>Used memory</name>
                <key>vm.memory.size[used]</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <units>B</units>
                <description>Used memory in Bytes</description>
                <applications>
@@ -787,6 +816,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                <type>CALCULATED</type>
                <key>vm.memory.util</key>
                <history>7d</history>
+               <status>ENABLED</status>
                <value_type>FLOAT</value_type>
                <units>%</units>
                <params>last("vm.memory.size[used]") / last("vm.memory.size[total]") * 100</params>
@@ -852,6 +882,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                <key>wmi.getall[root\cimv2,"select Name,Description,NetConnectionID,Speed,AdapterTypeId,NetConnectionStatus from win32_networkadapter where PhysicalAdapter=True and NetConnectionStatus&gt;0"]</key>
                <history>0</history>
                <trends>0</trends>
+               <status>ENABLED</status>
                <value_type>TEXT</value_type>
                <description>Raw data of win32_networkadapter.</description>
                <applications>
@@ -912,6 +943,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                      <key>net.if.in["{#IFNAME}",dropped]</key>
                      <delay>3m</delay>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <description>The number of incoming packets dropped on the network interface.</description>
                      <application_prototypes>
                         <application_prototype>
@@ -930,6 +962,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                      <key>net.if.in["{#IFNAME}",errors]</key>
                      <delay>3m</delay>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <description>The number of incoming packets with errors on the network interface.</description>
                      <application_prototypes>
                         <application_prototype>
@@ -948,6 +981,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                      <key>net.if.in["{#IFNAME}"]</key>
                      <delay>3m</delay>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <units>bps</units>
                      <description>Incoming traffic on the network interface.</description>
                      <application_prototypes>
@@ -971,6 +1005,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                      <key>net.if.out["{#IFNAME}",dropped]</key>
                      <delay>3m</delay>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <description>The number of outgoing packets dropped on the network interface.</description>
                      <application_prototypes>
                         <application_prototype>
@@ -989,6 +1024,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                      <key>net.if.out["{#IFNAME}",errors]</key>
                      <delay>3m</delay>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <description>The number of outgoing packets with errors on the network interface.</description>
                      <application_prototypes>
                         <application_prototype>
@@ -1007,6 +1043,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                      <key>net.if.out["{#IFNAME}"]</key>
                      <delay>3m</delay>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <units>bps</units>
                      <description>Outgoing traffic on the network interface.</description>
                      <application_prototypes>
@@ -1032,6 +1069,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                      <delay>0</delay>
                      <history>7d</history>
                      <trends>0d</trends>
+                     <status>ENABLED</status>
                      <units>bps</units>
                      <description>Estimated bandwidth of the network interface if any.</description>
                      <application_prototypes>
@@ -1067,6 +1105,7 @@ A typical Event ID 2019 is recorded in the system event log.</description>
                      <delay>0</delay>
                      <history>7d</history>
                      <trends>0</trends>
+                     <status>ENABLED</status>
                      <description>The operational status of the network interface.</description>
                      <application_prototypes>
                         <application_prototype>
@@ -1115,6 +1154,7 @@ WARNING: if closed manually - won't fire again on next poll, because of .diff.</
                      <delay>0</delay>
                      <history>7d</history>
                      <trends>0d</trends>
+                     <status>ENABLED</status>
                      <description>The type of the network interface.</description>
                      <application_prototypes>
                         <application_prototype>
@@ -1165,7 +1205,7 @@ WARNING: if closed manually - won't fire again on next poll, because of .diff.</
                      <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
                      <recovery_expression>{Template Module Windows network by Zabbix agent:net.if.in["{#IFNAME}"].avg(15m)}&lt;(({$IF.UTIL.MAX:"{#IFNAME}"}-3)/100)*{Template Module Windows network by Zabbix agent:net.if.speed["{#IFNAME}"].last()} and&#13;
 {Template Module Windows network by Zabbix agent:net.if.out["{#IFNAME}"].avg(15m)}&lt;(({$IF.UTIL.MAX:"{#IFNAME}"}-3)/100)*{Template Module Windows network by Zabbix agent:net.if.speed["{#IFNAME}"].last()}</recovery_expression>
-                     <name>Interface {#IFNAME}({#IFALIAS}): High bandwidth usage (&gt; {$IF.UTIL.MAX:"{#IFNAME}"}% )</name>
+                     <name>Interface {#IFNAME}({#IFALIAS}): High bandwidth usage (&gt;{$IF.UTIL.MAX:"{#IFNAME}"}% )</name>
                      <opdata>In: {ITEM.LASTVALUE1}, out: {ITEM.LASTVALUE3}, speed: {ITEM.LASTVALUE2}</opdata>
                      <priority>WARNING</priority>
                      <description>The network interface utilization is close to its estimated maximum bandwidth.</description>
@@ -1184,7 +1224,7 @@ or {Template Module Windows network by Zabbix agent:net.if.out["{#IFNAME}",error
                      <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
                      <recovery_expression>{Template Module Windows network by Zabbix agent:net.if.in["{#IFNAME}",errors].max(5m)}&lt;{$IF.ERRORS.WARN:"{#IFNAME}"}*0.8&#13;
 and {Template Module Windows network by Zabbix agent:net.if.out["{#IFNAME}",errors].max(5m)}&lt;{$IF.ERRORS.WARN:"{#IFNAME}"}*0.8</recovery_expression>
-                     <name>Interface {#IFNAME}({#IFALIAS}): High error rate (&gt; {$IF.ERRORS.WARN:"{#IFNAME}"} for 5m)</name>
+                     <name>Interface {#IFNAME}({#IFALIAS}): High error rate (&gt;{$IF.ERRORS.WARN:"{#IFNAME}"} for 5m)</name>
                      <opdata>errors in: {ITEM.LASTVALUE1}, errors out: {ITEM.LASTVALUE2}</opdata>
                      <priority>WARNING</priority>
                      <description>Recovers when below 80% of {$IF.ERRORS.WARN:"{#IFNAME}"} threshold</description>
@@ -1397,6 +1437,7 @@ return JSON.stringify({"data": output})</params>
                      <name>{#DEVNAME}: Disk utilization</name>
                      <key>perf_counter_en["\PhysicalDisk({#DEVNAME})\% Disk Time",60]</key>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <value_type>FLOAT</value_type>
                      <units>%</units>
                      <description>This item is the percentage of elapsed time that the selected disk drive was busy servicing read or writes requests.</description>
@@ -1429,6 +1470,7 @@ return JSON.stringify({"data": output})</params>
                      <name>{#DEVNAME}: Average disk read queue length</name>
                      <key>perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk Read Queue Length",60]</key>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <value_type>FLOAT</value_type>
                      <description>Average disk read queue, the number of requests outstanding on the disk at the time the performance data is collected.</description>
                      <application_prototypes>
@@ -1441,6 +1483,7 @@ return JSON.stringify({"data": output})</params>
                      <name>{#DEVNAME}: Disk read request avg waiting time</name>
                      <key>perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk sec/Read",60]</key>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <value_type>FLOAT</value_type>
                      <units>s</units>
                      <description>The average time for read requests issued to the device to be served. This includes the time spent by the requests in queue and the time spent servicing them.</description>
@@ -1463,6 +1506,7 @@ return JSON.stringify({"data": output})</params>
                      <name>{#DEVNAME}: Disk write request avg waiting time</name>
                      <key>perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk sec/Write",60]</key>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <value_type>FLOAT</value_type>
                      <units>s</units>
                      <description>The average time for write requests issued to the device to be served. This includes the time spent by the requests in queue and the time spent servicing them.</description>
@@ -1476,6 +1520,7 @@ return JSON.stringify({"data": output})</params>
                      <name>{#DEVNAME}: Average disk write queue length</name>
                      <key>perf_counter_en["\PhysicalDisk({#DEVNAME})\Avg. Disk Write Queue Length",60]</key>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <value_type>FLOAT</value_type>
                      <description>Average disk write queue, the number of requests outstanding on the disk at the time the performance data is collected.</description>
                      <application_prototypes>
@@ -1488,6 +1533,7 @@ return JSON.stringify({"data": output})</params>
                      <name>{#DEVNAME}: Disk average queue size (avgqu-sz)</name>
                      <key>perf_counter_en["\PhysicalDisk({#DEVNAME})\Current Disk Queue Length",60]</key>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <value_type>FLOAT</value_type>
                      <description>Current average disk queue, the number of requests outstanding on the disk at the time the performance data is collected.</description>
                      <application_prototypes>
@@ -1500,6 +1546,7 @@ return JSON.stringify({"data": output})</params>
                      <name>{#DEVNAME}: Disk read rate</name>
                      <key>perf_counter_en["\PhysicalDisk({#DEVNAME})\Disk Reads/sec",60]</key>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <value_type>FLOAT</value_type>
                      <units>!r/s</units>
                      <description>Rate of read operations on the disk.</description>
@@ -1513,6 +1560,7 @@ return JSON.stringify({"data": output})</params>
                      <name>{#DEVNAME}: Disk write rate</name>
                      <key>perf_counter_en["\PhysicalDisk({#DEVNAME})\Disk Writes/sec",60]</key>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <value_type>FLOAT</value_type>
                      <units>!w/s</units>
                      <description>Rate of write operations on the disk.</description>
@@ -1711,6 +1759,7 @@ Template tooling version used: 0.38</description>
                      <name>State of service "{#SERVICE.NAME}" ({#SERVICE.DISPLAYNAME})</name>
                      <key>service.info["{#SERVICE.NAME}",state]</key>
                      <history>7d</history>
+                     <status>ENABLED</status>
                      <applications>
                         <application>
                            <name>Services</name>
@@ -1740,17 +1789,17 @@ Template tooling version used: 0.38</description>
             </macro>
             <macro>
                <macro>{$SERVICE.NAME.NOT_MATCHES}</macro>
-               <value>^RemoteRegistry|MMCSS|gupdate|SysmonLog|clr_optimization_v.+|clr_optimization_v.+|sppsvc|gpsvc|Pml Driver HPZ12|Net Driver HPZ12|MapsBroker|IntelAudioService|Intel\(R\) TPM Provisioning Service|dbupdate|DoSvc$</value>
+               <value>^(RemoteRegistry|MMCSS|gupdate|SysmonLog|clr_optimization_v.+|clr_optimization_v.+|sppsvc|gpsvc|Pml Driver HPZ12|Net Driver HPZ12|MapsBroker|IntelAudioService|Intel\(R\) TPM Provisioning Service|dbupdate|DoSvc)$</value>
                <description>This macro is used in Service discovery. Can be overridden on the host or linked template level.</description>
             </macro>
             <macro>
                <macro>{$SERVICE.STARTUPNAME.MATCHES}</macro>
-               <value>^automatic|automatic delayed$</value>
+               <value>^(automatic|automatic delayed)$</value>
                <description>This macro is used in Service discovery. Can be overridden on the host or linked template level.</description>
             </macro>
             <macro>
                <macro>{$SERVICE.STARTUPNAME.NOT_MATCHES}</macro>
-               <value>^manual|disabled$</value>
+               <value>^(manual|disabled)$</value>
                <description>This macro is used in Service discovery. Can be overridden on the host or linked template level.</description>
             </macro>
          </macros>
