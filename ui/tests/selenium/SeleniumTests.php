@@ -181,7 +181,7 @@ require_once dirname(__FILE__).'/testSID.php';
 
 class SeleniumTests {
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('selenium');
+		$suite = new TestSuite('selenium');
 
 		$suite->addTestSuite('testGeneric');
 		$suite->addTestSuite('testGraphAxis');

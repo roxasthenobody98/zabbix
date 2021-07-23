@@ -24,7 +24,7 @@ require_once dirname(__FILE__).'/../include/CTest.php';
 class function_DBconnect extends CTest {
 	public function test_DBconnect() {
 		DBclose();
-		return DBconnect($error);
+		$this->assertTrue(DBconnect($error));
 	}
 
 	public function test_DBconnectIfAlreadyConnected() {

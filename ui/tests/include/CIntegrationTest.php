@@ -262,7 +262,7 @@ class CIntegrationTest extends CAPITest {
 				self::stopComponent($component);
 			}
 			catch (Exception $e) {
-				self::addWarning($e->getMessage());
+				self::_addWarning($e->getMessage());
 			}
 		}
 
@@ -293,7 +293,7 @@ class CIntegrationTest extends CAPITest {
 				self::stopComponent($component);
 			}
 			catch (Exception $e) {
-				self::addWarning($e->getMessage());
+				self::_addWarning($e->getMessage());
 			}
 		}
 

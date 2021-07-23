@@ -23,7 +23,7 @@ require_once dirname(__FILE__).'/selenium/SeleniumTests.php';
 
 class All {
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('Project');
+		$suite = new TestSuite('Project');
 
 		$suite->addTest(GeneralTests::suite());
 		$suite->addTest(SeleniumTests::suite());

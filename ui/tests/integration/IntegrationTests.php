@@ -18,6 +18,9 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **/
 
+
+use PHPUnit\Framework\TestSuite;
+
 require_once dirname(__FILE__).'/testDataCollection.php';
 require_once dirname(__FILE__).'/testDiagnosticDataTask.php';
 require_once dirname(__FILE__).'/testLowLevelDiscovery.php';
@@ -27,7 +30,7 @@ require_once dirname(__FILE__).'/testValuemaps.php';
 
 class IntegrationTests {
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('Integration');
+		$suite = new TestSuite('Integration');
 		$suite->addTestSuite('testDataCollection');
 		$suite->addTestSuite('testDiagnosticDataTask');
 		$suite->addTestSuite('testLowLevelDiscovery');

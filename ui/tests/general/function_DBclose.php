@@ -24,7 +24,7 @@ require_once dirname(__FILE__).'/../include/CTest.php';
 class function_DBclose extends CTest {
 	public function test_DBclose() {
 		DBconnect($error);
-		return DBclose();
+		$this->assertTrue(DBclose());
 	}
 
 	public function test_DBcloseOfClosedDatabase() {

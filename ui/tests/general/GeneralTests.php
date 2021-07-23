@@ -19,6 +19,8 @@
 **/
 
 
+use PHPUnit\Framework\TestSuite;
+
 require_once dirname(__FILE__).'/function_DBconnect.php';
 require_once dirname(__FILE__).'/function_DBclose.php';
 require_once dirname(__FILE__).'/function_DBselect.php';
@@ -33,7 +35,7 @@ require_once dirname(__FILE__).'/urlParamTest.php';
 class GeneralTests {
 
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('general');
+		$suite = new TestSuite('general');
 
 		$suite->addTestSuite('function_DBconnect');
 		$suite->addTestSuite('function_DBclose');

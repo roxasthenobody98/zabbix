@@ -55,7 +55,7 @@ class CSegmentedRadioElement extends CElement {
 			}
 
 			if ($radio->count() > 1) {
-				CTest::addWarning('Selected element is not one.');
+				CTest::_addWarning('Selected element is not one.');
 			}
 		}
 
