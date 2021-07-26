@@ -304,7 +304,7 @@ class testFormAdministrationMediaTypeMessageTemplates extends CWebTest {
 				$disabled_options = $form->getField('Message type')->getOptions()->filter(
 						new CElementFilter(CElementFilter::ATTRIBUTES_PRESENT, ['disabled'])
 				)->asText();
-				$this->assertContains($template['Message type'], $disabled_options);
+				$this->assertStringContainsString($template['Message type'], $disabled_options);
 				COverlayDialogElement::find()->one()->close();
 			}
 		}

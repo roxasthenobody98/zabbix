@@ -2104,7 +2104,7 @@ class testDashboardGraphWidget extends CWebTest {
 
 					foreach ($override['options'] as $option) {
 						if (is_array($option) && count($option) === 2) {
-							$this->assertContains(implode(': ', $option), $options_text);
+							$this->assertStringContainsString(implode(': ', $option), $options_text);
 						}
 					}
 				}

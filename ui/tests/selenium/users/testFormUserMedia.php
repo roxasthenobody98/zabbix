@@ -635,7 +635,7 @@ class testFormUserMedia extends CWebTest {
 			// Check that when no severities are passed - they all are turned on by default
 			for ($i = 1; $i < 7; $i++) {
 				$severity =  $row->query('xpath:./td[4]/div/div['.$i.']')->one()->getText();
-				$this->assertContains('(on)', $severity);
+				$this->assertStringContainsString('(on)', $severity);
 			}
 		}
 	}

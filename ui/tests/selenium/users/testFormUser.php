@@ -593,7 +593,7 @@ class testFormUser extends CWebTest {
 			$password = CTestArrayHelper::get($data['fields'], 'Password', $data['fields']['Password'] = 'zabbix');
 			$this->page->userLogin($data['fields']['Username'], $password);
 			// Verification of URL after login.
-			$this->assertContains($data['fields']['URL (after login)'], $this->page->getCurrentURL());
+			$this->assertStringContainsString($data['fields']['URL (after login)'], $this->page->getCurrentURL());
 			// Verification of the number of rows per page parameter.
 			$rows = $this->query('name:frm_maps')->asTable()->waitUntilVisible()->one()->getRows();
 			$this->assertEquals($data['fields']['Rows per page'], $rows->count());
@@ -1140,7 +1140,7 @@ class testFormUser extends CWebTest {
 		$form_create->fill($data);
 		$this->query('button:Cancel')->one()->click();
 		$cancel_url = $this->page->getCurrentURL();
-		$this->assertContains('zabbix.php?action=user.list', $cancel_url);
+		$this->assertStringContainsString('zabbix.php?action=user.list', $cancel_url);
 		$this->assertEquals($user_hash, CDBHelper::getHash($sql_users));
 
 		// Check Cancellation when updating users.

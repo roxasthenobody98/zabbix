@@ -135,7 +135,7 @@ class testPageAvailabilityReport extends CLegacyWebTest {
 			}
 
 			// Check only cells 2,3,4 in every row: Label, Problem state value, Ok state value.
-			$this->assertContains(array_slice($cells_values, 1, 3), $sla_item_values);
+			$this->assertStringContainsString(array_slice($cells_values, 1, 3), $sla_item_values);
 		}
 	}
 
