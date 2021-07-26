@@ -2013,9 +2013,14 @@ class CMacrosResolver extends CMacrosResolverGeneral {
 				}
 			}
 
+			// Create an array of macros used in element label or URLs.
 			foreach ($types as &$macro_types) {
-				$macro_types = array_map(function($macros_by_location) {
-					return array_keys(array_flip(call_user_func_array('array_merge', $macros_by_location)));
+				$macro_types = array_map(function ($macros_by_location) {
+					$unique_macros = [];
+					foreach ($macros_by_location as $macros) {
+						$unique_macros += array_flip($macros);
+					}
+					return array_keys($unique_macros);
 				}, $macro_types);
 			}
 			unset($macro_types);
