@@ -283,7 +283,7 @@ class testAlertingForServices extends CIntegrationTest {
 		);
 		$this->assertArrayHasKey(0, $response['result']);
 		$this->assertEquals(TRIGGER_SEVERITY_NOT_CLASSIFIED, $response['result'][0]['severity']);
-		$expected_eventname = 'Status of service "' . self::SERVICENAME . '" changed to OK'; 
+		$expected_eventname = 'Status of service "' . self::SERVICENAME . '" changed to OK';
 		$this->assertEquals($expected_eventname, $response['result'][0]['name']);
 
 		return true;
