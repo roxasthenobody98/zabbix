@@ -251,11 +251,11 @@ class testAlertingForServices extends CIntegrationTest {
 		);
 		$this->assertArrayHasKey(0, $response['result']);
 		$this->assertEquals(TRIGGER_SEVERITY_HIGH, $response['result'][0]['severity']);
-		$expected_eventname = 'Status of service "' . self::SERVICENAME . '" changed to High'; 
+		$expected_eventname = 'Status of service "' . self::SERVICENAME . '" changed to High';
 		$this->assertEquals($expected_eventname, $response['result'][0]['name']);
 
 		$this->sendSenderValue(self::HOSTNAME, self::TRAPPER_KEY, 0);
-		
+
 		sleep(1);
 
 		$response = $this->call('alert.get', [
@@ -336,7 +336,7 @@ class testAlertingForServices extends CIntegrationTest {
 
 		$this->sendSenderValue(self::HOSTNAME, self::TRAPPER_KEY, 1);
 		sleep(60);
-		
+
 		$response = $this->call('alert.get', [
 			'output' => 'extend',
 			'actionsids' => self::$actionid,
