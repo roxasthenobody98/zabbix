@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-07-30T07:34:01Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Travis CI by HTTP</template>
+            <name>Template Travis CI by HTTP</name>
+            <description>Template for monitoring Travis CI https://travis-ci.com</description>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>RAW</name>
+                </application>
+                <application>
+                    <name>Travis</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Accounts count</name>
+                    <type>HTTP_AGENT</type>
+                    <key>travis.accounts.count</key>
+                    <applications>
+                        <application>
+                            <name>Travis</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>var result = JSON.parse(value).accounts
+if (Array.isArray(result)){
+   return result.length;
+} else {
+   return 0;
+}</params>
+                        </step>
+                    </preprocessing>
+                    <url>https://{$TRAVIS_API_URL}/accounts</url>
+                    <headers>
+                        <header>
+                            <name>Accept</name>
+                            <value>application/vnd.travis-ci.2.1+json</value>
+                        </header>
+                        <header>
+                            <name>Authorization</name>
+                            <value>token {$TRAVIS_API_TOKEN}</value>
+                        </header>
+                    </headers>
+                </item>
+                <item>
+                    <name>Total passed builds</name>
+                    <type>HTTP_AGENT</type>
+                    <key>travis.builds</key>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RAW</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>return JSON.stringify(JSON.parse(value).builds.map(function (e) {return {&quot;id&quot;: e.id, &quot;duration&quot;: e.duration}}))</params>
+                        </step>
+                    </preprocessing>
+                    <url>https://{$TRAVIS_API_URL}/builds</url>
+                    <headers>
+                        <header>
+                            <name>Accept</name>
+                            <value>application/vnd.travis-ci.2.1+json</value>
+                        </header>
+                        <header>
+                            <name>Authorization</name>
+                            <value>token {$TRAVIS_API_TOKEN}</value>
+                        </header>
+                    </headers>
+                </item>
+                <item>
+                    <name>Total passed builds count</name>
+                    <type>DEPENDENT</type>
+                    <key>travis.builds.total_count</key>
+                    <delay>0</delay>
+                    <applications>
+                        <application>
+                            <name>Travis</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>return JSON.parse(value).length</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>travis.builds</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Total passed builds duration</name>
+                    <type>DEPENDENT</type>
+                    <key>travis.builds.total_duration</key>
+                    <delay>0</delay>
+                    <units>s</units>
+                    <applications>
+                        <application>
+                            <name>Travis</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>var result = JSON.parse(value);
+var duration = 0;
+for (i in result){
+    duration += result[i].duration;
+}
+return duration</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>travis.builds</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Active jobs</name>
+                    <type>HTTP_AGENT</type>
+                    <key>travis.jobs.active</key>
+                    <applications>
+                        <application>
+                            <name>Travis</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>return JSON.stringify(JSON.parse(value).jobs.length)</params>
+                        </step>
+                    </preprocessing>
+                    <url>https://{$TRAVIS_API_URL}/jobs</url>
+                    <headers>
+                        <header>
+                            <name>Accept</name>
+                            <value>application/vnd.travis-ci.2.1+json</value>
+                        </header>
+                        <header>
+                            <name>Authorization</name>
+                            <value>token {$TRAVIS_API_TOKEN}</value>
+                        </header>
+                    </headers>
+                </item>
+                <item>
+                    <name>Passed jobs</name>
+                    <type>HTTP_AGENT</type>
+                    <key>travis.jobs.passed</key>
+                    <applications>
+                        <application>
+                            <name>Travis</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>return JSON.stringify(JSON.parse(value).jobs.length)</params>
+                        </step>
+                    </preprocessing>
+                    <url>https://{$TRAVIS_API_URL}/jobs?state=passed</url>
+                    <headers>
+                        <header>
+                            <name>Accept</name>
+                            <value>application/vnd.travis-ci.2.1+json</value>
+                        </header>
+                        <header>
+                            <name>Authorization</name>
+                            <value>token {$TRAVIS_API_TOKEN}</value>
+                        </header>
+                    </headers>
+                </item>
+                <item>
+                    <name>Repos list</name>
+                    <type>HTTP_AGENT</type>
+                    <key>travis.repos</key>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RAW</name>
+                        </application>
+                    </applications>
+                    <url>https://{$TRAVIS_API_URL}/repos</url>
+                    <headers>
+                        <header>
+                            <name>Accept</name>
+                            <value>application/vnd.travis-ci.2.1+json</value>
+                        </header>
+                        <header>
+                            <name>Authorization</name>
+                            <value>token {$TRAVIS_API_TOKEN}</value>
+                        </header>
+                    </headers>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>Repo's builds</name>
+                    <type>DEPENDENT</type>
+                    <key>travis.builds.lld</key>
+                    <delay>0</delay>
+                    <lifetime>1d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>{#SLUG} count of all builds</name>
+                            <type>DEPENDENT</type>
+                            <key>travis.build.all_builds[{#SLUG}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>{#SLUG} repo</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>return JSON.parse(value).length</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>travis.build.list[{#SLUG}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SLUG} average duration of the build</name>
+                            <type>DEPENDENT</type>
+                            <key>travis.build.avg_duration[{#SLUG}]</key>
+                            <delay>0</delay>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>{#SLUG} repo</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>result = JSON.parse(value).filter(function (e) { return e.duration != &quot;0&quot; &amp;&amp; e.duration != null });
+var duration = 0;
+for (i in result) {
+   duration += result[i].duration;
+}
+return Math.round(duration / result.length)</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>travis.build.list[{#SLUG}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SLUG} description</name>
+                            <type>DEPENDENT</type>
+                            <key>travis.build.description[{#SLUG}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>{#SLUG} repo</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.repos[?(@.slug == &quot;{#SLUG}&quot;)].description.first()</params>
+                                </step>
+                                <step>
+                                    <type>DISCARD_UNCHANGED</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>travis.repos</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SLUG} last build duration</name>
+                            <type>DEPENDENT</type>
+                            <key>travis.build.duration[{#SLUG}]</key>
+                            <delay>0</delay>
+                            <units>s</units>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>{#SLUG} repo</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.repos[?(@.slug == &quot;{#SLUG}&quot;)].last_build_duration.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>travis.repos</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SLUG} count of failed builds</name>
+                            <type>DEPENDENT</type>
+                            <key>travis.build.failed_builds[{#SLUG}]</key>
+                            <delay>0</delay>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>{#SLUG} repo</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>return JSON.parse(value).filter(function (e){return e.state != &quot;passed&quot; &amp;&amp; e.state != &quot;started&quot; }).length
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>travis.build.list[{#SLUG}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SLUG} count of passed builds</name>
+                            <type>DEPENDENT</type>
+                            <key>travis.build.failed_passed[{#SLUG}]</key>
+                            <delay>0</delay>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>{#SLUG} repo</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>return JSON.parse(value).filter(function (e){return e.state == &quot;passed&quot;}).length
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>travis.build.list[{#SLUG}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SLUG} last build id</name>
+                            <type>DEPENDENT</type>
+                            <key>travis.build.id[{#SLUG}]</key>
+                            <delay>0</delay>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>{#SLUG} repo</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.repos[?(@.slug == &quot;{#SLUG}&quot;)].last_build_id.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>travis.repos</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SLUG} builds</name>
+                            <type>HTTP_AGENT</type>
+                            <key>travis.build.list[{#SLUG}]</key>
+                            <history>0</history>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RAW</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>return JSON.stringify(JSON.parse(value).builds.map(function (e) {
+   delete e.config
+   delete e.pull_request
+   delete e.pull_request_title
+   delete e.pull_request_number
+   return e
+}))</params>
+                                </step>
+                            </preprocessing>
+                            <url>https://{$TRAVIS_API_URL}/repos/{#SLUG}/builds</url>
+                            <headers>
+                                <header>
+                                    <name>Accept</name>
+                                    <value>application/vnd.travis-ci.2.1+json</value>
+                                </header>
+                                <header>
+                                    <name>Authorization</name>
+                                    <value>token {$TRAVIS_API_TOKEN}</value>
+                                </header>
+                            </headers>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SLUG} last build number</name>
+                            <type>DEPENDENT</type>
+                            <key>travis.build.number[{#SLUG}]</key>
+                            <delay>0</delay>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>{#SLUG} repo</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.repos[?(@.slug == &quot;{#SLUG}&quot;)].last_build_number.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>travis.repos</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SLUG} last build state</name>
+                            <type>DEPENDENT</type>
+                            <key>travis.build.state[{#SLUG}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>{#SLUG} repo</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.repos[?(@.slug == &quot;{#SLUG}&quot;)].last_build_state.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>travis.repos</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SLUG} duration of all builds</name>
+                            <type>DEPENDENT</type>
+                            <key>travis.build.total_duration[{#SLUG}]</key>
+                            <delay>0</delay>
+                            <units>s</units>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>{#SLUG} repo</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>value = JSON.parse(value);
+var duration = 0;
+for (i in value) {
+   duration += value[i].duration;
+}
+return duration
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>travis.build.list[{#SLUG}]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>{#SLUG} builds</name>
+                            <height>300</height>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template Travis CI by HTTP</host>
+                                        <key>travis.build.all_builds[{#SLUG}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template Travis CI by HTTP</host>
+                                        <key>travis.build.failed_builds[{#SLUG}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>3</sortorder>
+                                    <color>2774A4</color>
+                                    <item>
+                                        <host>Template Travis CI by HTTP</host>
+                                        <key>travis.build.failed_passed[{#SLUG}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                    <master_item>
+                        <key>travis.repos</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#SLUG}</lld_macro>
+                            <path>$..slug.first()</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>result = JSON.parse(value);
+result.data = result.repos;
+delete result.repos;
+return JSON.stringify(result)</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+            </discovery_rules>
+            <macros>
+                <macro>
+                    <macro>{$TRAVIS_API_TOKEN}</macro>
+                    <value>FVIwpHSbVMGl8Cu8zcdCjA</value>
+                </macro>
+                <macro>
+                    <macro>{$TRAVIS_API_URL}</macro>
+                    <value>api.travis-ci.com</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>
