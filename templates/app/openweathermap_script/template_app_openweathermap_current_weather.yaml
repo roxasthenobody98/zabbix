@@ -1,0 +1,186 @@
+zabbix_export:
+  version: '5.4'
+  date: '2021-07-30T10:20:27Z'
+  groups:
+    -
+      uuid: 1fed53ee3c564023937b0ab2ca93e28f
+      name: 'OpenWeather group'
+  templates:
+    -
+      uuid: 3357d05b745f4467b20eadcd95eb922b
+      template: 'Template App OpenWeatherMap Current weather'
+      name: 'Template App OpenWeatherMap Current weather'
+      groups:
+        -
+          name: 'OpenWeather group'
+      items:
+        -
+          uuid: 1d6e4eda254e431da42bfa8a4f4ea22c
+          name: 'Openweathermap: Get data'
+          type: SCRIPT
+          key: openweathermap.get_data
+          delay: 15m
+          trends: '0'
+          value_type: TEXT
+          params: |
+            var request = new HttpRequest();
+            var params = JSON.parse(value);
+            
+            try{
+            switch (params.city != ''){
+            case true: return request.get(params.api_endpoint+'q='+params.city+'&appid='+params.appid+'&units='+params.units+'&lang='+params.lang);
+            break;
+            case false: switch (params.lon != '' && params.lat != '' ){
+                        case true: return request.get(params.api_endpoint+'lat='+params.lat+'&lon='+params.lon+'&appid='+params.appid+'&units='+params.units+'&lang='+params.lang);
+                        break;
+                        case false: return request.get(params.api_endpoint+'zip='+params.zipcode+','+params.lang+'&appid='+params.appid+'&units='+params.units+'&lang='+params.lang);
+                        break;
+            
+                    }
+                  }
+               }
+            catch (error) {Zabbix.log(2, error)}
+          parameters:
+            -
+              name: appid
+              value: '{$AUTH_TOKEN}'
+            -
+              name: city
+              value: '{$CITY}'
+            -
+              name: lang
+              value: '{$LANG}'
+            -
+              name: lat
+              value: '{$LAT}'
+            -
+              name: lon
+              value: '{$LON}'
+            -
+              name: units
+              value: '{$UNITS}'
+            -
+              name: zipcode
+              value: '{$ZIP_CODE}'
+            -
+              name: api_endpoint
+              value: '{$OPENWEATHERMAP.API.ENDPOINT}'
+      discovery_rules:
+        -
+          uuid: 3d41824fd7cd4e95b3c7af3f49066c85
+          name: 'Current weather'
+          type: DEPENDENT
+          key: openweather.weather.discovery
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: b44a40b9c9884adb90f0faba60b9348e
+              name: '{#METRIC}'
+              type: DEPENDENT
+              key: 'weather.metric[{#METRIC}]'
+              delay: '0'
+              value_type: FLOAT
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - '$.main.{#METRIC}'
+                -
+                  type: REGEX
+                  parameters:
+                    - '(-?\d+\.?\d*|abc)'
+                    - \1
+              master_item:
+                key: openweathermap.get_data
+          graph_prototypes:
+            -
+              uuid: e9aa30fcd03049bc96c4f9ddad4c2421
+              name: '{#METRIC} graph'
+              graph_items:
+                -
+                  sortorder: '1'
+                  color: 1A7C11
+                  calc_fnc: ALL
+                  item:
+                    host: 'Template App OpenWeatherMap Current weather'
+                    key: 'weather.metric[{#METRIC}]'
+          master_item:
+            key: openweathermap.get_data
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.main
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  var output = [];
+                  
+                  Object.keys(JSON.parse(value)).forEach(function (v) {
+                      output.push({ '{#METRIC}': v })
+                  });
+                  
+                  return JSON.stringify(output);
+        -
+          uuid: ea7a12077f054117a1e008f9756ae339
+          name: Wind
+          type: DEPENDENT
+          key: openweather.wind.discovery
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: 37a6eebaf7c644438fddc4e5e2e115dc
+              name: 'wind {#METRIC}'
+              type: DEPENDENT
+              key: 'wind.metric[{#METRIC}]'
+              delay: '0'
+              value_type: FLOAT
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - '$.wind.{#METRIC}'
+              master_item:
+                key: openweathermap.get_data
+          master_item:
+            key: openweathermap.get_data
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.wind
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  var output = [];
+                  
+                  Object.keys(JSON.parse(value)).forEach(function (v) {
+                      output.push({ '{#METRIC}': v })
+                  });
+                  
+                  return JSON.stringify(output);
+      macros:
+        -
+          macro: '{$AUTH_TOKEN}'
+          type: SECRET_TEXT
+        -
+          macro: '{$CITY}'
+        -
+          macro: '{$LANG}'
+          value: ru
+          description: 'af,al,ar,az,bg,ca,cz,da,de,el,en,eu,fa,fi,fr,gl,he,hi,hr,hu,id,it,ja,kr,la,lt,mk,no,nl,pl,pt,pt,ro,ru,sv,sk,sl,sp,sr,th,tr,ua,vi,zh,zh,zu'
+        -
+          macro: '{$LAT}'
+        -
+          macro: '{$LON}'
+        -
+          macro: '{$OPENWEATHERMAP.API.ENDPOINT}'
+          value: 'api.openweathermap.org/data/2.5/weather?'
+        -
+          macro: '{$UNITS}'
+          value: metric
+          description: 'standard, metric, imperial'
+        -
+          macro: '{$ZIP_CODE}'
