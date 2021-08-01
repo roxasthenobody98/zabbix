@@ -4,7 +4,8 @@ SUBDIRS = \
 	mysql \
 	oracle \
 	postgresql \
-	sqlite3
+	sqlite3 \
+	mssql
 
 EXTRA_DIST = \
 	elasticsearch

@@ -158,6 +158,26 @@ my %sqlite3 = (
 	"t_varchar"	=>	"varchar"
 );
 
+my %mssql = (
+	"type"		=>	"sql",
+	"database"	=>	"mssql",
+	"before"	=>	"",
+	"after"		=>	"",
+	"table_options"	=>	"",
+	"t_bigint"	=>	"bigint",
+	"t_text"	=>	"varchar(max)",
+	"t_double"	=>	"DOUBLE PRECISION",
+	"t_id"		=>	"bigint",
+	"t_image"	=>	"varbinary(max)",
+	"t_integer"	=>	"int",
+	"t_longtext"	=>	"varchar(max)",
+	"t_nanosec"	=>	"int",
+	"t_serial"	=>	"bigint",
+	"t_shorttext"	=>	"varchar(max)",
+	"t_time"	=>	"int",
+	"t_varchar"	=>	"varchar"
+);
+
 sub rtrim($)
 {
 	my $string = shift;
@@ -396,6 +416,10 @@ sub process_field
 				$sequences = "${sequences}BEGIN${eol}\n";
 				$sequences = "${sequences}SELECT ${table_name}_seq.nextval INTO :new.id FROM dual;${eol}\n";
 				$sequences = "${sequences}END;${eol}\n/${eol}\n";
+			}
+			elsif ($output{"database"} eq "mssql")
+			{
+				$row = sprintf("%-*s IDENTITY(1,1)", $szcol4, $row);
 			}
 		}
 
@@ -685,7 +709,7 @@ EOF
 
 sub usage
 {
-	print "Usage: $0 [c|mysql|oracle|postgresql|sqlite3|timescaledb]\n";
+	print "Usage: $0 [c|mysql|oracle|postgresql|sqlite3|mssql|timescaledb]\n";
 	print "The script generates Zabbix SQL schemas and C code for different database engines.\n";
 	exit;
 }
@@ -753,6 +777,7 @@ sub main
 	elsif ($format eq 'oracle')		{ %output = %oracle; }
 	elsif ($format eq 'postgresql')		{ %output = %postgresql; }
 	elsif ($format eq 'sqlite3')		{ %output = %sqlite3; }
+	elsif ($format eq 'mssql')		{ %output = %mssql;}
 	elsif ($format eq 'timescaledb')	{ timescaledb(); }
 	else					{ usage(); }
 

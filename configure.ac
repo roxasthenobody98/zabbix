@@ -1503,11 +1503,26 @@ if test "x$server" = "xyes" || test "x$proxy" = "xyes"; then
 			AC_MSG_ERROR([SQLite3 library not found])
 		fi
 	fi
+	
+	dnl Checking for MS-SQL support
+	AX_LIB_MSSQL()
+	if test "x$want_mssql" = "xyes"; then
+		if test "x$have_db" != "xno"; then
+			AC_MSG_ERROR([You can configure for only one database.])
+		fi
+
+		if test "x$found_mssql" = "xyes"; then
+			have_db="MSSQL"
+			have_multirow_insert="yes"
+		else
+			AC_MSG_ERROR([MS-SQL library not found])
+		fi
+	fi
 
 	AC_MSG_CHECKING(for Zabbix server/proxy database selection)
 	if test "x$have_db" = "xno"; then
 		AC_MSG_RESULT(error)
-		AC_MSG_ERROR([No database selected for Zabbix server/proxy. Use --with-mysql or --with-oracle or --with-postgresql or --with-sqlite3.])
+		AC_MSG_ERROR([No database selected for Zabbix server/proxy. Use --with-mysql or --with-oracle or --with-postgresql or --with-sqlite3 or --with-mssql.])
 	else
 		AC_MSG_RESULT(ok)
 	fi
@@ -1520,9 +1535,9 @@ if test "x$server" = "xyes" || test "x$proxy" = "xyes"; then
 		AC_MSG_RESULT(no)
 	fi
 
-	DB_CFLAGS="$MYSQL_CFLAGS $ORACLE_CPPFLAGS $POSTGRESQL_CFLAGS $SQLITE3_CPPFLAGS"
-	DB_LDFLAGS="$MYSQL_LDFLAGS $ORACLE_LDFLAGS $POSTGRESQL_LDFLAGS $SQLITE3_LDFLAGS"
-	DB_LIBS="$MYSQL_LIBS $ORACLE_LIBS $POSTGRESQL_LIBS $SQLITE3_LIBS"
+	DB_CFLAGS="$MYSQL_CFLAGS $ORACLE_CPPFLAGS $POSTGRESQL_CFLAGS $SQLITE3_CPPFLAGS $MSSQL_CFLAGS"
+	DB_LDFLAGS="$MYSQL_LDFLAGS $ORACLE_LDFLAGS $POSTGRESQL_LDFLAGS $SQLITE3_LDFLAGS $MSSQL_LDFLAGS"
+	DB_LIBS="$MYSQL_LIBS $ORACLE_LIBS $POSTGRESQL_LIBS $SQLITE3_LIBS $MSSQL_LIBS"
 
 	AC_SUBST(DB_CFLAGS)
 	AC_SUBST(DB_LDFLAGS)
@@ -2017,6 +2032,7 @@ AC_OUTPUT([
 	database/oracle/Makefile
 	database/postgresql/Makefile
 	database/sqlite3/Makefile
+	database/mssql/Makefile
 	misc/Makefile
 	src/Makefile
 	src/go/Makefile
